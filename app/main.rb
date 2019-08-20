@@ -38,6 +38,9 @@ require 'lib/endpoint'
 require 'lib/ctx'
 require 'lib/watch_dir_reloader'
 
+require 'lib/templates'
+require 'views/templates'
+
 require 'endpoints'
 
 
