@@ -162,8 +162,8 @@ class Search
   end
 
 
-  def self.get_record_by_qsa_id(record_type, qsa_id_prefixed)
-    solr_handle_search(q: "qsa_id_prefixed:#{solr_escape(qsa_id_prefixed.upcase)} AND primary_type:#{record_type}")
+  def self.get_record_by_qsa_id(qsa_id_prefixed)
+    solr_handle_search(q: "qsa_id_prefixed:#{solr_escape(qsa_id_prefixed.upcase)}")
       .fetch('response')
       .fetch('docs')
       .map do |doc|
