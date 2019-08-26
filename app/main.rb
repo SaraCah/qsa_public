@@ -38,6 +38,7 @@ require 'lib/endpoint'
 require 'lib/ctx'
 require 'lib/watch_dir_reloader'
 require 'lib/solr_indexer'
+require 'lib/search'
 
 require 'lib/templates'
 require 'views/templates'
