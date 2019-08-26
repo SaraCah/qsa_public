@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<schema name="QSA Public" version="1.6">
+
+  <field name="_version_" type="plong" indexed="true" stored="true" multiValued="false"/>
+
+  <field name="id" type="string" indexed="true" stored="true" required="true" multiValued="false" />
+  <field name="uri" type="string" indexed="true" stored="true" required="true" multiValued="false" />
+  <field name="primary_type" type="string" indexed="true" stored="true" required="true" multiValued="false" />
+  <field name="types" type="string" indexed="true" stored="true" required="true" multiValued="true" />
+  <field name="title" type="string" indexed="true" stored="true" required="true" multiValued="false" />
+  <field name="qsa_id" type="string" indexed="true" stored="true" required="true" multiValued="false" />
+  <field name="qsa_id_prefixed" type="string" indexed="true" stored="true" required="true" multiValued="false" />
+  <field name="agency_assigned_id" type="string" indexed="true" stored="true" multiValued="false" />
+  <field name="agency_assigned_tokens" type="text_general" indexed="true" stored="true" multiValued="true" />
+
+  <field name="series" type="string" indexed="true" stored="true" required="false" multiValued="false" />
+  <field name="series_id" type="string" indexed="true" stored="true" required="false" multiValued="false" />
+
+  <field name="responsible_agency" type="string" indexed="true" stored="true" multiValued="false" />
+  <field name="recent_responsible_agencies" type="string" indexed="true" stored="true" multiValued="true" />
+  <field name="other_responsible_agencies" type="string" indexed="true" stored="true" multiValued="true" />
+  <field name="recent_responsible_agency_filter" type="string" indexed="true" stored="false" multiValued="true" />
+  <field name="creating_agency" type="string" indexed="true" stored="true" multiValued="false" />
+
+  <field name="keywords" type="text_general" indexed="true" stored="false" multiValued="true"/>
+  <field name="keywords_stemmed" type="text_en" indexed="true" stored="false" multiValued="true"/>
+  <field name="ngrams" type="ngrams" indexed="true" stored="false" multiValued="true"/>
+  <field name="edge_ngrams" type="edge_ngrams" indexed="true" stored="false" multiValued="true"/>
+
+  <field name="physical_representations" type="string" indexed="true" stored="true" multiValued="true" />
+  <field name="digital_representations" type="string" indexed="true" stored="true" multiValued="true" />
+  <field name="all_representations" type="string" indexed="true" stored="true" multiValued="true" />
+  <field name="file_issue_allowed" type="boolean" indexed="true" stored="true" multiValued="false" />
+  <field name="current_location" type="string" indexed="true" stored="true" multiValued="false" />
+
+  <field name="start_date" type="pdate" stored="true" multiValued="false" />
+  <field name="end_date" type="pdate" stored="true" multiValued="false" />
+
+  <field name="physical_representations_count" type="pint" stored="true" multiValued="false" />
+  <field name="digital_representations_count" type="pint" stored="true" multiValued="false" />
+
+  <!-- Sort fields -->
+  <field name="title_sort" type="string" indexed="true" stored="false" multiValued="false" />
+  <field name="agency_sort" type="string" indexed="true" stored="false" multiValued="false" />
+  <field name="qsaid_sort" type="string" indexed="true" stored="false" multiValued="false" />
+
+  <copyField source="physical_representations" dest="all_representations" />
+  <copyField source="digital_representations" dest="all_representations" />
+
+  <!-- This just here for import validator compat for the time being -->
+  <field name="identifier" type="string" indexed="true" stored="true" required="true" multiValued="false" />
+  <copyField source="qsa_id" dest="identifier" />
+
+  <copyField source="qsa_id" dest="keywords" />
+  <copyField source="agency_assigned_id" dest="keywords" />
+
+  <copyField source="agency_assigned_id" dest="ngrams" />
+  <copyField source="agency_assigned_id" dest="edge_ngrams" />
+
+  <copyField source="title" dest="keywords" />
+  <copyField source="title" dest="keywords_stemmed" />
+  <copyField source="title" dest="ngrams" />
+  <copyField source="title" dest="edge_ngrams" />
+
+  <uniqueKey>id</uniqueKey>
+
+  <!-- field type definitions. The "name" attribute is
+       just a label to be used by field definitions.  The "class"
+       attribute and any other attributes determine the real
+       behavior of the fieldType.
+       Class names starting with "solr" refer to java classes in a
+       standard package such as org.apache.solr.analysis
+  -->
+
+  <!-- The StrField type is not analyzed, but indexed/stored verbatim. -->
+  <fieldType name="string" class="solr.StrField" sortMissingLast="true" />
+
+  <!-- boolean type: "true" or "false" -->
+  <fieldType name="boolean" class="solr.BoolField" sortMissingLast="true"/>
+  <fieldType name="booleans" class="solr.BoolField" sortMissingLast="true" multiValued="true"/>
+
+
+  <!-- sortMissingLast and sortMissingFirst attributes are optional attributes are
+       currently supported on types that are sorted internally as strings
+       and on numeric types.
+       This includes "string", "boolean", "pint", "pfloat", "plong", "pdate", "pdouble".
+       - If sortMissingLast="true", then a sort on this field will cause documents
+       without the field to come after documents with the field,
+       regardless of the requested sort order (asc or desc).
+       - If sortMissingFirst="true", then a sort on this field will cause documents
+       without the field to come before documents with the field,
+       regardless of the requested sort order.
+       - If sortMissingLast="false" and sortMissingFirst="false" (the default),
+       then default lucene sorting will be used which places docs without the
+       field first in an ascending sort and last in a descending sort.
+  -->
+
+  <!--
+      Numeric field types that index values using KD-trees.
+      Point fields don't support FieldCache, so they must have docValues="true" if needed for sorting, faceting, functions, etc.
+  -->
+  <fieldType name="pint" class="solr.IntPointField" docValues="true"/>
+  <fieldType name="pfloat" class="solr.FloatPointField" docValues="true"/>
+  <fieldType name="plong" class="solr.LongPointField" docValues="true"/>
+  <fieldType name="pdouble" class="solr.DoublePointField" docValues="true"/>
+
+  <fieldType name="pints" class="solr.IntPointField" docValues="true" multiValued="true"/>
+  <fieldType name="pfloats" class="solr.FloatPointField" docValues="true" multiValued="true"/>
+  <fieldType name="plongs" class="solr.LongPointField" docValues="true" multiValued="true"/>
+  <fieldType name="pdoubles" class="solr.DoublePointField" docValues="true" multiValued="true"/>
+
+  <!-- The format for this date field is of the form 1995-12-31T23:59:59Z, and
+       is a more restricted form of the canonical representation of dateTime
+       http://www.w3.org/TR/xmlschema-2/#dateTime
+       The trailing "Z" designates UTC time and is mandatory.
+       Optional fractional seconds are allowed: 1995-12-31T23:59:59.999Z
+       All other components are mandatory.
+
+Expressions can also be used to denote calculations that should be
+performed relative to "NOW" to determine the value, ie...
+
+NOW/HOUR
+... Round to the start of the current hour
+NOW-1DAY
+... Exactly 1 day prior to now
+NOW/DAY+6MONTHS+3DAYS
+... 6 months and 3 days in the future from the start of
+the current day
+
+Consult the DatePointField javadocs for more information.
+  -->
+
+  <!-- KD-tree versions of date fields -->
+  <fieldType name="pdate" class="solr.DatePointField" docValues="true"/>
+  <fieldType name="pdates" class="solr.DatePointField" docValues="true" multiValued="true"/>
+
+  <!--Binary data type. The data should be sent/retrieved in as Base64 encoded Strings -->
+  <fieldType name="binary" class="solr.BinaryField"/>
+
+  <!-- The "RandomSortField" is not used to store or search any
+       data.  You can declare fields of this type it in your schema
+       to generate pseudo-random orderings of your docs for sorting
+       or function purposes.  The ordering is generated based on the field
+       name and the version of the index. As long as the index version
+       remains unchanged, and the same field name is reused,
+       the ordering of the docs will be consistent.
+       If you want different psuedo-random orderings of documents,
+       for the same version of the index, use a dynamicField and
+       change the field name in the request.
+  -->
+  <fieldType name="random" class="solr.RandomSortField" indexed="true" />
+
+  <!-- solr.TextField allows the specification of custom text analyzers
+       specified as a tokenizer and a list of token filters. Different
+       analyzers may be specified for indexing and querying.
+
+The optional positionIncrementGap puts space between multiple fields of
+this type on the same document, with the purpose of preventing false phrase
+matching across fields.
+
+For more info on customizing your analyzer chain, please see
+http://wiki.apache.org/solr/AnalyzersTokenizersTokenFilters
+  -->
+
+  <!-- One can also specify an existing Analyzer class that has a
+       default constructor via the class attribute on the analyzer element.
+       Example:
+       <fieldType name="text_greek" class="solr.TextField">
+       <analyzer class="org.apache.lucene.analysis.el.GreekAnalyzer"/>
+       </fieldType>
+  -->
+
+  <!-- A text field that only splits on whitespace for exact matching of words -->
+  <fieldType name="text_ws" class="solr.TextField" positionIncrementGap="100">
+    <analyzer>
+      <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+    </analyzer>
+  </fieldType>
+
+  <!-- A text type for English text where stopwords and synonyms are managed using the REST API -->
+  <fieldType name="managed_en" class="solr.TextField" positionIncrementGap="100">
+    <analyzer type="index">
+      <tokenizer class="solr.StandardTokenizerFactory"/>
+      <filter class="solr.ManagedStopFilterFactory" managed="english" />
+      <filter class="solr.ManagedSynonymGraphFilterFactory" managed="english" />
+      <filter class="solr.FlattenGraphFilterFactory"/>
+    </analyzer>
+    <analyzer type="query">
+      <tokenizer class="solr.StandardTokenizerFactory"/>
+      <filter class="solr.ManagedStopFilterFactory" managed="english" />
+      <filter class="solr.ManagedSynonymGraphFilterFactory" managed="english" />
+    </analyzer>
+  </fieldType>
+
+  <!-- A general text field that has reasonable, generic
+       cross-language defaults: it tokenizes with StandardTokenizer,
+       removes stop words from case-insensitive "stopwords.txt"
+       (empty by default), and down cases.  At query time only, it
+       also applies synonyms. -->
+  <fieldType name="text_general" class="solr.TextField" positionIncrementGap="100">
+    <analyzer type="index">
+      <tokenizer class="solr.StandardTokenizerFactory"/>
+      <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords.txt" />
+      <!-- in this example, we will only use synonyms at query time
+           <filter class="solr.SynonymGraphFilterFactory" synonyms="index_synonyms.txt" ignoreCase="true" expand="false"/>
+           <filter class="solr.FlattenGraphFilterFactory"/>
+      -->
+      <filter class="solr.LowerCaseFilterFactory"/>
+    </analyzer>
+    <analyzer type="query">
+      <tokenizer class="solr.StandardTokenizerFactory"/>
+      <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords.txt" />
+      <filter class="solr.SynonymGraphFilterFactory" synonyms="lang/synonyms.txt" ignoreCase="true" expand="true"/>
+      <filter class="solr.LowerCaseFilterFactory"/>
+    </analyzer>
+  </fieldType>
+
+  <!-- SortableTextField generaly functions exactly like TextField,
+       except that it supports, and by default uses, docValues for sorting (or faceting)
+       on the first 1024 characters of the original field values (which is configurable).
+
+       This makes it a bit more useful then TextField in many situations, but the trade-off
+       is that it takes up more space on disk; which is why it's not used in place of TextField
+       for every fieldType in this _default schema.
+  -->
+  <fieldType name="text_gen_sort" class="solr.SortableTextField" positionIncrementGap="100" multiValued="true">
+    <analyzer type="index">
+      <tokenizer class="solr.StandardTokenizerFactory"/>
+      <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords.txt" />
+      <filter class="solr.LowerCaseFilterFactory"/>
+    </analyzer>
+    <analyzer type="query">
+      <tokenizer class="solr.StandardTokenizerFactory"/>
+      <filter class="solr.StopFilterFactory" ignoreCase="true" words="lang/stopwords.txt" />
+      <filter class="solr.SynonymGraphFilterFactory" synonyms="lang/synonyms.txt" ignoreCase="true" expand="true"/>
+      <filter class="solr.LowerCaseFilterFactory"/>
+    </analyzer>
+  </fieldType>
+
+  <!-- A text field with defaults appropriate for English: it
+       tokenizes with StandardTokenizer, removes English stop words
+       (lang/stopwords_en.txt), down cases, protects words from protwords.txt, and
+       finally applies Porter's stemming.  The query time analyzer
+       also applies synonyms from synonyms.txt. -->
+  <fieldType name="text_en" class="solr.TextField" positionIncrementGap="100">
+    <analyzer type="index">
+      <tokenizer class="solr.StandardTokenizerFactory"/>
+      <!-- in this example, we will only use synonyms at query time
+           <filter class="solr.SynonymGraphFilterFactory" synonyms="index_synonyms.txt" ignoreCase="true" expand="false"/>
+           <filter class="solr.FlattenGraphFilterFactory"/>
+      -->
+      <!-- Case insensitive stop word removal.
+      -->
+      <filter class="solr.StopFilterFactory"
+              ignoreCase="true"
+              words="lang/stopwords.txt"
+              />
+      <filter class="solr.LowerCaseFilterFactory"/>
+      <filter class="solr.EnglishPossessiveFilterFactory"/>
+      <filter class="solr.KeywordMarkerFilterFactory" protected="lang/protwords.txt"/>
+      <!-- Optionally you may want to use this less aggressive stemmer instead of PorterStemFilterFactory:
+           <filter class="solr.EnglishMinimalStemFilterFactory"/>
+      -->
+      <filter class="solr.PorterStemFilterFactory"/>
+    </analyzer>
+    <analyzer type="query">
+      <tokenizer class="solr.StandardTokenizerFactory"/>
+      <filter class="solr.SynonymGraphFilterFactory" synonyms="lang/synonyms.txt" ignoreCase="true" expand="true"/>
+      <filter class="solr.StopFilterFactory"
+              ignoreCase="true"
+              words="lang/stopwords.txt"
+              />
+      <filter class="solr.LowerCaseFilterFactory"/>
+      <filter class="solr.EnglishPossessiveFilterFactory"/>
+      <filter class="solr.KeywordMarkerFilterFactory" protected="lang/protwords.txt"/>
+      <!-- Optionally you may want to use this less aggressive stemmer instead of PorterStemFilterFactory:
+           <filter class="solr.EnglishMinimalStemFilterFactory"/>
+      -->
+      <filter class="solr.PorterStemFilterFactory"/>
+    </analyzer>
+  </fieldType>
+
+  <fieldType name="ngrams" class="solr.TextField" positionIncrementGap="100">
+    <analyzer>
+      <filter class="solr.LowerCaseFilterFactory"/>
+      <tokenizer class="solr.NGramTokenizerFactory" minGramSize="3" maxGramSize="5"/>
+    </analyzer>
+  </fieldType>
+
+  <fieldType name="edge_ngrams" class="solr.TextField" positionIncrementGap="100">
+    <analyzer>
+      <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+      <filter class="solr.LowerCaseFilterFactory"/>
+      <filter class="solr.EdgeNGramFilterFactory" minGramSize="3" maxGramSize="5"/>
+    </analyzer>
+  </fieldType>
+
+</schema>

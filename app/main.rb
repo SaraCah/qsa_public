@@ -37,6 +37,7 @@ require 'storage/db'
 require 'lib/endpoint'
 require 'lib/ctx'
 require 'lib/watch_dir_reloader'
+require 'lib/solr_indexer'
 
 require 'lib/templates'
 require 'views/templates'
@@ -62,6 +63,8 @@ class QSAPublic < Sinatra::Base
     set :show_exceptions, false
 
     DB.connect
+
+    SolrIndexer.start
   end
 
   error do
