@@ -89,9 +89,6 @@ class Templates
 
       begin
         Erubis::EscapedEruby.new(File.read(@erb_file)).result(EmptyBinding.for(parsed_args))
-      rescue MAPAPIClient::SessionGoneError
-        # Re-raise to log out the user
-        raise $!
       rescue Sequel::DatabaseError
         # Re-raise to allow DB retry logic
         raise $!

@@ -38,7 +38,7 @@ class Ctx
 
   def self.log_bad_access(msg)
     username_label = self.user_logged_in? ?
-                       "MAP user '#{self.username}'" :
+                       "QSA Public user '#{self.username}'" :
                        "anonymous user (not logged in)"
 
     $LOG.warn("Access denied to #{username_label}.  Reason: #{msg}\n" +
