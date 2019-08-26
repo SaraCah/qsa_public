@@ -51,6 +51,10 @@ class QSAPublic < Sinatra::Base
 
   Endpoint.get('/feed/record/:qsa_id_prefixed')
     .param(:qsa_id_prefixed, String, "Record QSA ID with prefix") do
-    json_response(Search.get_record_by_qsa_id(params[:qsa_id_prefixed]))
+    if record = Search.get_record_by_qsa_id(params[:qsa_id_prefixed])
+      json_response(record)
+    else
+      [404]
+    end
   end
 end

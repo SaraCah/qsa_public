@@ -147,7 +147,7 @@ class Search
 
 
   def self.for_type(record_type, page, sort_by)
-    start_index = (page * AppConfig[:page_size]) + 1
+    start_index = (page * AppConfig[:page_size])
     response = solr_handle_search(q:"primary_type:#{record_type}",
                        start: start_index,
                        sort: parse_sort(sort_by)).fetch('response', {})
@@ -169,6 +169,8 @@ class Search
       .map do |doc|
       return doc
     end
+
+    nil
   end
 
 end
