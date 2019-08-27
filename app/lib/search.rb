@@ -165,6 +165,18 @@ class Search
   end
 
 
+  def self.get_record_by_uri(uri)
+    solr_handle_search(q: "uri:#{solr_escape(uri)}")
+      .fetch('response')
+      .fetch('docs')
+      .map do |doc|
+      return JSON.parse(doc.fetch('json'))
+    end
+
+    nil
+  end
+
+
   def self.get_record_by_qsa_id(qsa_id_prefixed)
     solr_handle_search(q: "qsa_id_prefixed:#{solr_escape(qsa_id_prefixed.upcase)}")
       .fetch('response')
@@ -176,4 +188,18 @@ class Search
     nil
   end
 
+
+  def self.resolve_refs!(record)
+    record.clone.each do |key, value|
+      if value.is_a?(Array)
+        value.each do |item|
+          if item.is_a?(Hash) && item['ref']
+            item['_resolved'] = get_record_by_uri(item['ref'])
+          end
+        end
+      elsif value.is_a?(Hash) && value['ref']
+        record['key']['_resolved'] = get_record_by_uri(item['ref'])
+      end
+    end
+  end
 end

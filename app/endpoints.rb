@@ -71,6 +71,7 @@ class QSAPublic < Sinatra::Base
     .param(:qsa_id_prefixed, String, "Record QSA ID with prefix") do
     begin
       if record = Search.get_record_by_qsa_id(params[:qsa_id_prefixed])
+        Search.resolve_refs!(record)
         json_response(record)
       else
         [404]
