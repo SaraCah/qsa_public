@@ -32,9 +32,27 @@ class QSAPublic < Sinatra::Base
   end
 
   Endpoint.get('/feed/subjects')
+         .param(:sort, String, "Sort string", optional: true)
+         .param(:page, Integer, "Page to return", optional: true) do
+    json_response(Search.for_type('subject', params[:page] || 0, params[:sort] || 'relevance'))
+  end
+
+  Endpoint.get('/feed/functions')
     .param(:sort, String, "Sort string", optional: true)
     .param(:page, Integer, "Page to return", optional: true) do
-    json_response(Search.for_type('subject', params[:page] || 0, params[:sort] || 'relevance'))
+    json_response(Search.for_type('function', params[:page] || 0, params[:sort] || 'relevance'))
+  end
+
+  Endpoint.get('/feed/mandates')
+    .param(:sort, String, "Sort string", optional: true)
+    .param(:page, Integer, "Page to return", optional: true) do
+    json_response(Search.for_type('mandate', params[:page] || 0, params[:sort] || 'relevance'))
+  end
+
+  Endpoint.get('/feed/representations')
+    .param(:sort, String, "Sort string", optional: true)
+    .param(:page, Integer, "Page to return", optional: true) do
+    json_response(Search.for_type(['digital_representation', 'physical_representation'], params[:page] || 0, params[:sort] || 'relevance'))
   end
 
   Endpoint.get('/feed/digital_representations')

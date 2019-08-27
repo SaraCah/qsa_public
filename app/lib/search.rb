@@ -150,7 +150,8 @@ class Search
 
   def self.for_type(record_type, page, sort_by)
     start_index = (page * AppConfig[:page_size])
-    response = solr_handle_search(q:"primary_type:#{record_type}",
+    query = Array(record_type).map{|type| "primary_type:#{type}"}.join(' OR ')
+    response = solr_handle_search(q:query,
                        start: start_index,
                        sort: parse_sort(sort_by)).fetch('response', {})
 
