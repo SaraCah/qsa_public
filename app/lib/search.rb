@@ -1,3 +1,5 @@
+require 'json'
+
 class Search
 
   SOLR_CHARS = '+-&|!(){}[]^"~*?:\\/ '
@@ -167,7 +169,7 @@ class Search
       .fetch('response')
       .fetch('docs')
       .map do |doc|
-      return doc
+      return JSON.parse(doc.fetch('json'))
     end
 
     nil

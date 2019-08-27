@@ -11,57 +11,12 @@
   <field name="title" type="string" indexed="true" stored="true" required="true" multiValued="false" />
   <field name="qsa_id" type="string" indexed="true" stored="true" required="true" multiValued="false" />
   <field name="qsa_id_prefixed" type="string" indexed="true" stored="true" required="true" multiValued="false" />
-  <field name="agency_assigned_id" type="string" indexed="true" stored="true" multiValued="false" />
-  <field name="agency_assigned_tokens" type="text_general" indexed="true" stored="true" multiValued="true" />
 
-  <field name="series" type="string" indexed="true" stored="true" required="false" multiValued="false" />
-  <field name="series_id" type="string" indexed="true" stored="true" required="false" multiValued="false" />
-
-  <field name="responsible_agency" type="string" indexed="true" stored="true" multiValued="false" />
-  <field name="recent_responsible_agencies" type="string" indexed="true" stored="true" multiValued="true" />
-  <field name="other_responsible_agencies" type="string" indexed="true" stored="true" multiValued="true" />
-  <field name="recent_responsible_agency_filter" type="string" indexed="true" stored="false" multiValued="true" />
-  <field name="creating_agency" type="string" indexed="true" stored="true" multiValued="false" />
-
+  <field name="json" type="string" indexed="false" stored="true" multiValued="false" />
   <field name="keywords" type="text_general" indexed="true" stored="false" multiValued="true"/>
-  <field name="keywords_stemmed" type="text_en" indexed="true" stored="false" multiValued="true"/>
-  <field name="ngrams" type="ngrams" indexed="true" stored="false" multiValued="true"/>
-  <field name="edge_ngrams" type="edge_ngrams" indexed="true" stored="false" multiValued="true"/>
-
-  <field name="physical_representations" type="string" indexed="true" stored="true" multiValued="true" />
-  <field name="digital_representations" type="string" indexed="true" stored="true" multiValued="true" />
-  <field name="all_representations" type="string" indexed="true" stored="true" multiValued="true" />
-  <field name="file_issue_allowed" type="boolean" indexed="true" stored="true" multiValued="false" />
-  <field name="current_location" type="string" indexed="true" stored="true" multiValued="false" />
 
   <field name="start_date" type="pdate" stored="true" multiValued="false" />
   <field name="end_date" type="pdate" stored="true" multiValued="false" />
-
-  <field name="physical_representations_count" type="pint" stored="true" multiValued="false" />
-  <field name="digital_representations_count" type="pint" stored="true" multiValued="false" />
-
-  <!-- Sort fields -->
-  <field name="title_sort" type="string" indexed="true" stored="false" multiValued="false" />
-  <field name="agency_sort" type="string" indexed="true" stored="false" multiValued="false" />
-  <field name="qsaid_sort" type="string" indexed="true" stored="false" multiValued="false" />
-
-  <copyField source="physical_representations" dest="all_representations" />
-  <copyField source="digital_representations" dest="all_representations" />
-
-  <!-- This just here for import validator compat for the time being -->
-  <field name="identifier" type="string" indexed="true" stored="true" required="true" multiValued="false" />
-  <copyField source="qsa_id" dest="identifier" />
-
-  <copyField source="qsa_id" dest="keywords" />
-  <copyField source="agency_assigned_id" dest="keywords" />
-
-  <copyField source="agency_assigned_id" dest="ngrams" />
-  <copyField source="agency_assigned_id" dest="edge_ngrams" />
-
-  <copyField source="title" dest="keywords" />
-  <copyField source="title" dest="keywords_stemmed" />
-  <copyField source="title" dest="ngrams" />
-  <copyField source="title" dest="edge_ngrams" />
 
   <uniqueKey>id</uniqueKey>
 
