@@ -197,8 +197,10 @@ class Search
             item['_resolved'] = get_record_by_uri(item['ref'])
           end
         end
+        record[key] = value.reject{|h| h['_resolved'].nil?}
       elsif value.is_a?(Hash) && value['ref']
-        record['key']['_resolved'] = get_record_by_uri(item['ref'])
+        record[key]['_resolved'] = get_record_by_uri(value['ref'])
+        record.delete(key) if record[key]['_resolved'].nil?
       end
     end
   end
