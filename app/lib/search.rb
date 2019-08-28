@@ -195,23 +195,16 @@ class Search
   def self.resolve_refs!(record)
     if record.is_a?(Array)
       record.each do |item|
-        if item.is_a?(Hash) && item['ref']
-          item['_resolved'] = get_record_by_uri(item['ref'])
-        end
+        resolve_refs!(item)
       end
-      record.reject!{|h| h['_resolved'].nil?}
-    elsif record is_?(Hash)
-      record.clone.each do |key, value|
-        if value.is_a?(Array)
-          value.each do |item|
-            if item.is_a?(Hash) && item['ref']
-              item['_resolved'] = get_record_by_uri(item['ref'])
-            end
-          end
-          record[key] = value.reject{|h| h['_resolved'].nil?}
-        elsif value.is_a?(Hash) && value['ref']
-          record[key]['_resolved'] = get_record_by_uri(value['ref'])
-          record.delete(key) if record[key]['_resolved'].nil?
+      record.reject!{|h| h['ref'] && h['_resolved'].nil?}
+    elsif record.is_a?(Hash)
+      record.keys.each do |key|
+        if key == 'ref'
+          record['_resolved'] = get_record_by_uri(record[key])
+          record.delete(key) if record['_resolved'].nil?
+        else
+          resolve_refs!(record[key])
         end
       end
     end
