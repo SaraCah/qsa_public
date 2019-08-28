@@ -18,6 +18,10 @@
   <field name="start_date" type="pdate" stored="true" multiValued="false" />
   <field name="end_date" type="pdate" stored="true" multiValued="false" />
 
+  <!-- Agency Business -->
+  <field name="creating_agency_id" type="string" indexed="true" stored="true" multiValued="false" />
+  <field name="responsible_agency_id" type="string" indexed="true" stored="true" multiValued="false" />
+
   <!-- Hierarchy Business -->
   <field name="parent_id" type="string" indexed="true" stored="true" multiValued="false" />
   <field name="position" type="pint" indexed="true" stored="true" multiValued="false" />
