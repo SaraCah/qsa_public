@@ -14,15 +14,23 @@ class QSAPublic < Sinatra::Base
   end
 
   Endpoint.get('/feed/series')
+    .param(:responsible_agency, String, "Agency ID string", optional: true)
     .param(:sort, String, "Sort string", optional: true)
     .param(:page, Integer, "Page to return", optional: true) do
-    json_response(Search.for_type('resource', params[:page] || 0, params[:sort] || 'relevance'))
+    filter_opts = {}
+    filter_opts['responsible_agency'] = params[:responsible_agency] if params[:responsible_agency]
+
+    json_response(Search.for_type('resource', params[:page] || 0, params[:sort] || 'relevance', filter_opts))
   end
 
   Endpoint.get('/feed/items')
+    .param(:responsible_agency, String, "Agency ID string", optional: true)
     .param(:sort, String, "Sort string", optional: true)
     .param(:page, Integer, "Page to return", optional: true) do
-    json_response(Search.for_type('archival_object', params[:page] || 0, params[:sort] || 'relevance'))
+    filter_opts = {}
+    filter_opts['responsible_agency'] = params[:responsible_agency] if params[:responsible_agency]
+
+    json_response(Search.for_type('archival_object', params[:page] || 0, params[:sort] || 'relevance', filter_opts))
   end
 
   Endpoint.get('/feed/agencies')
@@ -50,21 +58,44 @@ class QSAPublic < Sinatra::Base
   end
 
   Endpoint.get('/feed/representations')
+    .param(:responsible_agency, String, "Agency ID string", optional: true)
     .param(:sort, String, "Sort string", optional: true)
     .param(:page, Integer, "Page to return", optional: true) do
-    json_response(Search.for_type(['digital_representation', 'physical_representation'], params[:page] || 0, params[:sort] || 'relevance'))
+    filter_opts = {}
+    filter_opts['responsible_agency'] = params[:responsible_agency] if params[:responsible_agency]
+
+    json_response(Search.for_type(['digital_representation', 'physical_representation'], params[:page] || 0, params[:sort] || 'relevance', filter_opts))
   end
 
   Endpoint.get('/feed/digital_representations')
+    .param(:responsible_agency, String, "Agency ID string", optional: true)
     .param(:sort, String, "Sort string", optional: true)
     .param(:page, Integer, "Page to return", optional: true) do
-    json_response(Search.for_type('digital_representation', params[:page] || 0, params[:sort] || 'relevance'))
+    filter_opts = {}
+    filter_opts['responsible_agency'] = params[:responsible_agency] if params[:responsible_agency]
+
+    json_response(Search.for_type('digital_representation', params[:page] || 0, params[:sort] || 'relevance', filter_opts))
   end
 
   Endpoint.get('/feed/physical_representations')
+    .param(:responsible_agency, String, "Agency ID string", optional: true)
     .param(:sort, String, "Sort string", optional: true)
     .param(:page, Integer, "Page to return", optional: true) do
-    json_response(Search.for_type('physical_representation', params[:page] || 0, params[:sort] || 'relevance'))
+    filter_opts = {}
+    filter_opts['responsible_agency'] = params[:responsible_agency] if params[:responsible_agency]
+
+    json_response(Search.for_type('physical_representation', params[:page] || 0, params[:sort] || 'relevance', filter_opts))
+  end
+
+  Endpoint.get('/feed/search')
+    .param(:responsible_agency, String, "Agency ID string", optional: true)
+    .param(:q, String, "Search string", optional: true)
+    .param(:sort, String, "Sort string", optional: true)
+    .param(:page, Integer, "Page to return", optional: true) do
+    filter_opts = {}
+    filter_opts['responsible_agency'] = params[:responsible_agency] if params[:responsible_agency]
+
+    json_response(Search.keyword(params[:q], params[:page] || 0, params[:sort] || 'relevance', filter_opts))
   end
 
   Endpoint.get('/feed/:qsa_id_prefixed')

@@ -150,12 +150,28 @@ class Search
   end
 
 
-  def self.for_type(record_type, page, sort_by)
+  def self.for_type(record_type, page, sort_by, filters = {})
     start_index = (page * AppConfig[:page_size])
+
     query = Array(record_type).map{|type| "primary_type:#{type}"}.join(' OR ')
-    response = solr_handle_search(q:query,
-                       start: start_index,
-                       sort: parse_sort(sort_by)).fetch('response', {})
+
+    search_opts = {
+      q:query,
+      start: start_index,
+      sort: parse_sort(sort_by)
+    }
+
+    unless filters.reject{|_,v| v.nil?}.empty?
+      fq = []
+
+      if filters['responsible_agency']
+        fq << "+responsible_agency_id:#{solr_escape(filters['responsible_agency'])}"
+      end
+
+      search_opts[:fq] = fq.join(' ')
+    end
+
+    response = solr_handle_search(search_opts).fetch('response', {})
 
     {
       'total_count' => response.fetch('numFound'),
