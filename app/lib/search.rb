@@ -118,6 +118,8 @@ class Search
     'title_desc' => 'title_sort desc',
     'qsaid_asc' => 'qsaid_sort asc',
     'qsaid_desc' => 'qsaid_sort desc',
+    'position_asc' => 'position asc',
+    'position_desc' => 'position desc',
   }
 
 
@@ -177,11 +179,12 @@ class Search
   end
 
 
-  def self.get_record_by_qsa_id(qsa_id_prefixed)
+  def self.get_record_by_qsa_id(qsa_id_prefixed, raw = false)
     solr_handle_search(q: "qsa_id_prefixed:#{solr_escape(qsa_id_prefixed.upcase)}")
       .fetch('response')
       .fetch('docs')
       .map do |doc|
+      return doc if raw
       return JSON.parse(doc.fetch('json'))
     end
 
@@ -190,18 +193,50 @@ class Search
 
 
   def self.resolve_refs!(record)
-    record.clone.each do |key, value|
-      if value.is_a?(Array)
-        value.each do |item|
-          if item.is_a?(Hash) && item['ref']
-            item['_resolved'] = get_record_by_uri(item['ref'])
-          end
+    if record.is_a?(Array)
+      record.each do |item|
+        if item.is_a?(Hash) && item['ref']
+          item['_resolved'] = get_record_by_uri(item['ref'])
         end
-        record[key] = value.reject{|h| h['_resolved'].nil?}
-      elsif value.is_a?(Hash) && value['ref']
-        record[key]['_resolved'] = get_record_by_uri(value['ref'])
-        record.delete(key) if record[key]['_resolved'].nil?
+      end
+      record.reject!{|h| h['_resolved'].nil?}
+    elsif record is_?(Hash)
+      record.clone.each do |key, value|
+        if value.is_a?(Array)
+          value.each do |item|
+            if item.is_a?(Hash) && item['ref']
+              item['_resolved'] = get_record_by_uri(item['ref'])
+            end
+          end
+          record[key] = value.reject{|h| h['_resolved'].nil?}
+        elsif value.is_a?(Hash) && value['ref']
+          record[key]['_resolved'] = get_record_by_uri(value['ref'])
+          record.delete(key) if record[key]['_resolved'].nil?
+        end
       end
     end
+
+    record
+  end
+
+  def self.children(parent_id, page, sort_by = "position_asc", min_position = nil, max_position = nil)
+    start_index = (page * AppConfig[:page_size])
+    query = "parent_id:#{solr_escape(parent_id)}"
+    if min_position && max_position
+      query += " AND position:[#{min_position} TO #{max_position}]"
+    end
+    response = solr_handle_search(q:query,
+                                  start: start_index,
+                                  sort: parse_sort(sort_by)).fetch('response', {})
+
+    {
+      'total_count' => response.fetch('numFound'),
+      'current_page' => page,
+      'page_size' => AppConfig[:page_size],
+      'sorted_by' => sort_by,
+      'results' => response.fetch('docs', []).map do |doc|
+        JSON.parse(doc.fetch('json'))
+      end
+    }
   end
 end
