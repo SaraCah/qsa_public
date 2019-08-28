@@ -18,6 +18,10 @@
   <field name="start_date" type="pdate" stored="true" multiValued="false" />
   <field name="end_date" type="pdate" stored="true" multiValued="false" />
 
+  <!-- Sort fields -->
+  <field name="title_sort" type="string" indexed="true" stored="false" multiValued="false" />
+  <field name="qsaid_sort" type="string" indexed="true" stored="false" multiValued="false" />
+
   <!-- Agency Business -->
   <field name="creating_agency_id" type="string" indexed="true" stored="true" multiValued="false" />
   <field name="responsible_agency_id" type="string" indexed="true" stored="true" multiValued="false" />
