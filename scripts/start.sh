@@ -4,6 +4,10 @@ if [ "$QSA_PUBLIC_ENV" = "" ]; then
     QSA_PUBLIC_ENV=production
 fi
 
+if [ "$QSA_PUBLIC_LISTEN_PORT" = "" ]; then
+    QSA_PUBLIC_LISTEN_PORT=3333
+fi
+
 # open files
 ulimit -n 65000
 
@@ -12,7 +16,7 @@ set -eou pipefail
 cd "`dirname "$0"`/../"
 
 listen_address="0.0.0.0"
-listen_port=3333
+listen_port=$QSA_PUBLIC_LISTEN_PORT
 solr_port=9384
 logging=0
 
