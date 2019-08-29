@@ -1,6 +1,6 @@
 class Endpoint
 
-  attr_reader :uri, :method
+  attr_reader :uri, :method, :valid_params
 
   def initialize(method, uri, opts)
     @method = method
@@ -12,11 +12,13 @@ class Endpoint
 
   def self.post(uri, opts = {}, &block)
     e = new(:post, uri, opts)
+    register(e)
     block ? e.finish(&block) : e
   end
 
   def self.get(uri, opts = {}, &block)
     e = new(:get, uri, opts)
+    register(e)
     block ? e.finish(&block) : e
   end
 
@@ -120,4 +122,16 @@ class Endpoint
     end
   end
 
+  # Capture registered endpoints so we can report on them
+  # FIXME can drop once dev has settled
+  def self.endpoints
+    @endpoints
+  end
+
+  def self.register(e)
+    @endpoints ||= {}
+    @endpoints[e.method] ||= {}
+    @endpoints[e.method][e.uri] ||= {}
+    @endpoints[e.method][e.uri] = e
+  end
 end

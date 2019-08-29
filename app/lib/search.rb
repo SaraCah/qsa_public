@@ -150,39 +150,6 @@ class Search
   end
 
 
-  def self.for_type(record_type, page, sort_by, filters = {})
-    start_index = (page * AppConfig[:page_size])
-
-    query = Array(record_type).map{|type| "primary_type:#{type}"}.join(' OR ')
-
-    search_opts = {
-      q:query,
-      start: start_index,
-      sort: parse_sort(sort_by)
-    }
-
-    unless filters.reject{|_,v| v.nil?}.empty?
-      fq = []
-
-      if filters['responsible_agency']
-        fq << "+responsible_agency_id:#{solr_escape(filters['responsible_agency'])}"
-      end
-
-      search_opts[:fq] = fq.join(' ')
-    end
-
-    response = solr_handle_search(search_opts).fetch('response', {})
-
-    {
-      'total_count' => response.fetch('numFound'),
-      'current_page' => page,
-      'page_size' => AppConfig[:page_size],
-      'sorted_by' => sort_by,
-      'results' => response.fetch('docs', [])
-    }
-  end
-
-
   def self.get_record_by_uri(uri)
     solr_handle_search(q: "uri:#{solr_escape(uri)}")
       .fetch('response')
@@ -247,5 +214,75 @@ class Search
         JSON.parse(doc.fetch('json'))
       end
     }
+  end
+
+  def self.parse_filters(search_opts)
+    filters = {}
+    filters[:responsible_agency] = search_opts.fetch(:responsible_agency, nil)
+    filters.reject{|_, v| v.nil?}
+  end
+
+  def self.for(search_opts)
+    search_opts.reject!{|_,v| v.nil?}
+
+    page = search_opts.fetch(:page, 0)
+    record_types = search_opts.fetch(:types, [])
+    sort_by = search_opts.fetch(:sort, 'relevance')
+
+    filters = parse_filters(search_opts)
+
+    start_index = (page * AppConfig[:page_size])
+
+    query = if record_types.empty?
+              '*:*'
+            else
+              record_types.map{|type| "primary_type:#{type}"}.join(' OR ')
+            end
+
+    search_opts = {
+      q:query,
+      start: start_index,
+      sort: parse_sort(sort_by)
+    }
+
+    unless filters.empty?
+      fq = []
+
+      if filters[:responsible_agency]
+        fq << "+responsible_agency_id:#{solr_escape(filters[:responsible_agency])}"
+      end
+
+      search_opts[:fq] = fq.join(' ')
+    end
+
+    response = solr_handle_search(search_opts).fetch('response', {})
+
+    {
+      'total_count' => response.fetch('numFound'),
+      'current_page' => page,
+      'page_size' => AppConfig[:page_size],
+      'sorted_by' => sort_by,
+      'results' => response.fetch('docs', [])
+    }
+  end
+
+  def self.get_raw(opts)
+    query = "qsa_id_prefixed:#{solr_escape(opts[:qsa_id].upcase)}" if opts[:qsa_id]
+    query = "uri:#{solr_escape(opts[:uri])}" if opts[:uri]
+    query = "id:#{solr_escape(opts[:id])}" if opts[:id]
+
+    solr_handle_search(q: query)
+      .fetch('response')
+      .fetch('docs')
+      .map do |doc|
+      return doc
+    end
+
+    nil
+  end
+
+  def self.get(opts)
+    doc = get_raw(opts)
+    doc.nil? ? nil : JSON.parse(doc.fetch('json'))
   end
 end

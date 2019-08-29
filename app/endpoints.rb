@@ -13,146 +13,116 @@ class QSAPublic < Sinatra::Base
                                })
   end
 
-  Endpoint.get('/feed/series')
-    .param(:responsible_agency, String, "Agency ID string", optional: true)
+  Endpoint.get('/api/search')
+    .param(:type, [String], "Record Types", optional: true)
+    .param(:responsible_agency, String, "Agency SOLR ID string", optional: true)
     .param(:sort, String, "Sort string", optional: true)
     .param(:page, Integer, "Page to return", optional: true) do
-    filter_opts = {}
-    filter_opts['responsible_agency'] = params[:responsible_agency] if params[:responsible_agency]
 
-    json_response(Search.for_type('resource', params[:page] || 0, params[:sort] || 'relevance', filter_opts))
+    json_response(Search.for(types: params[:type],
+                             page: params[:page],
+                             sort: params[:sort],
+                             responsible_agency: params[:responsible_agency]))
   end
 
-  Endpoint.get('/feed/items')
-    .param(:responsible_agency, String, "Agency ID string", optional: true)
-    .param(:sort, String, "Sort string", optional: true)
-    .param(:page, Integer, "Page to return", optional: true) do
-    filter_opts = {}
-    filter_opts['responsible_agency'] = params[:responsible_agency] if params[:responsible_agency]
+  Endpoint.get('/api/fetch')
+    .param(:qsa_id, String, "Record QSA ID with prefix", optional: true)
+    .param(:uri, String, "Record URI", optional: true)
+    .param(:id, String, "Record SOLR ID", optional: true) do
+    response = [404]
 
-    json_response(Search.for_type('archival_object', params[:page] || 0, params[:sort] || 'relevance', filter_opts))
-  end
-
-  Endpoint.get('/feed/agencies')
-    .param(:sort, String, "Sort string", optional: true)
-    .param(:page, Integer, "Page to return", optional: true) do
-    json_response(Search.for_type('agent_corporate_entity', params[:page] || 0, params[:sort] || 'relevance'))
-  end
-
-  Endpoint.get('/feed/subjects')
-         .param(:sort, String, "Sort string", optional: true)
-         .param(:page, Integer, "Page to return", optional: true) do
-    json_response(Search.for_type('subject', params[:page] || 0, params[:sort] || 'relevance'))
-  end
-
-  Endpoint.get('/feed/functions')
-    .param(:sort, String, "Sort string", optional: true)
-    .param(:page, Integer, "Page to return", optional: true) do
-    json_response(Search.for_type('function', params[:page] || 0, params[:sort] || 'relevance'))
-  end
-
-  Endpoint.get('/feed/mandates')
-    .param(:sort, String, "Sort string", optional: true)
-    .param(:page, Integer, "Page to return", optional: true) do
-    json_response(Search.for_type('mandate', params[:page] || 0, params[:sort] || 'relevance'))
-  end
-
-  Endpoint.get('/feed/representations')
-    .param(:responsible_agency, String, "Agency ID string", optional: true)
-    .param(:sort, String, "Sort string", optional: true)
-    .param(:page, Integer, "Page to return", optional: true) do
-    filter_opts = {}
-    filter_opts['responsible_agency'] = params[:responsible_agency] if params[:responsible_agency]
-
-    json_response(Search.for_type(['digital_representation', 'physical_representation'], params[:page] || 0, params[:sort] || 'relevance', filter_opts))
-  end
-
-  Endpoint.get('/feed/digital_representations')
-    .param(:responsible_agency, String, "Agency ID string", optional: true)
-    .param(:sort, String, "Sort string", optional: true)
-    .param(:page, Integer, "Page to return", optional: true) do
-    filter_opts = {}
-    filter_opts['responsible_agency'] = params[:responsible_agency] if params[:responsible_agency]
-
-    json_response(Search.for_type('digital_representation', params[:page] || 0, params[:sort] || 'relevance', filter_opts))
-  end
-
-  Endpoint.get('/feed/physical_representations')
-    .param(:responsible_agency, String, "Agency ID string", optional: true)
-    .param(:sort, String, "Sort string", optional: true)
-    .param(:page, Integer, "Page to return", optional: true) do
-    filter_opts = {}
-    filter_opts['responsible_agency'] = params[:responsible_agency] if params[:responsible_agency]
-
-    json_response(Search.for_type('physical_representation', params[:page] || 0, params[:sort] || 'relevance', filter_opts))
-  end
-
-  Endpoint.get('/feed/search')
-    .param(:responsible_agency, String, "Agency ID string", optional: true)
-    .param(:q, String, "Search string", optional: true)
-    .param(:sort, String, "Sort string", optional: true)
-    .param(:page, Integer, "Page to return", optional: true) do
-    filter_opts = {}
-    filter_opts['responsible_agency'] = params[:responsible_agency] if params[:responsible_agency]
-
-    json_response(Search.keyword(params[:q], params[:page] || 0, params[:sort] || 'relevance', filter_opts))
-  end
-
-  Endpoint.get('/feed/:qsa_id_prefixed')
-    .param(:qsa_id_prefixed, String, "Record QSA ID with prefix") do
     begin
-      if record = Search.get_record_by_qsa_id(params[:qsa_id_prefixed])
-        Search.resolve_refs!(record)
-        json_response(record)
-      else
-        [404]
+      if params[:qsa_id] || params[:uri] || params[:id]
+        if record = Search.get(qsa_id: params[:qsa_id],
+                               uri: params[:uri],
+                               id: params[:id])
+          Search.resolve_refs!(record)
+          response = json_response(record)
+        end
       end
     rescue
       $LOG.error($!)
-
-      [404]
     end
+
+    response
   end
 
-  Endpoint.get('/feed/:qsa_id_prefixed/children')
+  Endpoint.get('/api/fetch_children')
     .param(:page, Integer, "Page to return", optional: true)
-    .param(:qsa_id_prefixed, String, "Record QSA ID with prefix") do
+    .param(:qsa_id, String, "Record QSA ID with prefix", optional: true)
+    .param(:uri, String, "Record URI", optional: true)
+    .param(:id, String, "Record SOLR ID", optional: true) do
+    response = 404
+
     begin
-      if record = Search.get_record_by_qsa_id(params[:qsa_id_prefixed])
-        json_response(Search.children(record.fetch('id'), params[:page] || 0))
-      else
-        [404]
+      if params[:qsa_id] || params[:uri] || params[:id]
+        if record = Search.get(qsa_id: params[:qsa_id],
+                               uri: params[:uri],
+                               id: params[:id])
+          response = json_response(Search.children(record.fetch('id'), params[:page] || 0))
+        end
       end
     rescue
       $LOG.error($!)
-
-      [404]
     end
+
+    response
   end
 
 
-  Endpoint.get('/feed/:qsa_id_prefixed/context')
-    .param(:qsa_id_prefixed, String, "Record QSA ID with prefix") do
+  Endpoint.get('/api/fetch_context')
+    .param(:qsa_id, String, "Record QSA ID with prefix", optional: true)
+    .param(:uri, String, "Record URI", optional: true)
+    .param(:id, String, "Record SOLR ID", optional: true) do
     begin
-      if (raw_record = Search.get_record_by_qsa_id(params[:qsa_id_prefixed], true)) && raw_record['primary_type'] == 'archival_object'
-        # show 10 records either side + 5 children
-        position = raw_record['position']
-        record = JSON.parse(raw_record.fetch('json'))
-        min_sibling_position = [0, position - 5].max
-        max_sibling_position = (10 - min_sibling_position) + position
+      response = [404]
 
-        json_response({
-                        'path_to_root' => Search.resolve_refs!(record['ancestors']),
-                        'siblings' => Search.children(raw_record.fetch('parent_id'), 0, 'position_asc', min_sibling_position, max_sibling_position).fetch('results'),
-                        'children' => Search.children(raw_record.fetch('id'), 0, 'position_asc', 0, 4).fetch('results'),
-                      })
-      else
-        [404]
+      if raw_record = Search.get_raw(qsa_id: params[:qsa_id],
+                                     uri: params[:uri],
+                                     id: params[:id])
+        if raw_record['primary_type'] == 'archival_object'
+          # show 10 records either side + 5 children
+          position = raw_record['position']
+          record = JSON.parse(raw_record.fetch('json'))
+          min_sibling_position = [0, position - 5].max
+          max_sibling_position = (10 - min_sibling_position) + position
+
+          response = json_response(path_to_root: Search.resolve_refs!(record['ancestors']),
+                                   siblings: Search.children(raw_record.fetch('parent_id'), 0, 'position_asc', min_sibling_position, max_sibling_position).fetch('results'),
+                                   children: Search.children(raw_record.fetch('id'), 0, 'position_asc', 0, 4).fetch('results'))
+        end
       end
     rescue
       $LOG.error($!)
-
-      [404]
     end
+
+    response
+  end
+
+  # Fudge a quick overview of API endpoints
+  # FIXME can drop once dev has settled
+  Endpoint.get('/api/doc') do
+    endpoints = []
+
+    Endpoint.endpoints.map {|_, uris|
+      uris.map{|uri, endpoint|
+        next unless uri.start_with?('/api/')
+        endpoints << {
+          method: endpoint.method,
+          uri: endpoint.uri,
+          params: endpoint.valid_params.map {|param, opts|
+            {
+              name: opts['type'].is_a?(Array) ? "#{param}[]" : param,
+              description: opts['description'],
+              type: opts['type'].is_a?(Array) ? "Array of #{opts['type'][0]}" : opts['type'],
+              description: opts['description'],
+              required: !(opts['options'][:optional] == true),
+            }
+          }
+        }
+      }
+    }
+
+    json_response(endpoints)
   end
 end
