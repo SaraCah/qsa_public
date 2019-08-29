@@ -43,7 +43,8 @@ require 'lib/search'
 require 'lib/templates'
 require 'views/templates'
 
-require 'endpoints'
+require 'endpoints_api'
+require 'endpoints_ui'
 
 
 class QSAPublic < Sinatra::Base
