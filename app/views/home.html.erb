@@ -46,7 +46,7 @@
                 if (httpRequest.readyState === XMLHttpRequest.DONE) {
                     if (httpRequest.status === 200) {
                         var json = JSON.parse(httpRequest.responseText);
-                        document.getElementById(target_container_id).innerText = json['results'].length;
+                        document.getElementById(target_container_id).innerText = json['total_count'];
                     }
                 }
             }
