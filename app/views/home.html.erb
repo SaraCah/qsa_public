@@ -1,1 +1,69 @@
-This is home. Welcome home.
+<p>This is home. Welcome home.</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>Series</td>
+      <td id="series_count"></td>
+      <td><a href="/api/search?type[]=resource">JSON</a></td>
+    </tr>
+    <tr>
+      <td>Items</td>
+      <td id="item_count"></td>
+      <td><a href="/api/search?type[]=archival_object">JSON</a></td>
+    </tr>
+    <tr>
+      <td>Agencies</td>
+      <td id="agency_count"></td>
+      <td><a href="/api/search?type[]=agent_corporate_entity">JSON</a></td>
+    </tr>
+    <tr>
+      <td>Subjects</td>
+      <td id="subject_count"></td>
+      <td><a href="/api/search?type[]=subject">JSON</a></td>
+    </tr>
+    <tr>
+      <td>Mandates</td>
+      <td id="mandate_count"></td>
+      <td><a href="/api/search?type[]=mandate">JSON</a></td>
+    </tr>
+    <tr>
+      <td>Functions</td>
+      <td id="function_count"></td>
+      <td><a href="/api/search?type[]=function">JSON</a></td>
+    </tr>
+  </tbody>
+</table>
+
+<p><a href="/api/doc">API doc</a></p>
+
+<script>
+    (function() {
+        function getCount(url, target_container_id) {
+            var httpRequest = new XMLHttpRequest();
+
+            function setCount() {
+                if (httpRequest.readyState === XMLHttpRequest.DONE) {
+                    if (httpRequest.status === 200) {
+                        var json = JSON.parse(httpRequest.responseText);
+                        document.getElementById(target_container_id).innerText = json['results'].length;
+                    }
+                }
+            }
+
+            if (!httpRequest) {
+                return false;
+            }
+            httpRequest.onreadystatechange = setCount;
+            httpRequest.open('GET', url);
+            httpRequest.send();
+        }
+
+        getCount('/api/search?type[]=resource', 'series_count');
+        getCount('/api/search?type[]=archival_object', 'item_count');
+        getCount('/api/search?type[]=agent_corporate_entity', 'agency_count');
+        getCount('/api/search?type[]=subject', 'subject_count');
+        getCount('/api/search?type[]=mandate', 'mandate_count');
+        getCount('/api/search?type[]=function', 'function_count');
+    })();
+</script>
