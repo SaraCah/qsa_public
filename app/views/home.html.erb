@@ -28,11 +28,6 @@
       <td><a href="/api/search?type[]=agent_corporate_entity">JSON</a></td>
     </tr>
     <tr>
-      <td>Subjects</td>
-      <td id="subject_count"></td>
-      <td><a href="/api/search?type[]=subject">JSON</a></td>
-    </tr>
-    <tr>
       <td>Mandates</td>
       <td id="mandate_count"></td>
       <td><a href="/api/search?type[]=mandate">JSON</a></td>
@@ -74,7 +69,6 @@
         getCount('/api/search?type[]=digital_representation', 'digirep_count');
         getCount('/api/search?type[]=physical_representation', 'physrep_count');
         getCount('/api/search?type[]=agent_corporate_entity', 'agency_count');
-        getCount('/api/search?type[]=subject', 'subject_count');
         getCount('/api/search?type[]=mandate', 'mandate_count');
         getCount('/api/search?type[]=function', 'function_count');
     })();
