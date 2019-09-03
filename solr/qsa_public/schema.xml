@@ -18,6 +18,14 @@
   <field name="start_date" type="pdate" stored="true" multiValued="false" />
   <field name="end_date" type="pdate" stored="true" multiValued="false" />
 
+  <field name="has_digital_items" type="boolean" indexed="true" stored="true" multiValued="false"/>
+  <field name="metadata_closed" type="boolean" indexed="true" stored="true" multiValued="false"/>
+  <field name="access_closed" type="boolean" indexed="true" stored="true" multiValued="false"/>
+
+  <field name="functions" type="string" indexed="true" stored="true" multiValued="true"/>
+  <field name="mandates" type="string" indexed="true" stored="true" multiValued="true"/>
+  <field name="previous_system_ids" type="string" indexed="true" stored="true" multiValued="true"/>
+
   <!-- Sort fields -->
   <field name="title_sort" type="string" indexed="true" stored="false" multiValued="false" />
   <field name="qsaid_sort" type="string" indexed="true" stored="false" multiValued="false" />
@@ -27,6 +35,8 @@
   <field name="responsible_agency_id" type="string" indexed="true" stored="true" multiValued="false" />
 
   <!-- Hierarchy Business -->
+  <field name="parent_qsa_id" type="string" indexed="true" stored="true" multiValued="false" />
+  <field name="parent_title" type="string" indexed="true" stored="true" multiValued="false" />
   <field name="parent_id" type="string" indexed="true" stored="true" multiValued="false" />
   <field name="position" type="pint" indexed="true" stored="true" multiValued="false" />
 
