@@ -19,6 +19,7 @@
   <field name="end_date" type="pdate" stored="true" multiValued="false" />
 
   <field name="has_digital_items" type="boolean" indexed="true" stored="true" multiValued="false"/>
+  <field name="has_physical_items" type="boolean" indexed="true" stored="true" multiValued="false"/>
   <field name="metadata_closed" type="boolean" indexed="true" stored="true" multiValued="false"/>
   <field name="access_closed" type="boolean" indexed="true" stored="true" multiValued="false"/>
 
