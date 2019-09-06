@@ -7,9 +7,6 @@ class AdvancedSearchQuery
   SOLR_CHARS = '+-&|!(){}[]^~*?:\\/'
 
   def self.parse(json)
-    # json
-    require 'pp';$stderr.puts("\n*** DEBUG #{(Time.now.to_f * 1000).to_i} [advanced_search_query.rb:12 ExpensiveApe]: " + {%Q^json^ => json}.pretty_inspect + "\n")
-
     new(JSON.parse(json))
   end
 
