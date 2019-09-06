@@ -4,13 +4,26 @@ class QSAPublic < Sinatra::Base
     .param(:type, [String], "Record Types", optional: true)
     .param(:responsible_agency, String, "Agency SOLR ID string", optional: true)
     .param(:sort, String, "Sort string (#{Search::VALID_SORTS.keys.join(', ')})", optional: true)
-    .param(:page, Integer, "Page to return", optional: true) do
+    .param(:page, Integer, "Page to return (zero-indexed)", optional: true) do
 
     json_response(Search.for(types: params[:type],
                              page: params[:page],
                              sort: params[:sort],
                              responsible_agency: params[:responsible_agency]))
   end
+
+  Endpoint.post('/api/advanced_search')
+    .param(:type, [String], "Record Types", optional: true)
+    .param(:query, AdvancedSearchQuery, "Search Query")
+    .param(:sort, String, "Sort string", optional: true)
+    .param(:page, Integer, "Page to return (zero-indexed)", optional: true) do
+
+    json_response(Search.advanced(types: params[:type],
+                                  page: params[:page],
+                                  sort: params[:sort],
+                                  query: params[:query]))
+  end
+
 
   Endpoint.get('/api/fetch')
     .param(:qsa_id, String, "Record QSA ID with prefix", optional: true)

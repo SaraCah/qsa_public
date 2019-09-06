@@ -287,4 +287,24 @@ class Search
     doc = get_raw(opts)
     doc.nil? ? nil : JSON.parse(doc.fetch('json'))
   end
+
+
+  def self.advanced(search_opts)
+    record_types = search_opts.fetch(:types) || :all_types
+    page = search_opts.fetch(:page) || 0
+    sort = search_opts.fetch(:sort) || :relevance
+    query = search_opts.fetch(:query)
+
+    start_index = (page * AppConfig[:page_size])
+
+    response = solr_handle_search(q: query.query_string, start: start_index).fetch('response', {})
+
+    {
+      'total_count' => response.fetch('numFound'),
+      'current_page' => page,
+      'page_size' => AppConfig[:page_size],
+      'sorted_by' => sort,
+      'results' => response.fetch('docs', [])
+    }
+  end
 end

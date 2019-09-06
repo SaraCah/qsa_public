@@ -69,8 +69,6 @@ class Endpoint
                             Array(params[param]).map {|val| type[0].parse(val)}
                           end
                         end
-                      elsif type.included_modules.include?(DTO)
-                        type.from_json(params[param])
                       elsif type.respond_to?(:parse)
                         type.parse(params[param])
                       else
