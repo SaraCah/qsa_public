@@ -120,6 +120,8 @@ class Search
     'qsaid_desc' => 'qsaid_sort desc',
     'position_asc' => 'position asc',
     'position_desc' => 'position desc',
+    'date_asc' => 'start_date asc, title_sort asc',
+    'date_desc' => 'start_date desc, title_sort desc',
   }
 
 
