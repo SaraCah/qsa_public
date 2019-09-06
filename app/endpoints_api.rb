@@ -3,7 +3,7 @@ class QSAPublic < Sinatra::Base
   Endpoint.get('/api/search')
     .param(:type, [String], "Record Types", optional: true)
     .param(:responsible_agency, String, "Agency SOLR ID string", optional: true)
-    .param(:sort, String, "Sort string", optional: true)
+    .param(:sort, String, "Sort string (#{Search::VALID_SORTS.keys.join(', ')})", optional: true)
     .param(:page, Integer, "Page to return", optional: true) do
 
     json_response(Search.for(types: params[:type],
