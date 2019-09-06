@@ -55,6 +55,24 @@ class QSAPublic < Sinatra::Base
     config.also_reload File.join('**', '*.rb')
   end
 
+  # Add CORS headers
+  class CORSHeaders
+    def initialize(app)
+      @app = app
+    end
+
+    def call(env)
+      (status, headers, body) = @app.call(env)
+
+      headers['Access-Control-Allow-Origin'] = '*'
+
+      [status, headers, body]
+    end
+  end
+
+  use CORSHeaders
+
+
   configure do
     $LOG.info("Starting application in #{QSAPublic.environment} mode")
   end
