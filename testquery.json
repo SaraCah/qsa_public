@@ -1,0 +1,25 @@
+{
+    "filter_linked_digital_objects_only": true,
+    "clauses": [
+        {
+            "field": "keywords",
+            "operator": "",
+            "query": "record"
+        },
+        {
+            "field": "keywords",
+            "operator": "OR",
+            "query": "pears cherries \"kiwi fruits\""
+        },
+        {
+            "field": "primary_type",
+            "operator": "OR",
+            "query": "fruit"
+        },
+        {
+            "field": "primary_type",
+            "operator": "OR",
+            "query": "vegetables"
+        }
+    ]
+}
