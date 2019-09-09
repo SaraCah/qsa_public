@@ -321,8 +321,6 @@ class Search
     page = search_opts.fetch(:page) || 0
     sort = parse_sort(search_opts.fetch(:sort) || 'relevance')
 
-
-
     start_index = (page * AppConfig[:page_size])
 
     filters = [
@@ -333,6 +331,7 @@ class Search
 
     response = solr_handle_search(q: query.query_string,
                                   start: start_index,
+                                  sort: sort,
                                   fq: filters).fetch('response', {})
 
     {
