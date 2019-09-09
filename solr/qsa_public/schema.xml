@@ -18,8 +18,11 @@
   <field name="start_date" type="pdate" stored="true" multiValued="false" />
   <field name="end_date" type="pdate" stored="true" multiValued="false" />
 
+  <field name="digital_representation_count" type="pint" indexed="true" stored="true" multiValued="false"/>
+  <field name="physical_representation_count" type="pint" indexed="true" stored="true" multiValued="false"/>
   <field name="has_digital_representations" type="boolean" indexed="true" stored="true" multiValued="false"/>
   <field name="has_physical_representations" type="boolean" indexed="true" stored="true" multiValued="false"/>
+
   <field name="metadata_closed" type="boolean" indexed="true" stored="true" multiValued="false"/>
   <field name="restricted_access" type="boolean" indexed="true" stored="true" multiValued="false"/>
 
@@ -34,6 +37,10 @@
   <!-- Agency Business -->
   <field name="creating_agency_id" type="string" indexed="true" stored="true" multiValued="false" />
   <field name="responsible_agency_id" type="string" indexed="true" stored="true" multiValued="false" />
+
+  <!-- Mandate/Function Business -->
+  <field name="mandate_id" type="string" indexed="true" stored="true" multiValued="true" />
+  <field name="function_id" type="string" indexed="true" stored="true" multiValued="true" />
 
   <!-- Hierarchy Business -->
   <field name="parent_qsa_id" type="string" indexed="true" stored="true" multiValued="false" />
