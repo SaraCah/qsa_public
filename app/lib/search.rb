@@ -289,15 +289,51 @@ class Search
   end
 
 
+  VALID_TYPES = [
+    'resource',
+    'archival_object',
+    'agent_corporate_entity',
+    'mandate',
+    'function'
+  ]
+
+
+  def self.parse_types(types)
+    if types.nil?
+      return VALID_TYPES
+    else
+      types & VALID_TYPES
+    end
+  end
+
   def self.advanced(search_opts)
-    record_types = search_opts.fetch(:types) || :all_types
-    page = search_opts.fetch(:page) || 0
-    sort = search_opts.fetch(:sort) || :relevance
     query = search_opts.fetch(:query)
+
+    record_types = parse_types(query.filter_types)
+
+    # Our query date range overlaps with our record's date range UNLESS:
+    #
+    # Record end < Query start; OR
+    # Record start > Query end
+    #
+    date_filter = "-(end_date:[* TO #{query.filter_start_date}] OR start_date:[#{query.filter_end_date} TO *])"
+
+    page = search_opts.fetch(:page) || 0
+    sort = parse_sort(search_opts.fetch(:sort) || 'relevance')
+
+
 
     start_index = (page * AppConfig[:page_size])
 
-    response = solr_handle_search(q: query.query_string, start: start_index).fetch('response', {})
+    filters = [
+      "primary_type:(#{record_types.join(' OR ')})",
+      date_filter,
+      query.filter_linked_digital_objects_only ? "has_digital_representations:true" : nil
+    ].compact
+
+    response = solr_handle_search(q: query.query_string,
+                                  start: start_index,
+                                  fq: filters).fetch('response', {})
 
     {
       'total_count' => response.fetch('numFound'),

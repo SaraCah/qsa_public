@@ -13,13 +13,11 @@ class QSAPublic < Sinatra::Base
   end
 
   Endpoint.post('/api/advanced_search')
-    .param(:type, [String], "Record Types", optional: true)
     .param(:query, AdvancedSearchQuery, "Search Query")
     .param(:sort, String, "Sort string", optional: true)
     .param(:page, Integer, "Page to return (zero-indexed)", optional: true) do
 
-    json_response(Search.advanced(types: params[:type],
-                                  page: params[:page],
+    json_response(Search.advanced(page: params[:page],
                                   sort: params[:sort],
                                   query: params[:query]))
   end
@@ -107,17 +105,25 @@ class QSAPublic < Sinatra::Base
     Endpoint.endpoints.map {|_, uris|
       uris.map{|uri, endpoint|
         next unless uri.start_with?('/api/')
+
+
         endpoints << {
           method: endpoint.method,
           uri: endpoint.uri,
           params: endpoint.valid_params.map {|param, opts|
-            {
+            params_map = {
               name: opts['type'].is_a?(Array) ? "#{param}[]" : param,
               description: opts['description'],
               type: opts['type'].is_a?(Array) ? "Array of #{opts['type'][0]}" : opts['type'],
               description: opts['description'],
               required: !(opts['options'][:optional] == true),
             }
+
+            if opts['type'].respond_to?(:endpoint_doc)
+              params_map['type_doc'] = opts['type'].endpoint_doc
+            end
+
+            params_map
           }
         }
       }

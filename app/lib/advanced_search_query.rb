@@ -1,7 +1,10 @@
 require 'json'
+require 'date'
 
 class AdvancedSearchQuery
-  attr_reader :query_string
+  attr_reader :query_string, :filter_start_date,
+              :filter_end_date, :filter_types,
+              :filter_open_records_only, :filter_linked_digital_objects_only
 
   # space and double quote are also meaningful, but let those through for now
   SOLR_CHARS = '+-&|!(){}[]^~*?:\\/'
@@ -12,9 +15,28 @@ class AdvancedSearchQuery
 
   def initialize(query)
     @query_string = parse_query(query)
+
+    @filter_start_date = to_solr_start_date(query['filter_start_date'] || '0000-01-01')
+    @filter_end_date = to_solr_end_date(query['filter_end_date'] || '9999-12-31')
+
+    @filter_types = query['types']
+    @filter_open_records_only = !!query['filter_open_records_only']
+    @filter_linked_digital_objects_only = !!query['filter_linked_digital_objects_only']
   end
 
   private
+
+  def to_solr_start_date(s)
+    # Validate date
+    Date.parse(s)
+    "#{s}T00:00:00Z"
+  end
+
+  def to_solr_end_date(s)
+    # Validate date
+    Date.parse(s)
+    "#{s}T23:59:59Z"
+  end
 
   def solr_escape(s)
     pattern = Regexp.quote(SOLR_CHARS)
@@ -60,6 +82,42 @@ class AdvancedSearchQuery
     }.flatten.reject(&:empty?)
 
     combine_left_associative(clauses)
+  end
+
+  def self.endpoint_doc
+    sample_doc = <<EOS
+     {
+         "filter_start_date": "2000-01-01",
+         "filter_end_date": "2016-06-01",
+         "filter_types": ["resource", "archival_object", "agent_corporate_entity"],
+         "filter_open_records_only": false,
+         "filter_linked_digital_objects_only": true,
+         "clauses": [
+             {
+                 "field": "keywords",
+                 "operator": "",
+                 "query": "record"
+             },
+             {
+                 "field": "keywords",
+                 "operator": "OR",
+                 "query": "pears cherries \\"kiwi fruits\\""
+             },
+             {
+                 "field": "qsa_id",
+                 "operator": "AND",
+                 "query": "S123"
+             },
+             {
+                 "field": "previous_system_ids",
+                 "operator": "NOT",
+                 "query": "ZZZ999"
+             }
+         ]
+     }
+EOS
+
+    {:sample_query => JSON.parse(sample_doc.strip)}
   end
 
 end
