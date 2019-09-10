@@ -326,7 +326,8 @@ class Search
     filters = [
       "primary_type:(#{record_types.join(' OR ')})",
       date_filter,
-      query.filter_linked_digital_objects_only ? "has_digital_representations:true" : nil
+      query.filter_linked_digital_objects_only ? "has_digital_representations:true" : nil,
+      query.filter_open_records_only ? "open_record:true" : nil,
     ].compact
 
     response = solr_handle_search(q: query.query_string,

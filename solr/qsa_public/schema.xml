@@ -23,8 +23,7 @@
   <field name="has_digital_representations" type="boolean" indexed="true" stored="true" multiValued="false"/>
   <field name="has_physical_representations" type="boolean" indexed="true" stored="true" multiValued="false"/>
 
-  <field name="metadata_closed" type="boolean" indexed="true" stored="true" multiValued="false"/>
-  <field name="restricted_access" type="boolean" indexed="true" stored="true" multiValued="false"/>
+  <field name="open_record" type="boolean" indexed="true" stored="true" multiValued="false"/>
 
   <field name="functions" type="string" indexed="true" stored="true" multiValued="true"/>
   <field name="mandates" type="string" indexed="true" stored="true" multiValued="true"/>
