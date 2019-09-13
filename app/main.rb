@@ -70,7 +70,9 @@ class QSAPublic < Sinatra::Base
     end
   end
 
-  use CORSHeaders
+  if QSAPublic.development?
+    use CORSHeaders
+  end
 
 
   configure do
