@@ -115,7 +115,6 @@ class QSAPublic < Sinatra::Base
               name: opts['type'].is_a?(Array) ? "#{param}[]" : param,
               description: opts['description'],
               type: opts['type'].is_a?(Array) ? "Array of #{opts['type'][0]}" : opts['type'],
-              description: opts['description'],
               required: !(opts['options'][:optional] == true),
             }
 
