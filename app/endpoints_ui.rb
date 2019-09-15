@@ -26,18 +26,4 @@ class QSAPublic < Sinatra::Base
     end
   end
 
-
-  Endpoint.get('/favicon.ico') do
-    send_file File.absolute_path('favicon.ico')
-  end
-
-  Endpoint.get('/api') do
-    Templates.emit_with_layout(:home,
-                               {},
-                               :layout,
-                               {
-                                 title: "QSA Public"
-                               })
-  end
-
 end
