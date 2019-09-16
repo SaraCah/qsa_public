@@ -131,7 +131,7 @@ class QSAPublic < Sinatra::Base
     json_response(endpoints)
   end
 
-  Endpoint.get('/api') do
+  Endpoint.get('/api/info') do
     Templates.emit_with_layout(:home,
                                {},
                                :layout,
