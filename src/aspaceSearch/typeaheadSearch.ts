@@ -1,6 +1,7 @@
 import {Http} from "../utils/http";
 import moment from "moment";
 import {DisplayResult} from "../models/DisplayResult";
+import {AspaceSearchParameters} from "../models/SearchParameters";
 
 export class TypeaheadSearch {
   public searchText: string = '';
@@ -26,7 +27,8 @@ export class TypeaheadSearch {
 
   private fetchSearchResults = (searchText: string, newTime: number) => {
     this.searchText = searchText;
-    Http.fetchResults(this.searchText)
+    const searchParameters = new AspaceSearchParameters({ clauses:[{ field: "keywords", operator: "OR", query: searchText }] });
+    Http.fetchResults(searchParameters)
       .then(results => {
         this.lastRun = newTime;
         this.setResults(new DisplayResult(results || []));

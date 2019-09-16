@@ -1,4 +1,5 @@
 import React from 'react';
+import {Link} from "react-router-dom";
 
 const PageHeader: React.FC = () => {
   return (
@@ -53,8 +54,8 @@ const PageHeader: React.FC = () => {
       </form>
       <nav id="qg-site-nav" role="navigation" aria-label="Main navigation" className="collapse">
         <ul>
-          <li><a href="https://www.qld.gov.au/queenslanders/">For Queenslanders</a></li>
-          <li><a href="https://www.business.qld.gov.au/">Business and industry</a></li>
+          <li><Link to={`/`}>Basic Search</Link></li>
+          <li><Link to={`/advancedSearch`}>Advanced Search</Link></li>
         </ul>
       </nav>
     </header>
