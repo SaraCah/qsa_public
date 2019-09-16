@@ -25,7 +25,8 @@ export class SeriesResult extends AspaceResult {
     this._dates = value;
   }
 
-  public responsible_agency?: AgencyResult;
+  public responsibleAgency?: Relationship<AgencyResult>;
+  public creatingAgency?: Relationship<AgencyResult>;
   public has_digital_representations: boolean = false;
   public has_physical_representations: boolean = false;
   public displayString: string;
@@ -48,7 +49,10 @@ export class SeriesResult extends AspaceResult {
   constructor (result: any) {
     super(result);
     if (!!result.responsible_agency) {
-      this.responsible_agency = new AgencyResult(result.responsible_agency);
+      this.responsibleAgency = new Relationship<AgencyResult>(result.responsible_agency);
+    }
+    if (!!result.creating_agency) {
+      this.creatingAgency = new Relationship<AgencyResult>(result.creating_agency);
     }
     this.has_digital_representations = result.has_digital_representations;
     this.has_physical_representations = result.has_physical_representations;
