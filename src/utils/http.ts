@@ -1,4 +1,5 @@
 import axios, {AxiosRequestConfig} from 'axios';
+import {AspaceSearchParameters} from "../models/SearchParameters";
 
 const searchUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/advanced_search`;
 const fetchUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/fetch`;
@@ -10,12 +11,10 @@ export class Http {
     }
   };
 
-  static async fetchResults<T>(searchText: string): Promise<T[]> {
-    // POST endpoint doesn't accept body parameters :|
-    const query = JSON.stringify({ clauses:[{ field: "keywords", operator: "OR", query: searchText }] });
+  static async fetchResults<T>(searchParameters: AspaceSearchParameters): Promise<T[]> {
+    const query = JSON.stringify(searchParameters);
     const response = await axios
-      .post(`${searchUrl}?query=${query}`,
-        Http.config)
+      .post(`${searchUrl}?query=${query}`, Http.config)
       .catch(error => {
         console.log(error, error.status);
         return error;

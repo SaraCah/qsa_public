@@ -2,7 +2,7 @@ import {AgencyResult} from "../models/AgencyResult";
 import {SeriesResult} from "../models/SeriesResult";
 import {AspaceResult} from "../models/AspaceResult";
 
-enum AspaceResultTypes {
+export enum AspaceResultTypes {
   Agency = "agent_corporate_entity",
   Series = "resource"
 }
@@ -11,10 +11,10 @@ enum AspaceResultTypes {
 export const newAspaceResultFromJsonModelType = (jsonModelType: string, params: any): AspaceResult => {
   let constructor;
   switch (jsonModelType) {
-    case AspaceResultTypes.Agency:
+    case "agent_corporate_entity":
       constructor = AgencyResult;
       break;
-    case AspaceResultTypes.Series:
+    case "resource":
       constructor = SeriesResult;
       break;
     default:
