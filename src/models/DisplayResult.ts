@@ -1,3 +1,5 @@
+import {newAspaceResultFromJsonModelType} from "../utils/typeResolver";
+
 export class DisplayResult {
   public displayFrom: number = 0;
   public displayTo: number = 10;
@@ -14,7 +16,7 @@ export class DisplayResult {
 
   constructor (data: any[], displayFrom = 0, displayTo = 20) {
     data.forEach(result => {
-      switch (result.primary_type) {
+      switch (result.primary_type || result.jsonmodel_type) {
         case "agent_corporate_entity":
           this.data.push(result);
           break;
@@ -22,6 +24,7 @@ export class DisplayResult {
           this.data.push(result);
           break;
         default:
+          console.error('Something went wrong', result);
           break;
       }
     });

@@ -6,7 +6,6 @@ import {AgencyResult} from "../models/AgencyResult";
 
 const ContentView: React.FC<AppState> = (props) => {
   const [selectedResult] = props.selectedResult;
-
   return (
       <div id="qg-primary-content" role="main">
         <div className="row">
