@@ -7,7 +7,7 @@ export class DisplayResult {
     let result = [];
     if (!this.data) { return []; }
     if (!!filterType) {
-      result = this.data.filter(result => result.primary_type === 'agent_corporate_entity')
+      result = this.data.filter(result => result.primary_type === filterType)
     }
     return result.slice(this.displayFrom, this.displayTo);
   };
