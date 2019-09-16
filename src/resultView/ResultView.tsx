@@ -57,11 +57,13 @@ export const agencyResultView = (agency: AgencyResult) => {
         <>
             <h3>Related agencies</h3>
             <ul className="list-group list-group-flush">
-              {agency.agentRelationships.map(agentRelationship => (
+              {agency.agentRelationships
+                .filter(relationship => !!relationship.resolved)
+                .map(relationship => (
                 <li className="list-group-item">
-                  <span className="small">{agentRelationship.relator}</span><br/>
-                  {agentRelationship.resolved.qsaIdPrefixed} - {agentRelationship.resolved.displayString}:&nbsp;
-                  {agentRelationship.startDate}{!!agentRelationship.endDate ? ` - ${agentRelationship.endDate}` : ''}
+                  <span className="small">{relationship.relator}</span><br/>
+                  {relationship.resolved.qsaIdPrefixed} - {relationship.resolved.displayString}:&nbsp;
+                  {relationship.startDate}{!!relationship.endDate ? ` - ${relationship.endDate}` : ''}
                 </li>
               ))}
             </ul>
@@ -71,11 +73,13 @@ export const agencyResultView = (agency: AgencyResult) => {
         <>
             <h3>Related series</h3>
             <ul className="list-group list-group-flush">
-              {agency.seriesRelationships.map(seriesRelationship => (
+              {agency.seriesRelationships
+                .filter(relationship => !!relationship.resolved)
+                .map(relationship => (
                 <li className="list-group-item">
-                  <h4>{seriesRelationship.resolved.qsaIdPrefixed} - {seriesRelationship.resolved.title}</h4>
-                  <span>{seriesRelationship.relator}</span>
-                  {seriesRelationship.startDate}{!!seriesRelationship.endDate ? ` - ${seriesRelationship.endDate}` : ''}
+                  <h4>{relationship.resolved.qsaIdPrefixed} - {relationship.resolved.title}</h4>
+                  <span>{relationship.relator}</span>
+                  {relationship.startDate}{!!relationship.endDate ? ` - ${relationship.endDate}` : ''}
                 </li>
               ))}
             </ul>
@@ -100,13 +104,7 @@ export const seriesResultView = (series: SeriesResult) => {
       <section className="core-information">
         <p className="lead">{series.abstract}</p>
         <ul className="list-group list-group-horizontal-md">
-          <li className="list-group-item">
-            <span className="small">ID</span><br/>
-            {series.qsaIdPrefixed}
-          </li>
-        </ul>
-        <h3 className="sr-only">Series descriptive metadata</h3>
-        <ul className="list-group list-group-flush">
+          {basiclistElement('ID', series.qsaIdPrefixed)}
           {basiclistElement('Disposal class', series.disposalClass)}
           {basiclistElement('Sensitivity label', series.sensitivityLabel)}
           {basiclistElement('Copyright status', series.copyrightStatus)}
@@ -142,11 +140,13 @@ export const seriesResultView = (series: SeriesResult) => {
           <>
             <h3>Related agencies</h3>
             <ul className="list-group list-group-flush">
-              {series.agentRelationships.map(agentRelationship => (
-                <li key={agentRelationship.resolved.id} className="list-group-item">
-                  <span className="small">{agentRelationship.relator}</span><br/>
-                  {agentRelationship.resolved.qsaIdPrefixed} - {agentRelationship.resolved.displayString}:&nbsp;
-                  {agentRelationship.startDate}{!!agentRelationship.endDate ? ` - ${agentRelationship.endDate}` : ''}
+              {series.agentRelationships
+                .filter(relationship => !!relationship.resolved)
+                .map(relationship => (
+                <li key={relationship.resolved.id} className="list-group-item">
+                  <span className="small">{relationship.relator}</span><br/>
+                  {relationship.resolved.qsaIdPrefixed} - {relationship.resolved.displayString}:&nbsp;
+                  {relationship.startDate}{!!relationship.endDate ? ` - ${relationship.endDate}` : ''}
                 </li>
               ))}
             </ul>
@@ -156,29 +156,31 @@ export const seriesResultView = (series: SeriesResult) => {
           <>
             <h3>Related series</h3>
             <ul className="list-group list-group-flush">
-              {series.seriesRelationships.map(seriesRelationship => (
-                <li className="list-group-item">
-                  <h4>{seriesRelationship.resolved.title} {seriesRelationship.resolved.qsaIdPrefixed}</h4>
-                  <span>{seriesRelationship.relator}</span>
-                  {seriesRelationship.startDate}{!!seriesRelationship.endDate ? ` - ${seriesRelationship.endDate}` : ''}
+              {series.seriesRelationships
+                .filter(relationship => !!relationship.resolved)
+                .map((relationship, index) => (
+                <li key={index} className="list-group-item">
+                  <span className="small">{relationship.relator}</span><br/>
+                  <span>{relationship.resolved.qsaIdPrefixed} - {relationship.resolved.title}</span>
+                  {relationship.startDate}{!!relationship.endDate ? ` - ${relationship.endDate}` : ''}
                 </li>
               ))}
             </ul>
           </>
           }
-          {!!series.responsibleAgency &&
+          {!!series.responsibleAgency && series.responsibleAgency.resolved &&
           <>
             <h3>Responsible agency</h3>
             <p>
-                <span>{series.responsibleAgency.resolved.qsaIdPrefixed} - {series.responsibleAgency.resolved.displayString}</span><br/>
-                <span>{series.responsibleAgency.relator}</span>
+              <span>{series.responsibleAgency.relator}</span>
+              <span>{series.responsibleAgency.resolved.qsaIdPrefixed} - {series.responsibleAgency.resolved.displayString}</span><br/>
               {series.responsibleAgency.startDate}{!!series.responsibleAgency.endDate ? ` - ${series.responsibleAgency.endDate}` : ''}
             </p>
           </>
           }
-          {!!series.creatingAgency &&
+          {!!series.creatingAgency && !!series.creatingAgency.resolved &&
           <>
-            <h3>Responsible agency</h3>
+            <h3>Responsible series</h3>
             <p>
                 <span>{series.creatingAgency.resolved.qsaIdPrefixed} - {series.creatingAgency.resolved.displayString}</span><br/>
                 <span>{series.creatingAgency.relator}</span>

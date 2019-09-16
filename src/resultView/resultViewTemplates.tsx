@@ -8,17 +8,14 @@ export const basiclistElement = (name: string, value?: string) => {
     return ''
   }
   return (
-    <li className="list-group-item list-group-item-action">
-      <div className="d-flex w-100 justify-content-between">
-        <h4 className="mb-1">{name}</h4>
-      </div>
-      <p className="mb-1">{value}</p>
+    <li className="list-group-item">
+      <span className="small">{name}</span><br/>
+      {value}
     </li>
   )
 };
 
 export const noteArticleElement = (value: AspaceNote) => {
-  console.log(value);
   if (!value || !value.subNotes || value.subNotes.filter(subNote => subNote.publish).length === 0) {
     return '';
   }
@@ -67,6 +64,7 @@ export const dateArticleElement = (idPrefix: string, values: AspaceDate[]) => {
   if (values.length === 0) {
     return '';
   }
+
   return (
     <article>
       <input id={`panel-date-${idPrefix}`} type="checkbox" name="tabs" aria-controls={`panel-content-date-${idPrefix}`}/>
@@ -78,7 +76,8 @@ export const dateArticleElement = (idPrefix: string, values: AspaceDate[]) => {
           {values.map((date: AspaceDate, index) => (
             <li key={index}>
               <span className="small">{date.label}</span><br/>
-              {date.start}{date.end ? ` - ${date.end}` : ''} {date.startCertainty || date.endCertainty}
+              {date.expression}
+              {!!date.startCertainty || !!date.endCertainty ? ' (approximate)' : ''}<br/>
             </li>
           ))}
         </ul>
