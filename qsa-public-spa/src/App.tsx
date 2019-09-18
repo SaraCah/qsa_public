@@ -14,6 +14,7 @@ import {Route, Switch} from "react-router-dom";
 import AspaceAdvancedSearch from "./advancedSearch/AdvancedSearch";
 import HomePage from "./recordViews/Home";
 import AgencyPage from "./recordViews/Agency";
+import NotFound from "./recordViews/NotFound";
 
 
 const App: React.FC = () => {
@@ -25,6 +26,7 @@ const App: React.FC = () => {
     <Switch>
       <Route exact path="/" component={HomePage} />
       <Route path="/agencies/:qsa_id" component={AgencyPage} />
+      <Route component={NotFound} />
     </Switch>
   );
 };

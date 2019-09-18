@@ -32,7 +32,7 @@ const AgencyPage: React.FC<RouteComponentProps<any>> = (route: RouteComponentPro
         setCurrentAgency(agencyResult)
       })
       .catch(() => {
-        window.location.href = '/not-found';
+        window.location.href = '/404';
       });
   }
 
