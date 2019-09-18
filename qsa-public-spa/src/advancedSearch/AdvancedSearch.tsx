@@ -1,4 +1,6 @@
 import React, {useState} from 'react';
+import { Redirect } from 'react-router';
+import queryString from 'query-string';
 
 class Clauses {
   private clauses: Clause[];
@@ -16,36 +18,57 @@ class Clauses {
   }
 
   emptyClause() {
-    const emptyClause = new Clause();
-
-    emptyClause.boolean_operator = 'AND'
-    emptyClause.query = '';
-    emptyClause.target_field = 'keywords';
-
-    return emptyClause;
+    return {
+      boolean_operator: 'AND',
+      query: '',
+      target_field: 'keywords'
+    };
   }
 
-  addEmpty() {
+  addEmpty(): Clauses {
     return new Clauses(this.clauses.concat([this.emptyClause()]));
   }
 
-  map(fn: (clause: Clause, idx: number) => any) {
+  map(fn: (clause: Clause, idx: number) => any): any[] {
     return this.clauses.map((clause, idx) => fn(clause, idx));
   }
 
-  remove(idx: number) {
+  remove(idx: number): Clauses {
     if (idx < this.clauses.length) {
       return new Clauses(this.clauses.slice(0, idx).concat(this.clauses.slice(idx + 1)));
     } else {
       return this;
     }
-
-    /* FIXME */
-    return this;
   }
+
+  operatorChanged(event: any, idx: number): Clauses {
+    this.clauses[idx].boolean_operator = event.target.value;
+    return new Clauses(this.clauses)
+  }
+
+  fieldChanged(event: any, idx: number): Clauses {
+    this.clauses[idx].target_field = event.target.value;
+    return new Clauses(this.clauses)
+  }
+
+  queryChanged(event: any, idx: number): Clauses {
+    this.clauses[idx].query = event.target.value;
+    return new Clauses(this.clauses)
+  }
+
+  toQueryString() {
+    return queryString.stringify({
+      op: this.clauses.map((c: Clause) => c.boolean_operator),
+      q: this.clauses.map((c: Clause) => c.query),
+      f: this.clauses.map((c: Clause) => c.target_field),
+    }, {
+      arrayFormat: 'bracket',
+    });
+  }
+
 }
 
-class Clause {
+interface Clause {
   boolean_operator?: string;
   query?: string;
   target_field?: string;
@@ -53,6 +76,7 @@ class Clause {
 
 const AspaceAdvancedSearch: React.FC = () => {
   const [clauses, setClauses] = useState(new Clauses());
+  const [needsRedirect, redirectForSearch] = useState('');
 
   /* const recordTypes: Array<string[]> = [
    *   [AspaceResultTypes.Agency, 'Agencies'],
@@ -71,39 +95,68 @@ const AspaceAdvancedSearch: React.FC = () => {
     ['previous_system_id', 'Previous System ID'],
   ];
 
-
-  const onSubmit = () => {
+  const onSubmit = (e: any) => {
+    redirectForSearch('/bananas?' + clauses.toQueryString());
   }
 
-  return (
-    <div id="advancedSearchContainer" className="container">
-      <form method="GET" action="/search" onSubmit={ (e) => { e.preventDefault(); console.log(e); onSubmit() } }>
-        {
-          clauses.map((clause, idx) => (
-            <div>
-              <select name="op[]" style={{visibility: (idx === 0) ? 'hidden' : 'visible'}}>
-                <option value="AND">AND</option>
-                <option value="OR">OR</option>
-                <option value="NOT">NOT</option>
-              </select>
-              <input type="text" name="q[]"></input>
-              <select name="f[]">
-                <option value="keywords">keywords</option>
-              </select>
-              <button onClick={ (e) => { e.preventDefault(); setClauses(clauses.addEmpty()) } }>Add Clause</button>
-              {
-              idx > 0 &&
-              <button onClick={ (e) => { e.preventDefault(); setClauses(clauses.remove(idx)) } }>Drop Clause</button>
-              }
-            </div>
-          ))
-        }
-        <div>
-          <button>Submit</button> 
-        </div>
-      </form>
-    </div>
-  );
+  if (needsRedirect) {
+    return <Redirect to={needsRedirect} push={ true }></Redirect>;
+  } else {
+    return (
+      <div id="advancedSearchContainer" className="container">
+        <form method="GET" action="/search" onSubmit={ (e) => { e.preventDefault(); onSubmit(e) } }>
+          {
+            clauses.map((clause, idx) => (
+              <div className="form-row">
+                <div className="form-group col-md-2">
+                  <select name="op[]"
+                          className="form-control custom-select"
+                          style={{visibility: (idx === 0) ? 'hidden' : 'visible'}}
+                          value={ clause.boolean_operator }
+                          onChange={ (e) => setClauses(clauses.operatorChanged(e, idx)) }>
+                    <option value="AND">AND</option>
+                    <option value="OR">OR</option>
+                    <option value="NOT">NOT</option>
+                  </select>
+                </div>
+
+                <div className="form-group col-md-5">
+                <input type="text"
+                       className="form-control"
+                       name="q[]"
+                       value={ clause.query }
+                       onChange={ (e) => setClauses(clauses.queryChanged(e, idx)) }>
+                </input>
+                </div>
+
+                <div className="form-group col-md-2">
+                <select name="f[]"
+                        className="form-control"
+                        value={ clause.target_field }
+                        onChange={ (e) => setClauses(clauses.fieldChanged(e, idx)) }>
+                  { keywordTypes.map(([value, label], idx) => (<option value={value}>{label}</option>)) }
+                </select>
+                </div>
+
+                <div className="form-group col-md-1">
+                  <button className="form-control" onClick={ (e) => { e.preventDefault(); setClauses(clauses.addEmpty()) } }><i className="fa fa-plus"></i></button>
+                </div>
+
+                {idx > 0 &&
+                <div className="form-group col-md-1">
+                  <button className="form-control" onClick={ (e) => { e.preventDefault(); setClauses(clauses.remove(idx)) } }><i className="fa fa-minus"></i></button>
+                </div>
+                }
+              </div>
+            ))
+          }
+          <div>
+            <button>Submit</button>
+          </div>
+        </form>
+      </div>
+    );
+  }
 };
 
 export default AspaceAdvancedSearch;

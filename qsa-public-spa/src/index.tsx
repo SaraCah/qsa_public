@@ -4,12 +4,27 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 import 'bootstrap/dist/js/bootstrap.bundle';
 import './index.scss';
-import { BrowserRouter as Router, Route } from 'react-router-dom'
+import { BrowserRouter, Switch, Route } from 'react-router-dom'
+
+import './scss/qg-main.scss';
+import 'bootstrap/dist/js/bootstrap';
+import 'popper.js';
+
+import HomePage from "./recordViews/Home";
+import AgencyPage from "./recordViews/Agency";
+import NotFound from "./recordViews/NotFound";
+import ResultsPage from "./recordViews/ResultsPage";
+
 
 ReactDOM.render(
-  <Router>
-      <Route path="/" component={App} />
-  </Router>,
+  <BrowserRouter>
+    <Switch>
+      <Route exact path="/" component={HomePage} />
+      <Route path="/agencies/:qsa_id" component={AgencyPage} />
+      <Route exact path="/search" component={ResultsPage} />
+      <Route component={NotFound} />
+    </Switch>
+  </BrowserRouter>,
   document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
