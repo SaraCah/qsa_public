@@ -62,11 +62,18 @@ class QSAPublic < Sinatra::Base
     end
 
     def call(env)
-      (status, headers, body) = @app.call(env)
-
+      headers = {}
       headers['Access-Control-Allow-Origin'] = '*'
+      headers['Access-Control-Allow-Methods'] = '*'
+      headers['Access-Control-Allow-Headers'] = '*'
 
-      [status, headers, body]
+      if env['REQUEST_METHOD'] == 'OPTIONS'
+        return [200, headers, []]
+      end
+
+      (status, response_headers, body) = @app.call(env)
+
+      [status, headers.merge(response_headers), body]
     end
   end
 
