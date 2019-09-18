@@ -5,7 +5,6 @@ import 'popper.js';
 import Breadcrumbs from "./breadcrumbs/Breadcrumbs";
 import Cart from "./cart/Cart";
 import PageFooter from "./pageFooter/PageFooter";
-import PageHeader from "./pageHeader/PageHeader";
 import FeedbackForm from "./feedbackForm/FeedbackForm";
 import AspaceSearch from "./aspaceSearch/AspaceSearch";
 import {AppState} from "./models/AppState";
@@ -15,6 +14,7 @@ import AspaceAdvancedSearch from "./advancedSearch/AdvancedSearch";
 import HomePage from "./recordViews/Home";
 import AgencyPage from "./recordViews/Agency";
 import NotFound from "./recordViews/NotFound";
+import ResultsPage from "./recordViews/ResultsPage";
 
 
 const App: React.FC = () => {
@@ -26,6 +26,7 @@ const App: React.FC = () => {
     <Switch>
       <Route exact path="/" component={HomePage} />
       <Route path="/agencies/:qsa_id" component={AgencyPage} />
+      <Route exact path="/search" component={ResultsPage} />
       <Route component={NotFound} />
     </Switch>
   );

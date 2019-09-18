@@ -71,9 +71,13 @@ const AspaceAdvancedSearch: React.FC = () => {
     ['previous_system_id', 'Previous System ID'],
   ];
 
+
+  const onSubmit = () => {
+  }
+
   return (
     <div id="advancedSearchContainer" className="container">
-      <form method="GET" action="/search">
+      <form method="GET" action="/search" onSubmit={ (e) => { e.preventDefault(); console.log(e); onSubmit() } }>
         {
           clauses.map((clause, idx) => (
             <div>
@@ -94,6 +98,9 @@ const AspaceAdvancedSearch: React.FC = () => {
             </div>
           ))
         }
+        <div>
+          <button>Submit</button> 
+        </div>
       </form>
     </div>
   );
