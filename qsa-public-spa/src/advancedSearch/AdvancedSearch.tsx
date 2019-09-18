@@ -44,19 +44,23 @@ class Clauses {
     }
   }
 
+  setClauseField(idx: number, field: string, value: string): Clauses {
+    let updated = [...this.clauses];
+    updated[idx] = Object.assign({}, updated[idx], {[field]: value});
+
+    return new Clauses(updated);
+  }
+
   operatorChanged(event: any, idx: number): Clauses {
-    this.clauses[idx].boolean_operator = event.target.value;
-    return new Clauses(this.clauses)
+    return this.setClauseField(idx, 'boolean_operator', event.target.value);
   }
 
   fieldChanged(event: any, idx: number): Clauses {
-    this.clauses[idx].target_field = event.target.value;
-    return new Clauses(this.clauses)
+    return this.setClauseField(idx, 'target_field', event.target.value);
   }
 
   queryChanged(event: any, idx: number): Clauses {
-    this.clauses[idx].query = event.target.value;
-    return new Clauses(this.clauses)
+    return this.setClauseField(idx, 'query', event.target.value);
   }
 
   toQueryString() {
