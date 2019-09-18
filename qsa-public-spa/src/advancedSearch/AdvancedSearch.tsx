@@ -1,22 +1,64 @@
 import React, {useState} from 'react';
-import {AppState} from "../models/AppState";
-import {DisplayResult} from "../models/DisplayResult";
-import {AspaceSearchParameters} from "../models/SearchParameters";
-import {AspaceResultTypes, newAspaceResultFromJsonModelType} from "../utils/typeResolver";
-import {Http} from "../utils/http";
-import {AspaceResult} from "../models/AspaceResult";
-import {AgencyResult} from "../models/AgencyResult";
-import {SeriesResult} from "../models/SeriesResult";
-import {Link} from "react-router-dom";
 
-const AspaceAdvancedSearch: React.FC<AppState> = (props: AppState) => {
-  const [results, setResults] = useState(new DisplayResult([]));
-  const [selectedResult, setSelectedResult] = props.selectedResult;
-  const [searchParameters, setSearchParameters] = useState(new AspaceSearchParameters());
-  const recordTypes: Array<string[]> = [
-    [AspaceResultTypes.Agency, 'Corporate agencies'],
-    [AspaceResultTypes.Series, 'Series'],
-  ];
+class Clauses {
+  private clauses: Clause[];
+
+  constructor(clauses?: Clause[]) {
+    if (clauses) {
+      this.clauses = clauses;
+    } else {
+      this.clauses = [];
+    }
+
+    if (this.clauses.length === 0) {
+      this.clauses.push(this.emptyClause());
+    }
+  }
+
+  emptyClause() {
+    const emptyClause = new Clause();
+
+    emptyClause.boolean_operator = 'AND'
+    emptyClause.query = '';
+    emptyClause.target_field = 'keywords';
+
+    return emptyClause;
+  }
+
+  addEmpty() {
+    return new Clauses(this.clauses.concat([this.emptyClause()]));
+  }
+
+  map(fn: (clause: Clause, idx: number) => any) {
+    return this.clauses.map((clause, idx) => fn(clause, idx));
+  }
+
+  remove(idx: number) {
+    if (idx < this.clauses.length) {
+      return new Clauses(this.clauses.slice(0, idx).concat(this.clauses.slice(idx + 1)));
+    } else {
+      return this;
+    }
+
+    /* FIXME */
+    return this;
+  }
+}
+
+class Clause {
+  boolean_operator?: string;
+  query?: string;
+  target_field?: string;
+}
+
+const AspaceAdvancedSearch: React.FC = () => {
+  const [clauses, setClauses] = useState(new Clauses());
+
+  /* const recordTypes: Array<string[]> = [
+   *   [AspaceResultTypes.Agency, 'Agencies'],
+   *   [AspaceResultTypes.Series, 'Series'],
+   * ]; */
+
   const keywordTypes = [
     ['keywords', 'Keywords'],
     ['title', 'Title'],
@@ -29,138 +71,30 @@ const AspaceAdvancedSearch: React.FC<AppState> = (props: AppState) => {
     ['previous_system_id', 'Previous System ID'],
   ];
 
-  const buildResultRow = (result: AspaceResult) => {
-    let resultRow: JSX.Element = <></>;
-    switch (result.jsonModelType) {
-      case 'agent_corporate_entity':
-        const agencyResult = result as AgencyResult;
-        resultRow = (
-          <li key={agencyResult.qsaIdPrefixed} className="list-group-item">
-            <h4><Link to={`/basicSearch/#${agencyResult.uri}`}>{agencyResult.displayString}</Link></h4>
-            {agencyResult.qsaIdPrefixed}<span className="badge badge-danger">Closed (example)</span><br/>
-            Content type: Agency<br/>
-            <code>
-              {JSON.stringify(agencyResult, null, 2)}
-            </code>
-          </li>
-        );
-        break;
-      case AspaceResultTypes.Series:
-        const seriesResult = result as SeriesResult;
-        resultRow = (
-          <li key={seriesResult.qsaIdPrefixed} className="list-group-item">
-            <h4><Link to={`/basicSearch/#${seriesResult.uri}`}>{seriesResult.displayString}</Link></h4>
-            {seriesResult.qsaIdPrefixed}<span className="badge badge-danger">Open (example)</span><br/>
-            Content type: Series<br/>
-            <section className="qg-accordion qg-dark-accordion" aria-label="Accordion Label">
-              <input type="radio" name="control" id="collapse" className="controls collapse" value="collapse" role="radio"/>
-              <label htmlFor="collapse" className="controls">Collapse details</label>
-              <span className="controls">&#124;</span>
-              <article>
-                <input id={`panel-json`} type="checkbox" name="tabs" aria-controls={`panel-content-json`}/>
-                <h3 className="acc-heading">
-                  <label htmlFor={`panel-json`}>
-                    Raw response data
-                    <span className="arrow"><i/></span>
-                  </label>
-                </h3>
-                <div className="collapsing-section" aria-hidden="true" id={`panel-content-json`}>
-                  <pre>{JSON.stringify(seriesResult, null, 2)}</pre>
-                </div>
-              </article>
-            </section>
-          </li>
-        );
-        break;
-    }
-    return resultRow;
-  };
-
   return (
     <div id="advancedSearchContainer" className="container">
-      <div className="row">
-        <div className="col">
-          <form>
-        <div className="row">
-          <div className="col pr-1 mx-0">
-            <span className="small">Search terms</span>
-            <input id="advancedSearchTermsInput" type="text" className="form-control"
-                   placeholder="Enter your search terms" onInput={
-                     event => setSearchParameters(
-                       prevState => prevState.mergeParameters(
-                         { clauses: [{
-                             field: prevState.clauses.length > 0 ? prevState.clauses[0].field : 'keywords',
-                              operator: 'OR',
-                              query: event.currentTarget.value
-                           }]
-                         }) )}/>
-          </div>
-          <div className="col pr-0 pl-1 mx-0">
-            <span className="small">Record type</span>
-            <select id="advancedSearchRecordType" className="form-control" onInput={
-              event => {
-                setSearchParameters(
-                  prevState => prevState.mergeParameters({ filterTypes:
-                      event.currentTarget.value !== '' ? [event.currentTarget.value] : undefined
-                  }) )
-              }}>
-              <option value="">All record types</option>
-              {recordTypes.map(([recordType, recordName]) => <option key={recordType} value={recordType}>{recordName}</option>)}
-            </select>
-          </div>
-          <div className="col px-1 mx-0">
-            <span className="small">Keyword</span>
-            <select id="advancedSearchKeywordType" className="form-control" onInput={
-              event => setSearchParameters(
-                prevState => prevState.mergeParameters({ clauses: [{
-                    field: event.currentTarget.value,
-                    operator: 'OR',
-                    query: prevState.clauses.length > 0 ? prevState.clauses[0].query : ''
-                  }]
-                }) )}>
-              <option value="">All</option>
-              {keywordTypes.map(([keywordType, recordName]) => <option key={keywordType} value={keywordType}>{recordName}</option>)}
-            </select>
-          </div>
-          <label htmlFor="inputEmail4">Years</label>
-          <div className="col pr-0 pl-1 mx-0">
-            <span className="small">From</span>
-            <input id="advancedSearchYearStart" className="form-control" onInput={
-              event => setSearchParameters(
-                prevState => prevState.mergeParameters({ filterStartDate: event.currentTarget.value }) )}/>
-          </div>
-          <div className="col pr-0 pl-1 mx-0">
-            <span className="small">To</span>
-            <input id="advancedSearchYearEnd" className="form-control" onInput={
-              event => setSearchParameters(
-                prevState => prevState.mergeParameters({ filterEndDate: event.currentTarget.value }) )}/>
-          </div>
-        </div>
-        <div className="row pt-3 pb-3">
-          <div className="col">
-            <button type="button" className="btn btn-outline-primary" onClick={() => {
-              Http.fetchResults<AspaceResult>(searchParameters)
-                .then(async (searchResults: AspaceResult[] = []): Promise<AspaceResult[]> => {
-                  return await Promise.all(searchResults
-                    .map((searchResult: AspaceResult) => Http.fetchFromUri(searchResult.uri)));
-                })
-                .then((searchResults: AspaceResult[]) => setResults(new DisplayResult(searchResults)));
-            }}>Search</button>
-          </div>
-        </div>
+      <form method="GET" action="/search">
+        {
+          clauses.map((clause, idx) => (
+            <div>
+              <select name="op[]" style={{visibility: (idx === 0) ? 'hidden' : 'visible'}}>
+                <option value="AND">AND</option>
+                <option value="OR">OR</option>
+                <option value="NOT">NOT</option>
+              </select>
+              <input type="text" name="q[]"></input>
+              <select name="f[]">
+                <option value="keywords">keywords</option>
+              </select>
+              <button onClick={ (e) => { e.preventDefault(); setClauses(clauses.addEmpty()) } }>Add Clause</button>
+              {
+              idx > 0 &&
+              <button onClick={ (e) => { e.preventDefault(); setClauses(clauses.remove(idx)) } }>Drop Clause</button>
+              }
+            </div>
+          ))
+        }
       </form>
-        </div>
-      </div>
-      <div className="row">
-        <div className="col">
-          <ul className="list-group">
-            {results.data.length === 0 &&
-              <>No results found.</>
-            }
-            {results.data.map(result => buildResultRow(newAspaceResultFromJsonModelType(result.jsonmodel_type, result)))}
-          </ul>
-        </div>
-      </div>
     </div>
   );
 };
