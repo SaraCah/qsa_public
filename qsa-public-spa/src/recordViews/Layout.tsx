@@ -78,6 +78,17 @@ const Layout: React.FC<any> = (props: any) => {
                             <div id="qg-primary-content" role="main">
                                 {props.children}
                             </div>
+                            <aside id="qg-secondary-content">
+                            </aside>
+                            <nav id="qg-section-nav" aria-label="side navigation" role="navigation">
+                                <h2><a href="/">ArchivesSearch</a></h2>
+                                <ul aria-label="section navigation">
+                                    <li><a href="/series">Series</a></li>
+                                    <li><a href="/agencies">Agencies</a></li>
+                                    <li><a href="/functions">Functions</a></li>
+                                    <li><a href="/mandates">Mandates</a></li>
+                                </ul>
+                            </nav>
                         </div>
                         <div id="qg-options" className="row">
                             <div id="qg-share" className="qg-share"></div>
