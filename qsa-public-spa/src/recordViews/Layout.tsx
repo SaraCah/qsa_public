@@ -1,4 +1,5 @@
 import React from 'react';
+import {Link} from "react-router-dom";
 
 const Layout: React.FC<any> = (props: any) => {
     return (
@@ -80,12 +81,12 @@ const Layout: React.FC<any> = (props: any) => {
                             <aside id="qg-secondary-content">
                             </aside>
                             <nav id="qg-section-nav" aria-label="side navigation" role="navigation">
-                                <h2><a href="/">ArchivesSearch</a></h2>
+                                <h2><Link to={ "/" }>ArchivesSearch</Link></h2>
                                 <ul aria-label="section navigation">
-                                    <li><a href="/series">Series</a></li>
-                                    <li><a href="/agencies">Agencies</a></li>
-                                    <li><a href="/functions">Functions</a></li>
-                                    <li><a href="/mandates">Mandates</a></li>
+                                    <li><Link to={ "/series" }>Series</Link></li>
+                                    <li><Link to={ "/agencies" }>Agencies</Link></li>
+                                    <li><Link to={ "/functions" }>Functions</Link></li>
+                                    <li><Link to={ "/mandates" }>Mandates</Link></li>
                                 </ul>
                             </nav>
                         </div>
