@@ -12,7 +12,7 @@ import 'popper.js';
 import HomePage from "./recordViews/Home";
 import AgencyPage from "./recordViews/Agency";
 import NotFound from "./recordViews/NotFound";
-import ResultsPage from "./recordViews/ResultsPage";
+import ResultsPage from "./recordViews/Results";
 
 
 ReactDOM.render(

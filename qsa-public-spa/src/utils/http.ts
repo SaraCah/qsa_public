@@ -1,5 +1,5 @@
 import axios, {AxiosRequestConfig} from 'axios';
-import {AspaceSearchParameters} from "../models/SearchParameters";
+import {AdvancedSearchQuery} from "../models/AdvancedSearch";
 
 const searchUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/advanced_search`;
 const fetchUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/fetch`;
@@ -16,15 +16,15 @@ export class Http {
     }
   };
 
-  static async fetchResults<T>(searchParameters: AspaceSearchParameters): Promise<T[]> {
-    const query = JSON.stringify(searchParameters);
+  static async fetchResults<T>(advancedSearchQuery: AdvancedSearchQuery): Promise<T[]> {
+    const query = advancedSearchQuery.toJSON();
     const response = await axios
       .post(`${searchUrl}?query=${query}`, Http.config)
       .catch(error => {
         console.log(error, error.status);
         return error;
       });
-    return !!response.data ? response.data.results : [];
+    return response.data || [];
   }
 
   static async fetchFromUri<T>(uri: string): Promise<T> {

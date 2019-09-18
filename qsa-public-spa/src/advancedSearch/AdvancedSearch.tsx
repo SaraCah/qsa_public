@@ -1,89 +1,9 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { Redirect } from 'react-router';
-import queryString from 'query-string';
+import { AdvancedSearchQuery } from '../models/AdvancedSearch';
 
-let clauseCount: number = 0;
-
-class Clauses {
-  private clauses: Clause[];
-
-  constructor(clauses?: Clause[]) {
-    if (clauses) {
-      this.clauses = clauses;
-    } else {
-      this.clauses = [];
-    }
-
-    if (this.clauses.length === 0) {
-      this.clauses.push(this.emptyClause());
-    }
-  }
-
-  emptyClause() {
-    return {
-      id: clauseCount++,
-      boolean_operator: 'AND',
-      query: '',
-      target_field: 'keywords'
-    };
-  }
-
-  addEmpty(): Clauses {
-    return new Clauses(this.clauses.concat([this.emptyClause()]));
-  }
-
-  map(fn: (clause: Clause, idx: number) => any): any[] {
-    return this.clauses.map((clause, idx) => fn(clause, idx));
-  }
-
-  remove(idx: number): Clauses {
-    if (idx < this.clauses.length) {
-      return new Clauses(this.clauses.slice(0, idx).concat(this.clauses.slice(idx + 1)));
-    } else {
-      return this;
-    }
-  }
-
-  setClauseField(idx: number, field: string, value: string): Clauses {
-    let updated = [...this.clauses];
-    updated[idx] = Object.assign({}, updated[idx], {[field]: value});
-
-    return new Clauses(updated);
-  }
-
-  operatorChanged(event: any, idx: number): Clauses {
-    return this.setClauseField(idx, 'boolean_operator', event.target.value);
-  }
-
-  fieldChanged(event: any, idx: number): Clauses {
-    return this.setClauseField(idx, 'target_field', event.target.value);
-  }
-
-  queryChanged(event: any, idx: number): Clauses {
-    return this.setClauseField(idx, 'query', event.target.value);
-  }
-
-  toQueryString() {
-    return queryString.stringify({
-      op: this.clauses.map((c: Clause) => c.boolean_operator),
-      q: this.clauses.map((c: Clause) => c.query),
-      f: this.clauses.map((c: Clause) => c.target_field),
-    }, {
-      arrayFormat: 'bracket',
-    });
-  }
-
-}
-
-interface Clause {
-  id: number;
-  boolean_operator?: string;
-  query?: string;
-  target_field?: string;
-}
-
-const AspaceAdvancedSearch: React.FC = () => {
-  const [clauses, setClauses] = useState(new Clauses());
+const AspaceAdvancedSearch: React.FC<{advancedSearchQuery: AdvancedSearchQuery, onSearch?: ()=>void }> = (props) => {
+  const [advancedSearchQuery, setAdvancedSearchQuery] = useState(props.advancedSearchQuery);
   const [needsRedirect, redirectForSearch] = useState('');
 
   /* const recordTypes: Array<string[]> = [
@@ -104,24 +24,31 @@ const AspaceAdvancedSearch: React.FC = () => {
   ];
 
   const onSubmit = (e: any) => {
-    redirectForSearch('/bananas?' + clauses.toQueryString());
+    redirectForSearch('/search?' + advancedSearchQuery.toQueryString());
   }
 
+  useEffect(() => {
+    if (needsRedirect && props.onSearch) {
+      props.onSearch();
+    }
+    redirectForSearch('');
+  });
+
   if (needsRedirect) {
-    return <Redirect to={needsRedirect} push={ true }></Redirect>;
+    return <Redirect to={ needsRedirect } push={ true }></Redirect>;
   } else {
-    return (
+    return ( 
       <div id="advancedSearchContainer" className="container">
-        <form method="GET" action="/search" onSubmit={ (e) => { e.preventDefault(); onSubmit(e) } }>
+        <form method="GET" onSubmit={ (e) => { e.preventDefault(); onSubmit(e) } }>
           {
-            clauses.map((clause, idx) => (
+            advancedSearchQuery.map((clause, idx) => (
               <div className="form-row" key={ clause.id }>
                 <div className="form-group col-md-2">
                   <select name="op[]"
                           className="form-control custom-select"
                           style={{visibility: (idx === 0) ? 'hidden' : 'visible'}}
                           value={ clause.boolean_operator }
-                          onChange={ (e) => setClauses(clauses.operatorChanged(e, idx)) }>
+                          onChange={ (e) => setAdvancedSearchQuery(advancedSearchQuery.operatorChanged(e, idx)) }>
                     <option value="AND">AND</option>
                     <option value="OR">OR</option>
                     <option value="NOT">NOT</option>
@@ -133,7 +60,7 @@ const AspaceAdvancedSearch: React.FC = () => {
                          className="form-control"
                          name="q[]"
                          value={ clause.query }
-                         onChange={ (e) => setClauses(clauses.queryChanged(e, idx)) }>
+                         onChange={ (e) => setAdvancedSearchQuery(advancedSearchQuery.queryChanged(e, idx)) }>
                   </input>
                 </div>
 
@@ -141,18 +68,18 @@ const AspaceAdvancedSearch: React.FC = () => {
                   <select name="f[]"
                           className="form-control"
                           value={ clause.target_field }
-                          onChange={ (e) => setClauses(clauses.fieldChanged(e, idx)) }>
+                          onChange={ (e) => setAdvancedSearchQuery(advancedSearchQuery.fieldChanged(e, idx)) }>
                     { keywordTypes.map(([value, label], idx) => (<option key={ value } value={ value }>{label}</option>)) }
                   </select>
                 </div>
 
                 <div className="form-group col-md-1">
-                  <button className="form-control" onClick={ (e) => { e.preventDefault(); setClauses(clauses.addEmpty()) } }><i className="fa fa-plus"></i></button>
+                  <button className="form-control" onClick={ (e) => { e.preventDefault(); setAdvancedSearchQuery(advancedSearchQuery.addEmpty()) } }><i className="fa fa-plus"></i></button>
                 </div>
 
                 {idx > 0 &&
                  <div className="form-group col-md-1">
-                   <button className="form-control" onClick={ (e) => { e.preventDefault(); setClauses(clauses.remove(idx)) } }><i className="fa fa-minus"></i></button>
+                   <button className="form-control" onClick={ (e) => { e.preventDefault(); setAdvancedSearchQuery(advancedSearchQuery.remove(idx)) } }><i className="fa fa-minus"></i></button>
                  </div>
                 }
               </div>

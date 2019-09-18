@@ -66,7 +66,7 @@ const Layout: React.FC<any> = (props: any) => {
                     </header>
 
                     <div id="qg-content">
-                        <div id="qg-three-col" className="row">
+                        <div id="qg-two-col-nav" className="row">
                             <nav id="qg-breadcrumb" role="navigation" aria-label="breadcrumb navigation" aria-labelledby="breadcrumb-heading" className="collapse">
                                 <h2 id="breadcrumb-heading" className="qg-visually-hidden">You are here:</h2>
                                 <ol className="list-inline">
@@ -78,8 +78,6 @@ const Layout: React.FC<any> = (props: any) => {
                             <div id="qg-primary-content" role="main">
                                 {props.children}
                             </div>
-                            <aside id="qg-secondary-content">
-                            </aside>
                             <nav id="qg-section-nav" aria-label="side navigation" role="navigation">
                                 <h2><Link to={ "/" }>ArchivesSearch</Link></h2>
                                 <ul aria-label="section navigation">
