@@ -31,6 +31,7 @@ const AspaceAdvancedSearch: React.FC<{advancedSearchQuery: AdvancedSearchQuery, 
     if (needsRedirect && props.onSearch) {
       props.onSearch();
     }
+
     redirectForSearch('');
   });
 
@@ -60,7 +61,8 @@ const AspaceAdvancedSearch: React.FC<{advancedSearchQuery: AdvancedSearchQuery, 
                          className="form-control"
                          name="q[]"
                          value={ clause.query }
-                         onChange={ (e) => setAdvancedSearchQuery(advancedSearchQuery.queryChanged(e, idx)) }>
+                         onChange={ (e) => setAdvancedSearchQuery(advancedSearchQuery.queryChanged(e, idx)) }
+                         required>
                   </input>
                 </div>
 
