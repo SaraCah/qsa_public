@@ -129,21 +129,21 @@ const AspaceAdvancedSearch: React.FC = () => {
                 </div>
 
                 <div className="form-group col-md-5">
-                <input type="text"
-                       className="form-control"
-                       name="q[]"
-                       value={ clause.query }
-                       onChange={ (e) => setClauses(clauses.queryChanged(e, idx)) }>
-                </input>
+                  <input type="text"
+                         className="form-control"
+                         name="q[]"
+                         value={ clause.query }
+                         onChange={ (e) => setClauses(clauses.queryChanged(e, idx)) }>
+                  </input>
                 </div>
 
                 <div className="form-group col-md-2">
-                <select name="f[]"
-                        className="form-control"
-                        value={ clause.target_field }
-                        onChange={ (e) => setClauses(clauses.fieldChanged(e, idx)) }>
-                  { keywordTypes.map(([value, label], idx) => (<option key={ value } value={ value }>{label}</option>)) }
-                </select>
+                  <select name="f[]"
+                          className="form-control"
+                          value={ clause.target_field }
+                          onChange={ (e) => setClauses(clauses.fieldChanged(e, idx)) }>
+                    { keywordTypes.map(([value, label], idx) => (<option key={ value } value={ value }>{label}</option>)) }
+                  </select>
                 </div>
 
                 <div className="form-group col-md-1">
@@ -151,9 +151,9 @@ const AspaceAdvancedSearch: React.FC = () => {
                 </div>
 
                 {idx > 0 &&
-                <div className="form-group col-md-1">
-                  <button className="form-control" onClick={ (e) => { e.preventDefault(); setClauses(clauses.remove(idx)) } }><i className="fa fa-minus"></i></button>
-                </div>
+                 <div className="form-group col-md-1">
+                   <button className="form-control" onClick={ (e) => { e.preventDefault(); setClauses(clauses.remove(idx)) } }><i className="fa fa-minus"></i></button>
+                 </div>
                 }
               </div>
             ))
