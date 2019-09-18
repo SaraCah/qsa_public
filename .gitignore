@@ -8,25 +8,25 @@
 /static
 
 # dependencies
-/node_modules
-/.pnp
-.pnp.js
+/qsa-public-spa/node_modules
+/qsa-public-spa/.pnp
+/qsa-public-spa/.pnp.js
 
 # testing
-/coverage
+/qsa-public-spa/coverage
 
 # production
-/build
+/qsa-public-spa/build
 
 # misc
-.DS_Store
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+/qsa-public-spa/.DS_Store
+/qsa-public-spa/.env.local
+/qsa-public-spa/.env.development.local
+/qsa-public-spa/.env.test.local
+/qsa-public-spa/.env.production.local
 
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+/qsa-public-spa/npm-debug.log*
+/qsa-public-spa/yarn-debug.log*
+/qsa-public-spa/yarn-error.log*
 
-/.idea/
+/qsa-public-spa/.idea/
