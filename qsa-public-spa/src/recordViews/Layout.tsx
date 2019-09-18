@@ -1,5 +1,4 @@
 import React from 'react';
-import {RouteComponentProps} from "react-router-dom";
 
 const Layout: React.FC<any> = (props: any) => {
     return (

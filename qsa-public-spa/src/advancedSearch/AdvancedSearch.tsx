@@ -2,6 +2,8 @@ import React, {useState} from 'react';
 import { Redirect } from 'react-router';
 import queryString from 'query-string';
 
+let clauseCount: number = 0;
+
 class Clauses {
   private clauses: Clause[];
 
@@ -19,6 +21,7 @@ class Clauses {
 
   emptyClause() {
     return {
+      id: clauseCount++,
       boolean_operator: 'AND',
       query: '',
       target_field: 'keywords'
@@ -69,6 +72,7 @@ class Clauses {
 }
 
 interface Clause {
+  id: number;
   boolean_operator?: string;
   query?: string;
   target_field?: string;
@@ -107,7 +111,7 @@ const AspaceAdvancedSearch: React.FC = () => {
         <form method="GET" action="/search" onSubmit={ (e) => { e.preventDefault(); onSubmit(e) } }>
           {
             clauses.map((clause, idx) => (
-              <div className="form-row">
+              <div className="form-row" key={ clause.id }>
                 <div className="form-group col-md-2">
                   <select name="op[]"
                           className="form-control custom-select"
@@ -134,7 +138,7 @@ const AspaceAdvancedSearch: React.FC = () => {
                         className="form-control"
                         value={ clause.target_field }
                         onChange={ (e) => setClauses(clauses.fieldChanged(e, idx)) }>
-                  { keywordTypes.map(([value, label], idx) => (<option value={value}>{label}</option>)) }
+                  { keywordTypes.map(([value, label], idx) => (<option key={ value } value={ value }>{label}</option>)) }
                 </select>
                 </div>
 

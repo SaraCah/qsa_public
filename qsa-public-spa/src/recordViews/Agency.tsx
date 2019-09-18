@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {RouteComponentProps, Link} from "react-router-dom";
+import {RouteComponentProps} from "react-router-dom";
 
 import {Http} from "../utils/http";
 import {AgencyResult} from "../models/AgencyResult";
@@ -7,7 +7,7 @@ import {AgencyResult} from "../models/AgencyResult";
 import {
   dateArticleElement,
   noteArticleElement,
-  basiclistElement, externalResourceArticleElement
+  /* basiclistElement, externalResourceArticleElement */
 } from "../resultView/resultViewTemplates";
 
 /* import {AppState} from "../models/AppState";
@@ -22,7 +22,7 @@ import {
 
 
 const AgencyPage: React.FC<RouteComponentProps<any>> = (route: RouteComponentProps<any>) => {
-  const [agency, setCurrentAgency] = React.useState<any | null>(null);
+  const [agency, setCurrentAgency] = useState<any | null>(null);
   const qsa_id: string = route.match.params.qsa_id;
 
   /* FIXME: probably want a definition file of types to QSA prefixes here */
