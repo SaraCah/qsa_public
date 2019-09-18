@@ -3,4 +3,7 @@
   form > div.row {
     align-items: end;
   }
+  .form-control {
+    height: calc(1.5em + 0.75rem + 2px);
+  }
 }
