@@ -14,7 +14,7 @@ const PageHeader: React.FC = () => {
       </div>
       <ul className="qg-utilities list-inline col-xs-6 col-md-5">
         <li>
-          <a href="#"><span className="fa fa-shopping-cart fa-2x hidden-md hidden-lg" aria-hidden="true"></span>cart</a>
+          <a href="#"><span className="fa fa-shopping-cart fa-2x" aria-hidden="true"></span></a>
         </li>
         <li>
           <a href="https://www.qld.gov.au/contact-us/">
