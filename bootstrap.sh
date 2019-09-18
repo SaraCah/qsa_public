@@ -82,3 +82,8 @@ if [ ! -d "solr_dist" ]; then
 
     mv solr_dist.tmp solr_dist
 fi
+
+(
+    cd qsa-public-spa
+    npm install
+)
