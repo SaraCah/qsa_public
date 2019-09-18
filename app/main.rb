@@ -55,6 +55,11 @@ class QSAPublic < Sinatra::Base
     config.also_reload File.join('**', '*.rb')
   end
 
+  configure do
+    FileUtils.mkdir_p(File.join(File.dirname(__FILE__), '..', 'static'))
+  end
+
+
   # Add CORS headers
   class CORSHeaders
     def initialize(app)
