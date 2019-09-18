@@ -1,3 +1,5 @@
+/* FIXME: split this into our components for record views? */
+
 import React from "react";
 import {AgencyResult} from "../models/AgencyResult";
 import {SeriesResult} from "../models/SeriesResult";

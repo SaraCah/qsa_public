@@ -46,4 +46,8 @@ export class AgencyResult extends AspaceResult {
     this.mandateRelationships = result.mandate_relationships;
     this.functionRelationships = result.function_relationships;
   }
+
+  static forJSON(json: any) {
+    return new AgencyResult(json);
+  }
 }

@@ -6,8 +6,6 @@ import * as serviceWorker from './serviceWorker';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/js/bootstrap.bundle';
 import { BrowserRouter as Router, Route } from 'react-router-dom'
-import AspaceAdvancedSearch from "./advancedSearch/AdvancedSearch";
-
 
 ReactDOM.render(
   <Router>

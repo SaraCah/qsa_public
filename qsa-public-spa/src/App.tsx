@@ -11,7 +11,9 @@ import AspaceSearch from "./aspaceSearch/AspaceSearch";
 import ContentView from "./contentView/ContentView";
 import {AppState} from "./models/AppState";
 import {Route, Switch} from "react-router-dom";
+
 import AspaceAdvancedSearch from "./advancedSearch/AdvancedSearch";
+import AgencyPage from "./recordViews/Agency";
 
 
 const App: React.FC = () => {
@@ -35,7 +37,6 @@ const App: React.FC = () => {
           <div id="qg-three-col" className="row">
             <Breadcrumbs/>
             <Switch>
-              <Route path="/advancedSearch" children={AspaceAdvancedSearch({...appState})}/>
               <Route exact path="/" children={
                 <>
                   <ContentView {...appState} />
@@ -52,6 +53,11 @@ const App: React.FC = () => {
                   <AspaceSearch {...appState}/>
                 </>}
               />
+
+              <Route path="/advancedSearch" children={AspaceAdvancedSearch({...appState})}/>
+
+              <Route path="/agencies/:qsa_id" component={AgencyPage} />
+
             </Switch>
           </div>
           <div id="qg-options" className="row">
