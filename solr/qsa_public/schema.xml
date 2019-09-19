@@ -11,6 +11,7 @@
   <field name="title" type="string" indexed="true" stored="true" required="true" multiValued="false" />
   <field name="qsa_id" type="string" indexed="true" stored="true" required="true" multiValued="false" />
   <field name="qsa_id_prefixed" type="string" indexed="true" stored="true" required="true" multiValued="false" />
+  <field name="qsa_id_search" type="string" indexed="true" stored="false" required="false" multiValued="true" />
 
   <field name="json" type="string" indexed="false" stored="true" multiValued="false" />
   <field name="keywords" type="text_general" indexed="true" stored="false" multiValued="true"/>

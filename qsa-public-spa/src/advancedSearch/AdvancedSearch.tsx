@@ -14,12 +14,8 @@ const AspaceAdvancedSearch: React.FC<{advancedSearchQuery: AdvancedSearchQuery, 
   const keywordTypes = [
     ['keywords', 'Keywords'],
     ['title', 'Title'],
-    ['item_id','Item ID'],
-    ['agency_id', 'Agency ID'],
-    ['series_id', 'Series ID'],
+    ['qsa_id_search','QSA ID'],
     ['notes', 'Notes'],
-    ['function', 'Function'],
-    ['mandate', 'Mandate'],
     ['previous_system_id', 'Previous System ID'],
   ];
 
