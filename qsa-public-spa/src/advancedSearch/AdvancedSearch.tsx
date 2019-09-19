@@ -15,8 +15,7 @@ const AspaceAdvancedSearch: React.FC<{advancedSearchQuery: AdvancedSearchQuery, 
     ['keywords', 'Keywords'],
     ['title', 'Title'],
     ['qsa_id_search','QSA ID'],
-    ['notes', 'Notes'],
-    ['previous_system_id', 'Previous System ID'],
+    ['previous_system_ids', 'Previous System ID'],
   ];
 
   const onSubmit = (e: any) => {

@@ -8,10 +8,9 @@
   <field name="uri" type="string" indexed="true" stored="true" required="true" multiValued="false" />
   <field name="primary_type" type="string" indexed="true" stored="true" required="true" multiValued="false" />
   <field name="types" type="string" indexed="true" stored="true" required="true" multiValued="true" />
-  <field name="title" type="string" indexed="true" stored="true" required="true" multiValued="false" />
+  <field name="title" type="text_general" indexed="true" stored="true" required="true" multiValued="false" />
   <field name="qsa_id" type="string" indexed="true" stored="true" required="true" multiValued="false" />
   <field name="qsa_id_prefixed" type="string" indexed="true" stored="true" required="true" multiValued="false" />
-  <field name="qsa_id_search" type="string" indexed="true" stored="false" required="false" multiValued="true" />
 
   <field name="json" type="string" indexed="false" stored="true" multiValued="false" />
   <field name="keywords" type="text_general" indexed="true" stored="false" multiValued="true"/>
@@ -26,7 +25,12 @@
 
   <field name="functions" type="string" indexed="true" stored="true" multiValued="true"/>
   <field name="mandates" type="string" indexed="true" stored="true" multiValued="true"/>
-  <field name="previous_system_ids" type="string" indexed="true" stored="true" multiValued="true"/>
+  <field name="previous_system_ids" type="keyword" indexed="true" stored="true" multiValued="true"/>
+
+  <!-- Search fields -->
+  <field name="qsa_id_search" type="keyword" indexed="true" stored="false" required="false" multiValued="true" />
+  <copyField source="qsa_id" dest="qsa_id_search" />
+  <copyField source="qsa_id_prefixed" dest="qsa_id_search" />
 
   <!-- Sort fields -->
   <field name="title_sort" type="string" indexed="true" stored="false" multiValued="false" />
@@ -276,6 +280,13 @@ http://wiki.apache.org/solr/AnalyzersTokenizersTokenFilters
       <tokenizer class="solr.WhitespaceTokenizerFactory"/>
       <filter class="solr.LowerCaseFilterFactory"/>
       <filter class="solr.EdgeNGramFilterFactory" minGramSize="3" maxGramSize="5"/>
+    </analyzer>
+  </fieldType>
+
+  <fieldType name="keyword" class="solr.TextField" positionIncrementGap="100" omitNorms="true">
+    <analyzer>
+      <tokenizer class="solr.KeywordTokenizerFactory"/>
+      <filter class="solr.LowerCaseFilterFactory" />
     </analyzer>
   </fieldType>
 
