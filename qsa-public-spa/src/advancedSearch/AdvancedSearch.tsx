@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import { Redirect } from 'react-router';
 import { AdvancedSearchQuery } from '../models/AdvancedSearch';
 
-const AspaceAdvancedSearch: React.FC<{advancedSearchQuery: AdvancedSearchQuery, onSearch?: ()=>void }> = (props) => {
+const AspaceAdvancedSearch: React.FC<{advancedSearchQuery: AdvancedSearchQuery, onSearch?: (updatedAdvancedSearchQuery: AdvancedSearchQuery) => void }> = (props) => {
   const [advancedSearchQuery, setAdvancedSearchQuery] = useState(props.advancedSearchQuery);
   const [needsRedirect, redirectForSearch] = useState('');
 
@@ -32,11 +32,11 @@ const AspaceAdvancedSearch: React.FC<{advancedSearchQuery: AdvancedSearchQuery, 
 
   useEffect(() => {
     if (needsRedirect && props.onSearch) {
-      props.onSearch();
+      props.onSearch(advancedSearchQuery);
     }
 
     redirectForSearch('');
-  }, [needsRedirect, props]);
+  }, [needsRedirect, advancedSearchQuery, props]);
 
   if (needsRedirect) {
     return <Redirect to={ needsRedirect } push={ true }></Redirect>;
@@ -122,7 +122,7 @@ const AspaceAdvancedSearch: React.FC<{advancedSearchQuery: AdvancedSearchQuery, 
                            className="form-control"
                            type="text"
                            name="from"
-                           value={ advancedSearchQuery.getFromDate() }>
+                           value={ advancedSearchQuery.getFromDate() || '' }>
                     </input>
                   </label>
                 </div>
@@ -132,7 +132,7 @@ const AspaceAdvancedSearch: React.FC<{advancedSearchQuery: AdvancedSearchQuery, 
                            className="form-control"
                            type="text"
                            name="to"
-                           value={ advancedSearchQuery.getToDate() }>
+                           value={ advancedSearchQuery.getToDate() || '' }>
                     </input>
                   </label>
                 </div>

@@ -9,8 +9,8 @@ import queryString from "query-string";
 
 const ResultsPage: React.FC<RouteComponentProps<any>> = (route: RouteComponentProps<any>) => {
     const [searchResults, setSearchResults] = useState<any | null>(null);
-
-    const advancedSearchQuery: AdvancedSearchQuery = AdvancedSearchQuery.fromQueryString(route.location.search);
+    const [advancedSearchQuery, setAdvancedSearchQuery] = useState<AdvancedSearchQuery>(AdvancedSearchQuery.fromQueryString(route.location.search));
+    const [searchCount, setSearchCount] = useState<number>(0);
 
     const currentPage: number = Number(queryString.parse(route.location.search).page || 0);
 
@@ -19,13 +19,25 @@ const ResultsPage: React.FC<RouteComponentProps<any>> = (route: RouteComponentPr
     }
 
     useEffect(() => {
+        setAdvancedSearchQuery(AdvancedSearchQuery.fromQueryString(route.location.search));
+    }, [route]);
+
+    useEffect(() => {
         /* If the page changes, re-fire the search */
-        Http.fetchResults(advancedSearchQuery, currentPage).then(setSearchResults);
+        Http.fetchResults(advancedSearchQuery, currentPage).then((results) => {
+            setSearchResults(results);
+            setSearchCount(searchCount + 1);
+        });
     }, [currentPage, advancedSearchQuery]);
+
+    const onSearchHandler = (updatedAdvancedSearchQuery: AdvancedSearchQuery) => {
+        setSearchResults(null);
+        setAdvancedSearchQuery(updatedAdvancedSearchQuery);
+    };
 
     return (
         <Layout>
-            <AspaceAdvancedSearch advancedSearchQuery={ advancedSearchQuery } onSearch={ () => setSearchResults(null) }></AspaceAdvancedSearch>
+            <AspaceAdvancedSearch key={ searchCount } advancedSearchQuery={ advancedSearchQuery } onSearch={ onSearchHandler }></AspaceAdvancedSearch>
             {searchResults && <SearchResults searchResults={ searchResults } currentPage={ currentPage } advancedSearchQuery={ advancedSearchQuery }></SearchResults> }
         </Layout>
     );

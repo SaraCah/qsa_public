@@ -187,14 +187,16 @@ export class AdvancedSearchQuery {
       clauses: [],
     };
 
-    criteria.clauses = raw.q.map((queryString: string, idx: number) => {
-      return {
-        id: idx,
-        query: queryString,
-        boolean_operator: raw.op[idx] || 'AND',
-        target_field: raw.f[idx] || 'keywords',
-      }
-    });
+    if (raw.q) {
+      criteria.clauses = raw.q.map((queryString: string, idx: number) => {
+        return {
+          id: idx,
+          query: queryString,
+          boolean_operator: raw.op[idx] || 'AND',
+          target_field: raw.f[idx] || 'keywords',
+        }
+      });
+    }
 
     if (raw.type) {
       criteria.recordTypes = {};

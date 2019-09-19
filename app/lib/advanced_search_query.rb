@@ -65,8 +65,10 @@ class AdvancedSearchQuery
   end
 
   def parse_query(query)
-    if Array(query['clauses']).empty? || (query['clauses'].length == 1 && query['clauses'][0]['query'].to_s.empty?)
-      # No query given
+    query['clauses'] = Array(query['clauses']).reject {|clause| clause['query'].to_s.empty?}
+
+    if query['clauses'].empty?
+      # No query/queries given
       return ''
     end
 

@@ -81,10 +81,10 @@ const Layout: React.FC<any> = (props: any) => {
                             <nav id="qg-section-nav" aria-label="side navigation" role="navigation">
                                 <h2><Link to={ "/" }>ArchivesSearch</Link></h2>
                                 <ul aria-label="section navigation">
-                                    <li><Link to={ "/series" }>Series</Link></li>
-                                    <li><Link to={ "/agencies" }>Agencies</Link></li>
-                                    <li><Link to={ "/functions" }>Functions</Link></li>
-                                    <li><Link to={ "/mandates" }>Mandates</Link></li>
+                                    <li><Link to={ "/search?type[]=resource" }>Series</Link></li>
+                                    <li><Link to={ "/search?type[]=agent_corporate_entity" }>Agencies</Link></li>
+                                    <li><Link to={ "/search?type[]=function" }>Functions</Link></li>
+                                    <li><Link to={ "/search?type[]=mandate" }>Mandates</Link></li>
                                 </ul>
                             </nav>
                         </div>
