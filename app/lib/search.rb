@@ -299,7 +299,7 @@ class Search
 
 
   def self.parse_types(types)
-    if types.nil?
+    if types.nil? || types.empty?
       return VALID_TYPES
     else
       types & VALID_TYPES

@@ -19,7 +19,7 @@ class AdvancedSearchQuery
     @filter_start_date = to_solr_start_date(query['filter_start_date'] || '0000-01-01')
     @filter_end_date = to_solr_end_date(query['filter_end_date'] || '9999-12-31')
 
-    @filter_types = query['types']
+    @filter_types = query['filter_types']
     @filter_open_records_only = !!query['filter_open_records_only']
     @filter_linked_digital_objects_only = !!query['filter_linked_digital_objects_only']
   end

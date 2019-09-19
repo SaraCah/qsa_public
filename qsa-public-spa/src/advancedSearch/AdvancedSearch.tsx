@@ -18,6 +18,14 @@ const AspaceAdvancedSearch: React.FC<{advancedSearchQuery: AdvancedSearchQuery, 
     ['previous_system_ids', 'Previous System ID'],
   ];
 
+  const recordTypes = [
+    ['resource', 'Series'],
+    ['archival_object', 'Record'],
+    ['agent_corporate_entity', 'Agency'],
+    ['mandate','Mandate'],
+    ['function','Function'],
+  ];
+
   const onSubmit = (e: any) => {
     redirectForSearch('/search?' + advancedSearchQuery.toQueryString());
   }
@@ -83,6 +91,23 @@ const AspaceAdvancedSearch: React.FC<{advancedSearchQuery: AdvancedSearchQuery, 
               </div>
             ))
           }
+          <div><small>Limit to:</small></div>
+          <div style={ {columns: 3} }>
+            {
+              recordTypes.map((recordType) => {
+                return <div key={ recordType[0] }>
+                  <label>
+                    <input onChange={(e) => setAdvancedSearchQuery(advancedSearchQuery.setType(recordType[0], e.target.checked))}
+                           type="checkbox"
+                           name="type[]"
+                           value={ recordType[0] }
+                           checked={ !!advancedSearchQuery.isTypeSelected(recordType[0]) }>
+                    </input> { recordType[1] }
+                   </label>
+                 </div>
+              })
+            }
+          </div>
           <div>
             <button className="btn btn-primary">Submit</button>
           </div>

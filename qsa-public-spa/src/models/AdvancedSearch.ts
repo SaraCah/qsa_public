@@ -2,6 +2,8 @@
 // import moment from "moment";
 import queryString from "query-string";
 
+type HashSet = { [name:string]: boolean };
+
 export interface Clause {
   id: number;
   boolean_operator?: string;
@@ -11,14 +13,21 @@ export interface Clause {
 
 export class AdvancedSearchQuery {
   private readonly clauses: Clause[];
+  private readonly recordTypes: HashSet;
 
   static clauseCount: number = 0;
 
-  constructor(clauses?: Clause[]) {
+  constructor(clauses?: Clause[], recordTypes?: HashSet) {
     if (clauses) {
       this.clauses = clauses;
     } else {
       this.clauses = [];
+    }
+
+    if (recordTypes) {
+      this.recordTypes = recordTypes;
+    } else {
+      this.recordTypes = {};
     }
 
     AdvancedSearchQuery.clauseCount += this.clauses.length;
@@ -37,8 +46,20 @@ export class AdvancedSearchQuery {
     };
   }
 
+  setType(recordType: string, checked: boolean): AdvancedSearchQuery {
+    return new AdvancedSearchQuery(this.clauses, Object.assign({}, this.recordTypes, {[recordType]: checked}));
+  }
+
+  isTypeSelected(recordType:string): boolean {
+    if (Object.keys(this.recordTypes).length === 0) {
+      return false;
+    } else {
+      return this.recordTypes[recordType];
+    }
+  }
+
   addEmpty(): AdvancedSearchQuery {
-    return new AdvancedSearchQuery(this.clauses.concat([AdvancedSearchQuery.emptyClause()]));
+    return new AdvancedSearchQuery(this.clauses.concat([AdvancedSearchQuery.emptyClause()]), this.recordTypes);
   }
 
   map(fn: (clause: Clause, idx: number) => any): any[] {
@@ -47,7 +68,7 @@ export class AdvancedSearchQuery {
 
   remove(idx: number): AdvancedSearchQuery {
     if (idx < this.clauses.length) {
-      return new AdvancedSearchQuery(this.clauses.slice(0, idx).concat(this.clauses.slice(idx + 1)));
+      return new AdvancedSearchQuery(this.clauses.slice(0, idx).concat(this.clauses.slice(idx + 1)), this.recordTypes);
     } else {
       return this;
     }
@@ -57,7 +78,7 @@ export class AdvancedSearchQuery {
     let updated = [...this.clauses];
     updated[idx] = Object.assign({}, updated[idx], {[field]: value});
 
-    return new AdvancedSearchQuery(updated);
+    return new AdvancedSearchQuery(updated, this.recordTypes);
   }
 
   operatorChanged(event: any, idx: number): AdvancedSearchQuery {
@@ -77,36 +98,11 @@ export class AdvancedSearchQuery {
       op: this.clauses.map((c: Clause) => c.boolean_operator),
       q: this.clauses.map((c: Clause) => c.query),
       f: this.clauses.map((c: Clause) => c.target_field),
+      type: Object.keys(this.recordTypes).filter((recordType: string) => this.recordTypes[recordType]),
     }, {
       arrayFormat: 'bracket',
     });
   }
-
-// {
-//   "filter_linked_digital_objects_only": true,
-//   "clauses": [
-//       {
-//         "field": "keywords",
-//         "operator": "",
-//         "query": "record"
-//       },
-//       {
-//         "field": "keywords",
-//         "operator": "OR",
-//         "query": "pears cherries \"kiwi fruits\""
-//       },
-//       {
-//         "field": "primary_type",
-//         "operator": "OR",
-//         "query": "fruit"
-//       },
-//       {
-//         "field": "primary_type",
-//         "operator": "OR",
-//         "query": "vegetables"
-//       }
-//       ]
-// }
 
   toJSON() {
     return JSON.stringify({
@@ -116,7 +112,8 @@ export class AdvancedSearchQuery {
           'operator': clause.boolean_operator,
           'query': clause.query,
         }
-      })
+      }),
+      filter_types: Object.keys(this.recordTypes).filter((recordType: string) => this.recordTypes[recordType]),
     })
   }
 
@@ -131,7 +128,12 @@ export class AdvancedSearchQuery {
       }
     });
 
-    return new AdvancedSearchQuery(clauses);
+    const recordTypes: HashSet = {};
+    if (raw.type) {
+      raw.type.forEach((recordType: string) => recordTypes[recordType] = true)
+    }
+
+    return new AdvancedSearchQuery(clauses, recordTypes);
   }
 }
 
