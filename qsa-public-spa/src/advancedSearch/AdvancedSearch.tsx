@@ -136,6 +136,17 @@ const AspaceAdvancedSearch: React.FC<{advancedSearchQuery: AdvancedSearchQuery, 
               </div>
             </div>
           </div>
+          <div className="form-group">
+            <div className="form-row">
+              <label>
+                <input type="checkbox"
+                       name="open"
+                       checked={ !!advancedSearchQuery.isOpenRecordsOnly() }
+                       onChange={(e) => setAdvancedSearchQuery(advancedSearchQuery.setOpenRecordsOnly(e.target.checked))}>
+                </input> Open records only
+              </label>
+            </div>
+          </div>
           <div>
             <button className="btn btn-primary">Submit</button>
           </div>

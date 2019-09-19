@@ -16,6 +16,7 @@ export interface Criteria {
   recordTypes?: HashSet,
   fromDate?: string,
   toDate?: string,
+  openRecordsOnly?: boolean,
 }
 
 export class AdvancedSearchQuery {
@@ -49,6 +50,17 @@ export class AdvancedSearchQuery {
       target_field: 'keywords'
     };
   }
+
+  setOpenRecordsOnly(checked: boolean) {
+    const newCriteria: Criteria = {...this.criteria};
+    newCriteria.openRecordsOnly = checked;
+    return new AdvancedSearchQuery(newCriteria);
+  }
+
+  isOpenRecordsOnly(): boolean {
+    return !!this.criteria.openRecordsOnly;
+  }
+
 
   setFromDate(date: string): AdvancedSearchQuery {
     const newCriteria: Criteria = {...this.criteria};
@@ -134,6 +146,7 @@ export class AdvancedSearchQuery {
       type: Object.keys(this.criteria.recordTypes || []).filter((recordType: string) => this.criteria.recordTypes && this.criteria.recordTypes[recordType]),
       from: this.criteria.fromDate,
       to: this.criteria.toDate,
+      open: this.isOpenRecordsOnly(),
     }, {
       arrayFormat: 'bracket',
     });
@@ -151,6 +164,7 @@ export class AdvancedSearchQuery {
       filter_types: Object.keys(this.criteria.recordTypes || []).filter((recordType: string) => this.criteria.recordTypes && this.criteria.recordTypes[recordType]),
       filter_start_date: this.criteria.fromDate,
       filter_end_date: this.criteria.toDate,
+      filter_open_records_only: this.isOpenRecordsOnly(),
     })
   }
 
@@ -181,6 +195,10 @@ export class AdvancedSearchQuery {
 
     if (raw.to) {
       criteria.toDate = raw.to;
+    }
+
+    if (raw.open) {
+      criteria.openRecordsOnly = raw.open === 'true';
     }
 
     return new AdvancedSearchQuery(criteria);
