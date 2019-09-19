@@ -34,7 +34,7 @@ const PathMappingForType: { [name:string]:string } = {
 const LabelForType: { [name:string]:string } = {
     'agent_corporate_entity': 'Agency',
     'resource': 'Series',
-    'archival_object': 'Record',
+    'archival_object': 'Item',
     'mandate': 'Mandate',
     'function': 'Function',
 }

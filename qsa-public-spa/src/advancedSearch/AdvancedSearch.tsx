@@ -20,7 +20,7 @@ const AspaceAdvancedSearch: React.FC<{advancedSearchQuery: AdvancedSearchQuery, 
 
   const recordTypes = [
     ['resource', 'Series'],
-    ['archival_object', 'Record'],
+    ['archival_object', 'Item'],
     ['agent_corporate_entity', 'Agency'],
     ['mandate','Mandate'],
     ['function','Function'],
