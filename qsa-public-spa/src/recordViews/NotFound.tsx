@@ -4,7 +4,7 @@ import Layout from './Layout';
 
 const NotFound: React.FC<RouteComponentProps<any>> = (route: RouteComponentProps<any>) => {
     return (
-        <Layout>
+        <Layout noindex={ true }>
             Sorry, page not found.
         </Layout>
     );

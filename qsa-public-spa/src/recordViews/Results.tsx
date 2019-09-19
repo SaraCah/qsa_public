@@ -7,44 +7,27 @@ import {Http} from "../utils/http";
 import {iconForType, labelForType, uriFor} from "../utils/typeResolver";
 import queryString from "query-string";
 
-const ResultsPage: React.FC<RouteComponentProps<any>> = (route: RouteComponentProps<any>) => {
+const ResultsPage: React.FC<any> = (route: any) => {
     const [searchResults, setSearchResults] = useState<any | null>(null);
     const [advancedSearchQuery, setAdvancedSearchQuery] = useState<AdvancedSearchQuery>(AdvancedSearchQuery.fromQueryString(route.location.search));
-    const [searchCount, setSearchCount] = useState<number>(0);
 
     const currentPage: number = Number(queryString.parse(route.location.search).page || 0);
 
     if (!searchResults) {
         Http.fetchResults(advancedSearchQuery, currentPage).then(setSearchResults);
+        return <Layout skipFooter={ true }></Layout>
+    } else {
+        return (
+            <Layout skipFooter={ !searchResults }>
+                <h1>Archives Search</h1>
+                <div className="qg-call-out-box">
+                    <AspaceAdvancedSearch advancedSearchQuery={ advancedSearchQuery }></AspaceAdvancedSearch>
+                </div>
+                {searchResults && <SearchResults searchResults={ searchResults } currentPage={ currentPage } advancedSearchQuery={ advancedSearchQuery }></SearchResults> }
+            </Layout>
+        );
     }
-
-    useEffect(() => {
-        setAdvancedSearchQuery(AdvancedSearchQuery.fromQueryString(route.location.search));
-    }, [route]);
-
-    useEffect(() => {
-        /* If the page changes, re-fire the search */
-        Http.fetchResults(advancedSearchQuery, currentPage).then((results) => {
-            setSearchResults(results);
-            setSearchCount(searchCount + 1);
-        });
-    }, [currentPage, advancedSearchQuery]);
-
-    const onSearchHandler = (updatedAdvancedSearchQuery: AdvancedSearchQuery) => {
-        setSearchResults(null);
-        setAdvancedSearchQuery(updatedAdvancedSearchQuery);
-    };
-
-    return (
-        <Layout>
-            <h1>Archives Search</h1>
-            <div className="qg-call-out-box">
-                <AspaceAdvancedSearch key={ searchCount } advancedSearchQuery={ advancedSearchQuery } onSearch={ onSearchHandler }></AspaceAdvancedSearch>
-            </div>
-            {searchResults && <SearchResults searchResults={ searchResults } currentPage={ currentPage } advancedSearchQuery={ advancedSearchQuery }></SearchResults> }
-        </Layout>
-    );
-}
+};
 
 const SearchResults: React.FC<{ searchResults: any, currentPage: number, advancedSearchQuery: AdvancedSearchQuery }> = (props) => {
     return (
@@ -90,6 +73,6 @@ const SearchResults: React.FC<{ searchResults: any, currentPage: number, advance
             </nav>
         </>
     )
-}
+};
 
 export default ResultsPage;

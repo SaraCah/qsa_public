@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import { Redirect } from 'react-router';
 import { AdvancedSearchQuery } from '../models/AdvancedSearch';
 
-const AspaceAdvancedSearch: React.FC<{advancedSearchQuery: AdvancedSearchQuery, onSearch?: (updatedAdvancedSearchQuery: AdvancedSearchQuery) => void }> = (props) => {
+const AspaceAdvancedSearch: React.FC<{advancedSearchQuery: AdvancedSearchQuery }> = (props) => {
   const [advancedSearchQuery, setAdvancedSearchQuery] = useState(props.advancedSearchQuery);
   const [needsRedirect, redirectForSearch] = useState('');
 
@@ -29,14 +29,6 @@ const AspaceAdvancedSearch: React.FC<{advancedSearchQuery: AdvancedSearchQuery, 
   const onSubmit = (e: any) => {
     redirectForSearch('/search?' + advancedSearchQuery.toQueryString());
   }
-
-  useEffect(() => {
-    if (needsRedirect && props.onSearch) {
-      props.onSearch(advancedSearchQuery);
-    }
-
-    redirectForSearch('');
-  }, [needsRedirect, advancedSearchQuery, props]);
 
   if (needsRedirect) {
     return <Redirect to={ needsRedirect } push={ true }></Redirect>;
