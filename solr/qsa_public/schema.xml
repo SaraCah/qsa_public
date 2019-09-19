@@ -27,10 +27,16 @@
   <field name="mandates" type="string" indexed="true" stored="true" multiValued="true"/>
   <field name="previous_system_ids" type="keyword" indexed="true" stored="true" multiValued="true"/>
 
+  <field name="description" type="string" indexed="false" stored="true" multiValued="false"/>
+  <field name="dates_display_string" type="string" indexed="false" stored="true" multiValued="false"/>
+  <field name="digital_representation_count" type="pint" indexed="false" stored="true" multiValued="false"/>
+  <field name="physical_representation_count" type="pint" indexed="false" stored="true" multiValued="false"/>
+
   <!-- Search fields -->
   <field name="qsa_id_search" type="keyword" indexed="true" stored="false" required="false" multiValued="true" />
   <copyField source="qsa_id" dest="qsa_id_search" />
   <copyField source="qsa_id_prefixed" dest="qsa_id_search" />
+  <field name="note_types" type="string" indexed="true" stored="true" multiValued="true"/>
 
   <!-- Sort fields -->
   <field name="title_sort" type="string" indexed="true" stored="false" multiValued="false" />
