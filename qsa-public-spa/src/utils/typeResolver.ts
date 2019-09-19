@@ -22,3 +22,40 @@ export const newAspaceResultFromJsonModelType = (jsonModelType: string, params: 
   }
   return new constructor(params);
 };
+
+const PathMappingForType: { [name:string]:string } = {
+    'agent_corporate_entity': '/agencies/',
+    'resource': '/series/',
+    'archival_object': '/records/',
+    'mandate': '/mandates/',
+    'function': '/functions/',
+}
+
+const LabelForType: { [name:string]:string } = {
+    'agent_corporate_entity': 'Agency',
+    'resource': 'Series',
+    'archival_object': 'Record',
+    'mandate': 'Mandate',
+    'function': 'Function',
+}
+
+const IconForType: { [name:string]:string } = {
+    'agent_corporate_entity': 'fa fa-building',
+    'resource': 'fa fa-folder-open',
+    'archival_object': 'fa fa-file',
+    'mandate': 'fa fa-scroll',
+    'function': 'fa fa-clipboard',
+}
+
+
+export const uriFor = (qsaIDPrefixed: string, recordType: string): string => {
+    return PathMappingForType[recordType] + qsaIDPrefixed;
+}
+
+export const labelForType = (recordType: string): string => {
+    return LabelForType[recordType];
+}
+
+export const iconForType = (recordType: string): string => {
+    return IconForType[recordType];
+}

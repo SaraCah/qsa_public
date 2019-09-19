@@ -33,7 +33,7 @@ const AspaceAdvancedSearch: React.FC<{advancedSearchQuery: AdvancedSearchQuery, 
     }
 
     redirectForSearch('');
-  });
+  }, [needsRedirect, props]);
 
   if (needsRedirect) {
     return <Redirect to={ needsRedirect } push={ true }></Redirect>;

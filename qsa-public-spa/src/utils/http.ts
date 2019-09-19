@@ -16,10 +16,10 @@ export class Http {
     }
   };
 
-  static async fetchResults<T>(advancedSearchQuery: AdvancedSearchQuery): Promise<T[]> {
+  static async fetchResults<T>(advancedSearchQuery: AdvancedSearchQuery, page: number=0): Promise<T[]> {
     const query = advancedSearchQuery.toJSON();
     const response = await axios
-      .post(`${searchUrl}?query=${query}`, Http.config)
+      .post(`${searchUrl}?query=${query}&page=${page}`, Http.config)
       .catch(error => {
         console.log(error, error.status);
         return error;
