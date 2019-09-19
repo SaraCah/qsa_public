@@ -16,8 +16,8 @@ class AdvancedSearchQuery
   def initialize(query)
     @query_string = parse_query(query)
 
-    @filter_start_date = to_solr_start_date(query['filter_start_date'] || '0000-01-01')
-    @filter_end_date = to_solr_end_date(query['filter_end_date'] || '9999-12-31')
+    @filter_start_date = to_solr_start_date(query['filter_start_date']) || '0000-01-01T00:00:00Z'
+    @filter_end_date = to_solr_end_date(query['filter_end_date']) || '9999-12-31T23:59:59Z'
 
     @filter_types = query['filter_types']
     @filter_open_records_only = !!query['filter_open_records_only']
@@ -27,15 +27,23 @@ class AdvancedSearchQuery
   private
 
   def to_solr_start_date(s)
-    # Validate date
-    Date.parse(s)
-    "#{s}T00:00:00Z"
+    return if s.nil?
+
+    date = DateParse.date_parse_down(s)
+
+    return if date.nil?
+
+    "#{date.iso8601}T00:00:00Z"
   end
 
   def to_solr_end_date(s)
-    # Validate date
-    Date.parse(s)
-    "#{s}T23:59:59Z"
+    return if s.nil?
+
+    date = DateParse.date_parse_up(s)
+
+    return if date.nil?
+
+    "#{date.iso8601}T23:59:59Z"
   end
 
   def solr_escape(s)
