@@ -7,7 +7,10 @@ import {AdvancedSearchQuery} from "../models/AdvancedSearch";
 const HomePage: React.FC<RouteComponentProps<any>> = (route: RouteComponentProps<any>) => {
     return (
         <Layout>
-            <AspaceAdvancedSearch advancedSearchQuery={ new AdvancedSearchQuery({clauses: []}) }></AspaceAdvancedSearch>
+            <h1>Archives Search</h1>
+            <div className="qg-call-out-box">
+                <AspaceAdvancedSearch advancedSearchQuery={ new AdvancedSearchQuery({clauses: []}) }></AspaceAdvancedSearch>
+            </div>
         </Layout>
     );
 }

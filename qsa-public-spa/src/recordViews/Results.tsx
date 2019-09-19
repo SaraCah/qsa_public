@@ -37,7 +37,10 @@ const ResultsPage: React.FC<RouteComponentProps<any>> = (route: RouteComponentPr
 
     return (
         <Layout>
-            <AspaceAdvancedSearch key={ searchCount } advancedSearchQuery={ advancedSearchQuery } onSearch={ onSearchHandler }></AspaceAdvancedSearch>
+            <h1>Archives Search</h1>
+            <div className="qg-call-out-box">
+                <AspaceAdvancedSearch key={ searchCount } advancedSearchQuery={ advancedSearchQuery } onSearch={ onSearchHandler }></AspaceAdvancedSearch>
+            </div>
             {searchResults && <SearchResults searchResults={ searchResults } currentPage={ currentPage } advancedSearchQuery={ advancedSearchQuery }></SearchResults> }
         </Layout>
     );

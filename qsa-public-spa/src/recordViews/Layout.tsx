@@ -79,7 +79,7 @@ const Layout: React.FC<any> = (props: any) => {
                                 {props.children}
                             </div>
                             <nav id="qg-section-nav" aria-label="side navigation" role="navigation">
-                                <h2><Link to={ "/" }>ArchivesSearch</Link></h2>
+                                <h2><Link to={ "/" }>Archives Search</Link></h2>
                                 <ul aria-label="section navigation">
                                     <li><Link to={ "/search?type[]=resource" }>Series</Link></li>
                                     <li><Link to={ "/search?type[]=agent_corporate_entity" }>Agencies</Link></li>
