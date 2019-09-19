@@ -9,7 +9,6 @@ import queryString from "query-string";
 
 const ResultsPage: React.FC<RouteComponentProps<any>> = (route: RouteComponentProps<any>) => {
     const [searchResults, setSearchResults] = useState<any | null>(null);
-    // const [currentPage, setCurrentPage] = useState<number>(0);
 
     const advancedSearchQuery: AdvancedSearchQuery = AdvancedSearchQuery.fromQueryString(route.location.search);
 
@@ -18,6 +17,11 @@ const ResultsPage: React.FC<RouteComponentProps<any>> = (route: RouteComponentPr
     if (!searchResults) {
         Http.fetchResults(advancedSearchQuery, currentPage).then(setSearchResults);
     }
+
+    useEffect(() => {
+        /* If the page changes, re-fire the search */
+        Http.fetchResults(advancedSearchQuery, currentPage).then(setSearchResults);
+    }, [currentPage]);
 
     return (
         <Layout>
@@ -44,7 +48,7 @@ const SearchResults: React.FC<{ searchResults: any, currentPage: number, advance
                 </thead>
                 <tbody>
                 {props.searchResults.results.map((result: any) => {
-                    return <tr>
+                    return <tr key={ result.id }>
                         <td><i className={ iconForType(result.primary_type) } aria-hidden="true"></i> { labelForType(result.primary_type) }</td>
                         <td>{ result.qsa_id_prefixed }</td>
                         <td>{ result.title }</td>
@@ -54,18 +58,20 @@ const SearchResults: React.FC<{ searchResults: any, currentPage: number, advance
                 </tbody>
             </table>
             <nav>
-                <ul className="pagination">
-                    <li className={'page-item prev ' + (props.currentPage === 0 ? 'disabled' : '')}>
-                        <Link to={ '/search?' + props.advancedSearchQuery.toQueryString() + '&page=' + (props.currentPage - 1)} className="page-link">
-                            <span aria-hidden="true">«</span> Previous
-                        </Link>
-                    </li>
-                    <li className={"page-item next " + ((props.currentPage === Math.floor(props.searchResults.total_count / props.searchResults.page_size)) ? 'disabled' : '')} >
-                        <Link to={ '/search?' + props.advancedSearchQuery.toQueryString() + '&page=' + (props.currentPage + 1)} className="page-link">
-                            Next <span aria-hidden="true">»</span>
-                        </Link>
-                    </li>
-                </ul>
+                <div className="text-center">
+                    <ul className="pagination">
+                        <li className={'page-item prev ' + (props.currentPage === 0 ? 'disabled' : '')}>
+                            <Link to={ '/search?' + props.advancedSearchQuery.toQueryString() + '&page=' + (props.currentPage - 1)} className="page-link">
+                                <span aria-hidden="true">«</span> Previous
+                            </Link>
+                        </li>
+                        <li className={"page-item next " + ((props.currentPage >= (Math.ceil(props.searchResults.total_count / props.searchResults.page_size) - 1)) ? 'disabled' : '')} >
+                            <Link to={ '/search?' + props.advancedSearchQuery.toQueryString() + '&page=' + (props.currentPage + 1)} className="page-link">
+                                Next <span aria-hidden="true">»</span>
+                            </Link>
+                        </li>
+                    </ul>
+                </div>
             </nav>
         </>
     )

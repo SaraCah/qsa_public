@@ -41,6 +41,7 @@ const AspaceAdvancedSearch: React.FC<{advancedSearchQuery: AdvancedSearchQuery, 
     return ( 
       <div id="advancedSearchContainer" className="container">
         <form method="GET" onSubmit={ (e) => { e.preventDefault(); onSubmit(e) } }>
+          <button style={{display: "none"}} aria-hidden="true"></button>
           {
             advancedSearchQuery.map((clause, idx) => (
               <div className="form-row" key={ clause.id }>
@@ -76,19 +77,19 @@ const AspaceAdvancedSearch: React.FC<{advancedSearchQuery: AdvancedSearchQuery, 
                 </div>
 
                 <div className="form-group col-md-1">
-                  <button className="form-control" onClick={ (e) => { e.preventDefault(); setAdvancedSearchQuery(advancedSearchQuery.addEmpty()) } }><i className="fa fa-plus"></i></button>
+                  <button className="btn btn-default" tabIndex={ 0 } onClick={ (e) => { e.preventDefault(); setAdvancedSearchQuery(advancedSearchQuery.addEmpty()) } }><i className="fa fa-plus"></i></button>
                 </div>
 
                 {idx > 0 &&
                  <div className="form-group col-md-1">
-                   <button className="form-control" onClick={ (e) => { e.preventDefault(); setAdvancedSearchQuery(advancedSearchQuery.remove(idx)) } }><i className="fa fa-minus"></i></button>
+                   <button className="btn btn-default" tabIndex={ 0 } onClick={ (e) => { e.preventDefault(); setAdvancedSearchQuery(advancedSearchQuery.remove(idx)) } }><i className="fa fa-minus"></i></button>
                  </div>
                 }
               </div>
             ))
           }
           <div>
-            <button>Submit</button>
+            <button className="btn btn-primary">Submit</button>
           </div>
         </form>
       </div>
