@@ -146,6 +146,15 @@ const AspaceAdvancedSearch: React.FC<{advancedSearchQuery: AdvancedSearchQuery, 
                 </input> Open records only
               </label>
             </div>
+            <div className="form-row">
+              <label>
+                <input type="checkbox"
+                       name="has_digital"
+                       checked={ !!advancedSearchQuery.hasDigitalObjects() }
+                       onChange={(e) => setAdvancedSearchQuery(advancedSearchQuery.setHasDigitalObjects(e.target.checked))}>
+                </input> Records with digital objects only
+              </label>
+            </div>
           </div>
           <div>
             <button className="btn btn-primary">Submit</button>

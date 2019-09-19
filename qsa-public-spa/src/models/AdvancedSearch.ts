@@ -17,6 +17,7 @@ export interface Criteria {
   fromDate?: string,
   toDate?: string,
   openRecordsOnly?: boolean,
+  hasDigitalObjects?: boolean,
 }
 
 export class AdvancedSearchQuery {
@@ -49,6 +50,16 @@ export class AdvancedSearchQuery {
       query: '',
       target_field: 'keywords'
     };
+  }
+
+  setHasDigitalObjects(checked: boolean) {
+    const newCriteria: Criteria = {...this.criteria};
+    newCriteria.hasDigitalObjects = checked;
+    return new AdvancedSearchQuery(newCriteria);
+  }
+
+  hasDigitalObjects(): boolean {
+    return !!this.criteria.hasDigitalObjects;
   }
 
   setOpenRecordsOnly(checked: boolean) {
@@ -147,6 +158,7 @@ export class AdvancedSearchQuery {
       from: this.criteria.fromDate,
       to: this.criteria.toDate,
       open: this.isOpenRecordsOnly(),
+      has_digital: this.hasDigitalObjects(),
     }, {
       arrayFormat: 'bracket',
     });
@@ -165,6 +177,7 @@ export class AdvancedSearchQuery {
       filter_start_date: this.criteria.fromDate,
       filter_end_date: this.criteria.toDate,
       filter_open_records_only: this.isOpenRecordsOnly(),
+      filter_linked_digital_objects_only: this.hasDigitalObjects(),
     })
   }
 
@@ -199,6 +212,10 @@ export class AdvancedSearchQuery {
 
     if (raw.open) {
       criteria.openRecordsOnly = raw.open === 'true';
+    }
+
+    if (raw.has_digital) {
+      criteria.hasDigitalObjects = raw.has_digital === 'true';
     }
 
     return new AdvancedSearchQuery(criteria);
