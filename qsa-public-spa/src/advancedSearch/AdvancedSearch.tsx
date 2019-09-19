@@ -80,12 +80,12 @@ const AspaceAdvancedSearch: React.FC<{advancedSearchQuery: AdvancedSearchQuery, 
                 </div>
 
                 <div className="form-group col-md-1">
-                  <button className="btn btn-default" tabIndex={ 0 } onClick={ (e) => { e.preventDefault(); setAdvancedSearchQuery(advancedSearchQuery.addEmpty()) } }><i className="fa fa-plus"></i></button>
+                  <button className="qg-btn btn-default btn-sm" tabIndex={ 0 } onClick={ (e) => { e.preventDefault(); setAdvancedSearchQuery(advancedSearchQuery.addEmpty()) } }><i className="fa fa-plus"></i></button>
                 </div>
 
                 {idx > 0 &&
                  <div className="form-group col-md-1">
-                   <button className="btn btn-default" tabIndex={ 0 } onClick={ (e) => { e.preventDefault(); setAdvancedSearchQuery(advancedSearchQuery.remove(idx)) } }><i className="fa fa-minus"></i></button>
+                   <button className="qg-btn btn-default btn-sm" tabIndex={ 0 } onClick={ (e) => { e.preventDefault(); setAdvancedSearchQuery(advancedSearchQuery.remove(idx)) } }><i className="fa fa-minus"></i></button>
                  </div>
                 }
               </div>
@@ -157,7 +157,7 @@ const AspaceAdvancedSearch: React.FC<{advancedSearchQuery: AdvancedSearchQuery, 
             </div>
           </div>
           <div>
-            <button className="btn btn-primary">Submit</button>
+            <button className="qg-btn btn-primary">Submit</button>
           </div>
         </form>
       </div>

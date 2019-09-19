@@ -40,10 +40,10 @@ const SearchResults: React.FC<{ searchResults: any, currentPage: number, advance
             <table className="table table-bordered table-striped">
                 <thead>
                     <tr>
-                        <th>Record Type</th>
-                        <th>QSA ID</th>
+                        <th style={{width: '140px'}}>Record Type</th>
+                        <th style={{width: '120px'}}>QSA ID</th>
                         <th>Title</th>
-                        <th></th>
+                        <th style={{width: '60px'}}></th>
                     </tr>
                 </thead>
                 <tbody>
