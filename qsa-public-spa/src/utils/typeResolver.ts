@@ -43,7 +43,7 @@ const IconForType: { [name:string]:string } = {
     'agent_corporate_entity': 'fa fa-building',
     'resource': 'fa fa-folder-open',
     'archival_object': 'fa fa-file',
-    'mandate': 'fa fa-scroll',
+    'mandate': 'fa fa-legal',
     'function': 'fa fa-clipboard',
 }
 
