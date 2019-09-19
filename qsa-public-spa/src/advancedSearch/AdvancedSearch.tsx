@@ -66,7 +66,7 @@ const AspaceAdvancedSearch: React.FC<{advancedSearchQuery: AdvancedSearchQuery, 
                          name="q[]"
                          value={ clause.query }
                          onChange={ (e) => setAdvancedSearchQuery(advancedSearchQuery.queryChanged(e, idx)) }
-                         required>
+                  >
                   </input>
                 </div>
 

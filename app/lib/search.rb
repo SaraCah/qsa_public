@@ -306,6 +306,14 @@ class Search
     end
   end
 
+  def self.match_all_if_empty(s)
+    if s.to_s.empty?
+      "*:*"
+    else
+      s
+    end
+  end
+
   def self.advanced(search_opts)
     query = search_opts.fetch(:query)
 
@@ -330,7 +338,7 @@ class Search
       query.filter_open_records_only ? "open_record:true" : nil,
     ].compact
 
-    response = solr_handle_search(q: query.query_string,
+    response = solr_handle_search(q: match_all_if_empty(query.query_string),
                                   start: start_index,
                                   sort: sort,
                                   fq: filters).fetch('response', {})

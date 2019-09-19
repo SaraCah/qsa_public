@@ -65,6 +65,11 @@ class AdvancedSearchQuery
   end
 
   def parse_query(query)
+    if Array(query['clauses']).empty? || (query['clauses'].length == 1 && query['clauses'][0]['query'].to_s.empty?)
+      # No query given
+      return ''
+    end
+
     clauses = query['clauses'].each_with_index.map {|clause, idx|
       operator = clause.fetch('operator')
       negated = false
