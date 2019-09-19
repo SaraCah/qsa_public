@@ -49,15 +49,18 @@ const AspaceAdvancedSearch: React.FC<{advancedSearchQuery: AdvancedSearchQuery, 
             advancedSearchQuery.map((clause, idx) => (
               <div className="form-row" key={ clause.id }>
                 <div className="form-group col-md-2">
+                  { idx === 0 && <span className="form-control-plaintext text-right">Search for:</span>}
+                  {
                   <select name="op[]"
                           className="form-control custom-select"
-                          style={{visibility: (idx === 0) ? 'hidden' : 'visible'}}
+                          style={{display: (idx === 0) ? 'none' : 'block'}}
                           value={ clause.boolean_operator }
                           onChange={ (e) => setAdvancedSearchQuery(advancedSearchQuery.operatorChanged(e, idx)) }>
                     <option value="AND">AND</option>
                     <option value="OR">OR</option>
                     <option value="NOT">NOT</option>
                   </select>
+                  }
                 </div>
 
                 <div className="form-group col-md-5">
