@@ -196,7 +196,6 @@ export class AdvancedSearchQuery {
       }
     });
 
-    const recordTypes: HashSet = {};
     if (raw.type) {
       criteria.recordTypes = {};
       raw.type.forEach((recordType: string) => criteria.recordTypes && (criteria.recordTypes[recordType] = true))

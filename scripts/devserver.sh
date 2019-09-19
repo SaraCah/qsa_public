@@ -17,6 +17,6 @@ scripts/start.sh &
 
 (
     cd qsa-public-spa
-    PORT=3009 npm start
+    PORT=3009 npm start | cat
 )
 

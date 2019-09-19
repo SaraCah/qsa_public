@@ -21,7 +21,7 @@ const ResultsPage: React.FC<RouteComponentProps<any>> = (route: RouteComponentPr
     useEffect(() => {
         /* If the page changes, re-fire the search */
         Http.fetchResults(advancedSearchQuery, currentPage).then(setSearchResults);
-    }, [currentPage]);
+    }, [currentPage, advancedSearchQuery]);
 
     return (
         <Layout>

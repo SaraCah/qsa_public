@@ -41,7 +41,7 @@ const AspaceAdvancedSearch: React.FC<{advancedSearchQuery: AdvancedSearchQuery, 
   if (needsRedirect) {
     return <Redirect to={ needsRedirect } push={ true }></Redirect>;
   } else {
-    return ( 
+    return (
       <div id="advancedSearchContainer" className="container">
         <form method="GET" onSubmit={ (e) => { e.preventDefault(); onSubmit(e) } }>
           <button style={{display: "none"}} aria-hidden="true"></button>
