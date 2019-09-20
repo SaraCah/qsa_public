@@ -84,7 +84,8 @@ const CompactSearchSummary: React.FC<{ advancedSearchQuery: AdvancedSearchQuery,
         });
 
         if (clauseSummary.length === 0) {
-            return <span> Showing all {buildAccessLabel()}</span>;
+            const accessLabel = buildAccessLabel();
+            return <span key={ accessLabel }> Showing all {accessLabel}</span>;
         } else {
             const queryString = clauseSummary.join(' ');
             return <span> Searching for {buildAccessLabel()} matching <strong>{ queryString }</strong></span>;
@@ -103,7 +104,7 @@ const CompactSearchSummary: React.FC<{ advancedSearchQuery: AdvancedSearchQuery,
                 labelString = labels[0];
             }
 
-            return <span> of type <strong>{ labelString }</strong></span>;
+            return <span key={ labelString }> of type <strong>{ labelString }</strong></span>;
         }
     };
 
