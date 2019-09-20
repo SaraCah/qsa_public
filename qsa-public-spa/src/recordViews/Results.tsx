@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {Link, RouteComponentProps} from "react-router-dom";
 import Layout from './Layout';
 import AspaceAdvancedSearch from '../advancedSearch/AdvancedSearch'
-import {AdvancedSearchQuery} from "../models/AdvancedSearch";
+import {AdvancedSearchQuery, Filter} from "../models/AdvancedSearch";
 import {Http} from "../utils/http";
 import {iconForType, labelForType, uriFor} from "../utils/typeResolver";
 import queryString from "query-string";
@@ -19,6 +19,7 @@ const ResultsPage: React.FC<any> = (route: any) => {
     } else {
         return (
             <Layout skipFooter={ !searchResults }>
+                <SearchFacets facets={ searchResults.facets } advancedSearchQuery={ advancedSearchQuery } />
                 <h1>Archives Search</h1>
                 <div className="qg-call-out-box">
                     <AspaceAdvancedSearch advancedSearchQuery={ advancedSearchQuery }></AspaceAdvancedSearch>
@@ -28,6 +29,64 @@ const ResultsPage: React.FC<any> = (route: any) => {
         );
     }
 };
+
+const SearchFacets: React.FC<{ facets: any, advancedSearchQuery: AdvancedSearchQuery }> = (props) => {
+    const FACET_LABELS: {[name: string]: string} = {
+        'mandate_id': 'Mandates',
+        'function_id': 'Functions',
+    };
+
+    return (<>
+        {
+            (props.advancedSearchQuery.filters().length > 0 &&
+             <section>
+                <h4>Active filters</h4>
+                <ul>
+                    {
+                        props.advancedSearchQuery.filters().map((filter: Filter) => {
+                            return <li>
+                                {FACET_LABELS[filter.field]}: {filter.label}&nbsp;
+                                <Link className="btn btn-sm btn-outline-dark"
+                                      to={{
+                                            pathname: '/search',
+                                            search: props.advancedSearchQuery.removeFilter(filter).toQueryString()
+                                        }}>
+                                    <i className="fa fa-minus" title="Remove this filter"></i>
+                                </Link>
+                            </li>;
+                        })
+                    }
+                </ul>
+             </section>
+            )
+        }
+        {
+            Object.keys(props.facets).map((field: string) => {
+                const facets = props.facets[field];
+                return <section>
+                    <h4>{FACET_LABELS[field]}</h4>
+                    <ul>
+                        {
+                            facets.map((facet: any) => {
+                                if (props.advancedSearchQuery.hasFilter(facet.facet_field, facet.facet_value)) {
+                                    return <li>{facet.facet_label}&nbsp;{facet.facet_count}</li>
+                                } else {
+                                    return <li><Link
+                                                   to={{
+                                                       pathname: '/search',
+                                                       search: props.advancedSearchQuery.addFilter(facet.facet_field, facet.facet_value, facet.facet_label).toQueryString()
+                                                   }}>
+                                        {facet.facet_label}
+                                    </Link>&nbsp;{facet.facet_count}</li>;
+                                }
+                            })
+                        }
+                    </ul>
+                </section>
+            })
+        }
+    </>)
+}
 
 const SearchResult: React.FC<{ searchResult: any }> = (props) => {
     const formatRepresentationCounts = ():any => {

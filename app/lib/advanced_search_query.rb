@@ -3,6 +3,7 @@ require 'date'
 
 class AdvancedSearchQuery
   attr_reader :query_string, :filter_start_date,
+              :filters,
               :filter_end_date, :filter_types,
               :filter_open_records_only, :filter_linked_digital_objects_only
 
@@ -15,6 +16,8 @@ class AdvancedSearchQuery
 
   def initialize(query)
     @query_string = parse_query(query)
+
+    @filters = query['filters']
 
     @filter_start_date = to_solr_start_date(query['filter_start_date']) || '0000-01-01T00:00:00Z'
     @filter_end_date = to_solr_end_date(query['filter_end_date']) || '9999-12-31T23:59:59Z'

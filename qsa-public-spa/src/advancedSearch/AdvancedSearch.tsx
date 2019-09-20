@@ -27,7 +27,8 @@ const AspaceAdvancedSearch: React.FC<{advancedSearchQuery: AdvancedSearchQuery }
   ];
 
   const onSubmit = (e: any) => {
-    redirectForSearch('/search?' + advancedSearchQuery.toQueryString());
+    // Any filters are cleared when a new search fires
+    redirectForSearch('/search?' + advancedSearchQuery.clearFilters().toQueryString());
   }
 
   if (needsRedirect) {

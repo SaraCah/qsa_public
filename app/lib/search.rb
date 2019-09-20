@@ -350,6 +350,9 @@ class Search
   def self.advanced(search_opts)
     query = search_opts.fetch(:query)
 
+    # query
+    require 'pp';$stderr.puts("\n*** DEBUG #{(Time.now.to_f * 1000).to_i} [search.rb:354 YouthfulLungfish]: " + {%Q^query^ => query}.pretty_inspect + "\n")
+
     record_types = parse_types(query.filter_types)
 
     # Our query date range overlaps with our record's date range UNLESS:
@@ -366,6 +369,9 @@ class Search
 
     filters = [
       "primary_type:(#{record_types.join(' OR ')})",
+      *query.filters.map {|filter|
+        [solr_escape(filter['field']), solr_escape(filter['value'])].join(':')
+      },
       date_filter,
       query.filter_linked_digital_objects_only ? "has_digital_representations:true" : nil,
       query.filter_open_records_only ? "open_record:true" : nil,

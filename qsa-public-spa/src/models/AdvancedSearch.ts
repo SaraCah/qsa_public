@@ -13,6 +13,7 @@ export interface Clause {
 
 export interface Criteria {
   clauses: Clause[],
+  filters: Filter[],
   recordTypes?: HashSet,
   fromDate?: string,
   toDate?: string,
@@ -20,9 +21,14 @@ export interface Criteria {
   hasDigitalObjects?: boolean,
 }
 
+export interface Filter {
+  field: string,
+  value: string,
+  label: string,
+}
+
 export class AdvancedSearchQuery {
   private readonly criteria: Criteria;
-
   static clauseCount: number = 0;
 
   constructor(criteria: Criteria) {
@@ -149,11 +155,45 @@ export class AdvancedSearchQuery {
     return this.setClauseField(idx, 'query', event.target.value);
   }
 
+  addFilter(field: string, value: string, label: string): AdvancedSearchQuery {
+    const newFilter = {field, value, label};
+    const result = this.removeFilter(newFilter);
+    result.criteria.filters.push(newFilter);
+
+    return result;
+  }
+
+  removeFilter(filter: Filter): AdvancedSearchQuery {
+    const newFilters = this.criteria.filters.filter((elt: Filter) => !(elt.field === filter.field && elt.value === filter.value));
+    return new AdvancedSearchQuery(Object.assign({}, this.criteria, {filters: newFilters}));
+  }
+
+  hasFilter(field: string, value: string): boolean {
+    for (const filter of this.criteria.filters) {
+      if (filter.field === field && filter.value === value) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  filters(): Filter[] {
+    return this.criteria.filters;
+  }
+
+  clearFilters(): AdvancedSearchQuery {
+    return new AdvancedSearchQuery(Object.assign({}, this.criteria, {filters: []}));
+  }
+
   toQueryString() {
     return queryString.stringify({
       op: this.criteria.clauses.map((c: Clause) => c.boolean_operator),
       q: this.criteria.clauses.map((c: Clause) => c.query),
       f: this.criteria.clauses.map((c: Clause) => c.target_field),
+      ff: this.criteria.filters.map((f: Filter) => f.field),
+      fv: this.criteria.filters.map((f: Filter) => f.value),
+      fl: this.criteria.filters.map((f: Filter) => f.label),
       type: Object.keys(this.criteria.recordTypes || []).filter((recordType: string) => this.criteria.recordTypes && this.criteria.recordTypes[recordType]),
       from: this.criteria.fromDate,
       to: this.criteria.toDate,
@@ -173,6 +213,7 @@ export class AdvancedSearchQuery {
           'query': clause.query,
         }
       }),
+      filters: this.criteria.filters,
       filter_types: Object.keys(this.criteria.recordTypes || []).filter((recordType: string) => this.criteria.recordTypes && this.criteria.recordTypes[recordType]),
       filter_start_date: this.criteria.fromDate,
       filter_end_date: this.criteria.toDate,
@@ -181,14 +222,24 @@ export class AdvancedSearchQuery {
     })
   }
 
-  static fromQueryString(searchString: string) {
-    const raw:any = queryString.parse(searchString, {arrayFormat: 'bracket'});
-    const criteria: Criteria = {
+  static emptyQuery(): AdvancedSearchQuery {
+    return new AdvancedSearchQuery({
       clauses: [],
-    };
+      filters: [],
+    });
+  }
+
+  static fromQueryString(searchString: string): AdvancedSearchQuery {
+    const raw:any = queryString.parse(searchString, {arrayFormat: 'bracket'});
+
+    if (!raw.ff) { raw.ff = []; }
+    if (!raw.fv) { raw.fv = []; }
+    if (!raw.fl) { raw.fl = []; }
+
+    const result = AdvancedSearchQuery.emptyQuery();
 
     if (raw.q) {
-      criteria.clauses = raw.q.map((queryString: string, idx: number) => {
+      result.criteria.clauses = raw.q.map((queryString: string, idx: number) => {
         return {
           id: idx,
           query: queryString,
@@ -198,28 +249,43 @@ export class AdvancedSearchQuery {
       });
     }
 
+    // ff = filter field; fv = filter value; fl = filter label
+    if (raw.ff) {
+      result.criteria.filters = raw.ff.map((filterField: string, idx: number) => {
+        if (raw.fv[idx] && raw.fl[idx]) {
+          return {
+            field: filterField,
+            value: raw.fv[idx],
+            label: raw.fl[idx],
+          }
+        } else {
+          return null;
+        }
+      }).filter((e: any) => e);
+    }
+
     if (raw.type) {
-      criteria.recordTypes = {};
-      raw.type.forEach((recordType: string) => criteria.recordTypes && (criteria.recordTypes[recordType] = true))
+      result.criteria.recordTypes = {};
+      raw.type.forEach((recordType: string) => result.criteria.recordTypes && (result.criteria.recordTypes[recordType] = true))
     }
 
     if (raw.from) {
-      criteria.fromDate = raw.from;
+      result.criteria.fromDate = raw.from;
     }
 
     if (raw.to) {
-      criteria.toDate = raw.to;
+      result.criteria.toDate = raw.to;
     }
 
     if (raw.open) {
-      criteria.openRecordsOnly = raw.open === 'true';
+      result.criteria.openRecordsOnly = raw.open === 'true';
     }
 
     if (raw.has_digital) {
-      criteria.hasDigitalObjects = raw.has_digital === 'true';
+      result.criteria.hasDigitalObjects = raw.has_digital === 'true';
     }
 
-    return new AdvancedSearchQuery(criteria);
+    return result;
   }
 }
 
