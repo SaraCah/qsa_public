@@ -258,7 +258,7 @@ const SearchResults: React.FC<{ searchResults: any, currentPage: number, advance
     return (
         <section className="qg-results">
 
-            <h2>Results search</h2>
+            <h2>Your search results</h2>
 
             <div className="row">
                 <div className="col-sm-12">
