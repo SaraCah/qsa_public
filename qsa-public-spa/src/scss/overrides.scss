@@ -11,17 +11,23 @@
 .search-filters ul {
   list-style: none;
 
+  li {
+    position: relative;
+  }
+
   .facet-label {
     display: inline-block;
-    width: 30em;
+    width: calc(100% - 20px);
   }
 
   .facet-count {
-    display: inline-block;
+    position: absolute;
+    right: 0;
+    top: 0;
   }
 
   .facet-remove-btn {
-    text-align: left;
-    padding-left: 0;
+    text-align: right;
+    padding: 2px 0 2px 12px;
   }
 }
