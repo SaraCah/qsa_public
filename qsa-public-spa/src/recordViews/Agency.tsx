@@ -22,7 +22,7 @@ import Layout from "./Layout";
 
 
 
-const AgencyPage: React.FC<RouteComponentProps<any>> = (route: RouteComponentProps<any>) => {
+const AgencyPage: React.FC<any> = (route: any) => {
   const [agency, setCurrentAgency] = useState<any | null>(null);
   const qsa_id: string = route.match.params.qsa_id;
 
@@ -40,6 +40,8 @@ const AgencyPage: React.FC<RouteComponentProps<any>> = (route: RouteComponentPro
   if (!agency) {
     return <></>;
   } else {
+    route.setPageTitle(`Agency: ${agency.displayString}`);
+
     const hasAgentRelationships = agency.agentRelationships.length > 0,
           hasSeriesRelationships = agency.seriesRelationships.length > 0,
           hasNotes = agency.notes.length > 0,

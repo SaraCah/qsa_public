@@ -18,7 +18,7 @@ import ResultsPage from "./recordViews/Results";
 
 let routeKey: number = 0;
 
-function wrappedRoute(component: any, opts: { alwaysRender?: boolean } = {}): any {
+function wrappedRoute(component: any, opts: { alwaysRender?: boolean, pageTitle?: string } = {}): any {
   if (typeof(opts.alwaysRender) === 'undefined') {
     opts.alwaysRender = true;
   }
@@ -33,9 +33,20 @@ function wrappedRoute(component: any, opts: { alwaysRender?: boolean } = {}): an
       meta && meta.parentNode && meta.parentNode.removeChild(meta);
     });
 
+    const setPageTitle = (s: string) => {
+      const title = document.head.querySelector('title');
+      if (title) {
+        title.innerText = s;
+      }
+    };
+
+    if (opts.pageTitle) {
+      setPageTitle(opts.pageTitle);
+    }
+
 
     routeKey++;
-    return React.createElement(component, Object.assign({}, props, {routeKey: routeKey}, opts.alwaysRender ? {key: routeKey} : {}));
+    return React.createElement(component, Object.assign({}, props, {routeKey, setPageTitle}, opts.alwaysRender ? {key: routeKey} : {}));
   }
 }
 
@@ -43,10 +54,10 @@ function wrappedRoute(component: any, opts: { alwaysRender?: boolean } = {}): an
 ReactDOM.render(
   <BrowserRouter>
     <Switch>
-      <Route exact path="/" component={wrappedRoute(HomePage)} />
-      <Route path="/agencies/:qsa_id" component={wrappedRoute(AgencyPage)} />
-      <Route exact path="/search" component={wrappedRoute(ResultsPage)} />
-      <Route component={wrappedRoute(NotFound)} />
+      <Route exact path="/" component={wrappedRoute(HomePage, {pageTitle: "Archives Search: Home"})} />
+      <Route path="/agencies/:qsa_id" component={wrappedRoute(AgencyPage, {pageTitle: "View agency"})} />
+      <Route exact path="/search" component={wrappedRoute(ResultsPage, {pageTitle: "Search records"})} />
+      <Route component={wrappedRoute(NotFound, {pageTitle: "Page not found"})} />
     </Switch>
   </BrowserRouter>,
   document.getElementById('root'));
