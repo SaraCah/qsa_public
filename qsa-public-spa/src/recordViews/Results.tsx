@@ -51,6 +51,8 @@ const SearchFacets: React.FC<{ facets: any, advancedSearchQuery: AdvancedSearchQ
     const FACET_LABELS: {[name: string]: string} = {
         'mandate_id': 'Mandates',
         'function_id': 'Functions',
+        'creating_agency_id': 'Creating Agency',
+        'responsible_agency_id': 'Responsible Agency',
     };
 
     return (<section className="search-filters">

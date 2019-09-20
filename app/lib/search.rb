@@ -381,7 +381,7 @@ class Search
                                        'start': start_index,
                                        'sort': sort,
                                        'facet': true,
-                                       'facet.field': ['mandate_id', 'function_id'],
+                                       'facet.field': ['mandate_id', 'function_id', 'responsible_agency_id', 'creating_agency_id'],
                                        'facet.mincount': 1,
                                        fq: filters)
 
@@ -399,7 +399,7 @@ class Search
       }
     end
 
-    resolve_document_ids(facets, ['mandate_id', 'function_id'])
+    resolve_document_ids(facets, ['mandate_id', 'function_id', 'responsible_agency_id', 'creating_agency_id'])
 
     response = solr_response.fetch('response', {})
 
