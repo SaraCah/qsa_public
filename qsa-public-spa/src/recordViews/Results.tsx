@@ -10,6 +10,7 @@ import queryString from "query-string";
 const ResultsPage: React.FC<any> = (route: any) => {
     const [searchResults, setSearchResults] = useState<any | null>(null);
     const [advancedSearchQuery, setAdvancedSearchQuery] = useState<AdvancedSearchQuery>(AdvancedSearchQuery.fromQueryString(route.location.search));
+    const [showCompact, setShowCompact] = useState<boolean>(false);
 
     const currentPage: number = Number(queryString.parse(route.location.search).page || 0);
 
@@ -28,7 +29,11 @@ const ResultsPage: React.FC<any> = (route: any) => {
     };
 
     if (!searchResults) {
-        Http.fetchResults(advancedSearchQuery, currentPage).then(setSearchResults);
+        Http.fetchResults(advancedSearchQuery, currentPage).then((results) => {
+            setSearchResults(results);
+            setShowCompact(true);
+        });
+
         return <Layout skipFooter={ true }></Layout>
     } else {
         return (
@@ -38,13 +43,91 @@ const ResultsPage: React.FC<any> = (route: any) => {
                      <SearchFacets facets={ searchResults.facets } advancedSearchQuery={ advancedSearchQuery } />)
                 }>
                 <h1>Archives Search</h1>
-                <div className="qg-call-out-box">
-                    <AspaceAdvancedSearch advancedSearchQuery={ advancedSearchQuery }></AspaceAdvancedSearch>
-                </div>
+                {showCompact ?
+                 <CompactSearchSummary advancedSearchQuery={ advancedSearchQuery } modifySearch={ () => { setShowCompact(false); } } /> :
+                 <div className="qg-call-out-box">
+                     <AspaceAdvancedSearch advancedSearchQuery={ advancedSearchQuery }></AspaceAdvancedSearch>
+                 </div>
+                }
                 {searchResults && <SearchResults searchResults={ searchResults } currentPage={ currentPage } advancedSearchQuery={ advancedSearchQuery }></SearchResults> }
             </Layout>
         );
     }
+};
+
+const CompactSearchSummary: React.FC<{ advancedSearchQuery: AdvancedSearchQuery, modifySearch: () => void }> = (props) => {
+    const buildAccessLabel = () => {
+        const [openOnly, hasDigitalObjects] = [props.advancedSearchQuery.isOpenRecordsOnly(),
+                                               props.advancedSearchQuery.hasDigitalObjects()];
+
+        if (openOnly && hasDigitalObjects) {
+            return "open records with digital objects";
+        } else if (openOnly) {
+            return "open records";
+        } else if (hasDigitalObjects) {
+            return "records with digital objects";
+        } else {
+            return "records";
+        }
+    }
+
+    const buildQuerySummary = () => {
+        const clauseSummary: string[] = [];
+
+        props.advancedSearchQuery.getClauses().forEach((clause, idx) => {
+            if (clause.target_field && clause.query && clause.boolean_operator) {
+                if (idx > 0) {
+                    clauseSummary.push(clause.boolean_operator);
+                }
+                clauseSummary.push(`${clause.target_field}:${clause.query}`);
+            }
+        });
+
+        if (clauseSummary.length === 0) {
+            return <div>Showing all {buildAccessLabel()}</div>;
+        } else {
+            const queryString = clauseSummary.join(' ');
+            return <div>Searching for {buildAccessLabel()} matching <strong>{ queryString }</strong></div>;
+        }
+    };
+
+    const buildTypeSummary = () => {
+        const limits = props.advancedSearchQuery.getTypeLimits();
+        if (limits.length > 0) {
+            let labels = limits.map(labelForType);
+
+            let labelString = '';
+            if (labels.length > 1) {
+                labelString = (labels.slice(0, labels.length - 1).join(', ') + ' or ' + labels[labels.length - 1]);
+            } else {
+                labelString = labels[0];
+            }
+
+            return <div>of type <strong>{ labelString }</strong></div>;
+        }
+    };
+
+    const buildDateSummary = () => {
+        const [fromDate, toDate] = [props.advancedSearchQuery.getFromDate(), props.advancedSearchQuery.getToDate()];
+
+        if (fromDate && toDate) {
+            return <div>between dates <strong>{ fromDate }</strong> &mdash; <strong>{ toDate }</strong></div>;
+        } else if (fromDate) {
+            return <div>after date <strong>{ fromDate }</strong></div>;
+        } else if (toDate) {
+            return <div>before date <strong>{ toDate }</strong></div>;
+        } else {
+            return <div></div>;
+        }
+    }
+
+    return <div className="qg-call-out-box">
+        { buildQuerySummary() }
+        <div className="query-subclause">{ buildTypeSummary() }</div>
+        <div className="query-subclause">{ buildDateSummary() }</div>
+        <div><button onClick={ (e: any) => props.modifySearch() }
+                     className="qg-btn btn-primary btn-xs">Modify search</button></div>
+    </div>;
 };
 
 const SearchFacets: React.FC<{ facets: any, advancedSearchQuery: AdvancedSearchQuery }> = (props) => {
@@ -89,18 +172,18 @@ const SearchFacets: React.FC<{ facets: any, advancedSearchQuery: AdvancedSearchQ
                 const facets = props.facets[field];
                 if (facets.length > 0) {
                     return (
-                        <section className="available-filters">
+                        <section className="available-filters" key={ field }>
                             <h4>{FACET_LABELS[field]}</h4>
                             <ul>
                                 {
                                     facets.map((facet: any) => {
                                         if (props.advancedSearchQuery.hasFilter(facet.facet_field, facet.facet_value)) {
-                                            return <li>
+                                            return <li key={facet.facet_field + '_' + facet.facet_label}>
                                                 <div className="facet-label">{facet.facet_label}</div>
                                                 <div className="facet-count">{facet.facet_count}</div>
                                             </li>;
                                         } else {
-                                            return <li>
+                                            return <li key={facet.facet_field + '_' + facet.facet_label}>
                                                 <div className="facet-label">
                                                     <Link to={{
                                                         pathname: '/search',
@@ -169,6 +252,9 @@ const SearchResult: React.FC<{ searchResult: any }> = (props) => {
 }
 
 const SearchResults: React.FC<{ searchResults: any, currentPage: number, advancedSearchQuery: AdvancedSearchQuery }> = (props) => {
+    const pageUpper = Math.min((props.searchResults.current_page + 1) * props.searchResults.page_size, props.searchResults.total_count);
+    const pageLower = Math.min(pageUpper, props.searchResults.current_page * props.searchResults.page_size + 1);
+
     return (
         <section className="qg-results">
 
@@ -177,7 +263,7 @@ const SearchResults: React.FC<{ searchResults: any, currentPage: number, advance
             <div className="row">
                 <div className="col-sm-12">
                     <div className="pull-right">
-                        <small>Showing { props.searchResults.current_page * props.searchResults.page_size + 1 } - { Math.min((props.searchResults.current_page + 1) * props.searchResults.page_size, props.searchResults.total_count)} of { props.searchResults.total_count } Results</small>
+                        <small>Showing { pageLower } - { pageUpper } of { props.searchResults.total_count } Results</small>
                     </div>
                 </div>
             </div>
@@ -185,7 +271,7 @@ const SearchResults: React.FC<{ searchResults: any, currentPage: number, advance
             <ul className="list-group">
                 {props.searchResults.results.length === 0 && <li>No Results</li>}
                 {props.searchResults.results.length > 0 && props.searchResults.results.map((result:any) => {
-                    return <SearchResult searchResult={ result }></SearchResult>
+                    return <SearchResult searchResult={ result } key={ result.id }></SearchResult>
                 })}
             </ul>
 

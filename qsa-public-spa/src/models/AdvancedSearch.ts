@@ -78,6 +78,9 @@ export class AdvancedSearchQuery {
     return !!this.criteria.openRecordsOnly;
   }
 
+  getClauses(): Clause[] {
+    return this.criteria.clauses;
+  }
 
   setFromDate(date: string): AdvancedSearchQuery {
     const newCriteria: Criteria = {...this.criteria};
@@ -97,6 +100,14 @@ export class AdvancedSearchQuery {
 
   getToDate(): string|undefined {
     return this.criteria.toDate;
+  }
+
+  getTypeLimits(): string[] {
+    if (this.criteria.recordTypes) {
+      return Object.keys(this.criteria.recordTypes);
+    } else {
+      return [];
+    }
   }
 
   setType(recordType: string, checked: boolean): AdvancedSearchQuery {
