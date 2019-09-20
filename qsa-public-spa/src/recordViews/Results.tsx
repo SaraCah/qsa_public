@@ -84,10 +84,10 @@ const CompactSearchSummary: React.FC<{ advancedSearchQuery: AdvancedSearchQuery,
         });
 
         if (clauseSummary.length === 0) {
-            return <div>Showing all {buildAccessLabel()}</div>;
+            return <span> Showing all {buildAccessLabel()}</span>;
         } else {
             const queryString = clauseSummary.join(' ');
-            return <div>Searching for {buildAccessLabel()} matching <strong>{ queryString }</strong></div>;
+            return <span> Searching for {buildAccessLabel()} matching <strong>{ queryString }</strong></span>;
         }
     };
 
@@ -103,7 +103,7 @@ const CompactSearchSummary: React.FC<{ advancedSearchQuery: AdvancedSearchQuery,
                 labelString = labels[0];
             }
 
-            return <div>of type <strong>{ labelString }</strong></div>;
+            return <span> of type <strong>{ labelString }</strong></span>;
         }
     };
 
@@ -111,20 +111,31 @@ const CompactSearchSummary: React.FC<{ advancedSearchQuery: AdvancedSearchQuery,
         const [fromDate, toDate] = [props.advancedSearchQuery.getFromDate(), props.advancedSearchQuery.getToDate()];
 
         if (fromDate && toDate) {
-            return <div>between dates <strong>{ fromDate }</strong> &mdash; <strong>{ toDate }</strong></div>;
+            return <span> between dates <strong>{ fromDate }</strong> &mdash; <strong>{ toDate }</strong></span>;
         } else if (fromDate) {
-            return <div>after date <strong>{ fromDate }</strong></div>;
+            return <span> after date <strong>{ fromDate }</strong></span>;
         } else if (toDate) {
-            return <div>before date <strong>{ toDate }</strong></div>;
+            return <span> before date <strong>{ toDate }</strong></span>;
         } else {
-            return <div></div>;
+            return null;
         }
     }
 
+    {/* <div className="query-subclause">{  }</div>,
+        <div className="query-subclause">{  }</div>
+      */}
+    let clauses = [
+        buildQuerySummary(),
+        buildTypeSummary(),
+        buildDateSummary()
+    ].filter((elt) => elt);
+
+    if (clauses.length > 2) {
+        clauses = clauses.map((clause, idx) => ((idx > 0) ? <div className="query-subclause">{ clause }</div> : <div>{ clause }</div>));
+    }
+
     return <div className="qg-call-out-box">
-        { buildQuerySummary() }
-        <div className="query-subclause">{ buildTypeSummary() }</div>
-        <div className="query-subclause">{ buildDateSummary() }</div>
+        { clauses }
         <div><button onClick={ (e: any) => props.modifySearch() }
                      className="qg-btn btn-primary btn-xs">Modify search</button></div>
     </div>;
