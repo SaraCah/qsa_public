@@ -36,23 +36,27 @@ const SearchFacets: React.FC<{ facets: any, advancedSearchQuery: AdvancedSearchQ
         'function_id': 'Functions',
     };
 
-    return (<>
+    return (<section className="search-filters">
         {
             (props.advancedSearchQuery.filters().length > 0 &&
-             <section>
+             <section className="active-filters">
                 <h4>Active filters</h4>
                 <ul>
                     {
-                        props.advancedSearchQuery.filters().map((filter: Filter) => {
+                    props.advancedSearchQuery.filters().map((filter: Filter) => {
                             return <li>
-                                {FACET_LABELS[filter.field]}: {filter.label}&nbsp;
-                                <Link className="btn btn-sm btn-outline-dark"
-                                      to={{
-                                            pathname: '/search',
-                                            search: props.advancedSearchQuery.removeFilter(filter).toQueryString()
-                                        }}>
-                                    <i className="fa fa-minus" title="Remove this filter"></i>
-                                </Link>
+                                <div className="facet-label">
+                                    {FACET_LABELS[filter.field]}: {filter.label}&nbsp;
+                                </div>
+                                <div className="facet-count">
+                                    <Link className="qg-btn btn-link facet-remove-btn"
+                                          to={{
+                                                pathname: '/search',
+                                                search: props.advancedSearchQuery.removeFilter(filter).toQueryString()
+                                            }}>
+                                        <i className="fa fa-minus-circle" title="Remove this filter"></i>
+                                    </Link>
+                                </div>
                             </li>;
                         })
                     }
@@ -63,21 +67,26 @@ const SearchFacets: React.FC<{ facets: any, advancedSearchQuery: AdvancedSearchQ
         {
             Object.keys(props.facets).map((field: string) => {
                 const facets = props.facets[field];
-                return <section>
+                return <section className="available-filters">
                     <h4>{FACET_LABELS[field]}</h4>
                     <ul>
                         {
                             facets.map((facet: any) => {
                                 if (props.advancedSearchQuery.hasFilter(facet.facet_field, facet.facet_value)) {
-                                    return <li>{facet.facet_label}&nbsp;{facet.facet_count}</li>
+                                    return <li>
+                                        <div className="facet-label">{facet.facet_label}</div>
+                                        <div className="facet-count">{facet.facet_count}</div>
+                                    </li>;
                                 } else {
-                                    return <li><Link
-                                                   to={{
-                                                       pathname: '/search',
-                                                       search: props.advancedSearchQuery.addFilter(facet.facet_field, facet.facet_value, facet.facet_label).toQueryString()
-                                                   }}>
-                                        {facet.facet_label}
-                                    </Link>&nbsp;{facet.facet_count}</li>;
+                                    return <li>
+                                        <div className="facet-label">
+                                            <Link to={{
+                                                pathname: '/search',
+                                                search: props.advancedSearchQuery.addFilter(facet.facet_field, facet.facet_value, facet.facet_label).toQueryString()
+                                            }}>{facet.facet_label}</Link>
+                                        </div>
+                                        <div className="facet-count">{facet.facet_count}</div>
+                                    </li>;
                                 }
                             })
                         }
@@ -85,7 +94,7 @@ const SearchFacets: React.FC<{ facets: any, advancedSearchQuery: AdvancedSearchQ
                 </section>
             })
         }
-    </>)
+    </section>)
 }
 
 const SearchResult: React.FC<{ searchResult: any }> = (props) => {
