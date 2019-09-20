@@ -2,7 +2,7 @@ class QSAPublic < Sinatra::Base
 
   STATIC_DIR = File.realpath(File.absolute_path(File.join(File.dirname(__FILE__), '..', 'static')))
 
-  Endpoint.get('/*') do
+  get '/*' do
     if request.path == '/'
       send_file(File.join(STATIC_DIR, 'index.html'))
     else
@@ -21,7 +21,7 @@ class QSAPublic < Sinatra::Base
 
         send_file requested_file
       else
-        [404]
+        send_file(File.join(STATIC_DIR, 'index.html'))
       end
     end
   end
