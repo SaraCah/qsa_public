@@ -314,6 +314,39 @@ class Search
     end
   end
 
+  def self.resolve_document_ids(facets, fields)
+    document_ids_to_resolve = fields.map {|field|
+      facets[field].map {|entry|
+        entry[:facet_value]
+      }
+    }.flatten.uniq
+
+    query = "{!terms f=id}" + document_ids_to_resolve.join(',')
+
+    response = solr_handle_search('q' => query,
+                       'offset' => 0,
+                       'rows' => document_ids_to_resolve.length,
+                       'fl' => 'id,title')
+
+
+    id_to_title = response.fetch('response').fetch('docs').map {|doc|
+      [
+        doc['id'],
+        doc['title']
+      ]
+    }.to_h
+
+    facets.each do |facet_field, facet_entries|
+      next unless fields.include?(facet_field)
+
+      facet_entries.each do |entry|
+        entry[:facet_label] = id_to_title.fetch(entry[:facet_value])
+      end
+    end
+
+    facets
+  end
+
   def self.advanced(search_opts)
     query = search_opts.fetch(:query)
 
@@ -338,17 +371,39 @@ class Search
       query.filter_open_records_only ? "open_record:true" : nil,
     ].compact
 
-    response = solr_handle_search(q: match_all_if_empty(query.query_string),
-                                  start: start_index,
-                                  sort: sort,
-                                  fq: filters).fetch('response', {})
+    solr_response = solr_handle_search('q': match_all_if_empty(query.query_string),
+                                       'start': start_index,
+                                       'sort': sort,
+                                       'facet': true,
+                                       'facet.field': ['mandate_id', 'function_id'],
+                                       'facet.mincount': 1,
+                                       fq: filters)
+
+
+    facets = solr_response.fetch('facet_counts').fetch('facet_fields')
+
+    facets.keys.each do |facet_field|
+      facets[facet_field] = facets[facet_field].each_slice(2).map {|facet_value, facet_count|
+        {
+          facet_field: facet_field,
+          facet_value: facet_value,
+          facet_label: facet_value,
+          facet_count: facet_count,
+        }
+      }
+    end
+
+    resolve_document_ids(facets, ['mandate_id', 'function_id'])
+
+    response = solr_response.fetch('response', {})
 
     {
       'total_count' => response.fetch('numFound'),
       'current_page' => page,
       'page_size' => AppConfig[:page_size],
       'sorted_by' => sort,
-      'results' => response.fetch('docs', [])
+      'results' => response.fetch('docs', []),
+      'facets' => facets,
     }
   end
 end
