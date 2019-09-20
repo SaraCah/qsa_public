@@ -74,7 +74,7 @@ const Layout: React.FC<any> = (props: any) => {
                     </header>
 
                     <div id="qg-content">
-                        <div id="qg-two-col-nav" className="row">
+                        <div id={ props.aside ? 'qg-three-col' : 'qg-two-col-nav' } className="row">
                             <nav id="qg-breadcrumb" role="navigation" aria-label="breadcrumb navigation" aria-labelledby="breadcrumb-heading" className="collapse">
                                 <h2 id="breadcrumb-heading" className="qg-visually-hidden">You are here:</h2>
                                 <ol className="list-inline">
@@ -83,18 +83,29 @@ const Layout: React.FC<any> = (props: any) => {
                                     </li>
                                 </ol>
                             </nav>
+
                             <div id="qg-primary-content" role="main">
                                 {props.children}
                             </div>
-                            <nav id="qg-section-nav" aria-label="side navigation" role="navigation">
-                                <h2><Link to={ "/" }>Archives Search</Link></h2>
-                                <ul aria-label="section navigation">
-                                    <li><Link to={ "/search?type[]=resource" }>Series</Link></li>
-                                    <li><Link to={ "/search?type[]=agent_corporate_entity" }>Agencies</Link></li>
-                                    <li><Link to={ "/search?type[]=function" }>Functions</Link></li>
-                                    <li><Link to={ "/search?type[]=mandate" }>Mandates</Link></li>
-                                </ul>
-                            </nav>
+                            { props.aside &&
+                            <aside id="qg-secondary-content">
+                                <div className="qg-aside">
+                                    {props.aside}
+                                </div>
+                            </aside>
+                            }
+
+                            <div id="qg-section-nav">
+                                <nav id="qg-side-nav" aria-label="side navigation" role="navigation">
+                                    <h2><Link to={ "/" }>Archives Search</Link></h2>
+                                    <ul aria-label="section navigation">
+                                        <li><Link to={ "/search?type[]=resource" }>Series</Link></li>
+                                        <li><Link to={ "/search?type[]=agent_corporate_entity" }>Agencies</Link></li>
+                                        <li><Link to={ "/search?type[]=function" }>Functions</Link></li>
+                                        <li><Link to={ "/search?type[]=mandate" }>Mandates</Link></li>
+                                    </ul>
+                                </nav>
+                            </div>
                         </div>
                     </div>
 

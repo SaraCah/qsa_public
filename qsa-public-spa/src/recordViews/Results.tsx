@@ -13,13 +13,30 @@ const ResultsPage: React.FC<any> = (route: any) => {
 
     const currentPage: number = Number(queryString.parse(route.location.search).page || 0);
 
+    const hasFacets = (searchResults: any) => {
+        if (!searchResults.facets) {
+            return false;
+        }
+
+        for (const facetField of Object.keys(searchResults.facets)) {
+            if (searchResults.facets[facetField].length > 0) {
+                return true;
+            }
+        }
+
+        return false;
+    };
+
     if (!searchResults) {
         Http.fetchResults(advancedSearchQuery, currentPage).then(setSearchResults);
         return <Layout skipFooter={ true }></Layout>
     } else {
         return (
-            <Layout skipFooter={ !searchResults }>
-                <SearchFacets facets={ searchResults.facets } advancedSearchQuery={ advancedSearchQuery } />
+            <Layout skipFooter={ !searchResults }
+                aside={
+                    (hasFacets(searchResults) &&
+                     <SearchFacets facets={ searchResults.facets } advancedSearchQuery={ advancedSearchQuery } />)
+                }>
                 <h1>Archives Search</h1>
                 <div className="qg-call-out-box">
                     <AspaceAdvancedSearch advancedSearchQuery={ advancedSearchQuery }></AspaceAdvancedSearch>
@@ -37,6 +54,7 @@ const SearchFacets: React.FC<{ facets: any, advancedSearchQuery: AdvancedSearchQ
     };
 
     return (<section className="search-filters">
+        <h2>Results facets</h2>
         {
             (props.advancedSearchQuery.filters().length > 0 &&
              <section className="active-filters">
@@ -67,31 +85,35 @@ const SearchFacets: React.FC<{ facets: any, advancedSearchQuery: AdvancedSearchQ
         {
             Object.keys(props.facets).map((field: string) => {
                 const facets = props.facets[field];
-                return <section className="available-filters">
-                    <h4>{FACET_LABELS[field]}</h4>
-                    <ul>
-                        {
-                            facets.map((facet: any) => {
-                                if (props.advancedSearchQuery.hasFilter(facet.facet_field, facet.facet_value)) {
-                                    return <li>
-                                        <div className="facet-label">{facet.facet_label}</div>
-                                        <div className="facet-count">{facet.facet_count}</div>
-                                    </li>;
-                                } else {
-                                    return <li>
-                                        <div className="facet-label">
-                                            <Link to={{
-                                                pathname: '/search',
-                                                search: props.advancedSearchQuery.addFilter(facet.facet_field, facet.facet_value, facet.facet_label).toQueryString()
-                                            }}>{facet.facet_label}</Link>
-                                        </div>
-                                        <div className="facet-count">{facet.facet_count}</div>
-                                    </li>;
+                if (facets.length > 0) {
+                    return (
+                        <section className="available-filters">
+                            <h4>{FACET_LABELS[field]}</h4>
+                            <ul>
+                                {
+                                    facets.map((facet: any) => {
+                                        if (props.advancedSearchQuery.hasFilter(facet.facet_field, facet.facet_value)) {
+                                            return <li>
+                                                <div className="facet-label">{facet.facet_label}</div>
+                                                <div className="facet-count">{facet.facet_count}</div>
+                                            </li>;
+                                        } else {
+                                            return <li>
+                                                <div className="facet-label">
+                                                    <Link to={{
+                                                        pathname: '/search',
+                                                        search: props.advancedSearchQuery.addFilter(facet.facet_field, facet.facet_value, facet.facet_label).toQueryString()
+                                                    }}>{facet.facet_label}</Link>
+                                                </div>
+                                                <div className="facet-count">{facet.facet_count}</div>
+                                            </li>;
+                                        }
+                                    })
                                 }
-                            })
-                        }
-                    </ul>
-                </section>
+                            </ul>
+                        </section>
+                    );
+                }
             })
         }
     </section>)
