@@ -1,4 +1,27 @@
+require 'pp'
+
 class QSAPublic < Sinatra::Base
+
+  Endpoint.post('/api/error_report') do
+    error_report = JSON.parse(request.body.read)
+
+    Array(error_report['errors']).each do |error|
+      $LOG.error(error.pretty_inspect)
+    end
+
+    Array(error_report['consoleMessages']).each do |msg|
+      case msg['method']
+          when 'warn' then
+            $LOG.warn(msg['arguments'].pretty_inspect)
+          when 'error' then
+            $LOG.error(msg['arguments'].pretty_inspect)
+          else
+            $LOG.info(msg['arguments'].pretty_inspect)
+      end
+    end
+
+    [200]
+  end
 
   Endpoint.get('/api/search')
     .param(:type, [String], "Record Types", optional: true)

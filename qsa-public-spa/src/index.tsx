@@ -5,6 +5,7 @@ import 'bootstrap/dist/js/bootstrap.bundle';
 import './index.scss';
 import { BrowserRouter, Switch, Route, RouteComponentProps } from 'react-router-dom'
 
+import axios from 'axios';
 
 import './scss/qg-main.scss';
 import 'bootstrap/dist/js/bootstrap';
@@ -14,6 +15,101 @@ import HomePage from "./recordViews/Home";
 import AgencyPage from "./recordViews/Agency";
 import NotFound from "./recordViews/NotFound";
 import ResultsPage from "./recordViews/Results";
+
+
+/* Establish error handling */
+class ErrorBuffer {
+  static FLUSH_DELAY_MS: number = 2000;
+
+  private errors: ErrorEvent[];
+  private consoleMessages: { method: string, arguments: any[] }[];
+  private flushing: boolean;
+
+  constructor() {
+    this.errors = [];
+    this.consoleMessages = [];
+    this.flushing = false;
+
+    this.startTimer();
+  }
+
+  private startTimer() {
+    setInterval(() => { this.flush() }, ErrorBuffer.FLUSH_DELAY_MS);
+  }
+
+  private flush() {
+    if (this.flushing || (this.errors.length === 0 && this.consoleMessages.length === 0)) {
+      return;
+    }
+
+    const errors = this.errors;
+    const consoleMessages = this.consoleMessages;
+
+    this.errors = [];
+    this.consoleMessages = [];
+
+    this.flushing = true;
+    axios.post(`${process.env.REACT_APP_QSA_PUBLIC_URL}/api/error_report`,
+               {
+                 errors: this.formatErrors(errors),
+                 consoleMessages: this.formatMessages(consoleMessages)
+               }).finally(() => {
+                 this.flushing = false;
+               });
+  }
+
+  private formatErrors(errors: ErrorEvent[]): any[] {
+    return errors.map((error: ErrorEvent) => {
+      return {
+        message: error.message,
+        filename: error.filename,
+        lineno: error.lineno,
+        colno: error.colno,
+        stack: error.error.stack,
+      };
+    });
+  }
+
+  private formatMessages(messages: any[]): any[] {
+    return messages;
+  }
+
+  addError(error: ErrorEvent) {
+    this.errors.push(error);
+  }
+
+  addConsoleMessage(msg: any) {
+    this.consoleMessages.push(msg);
+  }
+}
+
+const appErrorBuffer = new ErrorBuffer();
+
+
+
+/* Hook console to capture messages */
+const browserConsole: any = console;
+const appConsole: any = {}
+
+Object.keys(browserConsole).forEach(function (key){
+  appConsole[key] = function (...rest: any[]) {
+    appErrorBuffer.addConsoleMessage({
+      method: key,
+      arguments: rest,
+    });
+    browserConsole[key].apply(this, arguments)
+  };
+});
+
+console = appConsole;
+
+/* Grab errors that hit the top-level */
+window.addEventListener('error', function (event) {
+  appErrorBuffer.addError(event);
+
+  return false;
+});
+
 
 
 let routeKey: number = 0;
