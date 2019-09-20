@@ -81,6 +81,24 @@ const Layout: React.FC<any> = (props: any) => {
                                     <li id="qldGov">
                                         <a href="http://www.qld.gov.au/" target="_blank">Queensland Government home</a>
                                     </li>
+                                    <li>
+                                        <a href="https://www.qld.gov.au/queenslanders/" target="_blank">For Queenslanders</a>
+                                    </li>
+                                    <li className="qldGovBreadcrumb">
+                                        <a href="https://www.qld.gov.au/recreation/" target="_blank">Recreation, sport and arts</a>
+                                    </li>
+                                    <li className="qldGovBreadcrumb">
+                                        <a href="https://www.qld.gov.au/recreation/arts/" target="_blank">Arts, culture and heritage</a>
+                                    </li>
+                                    <li className="qldGovBreadcrumb">
+                                        <a href="https://www.qld.gov.au/recreation/arts/heritage/" target="_blank">Heritage</a>
+                                    </li>
+                                    <li className="qldGovBreadcrumb">
+                                        <a href="https://www.qld.gov.au/recreation/arts/heritage/archives/" target="_blank">Queensland's archives</a>
+                                    </li>
+                                    <li className="qldGovBreadcrumb">
+                                        Archives Search
+                                    </li>
                                 </ol>
                             </nav>
 
