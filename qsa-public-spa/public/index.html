@@ -26,20 +26,21 @@
     -->
     <link rel="stylesheet" href="%PUBLIC_URL%/assets/fontawesome/css/all.min.css" />
 
-    <title>ArchivesSearch | Queensland State Archives | Queensland Government</title>
+    <title>Archives Search | Queensland State Archives | Queensland Government</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
+
     <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
 
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
-
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
+    <script>
+      var qg = qg || {};
+      qg.swe = qg.swe || {};
+      // Used by the feedback form.
+      qg.swe.franchiseTitle = 'Queensland State Archives: Archives Search';
+    </script>
+    <script src="%PUBLIC_URL%/assets/v3.1/latest/lib/jquery-3.3.1.min.js"></script>
+    <script src="%PUBLIC_URL%/assets/v3.1/latest/lib/all-ext-min.js"></script>
+    <script src="%PUBLIC_URL%/assets/v3.1/latest/js/qg-main.js"></script>
   </body>
 </html>

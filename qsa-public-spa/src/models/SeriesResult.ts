@@ -89,4 +89,8 @@ export class SeriesResult extends AspaceResult {
 
     this.accessNotifications = result.access_notifications;
   }
+
+  static forJSON(json: any) {
+    return new SeriesResult(json);
+  }
 }
