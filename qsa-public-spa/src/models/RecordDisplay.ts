@@ -81,7 +81,7 @@ export class RecordDisplay {
                 return;
             }
 
-            if (noteLabel && note.note_label != noteLabel) {
+            if (noteLabel && note.note_label.trim().toLowerCase() != noteLabel.trim().toLowerCase()) {
                 return;
             }
 

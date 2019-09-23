@@ -17,64 +17,7 @@ import {
   uriFor
 } from "../utils/typeResolver";
 import {Note, RecordDisplay} from "../models/RecordDisplay";
-
-
-const NoteDisplay: React.FC<{note: Note}> = ({ note }) => {
-  switch (note.kind) {
-    case "text": return (<div> { note.text.map((content:string) => <p>{ content }</p>) }</div>);
-    case "orderedlist": return (<div>
-      <p>{ note.title }</p>
-      <ol>
-        {
-          note.items.map((item: string) => <li>{ item }</li>)
-        }
-      </ol>
-    </div>);
-    case "definedlist": return (<div>
-      <p>{ note.title }</p>
-      <dl>
-        {
-          note.items.map(({label, value}) => {
-            return <>
-                <dt>{ label }</dt>
-                <dd>{ value }</dd>
-            </>
-          })
-        }
-      </dl>
-    </div>);
-    case "chronology": return (<div>
-      <p>{ note.title }</p>
-      <dl>
-        {
-          note.items.map(({event_date, value}) => {
-            return <>
-              <dt>{ event_date }</dt>
-              {
-                value.map((v: string) => {
-                  return <dd>{ v }</dd>
-                })
-              }
-            </>
-          })
-        }
-      </dl>
-    </div>);
-  } 
-}
-
-
-const Relationship: React.FC<{relationship: any}> = ({ relationship }) => {
-  return (<>
-        <i className={ iconForType(relationship._resolved.jsonmodel_type) } aria-hidden="true"></i>&nbsp;
-        <Link to={ uriFor(relationship._resolved.qsa_id_prefixed, relationship._resolved.jsonmodel_type) }>
-          { relationship._resolved.display_string }
-        </Link><br/>
-        Relator: { labelForRelator(relationship.relator) }<br/>
-        { relationship.start_date }&nbsp;-&nbsp;{ relationship.end_date }
-      </>
-  )
-}
+import {AccordionPanel, MaybeLink, NoteDisplay, Relationship} from "./Helpers";
 
 
 const SeriesPage: React.FC<any> = (route: any) => {
@@ -89,7 +32,7 @@ const SeriesPage: React.FC<any> = (route: any) => {
       })
       .catch((exception) => {
         console.error(exception);
-        // window.location.href = '/404';
+        window.location.href = '/404';
       });
   }
 
@@ -195,115 +138,59 @@ const SeriesPage: React.FC<any> = (route: any) => {
               {/*<label htmlFor="expand" className="controls">Show details</label>*/}
 
               {
-                series.getNotes('prefercite', null, (notes: Note[]) => {
-                  const id:string = series.generateId();
-
-                  return <article>
-                    <input id={ id } type="checkbox" name="tabs" aria-controls={ `${id}-content` } aria-expanded="false" role="checkbox"/>
-                    <h3 className="acc-heading">
-                      <label htmlFor={ id }>Notes: Preferred Citation <span className="arrow"> <i></i></span></label>
-                    </h3>
-                    <div className="collapsing-section" aria-hidden="true" id={ `${id}-content` }>
-                      { notes.map((note: Note) => <NoteDisplay note={ note }/>) }
-                    </div>
-                  </article>
-                })
+                series.getNotes('prefercite', null, (notes: Note[]) => (
+                    <AccordionPanel id={ series.generateId() }
+                                    title='Notes - Preferred Citation'
+                                    children={ notes.map((note: Note) => <NoteDisplay note={ note }/>) } />
+                ))
               }
 
               {
-                series.getNotes('odd', 'Remarks', (notes: Note[]) => {
-                  const id:string = series.generateId();
-
-                  return <article>
-                    <input id={ id } type="checkbox" name="tabs" aria-controls={ `${id}-content` } aria-expanded="false" role="checkbox"/>
-                    <h3 className="acc-heading">
-                      <label htmlFor={ id }>Notes: Remarks <span className="arrow"> <i></i></span></label>
-                    </h3>
-                    <div className="collapsing-section" aria-hidden="true" id={ `${id}-content` }>
-                      { notes.map((note: Note) => <NoteDisplay note={ note }/>) }
-                    </div>
-                  </article>
-                })
+                series.getNotes('odd', 'Remarks', (notes: Note[]) => (
+                    <AccordionPanel id={ series.generateId() }
+                                    title='Notes - Remarks'
+                                    children={ notes.map((note: Note) => <NoteDisplay note={ note }/>) } />
+                ))
               }
 
               {
-                series.getNotes('custodhist', null, (notes: Note[]) => {
-                  const id:string = series.generateId();
-
-                  return <article>
-                    <input id={ id } type="checkbox" name="tabs" aria-controls={ `${id}-content` } aria-expanded="false" role="checkbox"/>
-                    <h3 className="acc-heading">
-                      <label htmlFor={ id }>Notes - Agency Control Number (aka Department Numbers)  <span className="arrow"> <i></i></span></label>
-                    </h3>
-                    <div className="collapsing-section" aria-hidden="true" id={ `${id}-content` }>
-                      { notes.map((note: Note) => <NoteDisplay note={ note }/>) }
-                    </div>
-                  </article>
-                })
+                series.getNotes('custodhist', null, (notes: Note[]) => (
+                    <AccordionPanel id={ series.generateId() }
+                                    title='Notes - Agency Control Number (aka Department Numbers)'
+                                    children={ notes.map((note: Note) => <NoteDisplay note={ note }/>) } />
+                ))
               }
 
               {
-                series.getNotes('arrangement', null, (notes: Note[]) => {
-                  const id:string = series.generateId();
-
-                  return <article>
-                    <input id={ id } type="checkbox" name="tabs" aria-controls={ `${id}-content` } aria-expanded="false" role="checkbox"/>
-                    <h3 className="acc-heading">
-                      <label htmlFor={ id }>Notes - System of Arrangement <span className="arrow"> <i></i></span></label>
-                    </h3>
-                    <div className="collapsing-section" aria-hidden="true" id={ `${id}-content` }>
-                      { notes.map((note: Note) => <NoteDisplay note={ note }/>) }
-                    </div>
-                  </article>
-                })
+                series.getNotes('arrangement', null, (notes: Note[]) => (
+                    <AccordionPanel id={ series.generateId() }
+                                    title='Notes - System of Arrangement'
+                                    children={ notes.map((note: Note) => <NoteDisplay note={ note }/>) } />
+                ))
               }
 
               {
-                series.getExternalDocuments('Finding Aid', (docs: any) => {
-                  const id:string = series.generateId();
-
-                  return <article>
-                    <input id={ id } type="checkbox" name="tabs" aria-controls={ `${id}-content` } aria-expanded="false" role="checkbox"/>
-                    <h3 className="acc-heading">
-                      <label htmlFor={ id }>External Resources - Finding Aid <span className="arrow"> <i></i></span></label>
-                    </h3>
-                    <div className="collapsing-section" aria-hidden="true" id={ `${id}-content` }>
-                      {
-                        docs.map((doc: any) => {
-                          if (/^http/i.test(doc.location)) {
-                            return <a href={ doc.location } target="_blank">{ doc.location }</a>
-                          } else {
-                            return <p>{ doc.location }</p>;
-                          }
-                        })
-                      }
-                    </div>
-                  </article>
-                })
+                series.getExternalDocuments('Finding Aid', (docs: any) => (
+                    <AccordionPanel id={series.generateId()}
+                                    title='External Resources - Finding Aid'
+                                    children={
+                                      docs.map((doc: any) => (
+                                        <MaybeLink location={ doc.location } label={ doc.location }/>
+                                      ))
+                                    }/>
+                ))
               }
 
               {
-                series.getExternalDocuments('Publication', (docs: any) => {
-                  const id:string = series.generateId();
-
-                  return <article>
-                    <input id={ id } type="checkbox" name="tabs" aria-controls={ `${id}-content` } aria-expanded="false" role="checkbox"/>
-                    <h3 className="acc-heading">
-                      <label htmlFor={ id }>External Resources - Publications <span className="arrow"> <i></i></span></label>
-                    </h3>
-                    <div className="collapsing-section" aria-hidden="true" id={ `${id}-content` }>
-                      {
-                        docs.map((doc: any) => {
-                          if (/^http/i.test(doc.location)) {
-                            return <a href={ doc.location } target="_blank">{ doc.location }</a>
-                          } else {
-                            return <p>{ doc.location }</p>;
-                          }
-                        })
-                      }
-                    </div>
-                  </article>
-                })
+                series.getExternalDocuments('Publication', (docs: any) => (
+                    <AccordionPanel id={series.generateId()}
+                                    title='External Resources - Publications'
+                                    children={
+                                      docs.map((doc: any) => (
+                                        <MaybeLink location={ doc.location } label={ doc.location }/>
+                                      ))
+                                    }/>
+                ))
               }
             </section>
 
