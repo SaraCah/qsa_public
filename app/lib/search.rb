@@ -152,15 +152,15 @@ class Search
   end
 
 
-  def self.get_record_by_uri(uri)
-    solr_handle_search(q: "uri:#{solr_escape(uri)}")
+  def self.get_records_by_uris(uris)
+    solr_handle_search(q: "{!terms f=uri}#{uris.join(',')}",
+                       rows: uris.length)
       .fetch('response')
       .fetch('docs')
-      .map do |doc|
-      return JSON.parse(doc.fetch('json'))
-    end
-
-    nil
+      .map {|doc|
+        json = JSON.parse(doc.fetch('json'))
+        [doc['uri'], json]
+      }.to_h
   end
 
 
@@ -176,27 +176,75 @@ class Search
     nil
   end
 
+  def self.resolve_refs!(root)
+    queue = [root]
+    to_resolve = {}
 
-  def self.resolve_refs!(record)
-    # FIXME drop unresolvable please
-    if record.is_a?(Array)
-      record.each do |item|
-        resolve_refs!(item)
-      end
-      record.reject!{|h| h['ref'] && h['_resolved'].nil?}
-    elsif record.is_a?(Hash)
-      record.keys.each do |key|
-        if key == 'ref'
-          record['_resolved'] = get_record_by_uri(record[key])
-          record.delete(key) if record['_resolved'].nil?
+    # Round 1: Pull out the refs we need to resolve
+    while !queue.empty?
+      record = queue.shift
+
+      if record.is_a?(Hash)
+        if record['ref']
+          to_resolve[record['ref']] = :failed_to_resolve
         else
-          resolve_refs!(record[key])
+          queue.concat(record.values)
         end
+      elsif record.is_a?(Array)
+        queue.concat(record)
+      else
+        # Boring
       end
     end
 
-    record
+    # Round 2: do the resolves
+    to_resolve.merge!(get_records_by_uris(to_resolve.keys))
+
+    # Round 3: slot in the resolved values and delete things that couldn't be
+    # resolved
+    queue = [root]
+    while !queue.empty?
+      record = queue.shift
+
+      if record.is_a?(Hash)
+        record.keys.each do |key|
+          if record[key].is_a?(Hash) && record[key]['ref']
+            if to_resolve[record[key]['ref']] == :failed_to_resolve
+              record.delete(key)
+            else
+              record[key]['_resolved'] = to_resolve[record[key]['ref']]
+            end
+          else
+            queue << record[key]
+          end
+        end
+      elsif record.is_a?(Array)
+        # Is this an array of refs?
+        if record.any? {|elt| elt.is_a?(Hash) && elt['ref']}
+          # attempt resolve
+          to_delete = []
+          record.each do |elt|
+            if to_resolve[elt['ref']] == :failed_to_resolve
+              to_delete << elt
+            else
+              elt['_resolved'] = to_resolve[elt['ref']]
+            end
+          end
+
+          to_delete.each do |victim|
+            record.delete(victim)
+          end
+        else
+          queue.concat(record)
+        end
+      else
+        # boring
+      end
+    end
+
+    root
   end
+
 
   def self.children(parent_id, page, sort_by = "position_asc", min_position = nil, max_position = nil)
     start_index = (page * AppConfig[:page_size])
