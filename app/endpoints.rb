@@ -189,32 +189,49 @@ class QSAPublic < Sinatra::Base
 
 
   if !defined?(STATIC_DIR) 
-    # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    #  Don't put other endpoints after this one or they'll be overridden by splat
-    # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     STATIC_DIR = File.realpath(File.absolute_path(File.join(File.dirname(__FILE__), '..', 'static')))
+  end
 
-    get '/*' do
-      if request.path == '/'
-        send_file(File.join(STATIC_DIR, 'index.html'))
+  if QSAPublic.development?
+    # Delete any matching route from a previous reload
+    new_uri = compile('/*')
+
+    method_routes = @routes.fetch('GET', [])
+
+    route_to_replace = method_routes.find do |route_def|
+      uri = route_def[0]
+      uri.safe_string == new_uri.safe_string
+    end
+
+    if route_to_replace
+      method_routes.delete(route_to_replace)
+    end
+  end
+
+  # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  #  Don't put other endpoints after this one or they'll be overridden by splat
+  # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  get '/*' do
+    if request.path == '/'
+      send_file(File.join(STATIC_DIR, 'index.html'))
+    else
+      requested_file = begin
+                         File.realpath(File.absolute_path(File.join(STATIC_DIR, request.path)))
+                       rescue Errno::ENOENT
+                         ""
+                       end
+
+      if requested_file.start_with?(STATIC_DIR) && File.exist?(requested_file)
+        if request.path =~ /\.[a-f0-9]{8}\./
+          # Cache built assets more aggressively
+          headers('Cache-Control' => "max-age=86400, public",
+                  'Expires' => (Time.now + 86400).utc.rfc2822)
+        end
+
+        send_file requested_file
       else
-        requested_file = begin
-          File.realpath(File.absolute_path(File.join(STATIC_DIR, request.path)))
-        rescue Errno::ENOENT
-          ""
-        end
-
-        if requested_file.start_with?(STATIC_DIR) && File.exist?(requested_file)
-          if request.path =~ /\.[a-f0-9]{8}\./
-            # Cache built assets more aggressively
-            headers('Cache-Control' => "max-age=86400, public",
-                    'Expires' => (Time.now + 86400).utc.rfc2822)
-          end
-
-          send_file requested_file
-        else
-          send_file(File.join(STATIC_DIR, 'index.html'))
-        end
+        send_file(File.join(STATIC_DIR, 'index.html'))
       end
     end
   end
