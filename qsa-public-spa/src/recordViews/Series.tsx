@@ -118,7 +118,7 @@ const SeriesPage: React.FC<any> = (route: any) => {
                   series.getMaybe('rap_attached', (rap: any) => {
                     return <li className="list-group-item list-group-item-action">
                       <div className="d-flex w-100 justify-content-between">
-                        <h4 className="mb-1">Access notfications</h4>
+                        <h4 className="mb-1">Access notifications</h4>
                       </div>
                       <p className="mb-1">{ rap.display_string }</p>
                     </li>

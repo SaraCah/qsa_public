@@ -26,7 +26,7 @@ export const newAspaceResultFromJsonModelType = (jsonModelType: string, params: 
 const PathMappingForType: { [name:string]:string } = {
     'agent_corporate_entity': '/agencies/',
     'resource': '/series/',
-    'archival_object': '/records/',
+    'archival_object': '/items/',
     'mandate': '/mandates/',
     'function': '/functions/',
 }

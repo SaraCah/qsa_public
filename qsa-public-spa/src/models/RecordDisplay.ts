@@ -31,7 +31,7 @@ export class RecordDisplay {
         this.record = record;
     }
 
-    get(fieldName:string): string {
+    get(fieldName:string): any {
         return this.record[fieldName];
     }
 
