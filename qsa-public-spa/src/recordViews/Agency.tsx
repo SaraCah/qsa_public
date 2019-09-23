@@ -10,6 +10,7 @@ import {
   /* basiclistElement, externalResourceArticleElement */
 } from "../resultView/resultViewTemplates";
 import Layout from "./Layout";
+import {RecordDisplay} from "../models/RecordDisplay";
 
 /* import {AppState} from "../models/AppState";
  * import {DisplayResult} from "../models/DisplayResult";
@@ -26,11 +27,10 @@ const AgencyPage: React.FC<any> = (route: any) => {
   const [agency, setCurrentAgency] = useState<any | null>(null);
   const qsa_id: string = route.match.params.qsa_id;
 
-  /* FIXME: probably want a definition file of types to QSA prefixes here */
   if (!agency) {
-    Http.fetchByQSAID<AgencyResult>(qsa_id, AgencyResult)
-      .then((agencyResult: AgencyResult) => {
-        setCurrentAgency(agencyResult)
+    Http.fetchByQSAID(qsa_id, 'agent_corporate_entity')
+      .then((json: any) => {
+        setCurrentAgency(new RecordDisplay(json))
       })
       .catch(() => {
         window.location.href = '/404';

@@ -10,6 +10,8 @@ import {
   /* basiclistElement, externalResourceArticleElement */
 } from "../resultView/resultViewTemplates";
 import Layout from "./Layout";
+import {iconForType, labelForType} from "../utils/typeResolver";
+import {RecordDisplay} from "../models/RecordDisplay";
 
 
 const SeriesPage: React.FC<any> = (route: any) => {
@@ -18,121 +20,130 @@ const SeriesPage: React.FC<any> = (route: any) => {
 
   /* FIXME: probably want a definition file of types to QSA prefixes here */
   if (!series) {
-    Http.fetchByQSAID<SeriesResult>(qsa_id, SeriesResult)
-      .then((seriesResult: SeriesResult) => {
-        setCurrentSeries(seriesResult)
+    Http.fetchByQSAID(qsa_id, 'resource')
+      .then((json: any) => {
+        setCurrentSeries(new RecordDisplay(json))
       })
-      .catch(() => {
-        window.location.href = '/404';
+      .catch((exception) => {
+        console.error(exception);
+        // window.location.href = '/404';
       });
   }
 
   if (!series) {
-    return <></>;
+    return <Layout footer={false}></Layout>;
   } else {
-    route.setPageTitle(`Series: ${series.displayString}`);
-
-    const hasAgentRelationships = series.agentRelationships.length > 0,
-          hasSeriesRelationships = series.seriesRelationships.length > 0,
-          hasNotes = series.notes.length > 0,
-          hasDates = series.dates.length > 0;
+    route.setPageTitle(`Series: ${series.get('title')}`);
 
     return (
       <Layout>
         <div className="row">
           <div className="col-sm-12">
-            <h1>{ series.title }</h1>
+            <h1>
+              { series.get('title') }
+              <div>
+                <div className="badge">
+                  <small>
+                    <strong>
+                      <i className={ iconForType('resource') } aria-hidden="true"></i>&nbsp;{ labelForType('resource') }
+                    </strong>
+                  </small>
+                </div>
+              </div>
+            </h1>
 
             <section className="core-information">
               <h2 className="sr-only">Basic information</h2>
 
-              <p className="lead">{ series.abstract }</p>
+              <p className="lead">{ series.get('abstract') }</p>
 
               <ul className="list-group list-group-horizontal-md">
                 <li className="list-group-item">
                   <span className="small">ID</span><br/>
-                  { series.qsaIdPrefixed }
+                  { series.get('qsa_id_prefixed') }
                 </li>
                 <li className="list-group-item">
                   <span className="small">START DATE</span><br/>
-                  [series.start_date] ([start date qual])
+                  {
+                    series.getFirst('dates', (date: any) => {
+                      return date.begin && (`${date.begin}` + (date.certainty ? `(${date.certainty})`:''));
+                    })
+                  }
                 </li>
                 <li className="list-group-item">
                   <span className="small">END DATE</span><br/>
-                  [series.end_date] ([end date qual])
+                  {
+                    series.getFirst('dates', (date: any) => {
+                      return date.end && (`${date.end}` + (date.certainty_end ? `(${date.certainty_end})`:''));
+                    })
+                  }
                 </li>
               </ul>
 
-              <p className="footer small">Date notes: [Series.date_notes]</p>
+              {
+                series.getFirst('dates', (date: any) => {
+                  return date.date_notes && 
+                    <p className="footer small">Date notes: {date.date_notes}</p>;
+                })
+              }
+
               <h3 className="sr-only">Series descriptive metadata</h3>
 
-                  <ul className="list-group list-group-flush">
-                <li className="list-group-item list-group-item-action">
-                  <div className="d-flex w-100 justify-content-between">
-                    <h4 className="mb-1">Disposal class</h4>
-                  </div>
-                  <p className="mb-1">(Disposal class)</p>
-                </li>
-                <li className="list-group-item list-group-item-action">
-                  <div className="d-flex w-100 justify-content-between">
-                    <h4 className="mb-1">Sensitivity label</h4>
-                  </div>
-                  <p className="mb-1">(sensitivity label)</p>
-                </li>
-                <li className="list-group-item list-group-item-action">
-                  <div className="d-flex w-100 justify-content-between">
-                    <h4 className="mb-1">Copyright status</h4>
-                  </div>
-                  <p className="mb-1">(copyright status)</p>
-                </li>
-                <li className="list-group-item list-group-item-action">
-                  <div className="d-flex w-100 justify-content-between">
-                    <h4 className="mb-1">Information sources</h4>
-                  </div>
-                  <p className="mb-1">(information sources)</p>
-                </li>
-                <li className="list-group-item list-group-item-action">
-                  <div className="d-flex w-100 justify-content-between">
-                    <h4 className="mb-1">Previous identifiers</h4>
-                  </div>
-                  <p className="mb-1">(Previous system identifiers)</p>
-                </li>
-                <li className="list-group-item list-group-item-action">
-                  <div className="d-flex w-100 justify-content-between">
-                    <h4 className="mb-1">Access notifications</h4>
-                  </div>
-                  <p className="mb-1">(access notifications)</p>
-                </li>
+              <ul className="list-group list-group-flush">
+                {
+                  [
+                    ['disposal_class', 'Disposal class'],
+                    ['sensitivity_label', 'Sensitivity label'],
+                    ['copyright_status', 'Copyright status'],
+                    ['information_sources', 'Information sources'],
+                    ['repository_processing_note', 'Previous identifiers'],
+                  ].map(([fieldName, fieldLabel]) => {
+                    return series.getMaybe(fieldName, (value: any) => {
+                      return <li className="list-group-item list-group-item-action">
+                        <div className="d-flex w-100 justify-content-between">
+                          <h4 className="mb-1">{ fieldLabel }</h4>
+                        </div>
+                        <p className="mb-1">{ value }</p>
+                      </li>
+                    })
+                  })
+                }
+                {
+                  series.getMaybe('rap_attached', (rap: any) => {
+                    return <li className="list-group-item list-group-item-action">
+                      <div className="d-flex w-100 justify-content-between">
+                        <h4 className="mb-1">Access notfications</h4>
+                      </div>
+                      <p className="mb-1">{ rap.display_string }</p>
+                    </li>
+                  })
+                }
               </ul>
 
             </section>
 
-            <section className="qg-accordion qg-dark-accordion"
-                     aria-label="Accordion Label">
+            <section className="qg-accordion qg-dark-accordion" aria-label="Accordion Label">
               <h2 id="accordion">Detailed information</h2>
               <input type="radio" name="control" id="collapse"
                      className="controls collapse" value="collapse"
                      role="radio"/>
-                <label htmlFor="collapse" className="controls">Collapse details</label>
-                <span className="controls">&#124;</span>
-                <input type="radio" name="control" id="expand"
-                       className="controls expand" value="expand" role="radio"/>
-                  <label htmlFor="expand" className="controls">Show
-                    details</label>
+              
+              {/*<label htmlFor="collapse" className="controls">Collapse details</label>*/}
+              {/*<span className="controls">&#124;</span>*/}
+              {/*<input type="radio" name="control" id="expand" className="controls expand" value="expand" role="radio"/>*/}
+              {/*<label htmlFor="expand" className="controls">Show details</label>*/}
 
-                  <article>
-                    <input id="panel-1" type="checkbox" name="tabs"
-                           aria-controls="id-panel-content-1"
-                           aria-expanded="false" role="checkbox"/>
-                      <h3 className="acc-heading"><label htmlFor="panel-1">Note
-                        type: Description<span className="arrow"> <i></i></span></label>
-                      </h3>
-                      <div className="collapsing-section" aria-hidden="true"
-                           id="id-panel-content-1">
-                        <p> Insert all content from this note into this
-                          space</p>
-                      </div>
-                  </article>
+              <article>
+                <input id="panel-1" type="checkbox" name="tabs"
+                       aria-controls="id-panel-content-1"
+                       aria-expanded="false" role="checkbox"/>
+                  <h3 className="acc-heading">
+                    <label htmlFor="panel-1">Note type: Description<span className="arrow"> <i></i></span></label>
+                  </h3>
+                  <div className="collapsing-section" aria-hidden="true" id="id-panel-content-1">
+                    
+                  </div>
+              </article>
                   <article>
                     <input id="panel-2" type="checkbox" name="tabs"
                            aria-controls="id-panel-content-2"

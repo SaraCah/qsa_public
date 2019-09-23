@@ -49,10 +49,12 @@ class QSAPublic < Sinatra::Base
   Endpoint.get('/api/fetch')
     .param(:qsa_id, String, "Record QSA ID with prefix", optional: true)
     .param(:uri, String, "Record URI", optional: true)
-    .param(:id, String, "Record SOLR ID", optional: true) do
+    .param(:id, String, "Record SOLR ID", optional: true)
+    .param(:type, String, "Scope to record type", optional: true) do
     response = [404]
 
     begin
+      # FIXME scope fetch by type if provided
       if params[:qsa_id] || params[:uri] || params[:id]
         if record = Search.get(qsa_id: params[:qsa_id],
                                uri: params[:uri],

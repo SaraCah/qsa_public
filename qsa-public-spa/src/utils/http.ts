@@ -37,14 +37,15 @@ export class Http {
     return response.data;
   }
 
-  static async fetchByQSAID<T>(qsa_id: string, record_type: ResultClass): Promise<T> {
+  static async fetchByQSAID(qsa_id: string, record_type: string): Promise<any> {
     const response = await axios
-      .get(`${fetchUrl}?qsa_id=${qsa_id}`, Http.config)
+      .get(`${fetchUrl}?qsa_id=${qsa_id}&type=${record_type}`, Http.config)
       .catch(error => {
         console.log(error, error.status);
         return error;
       });
-    return record_type.forJSON(response.data) as T;
+
+    return response.data;
   }
 
 }
