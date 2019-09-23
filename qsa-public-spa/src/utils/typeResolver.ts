@@ -61,5 +61,13 @@ export const iconForType = (recordType: string): string => {
 }
 
 export const labelForRelator = (relator: string): string => {
-    return relator.split('_').map((s: string) => (s.charAt(0).toUpperCase() + s.slice(1))).join(' ');
+    return relator.split('_').map(uppercaseInitials).join(' ');
+}
+
+export const labelForMandateType = (type: string): string => {
+    return uppercaseInitials(type);
+}
+
+export const uppercaseInitials = (str: string): string => {
+    return str.split(' ').map((s: string) => (s.charAt(0).toUpperCase() + s.slice(1))).join(' ');
 }
