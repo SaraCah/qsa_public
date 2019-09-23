@@ -16,6 +16,7 @@ import AgencyPage from "./recordViews/Agency";
 import NotFound from "./recordViews/NotFound";
 import ResultsPage from "./recordViews/Results";
 import SeriesPage from "./recordViews/Series";
+import FunctionPage from "./recordViews/Function";
 
 
 /* Establish error handling */
@@ -154,6 +155,7 @@ ReactDOM.render(
       <Route exact path="/" component={wrappedRoute(HomePage, {pageTitle: "Archives Search: Home"})} />
       <Route path="/agencies/:qsa_id" component={wrappedRoute(AgencyPage, {pageTitle: "View agency"})} />
       <Route path="/series/:qsa_id" component={wrappedRoute(SeriesPage, {pageTitle: "View series"})} />
+      <Route path="/functions/:qsa_id" component={wrappedRoute(FunctionPage, {pageTitle: "View function"})} />
       <Route exact path="/search" component={wrappedRoute(ResultsPage, {pageTitle: "Search records"})} />
       <Route component={wrappedRoute(NotFound, {pageTitle: "Page not found"})} />
     </Switch>
