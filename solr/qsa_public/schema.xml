@@ -51,8 +51,7 @@
   <field name="function_id" type="string" indexed="true" stored="true" multiValued="true" />
 
   <!-- Hierarchy Business -->
-  <field name="parent_qsa_id" type="string" indexed="true" stored="true" multiValued="false" />
-  <field name="parent_title" type="string" indexed="true" stored="true" multiValued="false" />
+  <field name="resource_id" type="string" indexed="true" stored="true" multiValued="false" />
   <field name="parent_id" type="string" indexed="true" stored="true" multiValued="false" />
   <field name="position" type="pint" indexed="true" stored="true" multiValued="false" />
 

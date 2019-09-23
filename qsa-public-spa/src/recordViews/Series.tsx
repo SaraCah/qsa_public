@@ -196,7 +196,7 @@ const SeriesPage: React.FC<any> = (route: any) => {
 
             <section>
               <h2>Relationships</h2>
-              
+
               { series.getArray('agent_relationships').length > 0 && <h3>Related agencies</h3> }
               <ul className="list-group list-group-flush">
                 {
