@@ -47,6 +47,7 @@ const AgencyPage: React.FC<any> = (route: any) => {
     route.setPageTitle(`Agency: ${agency.get('display_string')}`);
 
     const controlledRecordsQuery = AdvancedSearchQuery.emptyQuery().addFilter('responsible_agency_id', agency.get('id'), agency.get('display_string'));
+    const createdRecordsQuery = AdvancedSearchQuery.emptyQuery().addFilter('creating_agency_id', agency.get('id'), agency.get('display_string'));
 
     return (
       <Layout>
@@ -202,8 +203,15 @@ const AgencyPage: React.FC<any> = (route: any) => {
 
               {
                 <Link to={ `/search?` + controlledRecordsQuery.toQueryString() }
-                      className="qg-btn btn-primary">
+                      className="qg-btn btn-primary btn-xs">
                   Browse Controlled Records
+                </Link>
+              }
+              &nbsp;
+              {
+                <Link to={ `/search?` + createdRecordsQuery.toQueryString() }
+                      className="qg-btn btn-primary btn-xs">
+                  Browse Created Records
                 </Link>
               }
 

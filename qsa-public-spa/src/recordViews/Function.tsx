@@ -95,7 +95,7 @@ const FunctionPage: React.FC<any> = (route: any) => {
 
               {
                 <Link to={ `/search?` + relatedQuery.toQueryString() }
-                      className="qg-btn btn-primary">
+                      className="qg-btn btn-primary btn-xs">
                   Browse Related Series
                 </Link>
               }
