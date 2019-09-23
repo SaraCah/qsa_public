@@ -124,7 +124,7 @@ const MandatePage: React.FC<any> = (route: any) => {
 
               {
                 <Link to={ `/search?` + relatedQuery.toQueryString() }
-                      className="qg-btn btn-primary btn-xs">
+                      className="qg-btn btn-primary btn-sm">
                   Browse Related Series
                 </Link>
               }

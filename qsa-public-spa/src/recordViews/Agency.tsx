@@ -203,14 +203,14 @@ const AgencyPage: React.FC<any> = (route: any) => {
 
               {
                 <Link to={ `/search?` + controlledRecordsQuery.toQueryString() }
-                      className="qg-btn btn-primary btn-xs">
+                      className="qg-btn btn-primary btn-sm">
                   Browse Controlled Records
                 </Link>
               }
               &nbsp;
               {
                 <Link to={ `/search?` + createdRecordsQuery.toQueryString() }
-                      className="qg-btn btn-primary btn-xs">
+                      className="qg-btn btn-primary btn-sm">
                   Browse Created Records
                 </Link>
               }
