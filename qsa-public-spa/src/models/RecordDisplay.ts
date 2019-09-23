@@ -1,3 +1,29 @@
+interface TextNote {
+    kind: 'text',
+    text: string[];
+}
+
+interface OrderedListNote {
+    kind: 'orderedlist',
+    title: string,
+    items: string[];
+}
+
+interface DefinedListNote {
+    kind: 'definedlist',
+    title: string,
+    items: {label:string, value: string}[];
+}
+
+interface ChronologyNote {
+    kind: 'chronology',
+    title: string,
+    items: {event_date:string, value: string[]}[];
+}
+
+export type Note = TextNote | OrderedListNote | DefinedListNote | ChronologyNote;
+
+
 export class RecordDisplay {
     private readonly record: any;
 
@@ -47,8 +73,32 @@ export class RecordDisplay {
     }
 
     getNotes(noteType: string, noteLabel: string, callback: any): any {
-        const notes = this.getArray('notes');
-        notes.filter((note:any) => {
-        })
+        const notes: any = this.getArray('notes');
+        const result: Note[] = [];
+
+        notes.forEach((note:any) => {
+            if (note.type != noteType) {
+                return;
+            }
+
+            if (noteLabel && note.note_label != noteLabel) {
+                return;
+            }
+
+            if (note.jsonmodel_type === 'note_singlepart') {
+                result.push({
+                    kind: 'text',
+                    text: note.content,
+                })
+            } else if (note.jsonmodel_type === 'note_multipart') {
+                
+            }
+        });
+
+        if (result.length > 0) {
+            return callback(result);
+        } else {
+            return [];
+        }
     }
 }

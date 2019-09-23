@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {RouteComponentProps} from "react-router-dom";
+import {Link, RouteComponentProps} from "react-router-dom";
 
 import {Http} from "../utils/http";
 import {SeriesResult} from "../models/SeriesResult";
@@ -10,8 +10,71 @@ import {
   /* basiclistElement, externalResourceArticleElement */
 } from "../resultView/resultViewTemplates";
 import Layout from "./Layout";
-import {iconForType, labelForType} from "../utils/typeResolver";
-import {RecordDisplay} from "../models/RecordDisplay";
+import {
+  iconForType,
+  labelForRelator,
+  labelForType,
+  uriFor
+} from "../utils/typeResolver";
+import {Note, RecordDisplay} from "../models/RecordDisplay";
+
+
+const NoteDisplay: React.FC<{note: Note}> = ({ note }) => {
+  switch (note.kind) {
+    case "text": return (<div> { note.text.map((content:string) => <p>{ content }</p>) }</div>);
+    case "orderedlist": return (<div>
+      <p>{ note.title }</p>
+      <ol>
+        {
+          note.items.map((item: string) => <li>{ item }</li>)
+        }
+      </ol>
+    </div>);
+    case "definedlist": return (<div>
+      <p>{ note.title }</p>
+      <dl>
+        {
+          note.items.map(({label, value}) => {
+            return <>
+                <dt>{ label }</dt>
+                <dd>{ value }</dd>
+            </>
+          })
+        }
+      </dl>
+    </div>);
+    case "chronology": return (<div>
+      <p>{ note.title }</p>
+      <dl>
+        {
+          note.items.map(({event_date, value}) => {
+            return <>
+              <dt>{ event_date }</dt>
+              {
+                value.map((v: string) => {
+                  return <dd>{ v }</dd>
+                })
+              }
+            </>
+          })
+        }
+      </dl>
+    </div>);
+  } 
+}
+
+
+const Relationship: React.FC<{relationship: any}> = ({ relationship }) => {
+  return (<>
+        <i className={ iconForType(relationship._resolved.jsonmodel_type) } aria-hidden="true"></i>&nbsp;
+        <Link to={ uriFor(relationship._resolved.qsa_id_prefixed, relationship._resolved.jsonmodel_type) }>
+          { relationship._resolved.display_string }
+        </Link><br/>
+        Relator: { labelForRelator(relationship.relator) }<br/>
+        { relationship.start_date }&nbsp;-&nbsp;{ relationship.end_date }
+      </>
+  )
+}
 
 
 const SeriesPage: React.FC<any> = (route: any) => {
@@ -124,148 +187,115 @@ const SeriesPage: React.FC<any> = (route: any) => {
 
             <section className="qg-accordion qg-dark-accordion" aria-label="Accordion Label">
               <h2 id="accordion">Detailed information</h2>
-              <input type="radio" name="control" id="collapse"
-                     className="controls collapse" value="collapse"
-                     role="radio"/>
-              
+
+              {/*<input type="radio" name="control" id="collapse" className="controls collapse" value="collapse" role="radio"/>*/}
               {/*<label htmlFor="collapse" className="controls">Collapse details</label>*/}
               {/*<span className="controls">&#124;</span>*/}
               {/*<input type="radio" name="control" id="expand" className="controls expand" value="expand" role="radio"/>*/}
               {/*<label htmlFor="expand" className="controls">Show details</label>*/}
 
-              <article>
-                <input id="panel-1" type="checkbox" name="tabs"
-                       aria-controls="id-panel-content-1"
-                       aria-expanded="false" role="checkbox"/>
-                  <h3 className="acc-heading">
-                    <label htmlFor="panel-1">Note type: Description<span className="arrow"> <i></i></span></label>
-                  </h3>
-                  <div className="collapsing-section" aria-hidden="true" id="id-panel-content-1">
-                    
-                  </div>
-              </article>
-                  <article>
-                    <input id="panel-2" type="checkbox" name="tabs"
-                           aria-controls="id-panel-content-2"
-                           aria-expanded="false" role="checkbox"/>
-                      <h3 className="acc-heading"><label htmlFor="panel-2">Note
-                        type: Information Sources<span
-                            className="arrow"> <i></i></span></label></h3>
-                      <div className="collapsing-section" aria-hidden="true"
-                           id="id-panel-content-2">
-                        <p> Insert all content from this note into this
-                          space</p>
-                      </div>
+              {
+                series.getNotes('prefercite', null, (notes: Note[]) => {
+                  return <article>
+                    <input id="panel-1" type="checkbox" name="tabs" aria-controls="id-panel-content-1" aria-expanded="false" role="checkbox"/>
+                    <h3 className="acc-heading">
+                      <label htmlFor="panel-1">Notes: Preferred Citation <span className="arrow"> <i></i></span></label>
+                    </h3>
+                    <div className="collapsing-section" aria-hidden="true" id="id-panel-content-1">
+                      { notes.map((note: Note) => <NoteDisplay note={ note }/>) }
+                    </div>
                   </article>
-                  <article>
-                    <input id="panel-3" type="checkbox" name="tabs"
-                           aria-controls="id-panel-content-3"
-                           aria-expanded="false" role="checkbox"/>
-                      <h3 className="acc-heading"><label htmlFor="panel-3">Note
-                        type: Preferred Citiation<span
-                            className="arrow"> <i></i></span></label></h3>
-                      <div className="collapsing-section" aria-hidden="true"
-                           id="id-panel-content-3">
-                        <p> Insert all content from this note into this
-                          space</p>
-                      </div>
+                })
+              }
+
+              {
+                series.getNotes('odd', 'Remarks', (notes: Note[]) => {
+                  return <article>
+                    <input id="panel-1" type="checkbox" name="tabs" aria-controls="id-panel-content-1" aria-expanded="false" role="checkbox"/>
+                    <h3 className="acc-heading">
+                      <label htmlFor="panel-1">Notes: Remarks <span className="arrow"> <i></i></span></label>
+                    </h3>
+                    <div className="collapsing-section" aria-hidden="true" id="id-panel-content-1">
+                      { notes.map((note: Note) => <NoteDisplay note={ note }/>) }
+                    </div>
                   </article>
-                  <article>
-                    <input id="panel-4" type="checkbox" name="tabs"
-                           aria-controls="id-panel-content-4"
-                           aria-expanded="false" role="checkbox"/>
-                      <h3 className="acc-heading"><label htmlFor="panel-4">Note
-                        type: Remarks<span
-                            className="arrow"> <i></i></span></label></h3>
-                      <div className="collapsing-section" aria-hidden="true"
-                           id="id-panel-content-4">
-                        <p> Insert all content from this note into this
-                          space</p>
-                      </div>
+                })
+              }
+
+              {
+                series.getNotes('custodhist', null, (notes: Note[]) => {
+                  return <article>
+                    <input id="panel-1" type="checkbox" name="tabs" aria-controls="id-panel-content-1" aria-expanded="false" role="checkbox"/>
+                    <h3 className="acc-heading">
+                      <label htmlFor="panel-1">Notes - Agency Control Number (aka Department Numbers)  <span className="arrow"> <i></i></span></label>
+                    </h3>
+                    <div className="collapsing-section" aria-hidden="true" id="id-panel-content-1">
+                      { notes.map((note: Note) => <NoteDisplay note={ note }/>) }
+                    </div>
                   </article>
-                  <article>
-                    <input id="panel-5" type="checkbox" name="tabs"
-                           aria-controls="id-panel-content-5"
-                           aria-expanded="false" role="checkbox"/>
-                      <h3 className="acc-heading"><label htmlFor="panel-5">Note
-                        type: Agency Control Numbers<span
-                            className="arrow"> <i></i></span></label></h3>
-                      <div className="collapsing-section" aria-hidden="true"
-                           id="id-panel-content-5">
-                        <p> Insert all content from this note into this
-                          space</p>
-                      </div>
+                })
+              }
+
+              {
+                series.getNotes('arrangement', null, (notes: Note[]) => {
+                  return <article>
+                    <input id="panel-1" type="checkbox" name="tabs" aria-controls="id-panel-content-1" aria-expanded="false" role="checkbox"/>
+                    <h3 className="acc-heading">
+                      <label htmlFor="panel-1">Notes - System of Arrangement <span className="arrow"> <i></i></span></label>
+                    </h3>
+                    <div className="collapsing-section" aria-hidden="true" id="id-panel-content-1">
+                      { notes.map((note: Note) => <NoteDisplay note={ note }/>) }
+                    </div>
                   </article>
-                  <article>
-                    <input id="panel-6" type="checkbox" name="tabs"
-                           aria-controls="id-panel-content-6"
-                           aria-expanded="false" role="checkbox"/>
-                      <h3 className="acc-heading"><label htmlFor="panel-6">External
-                        resources: Finding aids<span className="arrow"> <i></i></span></label>
-                      </h3>
-                      <div className="collapsing-section" aria-hidden="true"
-                           id="id-panel-content-6">
-                        <p> Insert all content from this note into this
-                          space</p>
-                      </div>
-                  </article>
-                  <article>
-                    <input id="panel-7" type="checkbox" name="tabs"
-                           aria-controls="id-panel-content-7"
-                           aria-expanded="false" role="checkbox"/>
-                      <h3 className="acc-heading"><label htmlFor="panel-7">External
-                        resources: Publications<span className="arrow"> <i></i></span></label>
-                      </h3>
-                      <div className="collapsing-section" aria-hidden="true"
-                           id="id-panel-content-7">
-                        <p> Insert all content from this note into this
-                          space</p>
-                      </div>
-                  </article>
+                })
+              }
             </section>
 
             <section>
-
-              <h2>Agency relationships</h2>
-
-              <h3>Related agencies</h3>
-
+              <h2>Relationships</h2>
+              
+              { series.getArray('agent_relationships').length > 0 && <h3>Related agencies</h3> }
               <ul className="list-group list-group-flush">
-                <li className="list-group-item">
-                  (Related agency 1)<br/>
-                  (Relationship type 1)<br/>
-                  (Relationship dates 1)
-                </li>
-                <li className="list-group-item">
-                  (Related agency 2)<br/>
-                  (Relationship type 2)<br/>
-                  (Relationship dates 2)
-                </li>
+                {
+                  series.getArray('agent_relationships').map((rlshp: any, idx: number) => {
+                    return <li key={ idx } className="list-group-item">
+                      { <Relationship relationship={ rlshp } /> }
+                    </li> 
+                  })
+                }
               </ul>
 
-              <h3>Related mandates</h3>
-
+              { series.getArray('series_relationships').length > 0 && <h3>Related series</h3> }
               <ul className="list-group list-group-flush">
-                <li className="list-group-item">
-                  (Related mandate 1)<br/>
-                  (Relationship type 1)<br/>
-                  (Relationship dates 1)
-                </li>
+                {
+                  series.getArray('series_relationships').map((rlshp: any, idx: number) => {
+                    return <li key={ idx } className="list-group-item">
+                      { <Relationship relationship={ rlshp } /> }
+                    </li>
+                  })
+                }
               </ul>
 
-              <h3>Related functions</h3>
-
+              { series.getArray('mandate_relationships').length > 0 && <h3>Related mandates</h3> }
               <ul className="list-group list-group-flush">
-                <li className="list-group-item">
-                  (Related function 1)<br/>
-                  (Relationship type 1)<br/>
-                  (Relationship dates 1)
-                </li>
-                <li className="list-group-item">
-                  (Related function 2)<br/>
-                  (Relationship type 2)<br/>
-                  (Relationship dates 2)
-                </li>
+                {
+                  series.getArray('mandate_relationships').map((rlshp: any, idx: number) => {
+                    return <li key={ idx } className="list-group-item">
+                      { <Relationship relationship={ rlshp } /> }
+                    </li>
+                  })
+                }
+              </ul>
+
+              { series.getArray('function_relationships').length > 0 && <h3>Related functions</h3> }
+              <ul className="list-group list-group-flush">
+                {
+                  series.getArray('function_relationships').map((rlshp: any, idx: number) => {
+                    return <li key={ idx } className="list-group-item">
+                      { <Relationship relationship={ rlshp } /> }
+                    </li>
+                  })
+                }
               </ul>
             </section>
 

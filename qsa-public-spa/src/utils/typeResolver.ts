@@ -59,3 +59,7 @@ export const labelForType = (recordType: string): string => {
 export const iconForType = (recordType: string): string => {
     return IconForType[recordType];
 }
+
+export const labelForRelator = (relator: string): string => {
+    return relator.split('_').map((s: string) => (s.charAt(0).toUpperCase() + s.slice(1))).join(' ');
+}

@@ -178,6 +178,7 @@ class Search
 
 
   def self.resolve_refs!(record)
+    # FIXME drop unresolvable please
     if record.is_a?(Array)
       record.each do |item|
         resolve_refs!(item)
