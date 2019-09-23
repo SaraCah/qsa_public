@@ -45,8 +45,7 @@ require 'lib/date_parse'
 require 'lib/templates'
 require 'views/templates'
 
-require 'endpoints_api'
-require 'endpoints_ui'
+require 'endpoints'
 
 
 class QSAPublic < Sinatra::Base

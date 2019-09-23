@@ -104,15 +104,29 @@ class QSAPublic < Sinatra::Base
                                      uri: params[:uri],
                                      id: params[:id])
         if raw_record['primary_type'] == 'archival_object'
-          # show 10 records either side + 5 children
+          # show 8 siblings and self (max 9 siblings) + 5 children
           position = raw_record['position']
           record = JSON.parse(raw_record.fetch('json'))
-          min_sibling_position = [0, position - 5].max
-          max_sibling_position = (10 - min_sibling_position) + position
 
-          response = json_response(path_to_root: Search.resolve_refs!(record['ancestors']),
+          siblings_count = Search.children(raw_record.fetch('parent_id'), 0).fetch('total_count')
+
+          min_sibling_position = position
+          max_sibling_position = position
+
+
+          while((max_sibling_position - min_sibling_position) < 8)do
+            min_sibling_position -= 1 if min_sibling_position > 0
+            max_sibling_position += 1 if max_sibling_position < siblings_count - 1
+
+            break if min_sibling_position == 0 && max_sibling_position == siblings_count - 1
+          end
+
+          response = json_response(current_uri: raw_record[:uri],
+                                   path_to_root: Search.resolve_refs!(record['ancestors']),
                                    siblings: Search.children(raw_record.fetch('parent_id'), 0, 'position_asc', min_sibling_position, max_sibling_position).fetch('results'),
-                                   children: Search.children(raw_record.fetch('id'), 0, 'position_asc', 0, 4).fetch('results'))
+                                   children: Search.children(raw_record.fetch('id'), 0, 'position_asc', 0, 4).fetch('results'),
+                                   siblings_count: siblings_count,
+                                   children_count: Search.children(raw_record.fetch('id'), 0).fetch('total_count'))
         end
       end
     rescue
@@ -163,5 +177,37 @@ class QSAPublic < Sinatra::Base
                                {
                                  title: "QSA Public API Summary"
                                })
+  end
+
+
+  if !defined?(STATIC_DIR) 
+    # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    #  Don't put other endpoints after this one or they'll be overridden by splat
+    # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    STATIC_DIR = File.realpath(File.absolute_path(File.join(File.dirname(__FILE__), '..', 'static')))
+
+    get '/*' do
+      if request.path == '/'
+        send_file(File.join(STATIC_DIR, 'index.html'))
+      else
+        requested_file = begin
+          File.realpath(File.absolute_path(File.join(STATIC_DIR, request.path)))
+        rescue Errno::ENOENT
+          ""
+        end
+
+        if requested_file.start_with?(STATIC_DIR) && File.exist?(requested_file)
+          if request.path =~ /\.[a-f0-9]{8}\./
+            # Cache built assets more aggressively
+            headers('Cache-Control' => "max-age=86400, public",
+                    'Expires' => (Time.now + 86400).utc.rfc2822)
+          end
+
+          send_file requested_file
+        else
+          send_file(File.join(STATIC_DIR, 'index.html'))
+        end
+      end
+    end
   end
 end
