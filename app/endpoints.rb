@@ -127,6 +127,14 @@ class QSAPublic < Sinatra::Base
                                    children: Search.children(raw_record.fetch('id'), 0, 'position_asc', 0, 4).fetch('results'),
                                    siblings_count: siblings_count,
                                    children_count: Search.children(raw_record.fetch('id'), 0).fetch('total_count'))
+        elsif raw_record['primary_type'] == 'resource'
+          record = JSON.parse(raw_record.fetch('json'))
+          response = json_response(current_uri: raw_record[:uri],
+                                   path_to_root: [record],
+                                   siblings: [],
+                                   children: Search.children(raw_record.fetch('id'), 0, 'position_asc', 0, 19).fetch('results'),
+                                   siblings_count: 0,
+                                   children_count: Search.children(raw_record.fetch('id'), 0).fetch('total_count'))
         end
       end
     rescue
