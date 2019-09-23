@@ -101,4 +101,20 @@ export class RecordDisplay {
             return [];
         }
     }
+
+    getExternalDocuments(title: string, callback: any): any {
+        const docs = this.getArray('external_documents').filter((doc: any) => {
+            return doc.title.trim().toLowerCase() === title.trim().toLowerCase();
+        });
+
+        if (docs.length > 0) {
+            return callback(docs);
+        } else {
+            return [];
+        }
+    }
+
+    generateId(): string {
+        return "" + Math.random() + new Date().getTime();
+    }
 }

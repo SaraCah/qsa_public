@@ -196,12 +196,14 @@ const SeriesPage: React.FC<any> = (route: any) => {
 
               {
                 series.getNotes('prefercite', null, (notes: Note[]) => {
+                  const id:string = series.generateId();
+
                   return <article>
-                    <input id="panel-1" type="checkbox" name="tabs" aria-controls="id-panel-content-1" aria-expanded="false" role="checkbox"/>
+                    <input id={ id } type="checkbox" name="tabs" aria-controls={ `${id}-content` } aria-expanded="false" role="checkbox"/>
                     <h3 className="acc-heading">
-                      <label htmlFor="panel-1">Notes: Preferred Citation <span className="arrow"> <i></i></span></label>
+                      <label htmlFor={ id }>Notes: Preferred Citation <span className="arrow"> <i></i></span></label>
                     </h3>
-                    <div className="collapsing-section" aria-hidden="true" id="id-panel-content-1">
+                    <div className="collapsing-section" aria-hidden="true" id={ `${id}-content` }>
                       { notes.map((note: Note) => <NoteDisplay note={ note }/>) }
                     </div>
                   </article>
@@ -210,12 +212,14 @@ const SeriesPage: React.FC<any> = (route: any) => {
 
               {
                 series.getNotes('odd', 'Remarks', (notes: Note[]) => {
+                  const id:string = series.generateId();
+
                   return <article>
-                    <input id="panel-1" type="checkbox" name="tabs" aria-controls="id-panel-content-1" aria-expanded="false" role="checkbox"/>
+                    <input id={ id } type="checkbox" name="tabs" aria-controls={ `${id}-content` } aria-expanded="false" role="checkbox"/>
                     <h3 className="acc-heading">
-                      <label htmlFor="panel-1">Notes: Remarks <span className="arrow"> <i></i></span></label>
+                      <label htmlFor={ id }>Notes: Remarks <span className="arrow"> <i></i></span></label>
                     </h3>
-                    <div className="collapsing-section" aria-hidden="true" id="id-panel-content-1">
+                    <div className="collapsing-section" aria-hidden="true" id={ `${id}-content` }>
                       { notes.map((note: Note) => <NoteDisplay note={ note }/>) }
                     </div>
                   </article>
@@ -224,12 +228,14 @@ const SeriesPage: React.FC<any> = (route: any) => {
 
               {
                 series.getNotes('custodhist', null, (notes: Note[]) => {
+                  const id:string = series.generateId();
+
                   return <article>
-                    <input id="panel-1" type="checkbox" name="tabs" aria-controls="id-panel-content-1" aria-expanded="false" role="checkbox"/>
+                    <input id={ id } type="checkbox" name="tabs" aria-controls={ `${id}-content` } aria-expanded="false" role="checkbox"/>
                     <h3 className="acc-heading">
-                      <label htmlFor="panel-1">Notes - Agency Control Number (aka Department Numbers)  <span className="arrow"> <i></i></span></label>
+                      <label htmlFor={ id }>Notes - Agency Control Number (aka Department Numbers)  <span className="arrow"> <i></i></span></label>
                     </h3>
-                    <div className="collapsing-section" aria-hidden="true" id="id-panel-content-1">
+                    <div className="collapsing-section" aria-hidden="true" id={ `${id}-content` }>
                       { notes.map((note: Note) => <NoteDisplay note={ note }/>) }
                     </div>
                   </article>
@@ -238,13 +244,63 @@ const SeriesPage: React.FC<any> = (route: any) => {
 
               {
                 series.getNotes('arrangement', null, (notes: Note[]) => {
+                  const id:string = series.generateId();
+
                   return <article>
-                    <input id="panel-1" type="checkbox" name="tabs" aria-controls="id-panel-content-1" aria-expanded="false" role="checkbox"/>
+                    <input id={ id } type="checkbox" name="tabs" aria-controls={ `${id}-content` } aria-expanded="false" role="checkbox"/>
                     <h3 className="acc-heading">
-                      <label htmlFor="panel-1">Notes - System of Arrangement <span className="arrow"> <i></i></span></label>
+                      <label htmlFor={ id }>Notes - System of Arrangement <span className="arrow"> <i></i></span></label>
                     </h3>
-                    <div className="collapsing-section" aria-hidden="true" id="id-panel-content-1">
+                    <div className="collapsing-section" aria-hidden="true" id={ `${id}-content` }>
                       { notes.map((note: Note) => <NoteDisplay note={ note }/>) }
+                    </div>
+                  </article>
+                })
+              }
+
+              {
+                series.getExternalDocuments('Finding Aid', (docs: any) => {
+                  const id:string = series.generateId();
+
+                  return <article>
+                    <input id={ id } type="checkbox" name="tabs" aria-controls={ `${id}-content` } aria-expanded="false" role="checkbox"/>
+                    <h3 className="acc-heading">
+                      <label htmlFor={ id }>External Resources - Finding Aid <span className="arrow"> <i></i></span></label>
+                    </h3>
+                    <div className="collapsing-section" aria-hidden="true" id={ `${id}-content` }>
+                      {
+                        docs.map((doc: any) => {
+                          if (/^http/i.test(doc.location)) {
+                            return <a href={ doc.location } target="_blank">{ doc.location }</a>
+                          } else {
+                            return <p>{ doc.location }</p>;
+                          }
+                        })
+                      }
+                    </div>
+                  </article>
+                })
+              }
+
+              {
+                series.getExternalDocuments('Publication', (docs: any) => {
+                  const id:string = series.generateId();
+
+                  return <article>
+                    <input id={ id } type="checkbox" name="tabs" aria-controls={ `${id}-content` } aria-expanded="false" role="checkbox"/>
+                    <h3 className="acc-heading">
+                      <label htmlFor={ id }>External Resources - Publications <span className="arrow"> <i></i></span></label>
+                    </h3>
+                    <div className="collapsing-section" aria-hidden="true" id={ `${id}-content` }>
+                      {
+                        docs.map((doc: any) => {
+                          if (/^http/i.test(doc.location)) {
+                            return <a href={ doc.location } target="_blank">{ doc.location }</a>
+                          } else {
+                            return <p>{ doc.location }</p>;
+                          }
+                        })
+                      }
                     </div>
                   </article>
                 })
