@@ -118,6 +118,11 @@ const RecordContextSiblings: React.FC<{context: Context}> = ({ context }) => {
     return (
         <ul>
             {
+                (context.siblings[0].position && context.siblings[0].position > 0) ?
+                    <li>&hellip;</li> :
+                    <></>
+            }
+            {
                 context.siblings.map((sibling: any, idx: number) => {
                     const isCurrent = context.current_uri === sibling.uri;
 
@@ -150,6 +155,10 @@ const RecordContextSiblings: React.FC<{context: Context}> = ({ context }) => {
                         }
                     </li>
                 })
+            }
+            {
+                context.siblings[context.siblings.length - 1].position && context.siblings[context.siblings.length - 1].position < context.siblings_count - 1 &&
+                <li>&hellip;</li>
             }
             {
                 siblingsQuery &&
