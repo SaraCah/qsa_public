@@ -174,8 +174,9 @@ const RecordContextSiblings: React.FC<{context: Context}> = ({ context }) => {
                 })
             }
             {
-                context.siblings[context.siblings.length - 1].position && context.siblings[context.siblings.length - 1].position < context.siblings_count - 1 &&
-                <li>&hellip;</li>
+                (context.siblings[context.siblings.length - 1].position && context.siblings[context.siblings.length - 1].position < context.siblings_count - 1) ? 
+                    <li>&hellip;</li> :
+                    <></>
             }
             {
                 siblingsQuery &&
