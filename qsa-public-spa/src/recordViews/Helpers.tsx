@@ -128,7 +128,11 @@ const RecordContextSiblings: React.FC<{context: Context}> = ({ context }) => {
 
                     return <li key={ sibling.id } className={ isCurrent ? 'current' : ''}>
                         {
-                            (sibling.children_count > 0) ? <i className={ iconForType('resource') } aria-hidden="true"></i> :
+                            (sibling.children_count > 0) ?
+                                <span className="fa-stack" style={ {width: '1em', height: '1em', lineHeight: '1em'} }>
+                                    <i className={ "fa-stack-1x " + iconForType(sibling.jsonmodel_type) } aria-hidden="true"></i>
+                                    <i className="fa fa-stack-1x fa-plus fa-inverse" aria-hidden="true" style={ { fontSize: '50%', marginTop: '2px'} }></i>
+                                </span> :
                             <i className={ iconForType(sibling.jsonmodel_type) } aria-hidden="true"></i>
                         }&nbsp;
                         {
@@ -143,8 +147,12 @@ const RecordContextSiblings: React.FC<{context: Context}> = ({ context }) => {
                                     context.children.map((child: any, idx: number) => {
                                         return <li key={ child.id }>
                                             {
-                                                (child.children_count > 0) ? <i className={ iconForType('resource') } aria-hidden="true"></i> :
-                                                <i className={ iconForType(child.jsonmodel_type) } aria-hidden="true"></i>
+                                                (child.children_count > 0) ?
+                                                    <span className="fa-stack" style={ {width: '1em', height: '1em', lineHeight: '1em'} }>
+                                                        <i className={ "fa-stack-1x " + iconForType(child.jsonmodel_type) } aria-hidden="true"></i>
+                                                        <i className="fa fa-stack-1x fa-plus fa-inverse" aria-hidden="true" style={ { fontSize: '50%', marginTop: '2px'} }></i>
+                                                    </span> :
+                                                    <i className={ iconForType(child.jsonmodel_type) } aria-hidden="true"></i>
                                             }&nbsp;
                                             <Link to={ uriFor(child.qsa_id_prefixed, child.jsonmodel_type) }>{ child.display_string }</Link>
                                         </li>

@@ -45,3 +45,13 @@
   font-weight: bold;
  }
 }
+
+
+.qg-aside {
+  a:visited {
+    color: $qg-blue-dark !important;
+  }
+  a {
+    text-decoration: none !important;
+  }
+}
