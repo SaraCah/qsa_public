@@ -1,7 +1,9 @@
-import React from "react";
-import {Note} from "../models/RecordDisplay";
+import React, {useState} from "react";
+import {Note, RecordDisplay} from "../models/RecordDisplay";
 import {iconForType, labelForRelator, uriFor} from "../utils/typeResolver";
 import {Link} from "react-router-dom";
+import {Http} from "../utils/http";
+import Layout from "./Layout";
 
 export const NoteDisplay: React.FC<{note: Note}> = ({ note }) => {
     switch (note.kind) {
@@ -60,6 +62,7 @@ export const Relationship: React.FC<{relationship: any}> = ({ relationship }) =>
     )
 }
 
+
 export const AccordionPanel: React.FC<{id: string, title: string, children: any}> = ({ id, title, children }) => {
     return (<article>
         <input id={ id } type="checkbox" name="tabs" aria-controls={ `${id}-content` } aria-expanded="false" role="checkbox"/>
@@ -73,6 +76,7 @@ export const AccordionPanel: React.FC<{id: string, title: string, children: any}
     )
 }
 
+
 export const MaybeLink: React.FC<{location: string, label: string}> = ({ location, label }) => {
     if (/^http/i.test(location)) {
         return <a href={ location } target="_blank">{ label }</a>
@@ -80,5 +84,87 @@ export const MaybeLink: React.FC<{location: string, label: string}> = ({ locatio
         return <p>{ location }</p>;
     } else {
         return <p>{ label }: { location }</p>
+    }
+}
+
+
+interface Context {
+    current_uri: string;
+    path_to_root: any[];
+    siblings: any[];
+    children: any[];
+    siblings_count: number;
+    children_count: number;
+}
+
+
+const RecordContextSiblings: React.FC<{context: Context}> = ({ context }) => {
+    return (
+        <ul>
+            {
+                context.siblings.map((sibling: any, idx: number) => {
+                    const isCurrent = context.current_uri === sibling.uri;
+
+                    return <li key={ sibling.id } className={ isCurrent ? 'current' : ''}>
+                        <i className={ iconForType(sibling.jsonmodel_type) } aria-hidden="true"></i>&nbsp;
+                        {
+                            isCurrent ?
+                                <span>{ sibling.display_string }</span> :
+                                <Link to={ uriFor(sibling.qsa_id_prefixed, sibling.jsonmodel_type) }>{ sibling.display_string }</Link>
+                        }
+                        {
+                            isCurrent && context.children.length > 0 &&
+                            <ul>
+                                {
+                                    context.children.map((child: any, idx: number) => {
+                                        return <li key={ child.id }>
+                                            <i className={ iconForType(child.jsonmodel_type) } aria-hidden="true"></i>&nbsp;
+                                            <Link to={ uriFor(child.qsa_id_prefixed, child.jsonmodel_type) }>{ child.display_string }</Link>
+                                        </li>
+                                    })
+                                }
+                            </ul>
+                        }
+                    </li>
+                })
+            }
+        </ul>
+    )
+}
+
+export const RecordContext: React.FC<{qsa_id: string, recordType: string}> = ({ qsa_id, recordType }) => {
+    const [context, setContext] = useState<Context | null>(null);
+
+    Http.fetchContextByQSAID(qsa_id, recordType)
+        .then((json: any) => {
+            setContext(json)
+        })
+        .catch((exception) => {
+            console.error(exception);
+            window.location.href = '/404';
+        });
+
+    if (!context) {
+        return <></>;
+    } else {
+        return (<div className="record-context">
+                {
+                    context.path_to_root.length === 0 ?
+                        <RecordContextSiblings context={ context }/> :
+                        context.path_to_root.map((record: any, idx: number) => {
+                            return <ul>
+                                <li key={ record.id }>
+                                    <i className={ iconForType(record.jsonmodel_type) } aria-hidden="true"></i>&nbsp;
+                                    <Link to={ uriFor(record.qsa_id_prefixed, record.jsonmodel_type) }>{ record.display_string }</Link>
+                                    {
+                                        idx === context.path_to_root.length - 1 &&
+                                        <RecordContextSiblings context={ context }/>
+                                    }
+                                </li>
+                            </ul>
+                        })
+                }
+            </div>
+        )
     }
 }

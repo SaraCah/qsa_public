@@ -17,7 +17,13 @@ import {
   uriFor
 } from "../utils/typeResolver";
 import {Note, RecordDisplay} from "../models/RecordDisplay";
-import {AccordionPanel, MaybeLink, NoteDisplay, Relationship} from "./Helpers";
+import {
+  AccordionPanel,
+  MaybeLink,
+  NoteDisplay,
+  RecordContext,
+  Relationship
+} from "./Helpers";
 
 
 const SeriesPage: React.FC<any> = (route: any) => {
@@ -37,12 +43,12 @@ const SeriesPage: React.FC<any> = (route: any) => {
   }
 
   if (!series) {
-    return <Layout footer={false}></Layout>;
+    return <Layout footer={false} />;
   } else {
     route.setPageTitle(`Series: ${series.get('title')}`);
 
     return (
-      <Layout>
+      <Layout aside={ <RecordContext qsa_id={ qsa_id } recordType="resource" /> }>
         <div className="row">
           <div className="col-sm-12">
             <h1>

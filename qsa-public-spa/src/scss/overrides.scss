@@ -35,3 +35,13 @@
 .query-subclause {
   padding-left: 1em;
 }
+
+.record-context {
+ ul {
+  list-style: none;
+ }
+ .current > a,
+ .current > span {
+  font-weight: bold;
+ }
+}

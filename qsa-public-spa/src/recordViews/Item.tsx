@@ -16,7 +16,13 @@ import {
   uriFor
 } from "../utils/typeResolver";
 import {Note, RecordDisplay} from "../models/RecordDisplay";
-import {AccordionPanel, MaybeLink, NoteDisplay, Relationship} from "./Helpers";
+import {
+    AccordionPanel,
+    MaybeLink,
+    NoteDisplay,
+    RecordContext,
+    Relationship
+} from "./Helpers";
 
 
 const PhysicalRepresentation: React.FC<{representation: any, item: RecordDisplay}> = ({ representation, item }) => {
@@ -115,7 +121,7 @@ const ItemPage: React.FC<any> = (route: any) => {
     route.setPageTitle(`Item: ${item.get('title')}`);
 
     return (
-        <Layout>
+        <Layout aside={ <RecordContext qsa_id={ qsa_id } recordType="archival_object" /> }>
           <div className="row">
             <div className="col-sm-12">
               <h1>
@@ -286,7 +292,7 @@ const ItemPage: React.FC<any> = (route: any) => {
                                     <ul className="list-group list-group-flush">
                                       {
                                         item.getArray('physical_representations').map((representation: any) => (
-                                            <li key={ representation.id } className="list-group-item">
+                                            <li key={ representation.qsa_id } className="list-group-item">
                                               <PhysicalRepresentation representation={representation} item={item}/>
                                             </li>
                                         ))
@@ -303,7 +309,7 @@ const ItemPage: React.FC<any> = (route: any) => {
                                     <ul className="list-group list-group-flush">
                                       {
                                         item.getArray('digital_representations').map((representation: any) => (
-                                            <li key={ representation.id } className="list-group-item">
+                                            <li key={ representation.qsa_id } className="list-group-item">
                                               <DigitalRepresentation representation={representation} item={item}/>
                                             </li>
                                         ))

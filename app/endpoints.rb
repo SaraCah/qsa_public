@@ -96,7 +96,8 @@ class QSAPublic < Sinatra::Base
   Endpoint.get('/api/fetch_context')
     .param(:qsa_id, String, "Record QSA ID with prefix", optional: true)
     .param(:uri, String, "Record URI", optional: true)
-    .param(:id, String, "Record SOLR ID", optional: true) do
+    .param(:id, String, "Record SOLR ID", optional: true)
+    .param(:type, String, "Scope to record type", optional: true) do
     begin
       response = [404]
 
@@ -121,17 +122,17 @@ class QSAPublic < Sinatra::Base
             break if min_sibling_position == 0 && max_sibling_position == siblings_count - 1
           end
 
-          response = json_response(current_uri: raw_record[:uri],
-                                   path_to_root: Search.resolve_refs!(record['ancestors']),
+          response = json_response(current_uri: record.fetch('uri'),
+                                   path_to_root: Search.resolve_refs!(record['ancestors']).map{|ref| ref['_resolved']},
                                    siblings: Search.children(raw_record.fetch('parent_id'), 0, 'position_asc', min_sibling_position, max_sibling_position).fetch('results'),
                                    children: Search.children(raw_record.fetch('id'), 0, 'position_asc', 0, 4).fetch('results'),
                                    siblings_count: siblings_count,
                                    children_count: Search.children(raw_record.fetch('id'), 0).fetch('total_count'))
         elsif raw_record['primary_type'] == 'resource'
           record = JSON.parse(raw_record.fetch('json'))
-          response = json_response(current_uri: raw_record[:uri],
-                                   path_to_root: [record],
-                                   siblings: [],
+          response = json_response(current_uri: record.fetch('uri'),
+                                   path_to_root: [],
+                                   siblings: [record],
                                    children: Search.children(raw_record.fetch('id'), 0, 'position_asc', 0, 19).fetch('results'),
                                    siblings_count: 0,
                                    children_count: Search.children(raw_record.fetch('id'), 0).fetch('total_count'))
