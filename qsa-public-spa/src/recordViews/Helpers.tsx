@@ -34,12 +34,12 @@ export const NoteDisplay: React.FC<{note: Note}> = ({ note }) => {
             <p>{ note.title }</p>
             <dl>
                 {
-                    note.items.map(({event_date, value}) => {
+                    note.items.map(({event_date, events}) => {
                         return <>
                             <dt>{ event_date }</dt>
                             {
-                                value.map((v: string) => {
-                                    return <dd>{ v }</dd>
+                                events.map((event: string) => {
+                                    return <dd>{ event }</dd>
                                 })
                             }
                         </>

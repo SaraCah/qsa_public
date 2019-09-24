@@ -18,7 +18,7 @@ interface DefinedListNote {
 interface ChronologyNote {
     kind: 'chronology',
     title: string,
-    items: {event_date:string, value: string[]}[];
+    items: {event_date:string, events: string[]}[];
 }
 
 export type Note = TextNote | OrderedListNote | DefinedListNote | ChronologyNote;
@@ -81,7 +81,7 @@ export class RecordDisplay {
                 return;
             }
 
-            if (noteLabel && note.note_label.trim().toLowerCase() != noteLabel.trim().toLowerCase()) {
+            if (noteLabel && note.note_label && note.note_label.trim().toLowerCase() != noteLabel.trim().toLowerCase()) {
                 return;
             }
 
@@ -91,7 +91,32 @@ export class RecordDisplay {
                     text: note.content,
                 })
             } else if (note.jsonmodel_type === 'note_multipart') {
-                
+                note.subnotes.forEach((subnote: any) => {
+                    if (subnote.jsonmodel_type === 'note_text') {
+                        result.push({
+                            kind: 'text',
+                            text: [note.content],
+                        })
+                    } else if (subnote.jsonmodel_type === 'note_chronology') {
+                        result.push({
+                            kind: 'chronology',
+                            title: subnote.title,
+                            items: subnote.items,
+                        })
+                    } else if (subnote.jsonmodel_type === 'note_orderedlist') {
+                        result.push({
+                            kind: 'orderedlist',
+                            title: subnote.title,
+                            items: subnote.items,
+                        })
+                    } else if (subnote.jsonmodel_type === 'note_definedlist') {
+                        result.push({
+                            kind: 'definedlist',
+                            title: subnote.title,
+                            items: subnote.items,
+                        })
+                    }
+                })
             }
         });
 
