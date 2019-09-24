@@ -4,6 +4,7 @@ import {iconForType, labelForRelator, uriFor} from "../utils/typeResolver";
 import {Link} from "react-router-dom";
 import {Http} from "../utils/http";
 import Layout from "./Layout";
+import {AdvancedSearchQuery} from "../models/AdvancedSearch";
 
 export const NoteDisplay: React.FC<{note: Note}> = ({ note }) => {
     switch (note.kind) {
@@ -99,6 +100,21 @@ interface Context {
 
 
 const RecordContextSiblings: React.FC<{context: Context}> = ({ context }) => {
+    let siblingsQuery: AdvancedSearchQuery|null = null;
+    let childrenQuery: AdvancedSearchQuery|null = null;
+
+    if (context.siblings_count > context.siblings.length) {
+        const parent: any = context.path_to_root[context.path_to_root.length - 1];
+        siblingsQuery = AdvancedSearchQuery.emptyQuery()
+                                           .addFilter('parent_id', parent.id, parent.display_string)
+    }
+
+    if (context.children_count> context.children.length) {
+        const current: any = context.siblings.find((record: any) => (record.uri === context.current_uri));
+        childrenQuery = AdvancedSearchQuery.emptyQuery()
+            .addFilter('parent_id', current.id, current.display_string);
+    }
+
     return (
         <ul>
             {
@@ -123,10 +139,24 @@ const RecordContextSiblings: React.FC<{context: Context}> = ({ context }) => {
                                         </li>
                                     })
                                 }
+                                {
+                                    childrenQuery &&
+                                    <li>
+                                        <Link className="qg-btn btn-link btn-xs"
+                                              to={ childrenQuery.toQueryString() }>Browse all {context.children_count} child records</Link>
+                                    </li>
+                                }
                             </ul>
                         }
                     </li>
                 })
+            }
+            {
+                siblingsQuery &&
+                <li>
+                    <Link className="qg-btn btn-link btn-xs"
+                          to={ siblingsQuery.toQueryString() }>Browse all {context.siblings_count} sibling records</Link> 
+                </li>
             }
         </ul>
     )
@@ -147,6 +177,10 @@ export const RecordContext: React.FC<{qsa_id: string, recordType: string}> = ({ 
     if (!context) {
         return <></>;
     } else {
+        const series: any = context.path_to_root.length > 0 ? context.path_to_root[0] : context.siblings[0];
+        const seriesQuery = AdvancedSearchQuery.emptyQuery()
+                                               .addFilter('resource_id', series.id, series.display_string);
+
         return (<div className="record-context">
                 {
                     context.path_to_root.length === 0 ?
@@ -163,6 +197,12 @@ export const RecordContext: React.FC<{qsa_id: string, recordType: string}> = ({ 
                                 </li>
                             </ul>
                         })
+                }
+                {
+                    <p>
+                        <Link className="qg-btn btn-primary btn-xs"
+                              to={ seriesQuery.toQueryString() }>Browse all items in series</Link>
+                    </p>
                 }
             </div>
         )
