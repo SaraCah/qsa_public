@@ -256,7 +256,7 @@ class Search
                                   start: start_index,
                                   sort: parse_sort(sort_by)).fetch('response', {})
 
-    {
+    result = {
       'total_count' => response.fetch('numFound'),
       'current_page' => page,
       'page_size' => AppConfig[:page_size],
@@ -265,6 +265,30 @@ class Search
         JSON.parse(doc.fetch('json'))
       end
     }
+
+    # Calculate child counts for the records we're returning
+    children_counts = count_children_for_docs(result['results'].map {|result| result['id']})
+
+    result['results'].each do |result|
+      result['children_count'] = children_counts.fetch(result['id'], 0)
+    end
+
+    result
+  end
+
+  def self.count_children_for_docs(doc_ids)
+    counts = solr_handle_search('q': "{!terms f=parent_id}#{doc_ids.join(',')}",
+                                'facet': true,
+                                'facet.field': ['parent_id'],
+                                'facet.mincount': 1,
+                                'facet.limit': doc_ids.length)
+
+    counts
+      .fetch('facet_counts')
+      .fetch('facet_fields')
+      .fetch('parent_id')
+      .each_slice(2)
+      .map {|parent_id, child_count| [parent_id, child_count]}.to_h
   end
 
   def self.parse_filters(search_opts)

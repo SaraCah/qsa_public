@@ -127,7 +127,10 @@ const RecordContextSiblings: React.FC<{context: Context}> = ({ context }) => {
                     const isCurrent = context.current_uri === sibling.uri;
 
                     return <li key={ sibling.id } className={ isCurrent ? 'current' : ''}>
-                        <i className={ iconForType(sibling.jsonmodel_type) } aria-hidden="true"></i>&nbsp;
+                        {
+                            (sibling.children_count > 0) ? <i className={ iconForType('resource') } aria-hidden="true"></i> :
+                            <i className={ iconForType(sibling.jsonmodel_type) } aria-hidden="true"></i>
+                        }&nbsp;
                         {
                             isCurrent ?
                                 <span>{ sibling.display_string }</span> :
@@ -139,7 +142,10 @@ const RecordContextSiblings: React.FC<{context: Context}> = ({ context }) => {
                                 {
                                     context.children.map((child: any, idx: number) => {
                                         return <li key={ child.id }>
-                                            <i className={ iconForType(child.jsonmodel_type) } aria-hidden="true"></i>&nbsp;
+                                            {
+                                                (child.children_count > 0) ? <i className={ iconForType('resource') } aria-hidden="true"></i> :
+                                                <i className={ iconForType(child.jsonmodel_type) } aria-hidden="true"></i>
+                                            }&nbsp;
                                             <Link to={ uriFor(child.qsa_id_prefixed, child.jsonmodel_type) }>{ child.display_string }</Link>
                                         </li>
                                     })
