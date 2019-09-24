@@ -146,6 +146,8 @@ const SearchFacets: React.FC<{ facets: any, advancedSearchQuery: AdvancedSearchQ
     const FACET_LABELS: {[name: string]: string} = {
         'mandate_id': 'Mandates',
         'function_id': 'Functions',
+        'parent_id': 'Parent Record',
+        'resource_id': 'Series',
         'creating_agency_id': 'Creating Agency',
         'responsible_agency_id': 'Responsible Agency',
     };
