@@ -148,7 +148,10 @@ const RecordContextSiblings: React.FC<{context: Context}> = ({ context }) => {
                                     childrenQuery &&
                                     <li>
                                         <Link className="qg-btn btn-link btn-xs"
-                                              to={ childrenQuery.toQueryString() }>Browse all {context.children_count} child records</Link>
+                                              to={{
+                                                  pathname: '/search',
+                                                  search: childrenQuery.toQueryString()
+                                            }}>Browse all {context.children_count} child records</Link>
                                     </li>
                                 }
                             </ul>
@@ -164,7 +167,10 @@ const RecordContextSiblings: React.FC<{context: Context}> = ({ context }) => {
                 siblingsQuery &&
                 <li>
                     <Link className="qg-btn btn-link btn-xs"
-                          to={ siblingsQuery.toQueryString() }>Browse all {context.siblings_count} sibling records</Link> 
+                          to={{
+                              pathname: '/search',
+                              search: siblingsQuery.toQueryString()
+                          }}>Browse all {context.siblings_count} sibling records</Link>
                 </li>
             }
         </ul>
@@ -174,14 +180,16 @@ const RecordContextSiblings: React.FC<{context: Context}> = ({ context }) => {
 export const RecordContext: React.FC<{qsa_id: string, recordType: string}> = ({ qsa_id, recordType }) => {
     const [context, setContext] = useState<Context | null>(null);
 
-    Http.fetchContextByQSAID(qsa_id, recordType)
-        .then((json: any) => {
-            setContext(json)
-        })
-        .catch((exception) => {
-            console.error(exception);
-            window.location.href = '/404';
-        });
+    if (!context) {
+        Http.fetchContextByQSAID(qsa_id, recordType)
+            .then((json: any) => {
+                setContext(json)
+            })
+            .catch((exception) => {
+                console.error(exception);
+                window.location.href = '/404';
+            });
+    }
 
     if (!context) {
         return <></>;
@@ -194,23 +202,24 @@ export const RecordContext: React.FC<{qsa_id: string, recordType: string}> = ({ 
                 {
                     context.path_to_root.length === 0 ?
                         <RecordContextSiblings context={ context }/> :
-                        context.path_to_root.map((record: any, idx: number) => {
-                            return <ul>
-                                <li key={ record.id }>
-                                    <i className={ iconForType(record.jsonmodel_type) } aria-hidden="true"></i>&nbsp;
-                                    <Link to={ uriFor(record.qsa_id_prefixed, record.jsonmodel_type) }>{ record.display_string }</Link>
-                                    {
-                                        idx === context.path_to_root.length - 1 &&
-                                        <RecordContextSiblings context={ context }/>
-                                    }
+
+                        context.path_to_root.reduce((nested_lists, next_ancestor) => (
+                            <ul>
+                                <li key={ next_ancestor.id }>
+                                    <i className={ iconForType(next_ancestor.jsonmodel_type) } aria-hidden="true"></i>&nbsp;
+                                    <Link to={ uriFor(next_ancestor.qsa_id_prefixed, next_ancestor.jsonmodel_type) }>{ next_ancestor.display_string }</Link>
+                                    { nested_lists }
                                 </li>
                             </ul>
-                        })
+                        ), <RecordContextSiblings context={ context } />)
                 }
                 {
                     <p>
                         <Link className="qg-btn btn-primary btn-xs"
-                              to={ seriesQuery.toQueryString() }>Browse all items in series</Link>
+                              to={{
+                                  pathname: '/search',
+                                  search: seriesQuery.toQueryString()
+                              }}>Browse all items in series</Link>
                     </p>
                 }
             </div>
