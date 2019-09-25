@@ -167,6 +167,7 @@ const AppContextProvider: React.FC<any> = (props) => {
     sessionId: null,
     setSessionId: (sessionId: any) => {console.log("ERROR")},
     setUser: (user: any) => {console.log("ERROR")},
+    clearSession: () => {console.log("ERROR")},
   })
 
   const setCurrentUser = (user: any) => {
@@ -187,14 +188,19 @@ const AppContextProvider: React.FC<any> = (props) => {
       setSessionLoaded(true);
       setCurrentUser(response.data)
     }, () => {
-      Http.logout();
-      setAppContext((oldState) => {
-        return Object.assign({}, oldState, { sessionId: null, sessionLoaded: true })
-      });
-
-      document.cookie = 'archives_search_session=;expires=Thu, 01 Jan 1970 00:00:00 GMT';
+      clearSession()
     });
   };
+
+  const clearSession = () => {
+    Http.logout();
+
+    setAppContext((oldState) => {
+      return Object.assign({}, oldState, { sessionId: null, sessionLoaded: true, user: null })
+    });
+
+    document.cookie = 'archives_search_session=;expires=Thu, 01 Jan 1970 00:00:00 GMT';
+  }
 
   // Update the current user
   const setSessionId = (sessionId: string) => {
@@ -232,7 +238,8 @@ const AppContextProvider: React.FC<any> = (props) => {
       sessionLoaded: !sessionId,
       sessionId: sessionId,
       setUser: setCurrentUser,
-      setSessionId: setSessionId
+      setSessionId: setSessionId,
+      clearSession: clearSession,
     }));
   }, []);
 

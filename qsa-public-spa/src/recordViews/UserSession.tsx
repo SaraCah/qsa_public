@@ -9,15 +9,22 @@ import AppContext from '../models/AppContext';
 
 export const UserSession: React.FC = () => {
 
+    const logout = (appContext: any) => {
+        appContext.clearSession();
+    }
+
     return (
         <AppContext.Consumer>
             {
                 (context: any) => (
                     <>
                         { context.sessionLoaded &&
-                          <div className="pull-right">
+                          <div className="login-box pull-right">
                               { context.user ?
-                                <p>Hello, { context.user.first_name || '' } { context.user.last_name || '' }</p> :
+                                <div>
+                                    Hello, { context.user.first_name || '' } { context.user.last_name || '' }
+                                    &nbsp;|<button onClick={ (e) => logout(context) } className="qg-btn btn-link btn-xs">Logout</button>
+                                </div> :
                                 <Link to="/login">Login</Link>
                               }
                           </div>
