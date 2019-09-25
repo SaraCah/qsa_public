@@ -105,7 +105,7 @@ const ItemPage: React.FC<any> = (route: any) => {
 
   /* FIXME: probably want a definition file of types to QSA prefixes here */
   if (!item) {
-    Http.fetchByQSAID(qsa_id, 'archival_object')
+    Http.get().fetchByQSAID(qsa_id, 'archival_object')
         .then((json: any) => {
           setCurrentItem(new RecordDisplay(json))
         })

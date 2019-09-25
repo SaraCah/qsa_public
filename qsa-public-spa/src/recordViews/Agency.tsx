@@ -31,7 +31,7 @@ const AgencyPage: React.FC<any> = (route: any) => {
   const qsa_id: string = route.match.params.qsa_id;
 
   if (!agency) {
-    Http.fetchByQSAID(qsa_id, 'agent_corporate_entity')
+    Http.get().fetchByQSAID(qsa_id, 'agent_corporate_entity')
       .then((json: any) => {
         setCurrentAgency(new RecordDisplay(json))
       })

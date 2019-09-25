@@ -5,6 +5,7 @@ const searchUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/advanced_search`;
 const fetchUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/fetch`;
 const contextUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/fetch_context`;
 const loginUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/authenticate`;
+const loggedInUserUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/logged_in_user`;
 
 
 interface ResultClass {
@@ -18,10 +19,46 @@ export class Http {
         }
     };
 
-    static async fetchResults<T>(advancedSearchQuery: AdvancedSearchQuery, page: number = 0): Promise<T[]> {
+    private static instance: Http | null;
+    private sessionId?: string;
+
+    constructor(sessionId?: string) {
+        this.sessionId = sessionId;
+    }
+
+    static login(sessionId: string | null) {
+        if (sessionId) {
+            Http.instance = new Http(sessionId);
+        } else {
+            Http.logout();
+        }
+    }
+
+    static logout() {
+        Http.instance = null;
+    }
+
+    getConfig() {
+        const result = {... Http.config};
+        result.headers = Object.assign({},
+                                       result.headers,
+                                       this.sessionId ? { 'x-archivessearch-session': this.sessionId } : {});
+
+        return result;
+    }
+
+    static get() {
+        if (!Http.instance) {
+            Http.instance = new Http();
+        }
+
+        return Http.instance;
+    }
+
+    async fetchResults<T>(advancedSearchQuery: AdvancedSearchQuery, page: number = 0): Promise<T[]> {
         const query = advancedSearchQuery.toJSON();
         const response = await axios
-            .post(`${searchUrl}?query=${query}&page=${page}`, Http.config)
+            .post(`${searchUrl}?query=${query}&page=${page}`, this.getConfig())
             .catch(error => {
                 console.log(error, error.status);
                 return error;
@@ -29,9 +66,9 @@ export class Http {
         return response.data || [];
     }
 
-    static async fetchFromUri<T>(uri: string): Promise<T> {
+    async fetchFromUri<T>(uri: string): Promise<T> {
         const response = await axios
-            .get(`${fetchUrl}?uri=${uri}`, Http.config)
+            .get(`${fetchUrl}?uri=${uri}`, this.getConfig())
             .catch(error => {
                 console.log(error, error.status);
                 return error;
@@ -39,20 +76,11 @@ export class Http {
         return response.data;
     }
 
-    static async fetchByQSAID(qsa_id: string, record_type: string): Promise<any> {
-        const response = await axios
-            .get(`${fetchUrl}?qsa_id=${qsa_id}&type=${record_type}`, Http.config)
-            .catch(error => {
-                console.log(error, error.status);
-                return error;
-            });
+    async fetchByQSAID(qsa_id: string, record_type: string): Promise<any> {
+        console.log(this.getConfig());
 
-        return response.data;
-    }
-
-    static async fetchContextByQSAID(qsa_id: string, record_type: string): Promise<any> {
         const response = await axios
-            .get(`${contextUrl}?qsa_id=${qsa_id}&type=${record_type}`, Http.config)
+            .get(`${fetchUrl}?qsa_id=${qsa_id}&type=${record_type}`, this.getConfig())
             .catch(error => {
                 console.log(error, error.status);
                 return error;
@@ -61,7 +89,18 @@ export class Http {
         return response.data;
     }
 
-    static async login(email: string, password: string): Promise<any> {
+    async fetchContextByQSAID(qsa_id: string, record_type: string): Promise<any> {
+        const response = await axios
+            .get(`${contextUrl}?qsa_id=${qsa_id}&type=${record_type}`, this.getConfig())
+            .catch(error => {
+                console.log(error, error.status);
+                return error;
+            });
+
+        return response.data;
+    }
+
+    async login(email: string, password: string): Promise<any> {
         const bodyFormData = new FormData();
         bodyFormData.set('email', email);
         bodyFormData.set('password', password);
@@ -69,7 +108,7 @@ export class Http {
         const response = await axios
             .post(loginUrl,
                   bodyFormData,
-                  { 
+                  {
                     headers: {'Content-Type': 'multipart/form-data' }
                   })
             .catch(error => {
@@ -78,5 +117,9 @@ export class Http {
             });
 
         return response.data || [];
+    }
+
+    async getCurrentUser(): Promise<any> {
+        return await axios.get(`${loggedInUserUrl}`, this.getConfig());
     }
 }

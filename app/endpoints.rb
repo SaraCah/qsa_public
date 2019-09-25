@@ -207,9 +207,8 @@ class QSAPublic < Sinatra::Base
   end
 
   Endpoint.post('/api/logout') do
-    if session[:api_session_id]
-      Sessions.delete_session(session[:api_session_id])
-      session[:api_session_id] = nil
+    if Ctx.get.session
+      Sessions.delete_session(Ctx.get.session.id)
     end
 
     json_response({ bye: "Bye!" })
@@ -221,17 +220,16 @@ class QSAPublic < Sinatra::Base
     if DBAuth.authenticate(params[:email], params[:password])
       user = Users.get_for_email(params[:email])
 
-      session[:api_session_id] = Sessions.create_session(user.fetch('id'))
-      json_response(authenticated: true)
+      session_id = Sessions.create_session(user.fetch('id'))
+      json_response(authenticated: true, session_id: session_id)
     else
       json_response(authenticated: false)
     end
   end
 
   Endpoint.get('/api/logged_in_user') do
-    if session[:api_session_id]
-      app_session = Sessions.get_session(session[:api_session_id])
-      json_response(Users.get(app_session.user_id))
+    if Ctx.get.session
+      json_response(Users.get(Ctx.get.session.user_id))
     else
       [403]
     end

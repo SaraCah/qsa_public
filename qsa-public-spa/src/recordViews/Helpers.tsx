@@ -196,7 +196,7 @@ export const RecordContext: React.FC<{qsa_id: string, recordType: string}> = ({ 
     const [context, setContext] = useState<Context | null>(null);
 
     if (!context) {
-        Http.fetchContextByQSAID(qsa_id, recordType)
+        Http.get().fetchContextByQSAID(qsa_id, recordType)
             .then((json: any) => {
                 setContext(json)
             })

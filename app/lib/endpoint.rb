@@ -115,6 +115,15 @@ class Endpoint
       app_instance = self
 
       Ctx.open do
+
+        if session_id = env['HTTP_X_ARCHIVESSEARCH_SESSION']
+          begin
+            Ctx.get.session = Sessions.get_session(session_id)
+          rescue SessionNotFoundError
+            # User's token not valid
+          end
+        end
+
         if endpoint.needs_session? && Ctx.get.session.nil?
           raise Sessions::SessionNotFoundError.new("A session is required to access this endpoint")
         end

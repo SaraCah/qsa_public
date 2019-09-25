@@ -29,7 +29,7 @@ class Users < BaseStorage
   end
 
   def self.get(user_id)
-    user = db[:user][:user_id => user_id]
+    user = db[:user][:id => user_id]
 
     return nil unless user
 

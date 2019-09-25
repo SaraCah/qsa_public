@@ -32,7 +32,7 @@ const SeriesPage: React.FC<any> = (route: any) => {
 
   /* FIXME: probably want a definition file of types to QSA prefixes here */
   if (!series) {
-    Http.fetchByQSAID(qsa_id, 'resource')
+    Http.get().fetchByQSAID(qsa_id, 'resource')
       .then((json: any) => {
         setCurrentSeries(new RecordDisplay(json))
       })

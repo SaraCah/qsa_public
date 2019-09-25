@@ -21,7 +21,7 @@ const FunctionPage: React.FC<any> = (route: any) => {
   const qsa_id: string = route.match.params.qsa_id;
 
   if (!currentFunction) {
-    Http.fetchByQSAID(qsa_id, 'function')
+    Http.get().fetchByQSAID(qsa_id, 'function')
       .then((json: any) => {
         setCurrentFunction(new RecordDisplay(json))
       })

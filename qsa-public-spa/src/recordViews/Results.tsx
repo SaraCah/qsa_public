@@ -29,7 +29,7 @@ const ResultsPage: React.FC<any> = (route: any) => {
     };
 
     if (!searchResults) {
-        Http.fetchResults(advancedSearchQuery, currentPage).then((results) => {
+        Http.get().fetchResults(advancedSearchQuery, currentPage).then((results) => {
             setSearchResults(results);
             setShowCompact(true);
         });

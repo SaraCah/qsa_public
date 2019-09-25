@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import ReactDOM from 'react-dom';
 import * as serviceWorker from './serviceWorker';
 import 'bootstrap/dist/js/bootstrap.bundle';
@@ -21,6 +21,9 @@ import MandatePage from "./recordViews/Mandate";
 import ItemPage from "./recordViews/Item";
 import {LoginPage} from "./recordViews/UserSession";
 
+import AppContext from './models/AppContext';
+
+import {Http} from './utils/http';
 
 /* Establish error handling */
 class ErrorBuffer {
@@ -147,25 +150,119 @@ function wrappedRoute(component: any, opts: { alwaysRender?: boolean, pageTitle?
 
 
     routeKey++;
-    return React.createElement(component, Object.assign({}, props, {routeKey, setPageTitle}, opts.alwaysRender ? {key: routeKey} : {}));
+    return React.createElement(component,
+                               Object.assign({},
+                                             props,
+                                             {routeKey, setPageTitle},
+                                             opts.alwaysRender ? {key: routeKey} : {}));
   }
 }
 
 
+const AppContextProvider: React.FC<any> = (props) => {
+  const [appContext, setAppContext] = useState({
+    sessionLoaded: false,
+    cart: null,
+    user: null,
+    sessionId: null,
+    setSessionId: (sessionId: any) => {console.log("ERROR")},
+    setUser: (user: any) => {console.log("ERROR")},
+  })
+
+  const setCurrentUser = (user: any) => {
+    setAppContext((oldState) => {
+      return Object.assign({}, oldState, { user: user })
+    });
+  };
+
+  const setSessionLoaded = (value: boolean) => {
+    setAppContext((oldState) => {
+      return Object.assign({}, oldState, { sessionLoaded: value })
+    });
+  };
+
+  // Assumes that Http has been logged in!
+  const getCurrentUser = () => {
+    Http.get().getCurrentUser().then((response) => {
+      setSessionLoaded(true);
+      setCurrentUser(response.data)
+    }, () => {
+      Http.logout();
+      setAppContext((oldState) => {
+        return Object.assign({}, oldState, { sessionId: null, sessionLoaded: true })
+      });
+
+      document.cookie = 'archives_search_session=;expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    });
+  };
+
+  // Update the current user
+  const setSessionId = (sessionId: string) => {
+    const isSecure = window.location.protocol === 'https:' ? ';secure' : '';
+    document.cookie = `archives_search_session=${sessionId};samesite=strict${isSecure}`
+
+    Http.login(sessionId);
+
+    setAppContext((oldState) => {
+      return Object.assign({}, oldState, { sessionId: sessionId })
+    });
+
+    getCurrentUser();
+  };
+
+  const loadSessionFromCookie = () => {
+    for (const cookie of document.cookie.split(';')) {
+      if (cookie.trim().startsWith('archives_search_session=')) {
+        return cookie.trim().split("=")[1];
+      }
+    }
+
+    return null;
+  }
+
+  // Add a `setUser` callback to our state to invoke the above setter
+  useEffect(() => {
+    const sessionId = loadSessionFromCookie();
+
+    if (sessionId) {
+      Http.login(sessionId);
+    }
+
+    setAppContext(Object.assign({}, appContext, {
+      sessionLoaded: !sessionId,
+      sessionId: sessionId,
+      setUser: setCurrentUser,
+      setSessionId: setSessionId
+    }));
+  }, []);
+
+  if (appContext.sessionId && !appContext.user) {
+    Http.login(appContext.sessionId);
+    getCurrentUser();
+  }
+
+  return <AppContext.Provider value={ appContext }>
+      { props.children }
+    </AppContext.Provider>;
+};
+
 ReactDOM.render(
-  <BrowserRouter>
-    <Switch>
-      <Route exact path="/" component={wrappedRoute(HomePage, {pageTitle: "Archives Search: Home"})} />
-      <Route path="/agencies/:qsa_id" component={wrappedRoute(AgencyPage, {pageTitle: "View agency"})} />
-      <Route path="/series/:qsa_id" component={wrappedRoute(SeriesPage, {pageTitle: "View series"})} />
-      <Route path="/functions/:qsa_id" component={wrappedRoute(FunctionPage, {pageTitle: "View function"})} />
-      <Route path="/mandates/:qsa_id" component={wrappedRoute(MandatePage, {pageTitle: "View mandate"})} />
-      <Route path="/items/:qsa_id" component={wrappedRoute(ItemPage, {pageTitle: "View item"})} />
-      <Route exact path="/login" component={wrappedRoute(LoginPage, {pageTitle: "Login"})} />
-      <Route exact path="/search" component={wrappedRoute(ResultsPage, {pageTitle: "Search records"})} />
-      <Route component={wrappedRoute(NotFound, {pageTitle: "Page not found"})} />
-    </Switch>
-  </BrowserRouter>,
+  <AppContextProvider>
+    <BrowserRouter>
+      <Switch>
+        <Route exact path="/" component={wrappedRoute(HomePage, {pageTitle: "Archives Search: Home"})} />
+        <Route path="/agencies/:qsa_id" component={wrappedRoute(AgencyPage, {pageTitle: "View agency"})} />
+        <Route path="/series/:qsa_id" component={wrappedRoute(SeriesPage, {pageTitle: "View series"})} />
+        <Route path="/functions/:qsa_id" component={wrappedRoute(FunctionPage, {pageTitle: "View function"})} />
+        <Route path="/mandates/:qsa_id" component={wrappedRoute(MandatePage, {pageTitle: "View mandate"})} />
+        <Route path="/items/:qsa_id" component={wrappedRoute(ItemPage, {pageTitle: "View item"})} />
+        <Route exact path="/login" component={wrappedRoute(LoginPage, {pageTitle: "Login"})} />
+        <Route exact path="/search" component={wrappedRoute(ResultsPage, {pageTitle: "Search records"})} />
+        <Route component={wrappedRoute(NotFound, {pageTitle: "Page not found"})} />
+      </Switch>
+    </BrowserRouter>
+  </AppContextProvider>,
+
   document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change

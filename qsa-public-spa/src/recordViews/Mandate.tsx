@@ -25,7 +25,7 @@ const MandatePage: React.FC<any> = (route: any) => {
   const qsa_id: string = route.match.params.qsa_id;
 
   if (!currentMandate) {
-    Http.fetchByQSAID(qsa_id, 'mandate')
+    Http.get().fetchByQSAID(qsa_id, 'mandate')
       .then((json: any) => {
         setCurrentMandate(new RecordDisplay(json))
       })
