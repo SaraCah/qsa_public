@@ -21,9 +21,8 @@ import MandatePage from "./recordViews/Mandate";
 import ItemPage from "./recordViews/Item";
 import {LoginPage} from "./recordViews/UserSession";
 
-import AppContext from './models/AppContext';
-
-import {Http} from './utils/http';
+import AppContext from './context/AppContext';
+import AppContextProvider from './context/AppContextProvider';
 
 /* Establish error handling */
 class ErrorBuffer {
@@ -158,100 +157,6 @@ function wrappedRoute(component: any, opts: { alwaysRender?: boolean, pageTitle?
   }
 }
 
-
-const AppContextProvider: React.FC<any> = (props) => {
-  const [appContext, setAppContext] = useState({
-    sessionLoaded: false,
-    cart: null,
-    user: null,
-    sessionId: null,
-    setSessionId: (sessionId: any) => {console.log("ERROR")},
-    setUser: (user: any) => {console.log("ERROR")},
-    clearSession: () => {console.log("ERROR")},
-  })
-
-  const setCurrentUser = (user: any) => {
-    setAppContext((oldState) => {
-      return Object.assign({}, oldState, { user: user })
-    });
-  };
-
-  const setSessionLoaded = (value: boolean) => {
-    setAppContext((oldState) => {
-      return Object.assign({}, oldState, { sessionLoaded: value })
-    });
-  };
-
-  // Assumes that Http has been logged in!
-  const getCurrentUser = () => {
-    Http.get().getCurrentUser().then((response) => {
-      setSessionLoaded(true);
-      setCurrentUser(response.data)
-    }, () => {
-      clearSession()
-    });
-  };
-
-  const clearSession = () => {
-    Http.logout();
-
-    setAppContext((oldState) => {
-      return Object.assign({}, oldState, { sessionId: null, sessionLoaded: true, user: null })
-    });
-
-    document.cookie = 'archives_search_session=;expires=Thu, 01 Jan 1970 00:00:00 GMT';
-  }
-
-  // Update the current user
-  const setSessionId = (sessionId: string) => {
-    const isSecure = window.location.protocol === 'https:' ? ';secure' : '';
-    document.cookie = `archives_search_session=${sessionId};samesite=strict${isSecure}`
-
-    Http.login(sessionId);
-
-    setAppContext((oldState) => {
-      return Object.assign({}, oldState, { sessionId: sessionId })
-    });
-
-    getCurrentUser();
-  };
-
-  const loadSessionFromCookie = () => {
-    for (const cookie of document.cookie.split(';')) {
-      if (cookie.trim().startsWith('archives_search_session=')) {
-        return cookie.trim().split("=")[1];
-      }
-    }
-
-    return null;
-  }
-
-  // Add a `setUser` callback to our state to invoke the above setter
-  useEffect(() => {
-    const sessionId = loadSessionFromCookie();
-
-    if (sessionId) {
-      Http.login(sessionId);
-    }
-
-    setAppContext(Object.assign({}, appContext, {
-      sessionLoaded: !sessionId,
-      sessionId: sessionId,
-      setUser: setCurrentUser,
-      setSessionId: setSessionId,
-      clearSession: clearSession,
-    }));
-  }, []);
-
-  if (appContext.sessionId && !appContext.user) {
-    Http.login(appContext.sessionId);
-    getCurrentUser();
-  }
-
-  return <AppContext.Provider value={ appContext }>
-      { props.children }
-    </AppContext.Provider>;
-};
 
 ReactDOM.render(
   <AppContextProvider>
