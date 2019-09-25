@@ -53,29 +53,6 @@ class Ctx
     def initialize(db)
       @db = db
       @session = nil
-      @current_location = nil
-    end
-
-    def current_location
-      return nil if permissions.is_admin?
-
-      return @current_location if @current_location
-
-      if session[:current_location]
-        @current_location = AgencyLocation.from_hash(session[:current_location])
-      else
-        session[:current_location] ||= Locations.default_location
-        @current_location = session[:current_location]
-      end
-    end
-
-    def set_location(agency_id, location_id)
-      session[:current_location] = Locations.get(agency_id, location_id)
-      @current_location = session[:current_location]
-    end
-
-    def permissions
-      @permissions ||= Users.permissions_for_user(session.username)
     end
   end
 

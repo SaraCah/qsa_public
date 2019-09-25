@@ -19,6 +19,7 @@ import SeriesPage from "./recordViews/Series";
 import FunctionPage from "./recordViews/Function";
 import MandatePage from "./recordViews/Mandate";
 import ItemPage from "./recordViews/Item";
+import {LoginPage} from "./recordViews/UserSession";
 
 
 /* Establish error handling */
@@ -160,6 +161,7 @@ ReactDOM.render(
       <Route path="/functions/:qsa_id" component={wrappedRoute(FunctionPage, {pageTitle: "View function"})} />
       <Route path="/mandates/:qsa_id" component={wrappedRoute(MandatePage, {pageTitle: "View mandate"})} />
       <Route path="/items/:qsa_id" component={wrappedRoute(ItemPage, {pageTitle: "View item"})} />
+      <Route exact path="/login" component={wrappedRoute(LoginPage, {pageTitle: "Login"})} />
       <Route exact path="/search" component={wrappedRoute(ResultsPage, {pageTitle: "Search records"})} />
       <Route component={wrappedRoute(NotFound, {pageTitle: "Page not found"})} />
     </Switch>

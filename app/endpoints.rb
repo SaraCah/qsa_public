@@ -188,6 +188,79 @@ class QSAPublic < Sinatra::Base
                                })
   end
 
+  Endpoint.post('/api/users')
+    .param(:user, UserFormDTO, "User to create", :body => true) do
+
+    if (errors = params[:user].validate).empty?
+      if (errors = Users.create_from_dto(params[:user])).empty?
+        user = Users.get_for_email(params[:user].fetch(:email))
+        session = Sessions.create_session(user.fetch('id'))
+
+        json_response(status: 'created',
+                      session: session)
+      else
+        json_response(errors: errors)
+      end
+    else
+      json_response(errors: errors)
+    end
+  end
+
+  Endpoint.post('/api/logout') do
+    if session[:api_session_id]
+      Sessions.delete_session(session[:api_session_id])
+      session[:api_session_id] = nil
+    end
+
+    json_response({ bye: "Bye!" })
+  end
+
+  Endpoint.post('/api/authenticate', needs_session: false)
+    .param(:email, String, "Email to authenticate")
+    .param(:password, String, "Password") do
+    if DBAuth.authenticate(params[:email], params[:password])
+      session[:api_session_id] = Sessions.create_session(params[:email])
+      json_response(authenticated: true)
+    else
+      json_response(authenticated: false)
+    end
+  end
+
+  Endpoint.get('/api/logged_in_user') do
+    if session[:api_session_id]
+      app_session = Sessions.get_session(session[:api_session_id])
+      json_response(Users.get(app_session.user_id))
+    else
+      [403]
+    end
+  end
+
+
+  Endpoint.get('/api/fetch')
+    .param(:qsa_id, String, "Record QSA ID with prefix", optional: true)
+    .param(:uri, String, "Record URI", optional: true)
+    .param(:id, String, "Record SOLR ID", optional: true)
+    .param(:type, String, "Scope to record type", optional: true) do
+    response = [404]
+
+    begin
+      # FIXME scope fetch by type if provided
+      if params[:qsa_id] || params[:uri] || params[:id]
+        if record = Search.get(qsa_id: params[:qsa_id],
+                               uri: params[:uri],
+                               id: params[:id])
+          Search.resolve_refs!(record)
+          response = json_response(record)
+        end
+      end
+    rescue
+      $LOG.error($!)
+    end
+
+    response
+  end
+
+
 
   if !defined?(STATIC_DIR) 
     STATIC_DIR = File.realpath(File.absolute_path(File.join(File.dirname(__FILE__), '..', 'static')))

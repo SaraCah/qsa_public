@@ -1,5 +1,6 @@
 import React from 'react';
 import {Link} from "react-router-dom";
+import {UserSession} from "./UserSession";
 
 const Layout: React.FC<any> = (props: any) => {
     if (props.noindex) {
@@ -73,40 +74,48 @@ const Layout: React.FC<any> = (props: any) => {
                         </form>
                     </header>
 
+                    <div className="row">
+                        <nav id="qg-breadcrumb" role="navigation" aria-label="breadcrumb navigation" aria-labelledby="breadcrumb-heading" className="collapse">
+                            <h2 id="breadcrumb-heading" className="qg-visually-hidden">You are here:</h2>
+                            <ol className="list-inline">
+                                <li id="qldGov">
+                                    <a href="http://www.qld.gov.au/" target="_blank">Queensland Government home</a>
+                                </li>
+                                <li>
+                                    <a href="https://www.qld.gov.au/queenslanders/" target="_blank">For Queenslanders</a>
+                                </li>
+                                <li className="qldGovBreadcrumb">
+                                    <a href="https://www.qld.gov.au/recreation/" target="_blank">Recreation, sport and arts</a>
+                                </li>
+                                <li className="qldGovBreadcrumb">
+                                    <a href="https://www.qld.gov.au/recreation/arts/" target="_blank">Arts, culture and heritage</a>
+                                </li>
+                                <li className="qldGovBreadcrumb">
+                                    <a href="https://www.qld.gov.au/recreation/arts/heritage/" target="_blank">Heritage</a>
+                                </li>
+                                <li className="qldGovBreadcrumb">
+                                    <a href="https://www.qld.gov.au/recreation/arts/heritage/archives/" target="_blank">Queensland's archives</a>
+                                </li>
+                                <li className="qldGovBreadcrumb">
+                                    Archives Search
+                                </li>
+                            </ol>
+                        </nav>
+                    </div>
+
                     <div id="qg-content">
+                        { !props.aside && <UserSession></UserSession> }
+
                         <div id={ props.aside ? 'qg-three-col' : 'qg-two-col-nav' } className="row">
-                            <nav id="qg-breadcrumb" role="navigation" aria-label="breadcrumb navigation" aria-labelledby="breadcrumb-heading" className="collapse">
-                                <h2 id="breadcrumb-heading" className="qg-visually-hidden">You are here:</h2>
-                                <ol className="list-inline">
-                                    <li id="qldGov">
-                                        <a href="http://www.qld.gov.au/" target="_blank">Queensland Government home</a>
-                                    </li>
-                                    <li>
-                                        <a href="https://www.qld.gov.au/queenslanders/" target="_blank">For Queenslanders</a>
-                                    </li>
-                                    <li className="qldGovBreadcrumb">
-                                        <a href="https://www.qld.gov.au/recreation/" target="_blank">Recreation, sport and arts</a>
-                                    </li>
-                                    <li className="qldGovBreadcrumb">
-                                        <a href="https://www.qld.gov.au/recreation/arts/" target="_blank">Arts, culture and heritage</a>
-                                    </li>
-                                    <li className="qldGovBreadcrumb">
-                                        <a href="https://www.qld.gov.au/recreation/arts/heritage/" target="_blank">Heritage</a>
-                                    </li>
-                                    <li className="qldGovBreadcrumb">
-                                        <a href="https://www.qld.gov.au/recreation/arts/heritage/archives/" target="_blank">Queensland's archives</a>
-                                    </li>
-                                    <li className="qldGovBreadcrumb">
-                                        Archives Search
-                                    </li>
-                                </ol>
-                            </nav>
 
                             <div id="qg-primary-content" role="main">
                                 {props.children}
                             </div>
+
                             { props.aside &&
                             <aside id="qg-secondary-content">
+                                <UserSession></UserSession>
+
                                 <div className="qg-aside">
                                     {props.aside}
                                 </div>

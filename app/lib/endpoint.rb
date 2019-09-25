@@ -7,7 +7,7 @@ class Endpoint
     @uri = uri
     @valid_params = {'splat' => ParamDef.new(String, 'Rest of URL', {:optional => true})}
     @opts = opts
-    @needs_session = opts.fetch(:needs_session, true)
+    @needs_session = opts.fetch(:needs_session, false)
   end
 
   def self.post(uri, opts = {}, &block)
@@ -115,6 +115,10 @@ class Endpoint
       app_instance = self
 
       Ctx.open do
+        if endpoint.needs_session? && Ctx.get.session.nil?
+          raise Sessions::SessionNotFoundError.new("A session is required to access this endpoint")
+        end
+
         app_instance.instance_eval(&block)
       end
     end

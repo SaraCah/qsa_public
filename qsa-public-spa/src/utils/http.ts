@@ -4,6 +4,7 @@ import {AdvancedSearchQuery} from "../models/AdvancedSearch";
 const searchUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/advanced_search`;
 const fetchUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/fetch`;
 const contextUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/fetch_context`;
+const loginUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/authenticate`;
 
 
 interface ResultClass {
@@ -58,5 +59,21 @@ export class Http {
             });
 
         return response.data;
+    }
+
+    static async login(email: string, password: string): Promise<any> {
+        const response = await axios
+            .post(loginUrl,
+                  {
+                    email: email,
+                    password: password,
+                  },
+                  Http.config)
+            .catch(error => {
+                console.log(error, error.status);
+                return error;
+            });
+
+        return response.data || [];
     }
 }

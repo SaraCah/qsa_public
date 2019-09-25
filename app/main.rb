@@ -45,6 +45,15 @@ require 'lib/date_parse'
 require 'lib/templates'
 require 'views/templates'
 
+require 'models/dto'
+require 'models/user_form_dto'
+require 'models/user_dto'
+
+require 'storage/base_storage'
+require 'storage/users'
+require 'storage/sessions'
+require 'storage/db_auth'
+
 require 'endpoints'
 
 
