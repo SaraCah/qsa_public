@@ -62,13 +62,16 @@ export class Http {
     }
 
     static async login(email: string, password: string): Promise<any> {
+        const bodyFormData = new FormData();
+        bodyFormData.set('email', email);
+        bodyFormData.set('password', password);
+
         const response = await axios
             .post(loginUrl,
-                  {
-                    email: email,
-                    password: password,
-                  },
-                  Http.config)
+                  bodyFormData,
+                  { 
+                    headers: {'Content-Type': 'multipart/form-data' }
+                  })
             .catch(error => {
                 console.log(error, error.status);
                 return error;

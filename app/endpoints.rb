@@ -215,11 +215,13 @@ class QSAPublic < Sinatra::Base
     json_response({ bye: "Bye!" })
   end
 
-  Endpoint.post('/api/authenticate', needs_session: false)
+  Endpoint.post('/api/authenticate')
     .param(:email, String, "Email to authenticate")
     .param(:password, String, "Password") do
     if DBAuth.authenticate(params[:email], params[:password])
-      session[:api_session_id] = Sessions.create_session(params[:email])
+      user = Users.get_for_email(params[:email])
+
+      session[:api_session_id] = Sessions.create_session(user.fetch('id'))
       json_response(authenticated: true)
     else
       json_response(authenticated: false)

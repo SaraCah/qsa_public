@@ -30,7 +30,7 @@ Sequel.migration do
       primary_key :id
 
       String :session_id, :unique => true, :null => false, size: 64
-      foreign_key :user_id, :user, :unique => true
+      foreign_key :user_id, :user
 
       Bignum :create_time, null: false
       Bignum :last_used_time, null: false
@@ -38,5 +38,17 @@ Sequel.migration do
       String :session_data, :null => true, :text => true
     end
 
+    admin_id = self[:user].insert(
+      :email => 'admin',
+      :first_name => 'Admin',
+      :admin => 1,
+      :create_time => java.lang.System.currentTimeMillis,
+      :modified_time => java.lang.System.currentTimeMillis,
+    )
+
+    self[:dbauth].insert(
+      :user_id => admin_id,
+      :pwhash => '$2a$10$kV6q/lrjUkc2VLRsz8V1l.LQlgoxZEmZZq7/tU46UoPMnc1H9/KQS', 
+    )
   end
 end

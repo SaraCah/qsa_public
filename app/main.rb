@@ -118,6 +118,10 @@ class QSAPublic < Sinatra::Base
     return [500, {}, {"SERVER_ERROR" => {type: $!.class.to_s, message: $!.to_s}}.to_json]
   end
 
+  use Rack::Session::Cookie, :key => 'qsaarchivessearch.session',
+      :path => '/',
+      :secret => AppConfig[:session_secret]
+
   private
 
   def json_response(hash)
