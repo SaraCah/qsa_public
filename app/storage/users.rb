@@ -137,4 +137,18 @@ class Users < BaseStorage
     UserDTO.from_row(user)
   end
 
+  def self.update_password(user_id, current_password, new_password, confirm_new_password)
+    if DBAuth.authenticate_for_id(user_id, current_password)
+      if new_password == confirm_new_password
+        DBAuth.set_user_password(user_id, new_password)
+
+        []
+      else
+        [{code: 'CONFIRM_PASSWORD_MISMATCH', field: 'password'}]
+      end
+    else
+      [{code: "INCORRECT_PASSWORD", field: 'current_password'}]
+    end
+  end
+
 end

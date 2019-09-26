@@ -24,6 +24,7 @@ import {LoginPage} from "./recordViews/UserSession";
 import AppContext from './context/AppContext';
 import AppContextProvider from './context/AppContextProvider';
 import {
+  ChangePasswordPage,
   MyAccountPage,
   MyContactDetailsPage,
   RegisterPage, UserManagementPage
@@ -178,6 +179,7 @@ ReactDOM.render(
         <Route exact path="/register" component={wrappedRoute(RegisterPage, {pageTitle: "Register"})} />
         <Route exact path="/my-account" component={wrappedRoute(MyAccountPage, {pageTitle: "My Account"})} />
         <Route exact path="/my-details" component={wrappedRoute(MyContactDetailsPage, {pageTitle: "My Contact Details"})} />
+        <Route exact path="/change-password" component={wrappedRoute(ChangePasswordPage, {pageTitle: "Change Password"})} />
         <Route exact path="/admin/users" component={wrappedRoute(UserManagementPage, {pageTitle: "User Management"})} />
         <Route exact path="/admin/users/:user_id" component={wrappedRoute(UserManagementPage, {pageTitle: "User Management"})} />
         <Route component={wrappedRoute(NotFound, {pageTitle: "Page not found"})} />

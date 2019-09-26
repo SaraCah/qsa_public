@@ -106,7 +106,6 @@ export const RegisterPage: React.FC<any> = (route: any) => {
 
                         <h3>Your login details</h3>
                         <div className="qg-call-out-box">
-
                             <div className="form-group">
                                 <label htmlFor="email">Email address</label>
                                 <input type="text" className="form-control"
@@ -195,7 +194,7 @@ const AdminAccountSummary: React.FC = () => {
                         <div className="details">
                             <h2>Change password</h2>
                             <p>Change your password</p>
-                            <a href="#" className="btn btn-primary">Change password</a>
+                            <Link to="/change-password" className="btn btn-primary">Change password</Link>
                         </div>
                     </div>
                 </article>
@@ -255,7 +254,7 @@ const UserAccountSummary: React.FC = () => {
                         <div className="details">
                             <h2>Change password</h2>
                             <p>Change your password</p>
-                            <a href="#" className="btn btn-primary">Change password</a>
+                            <Link to="/change-password" className="btn btn-primary">Change password</Link>
                         </div>
                     </div>
                 </article>
@@ -406,6 +405,109 @@ export const MyContactDetailsPage: React.FC<any> = (route: any) => {
                 {
                     (context: any) => (
                         <UserDetailsForm context={ context }/>
+                    )
+                }
+            </AppContext.Consumer>
+        </LoginRequired>
+    )
+}
+
+
+const ChangePasswordForm: React.FC<{ context: any }> = ({ context }) => {
+    const [data, setData]: [any, any] = useState({});
+    const [errors, setErrors]: [any, any] = useState([]);
+    const [showUpdateSuccess, setShowUpdateSuccess]: [boolean, any] = useState(false);
+
+    const onSubmit = (e: any) => {
+        setErrors([]);
+        setShowUpdateSuccess(false);
+
+        Http.get().updatePassword(data).then((response: any) => {
+            if (response.status === 'updated') {
+                setShowUpdateSuccess(true);
+                setData({})
+            } else if (response.errors) {
+                setErrors(response.errors);
+            } else {
+                setErrors([{validation_code: "Update Failed -- please try again"}]);
+            }
+        })
+    }
+
+    return (
+        <div className="row">
+            <div className="col-sm-12">
+                <h1>Update password</h1>
+                {
+                    showUpdateSuccess &&
+                    <div className="alert alert-success" role="alert">
+                        <p>Password updated.</p>
+                    </div>
+                }
+                <form method="GET" onSubmit={ (e) => { e.preventDefault(); onSubmit(e) } }>
+                    {
+                        errors && errors.length > 0 &&
+                        <FormErrors errors={ errors } />
+                    }
+
+                    <div className="qg-call-out-box">
+                        <div className="form-group">
+                            <label htmlFor="current_password">Current Password</label>
+                            <input type="text" className="form-control"
+                                   id="current_password"
+                                   value={ data.current_password || '' }
+                                   onChange={ (e) => setData(Object.assign({...data}, {current_password: e.target.value}))} />
+                        </div>
+
+                        <div className="form-group">
+                            <label htmlFor="new_password">New Password</label>
+                            <input type="text" className="form-control"
+                                   id="new_password"
+                                   value={ data.password || '' }
+                                   onChange={ (e) => setData(Object.assign({...data}, {password: e.target.value}))} />
+                        </div>
+
+                        <div className="form-group">
+                            <label htmlFor="confirm_new_password">Confirm New Password</label>
+                            <input type="text" className="form-control"
+                                   id="confirm_new_password"
+                                   value={ data.confirm_password || '' }
+                                   onChange={ (e) => setData(Object.assign({...data}, {confirm_password: e.target.value}))} />
+                        </div>
+                        {
+                            data.password && data.password !== data.confirm_password &&
+                            <small id="passwordHelpInline" className="text-danger">
+                                Password mismatch
+                            </small>
+                        }
+                        {
+                            data.password && data.password === data.confirm_password &&
+                            <small id="passwordHelpInline" className="text-success">
+                                Passwords match!
+                            </small>
+                        }
+                    </div>
+
+                    <div className="form-row col-md-12">
+                        <p>
+                            <button type="submit" className="qg-btn btn-primary">
+                                Update password
+                            </button>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    )
+}
+
+export const ChangePasswordPage: React.FC<any> = (route: any) => {
+    return (
+        <LoginRequired>
+            <AppContext.Consumer>
+                {
+                    (context: any) => (
+                        <ChangePasswordForm context={ context }/>
                     )
                 }
             </AppContext.Consumer>

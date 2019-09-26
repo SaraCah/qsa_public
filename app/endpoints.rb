@@ -271,6 +271,23 @@ class QSAPublic < Sinatra::Base
     end
   end
 
+  Endpoint.post('/api/users/update_password')
+    .param(:current_password, String, "Current password")
+    .param(:password, String, "New Password")
+    .param(:confirm_password, String, "Confirm new password") do
+    if Ctx.user_logged_in?
+      logged_in_user = Users.get(Ctx.get.session.user_id)
+
+      if (errors = Users.update_password(logged_in_user.fetch('id'), params[:current_password], params[:password], params[:confirm_password])).empty?
+        json_response(status: 'updated')
+      else
+        json_response(errors: errors)
+      end
+    else
+      [404]
+    end
+  end
+
   Endpoint.get('/api/admin/users')
     .param(:q, String, "Filter user", optional: true)
     .param(:start_date, String, "Filter after start date", optional: true)

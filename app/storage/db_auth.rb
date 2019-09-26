@@ -19,4 +19,17 @@ class DBAuth < BaseStorage
       false
     end
   end
+
+  def self.authenticate_for_id(user_id, password)
+    hash = db[:user]
+             .join(:dbauth, Sequel[:dbauth][:user_id] => Sequel[:user][:id])
+             .filter(Sequel[:user][:id] => user_id)
+             .get(Sequel[:dbauth][:pwhash])
+
+    if hash
+      BCrypt::Password.new(hash) == password
+    else
+      false
+    end
+  end
 end

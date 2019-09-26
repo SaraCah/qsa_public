@@ -9,6 +9,7 @@ const loginUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/authenticate`;
 const loggedInUserUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/logged_in_user`;
 const registerUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users`;
 const updateContactDetailsUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/update`;
+const updatePasswordUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/update_password`;
 const userUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/admin/user`;
 const usersUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/admin/users`;
 
@@ -153,6 +154,27 @@ export class Http {
 
         const response = await axios
             .post(updateContactDetailsUrl,
+                bodyFormData,
+                config)
+            .catch(error => {
+                console.log(error, error.status);
+                return error;
+            });
+
+        return response.data || [];
+    }
+
+    async updatePassword(data: any): Promise<any> {
+        const bodyFormData = new FormData();
+        bodyFormData.set('current_password', data.current_password);
+        bodyFormData.set('password', data.password);
+        bodyFormData.set('confirm_password', data.confirm_password);
+
+        const config = this.getConfig();
+        config.headers['Content-Type'] = 'multipart/form-data';
+
+        const response = await axios
+            .post(updatePasswordUrl,
                 bodyFormData,
                 config)
             .catch(error => {
