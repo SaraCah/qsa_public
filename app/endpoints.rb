@@ -235,6 +235,34 @@ class QSAPublic < Sinatra::Base
     end
   end
 
+  Endpoint.post('/api/users/update')
+    .param(:user, UserFormDTO, "User") do
+    if Ctx.user_logged_in?
+      existing_user = Users.get(params[:user].fetch('id'))
+      logged_in_user = Users.get(Ctx.get.session.user_id)
+
+      can_edit = existing_user && (logged_in_user.fetch('is_admin') || existing_user.fetch('id') == logged_in_user.fetch('id')) 
+
+      if can_edit
+        if (errors = params[:user].validate).empty?
+          if (errors = Users.update_from_dto(params[:user])).empty?
+            json_response(status: 'updated')
+          else
+            json_response(errors: errors)
+          end
+        else
+          json_response(errors: errors) unless errors.empty?
+        end
+      else
+        Ctx.log_bad_access("attempted to update user #{params[:user].fetch('id')}")
+        [404]
+      end
+    else
+      Ctx.log_bad_access("anonymous access attempted to update user #{params[:user].fetch('id')}")
+      [404]
+    end
+  end
+
 
   Endpoint.get('/api/fetch')
     .param(:qsa_id, String, "Record QSA ID with prefix", optional: true)

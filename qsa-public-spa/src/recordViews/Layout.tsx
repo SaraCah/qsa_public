@@ -34,8 +34,8 @@ const LeftNavigation: React.FC<any> = (props: any) => {
                                 {
                                     props.showNavForUser &&
                                     <ul aria-label="section navigation">
-                                        <li><a href="#">My Contact Details</a></li>
-                                        <li><a href="#">Change Password</a></li>
+                                        <li><Link to="/my-details">My contact details</Link></li>
+                                        <li><a href="#">Change password</a></li>
                                         {
                                             context.user.is_admin ?
                                                 <>

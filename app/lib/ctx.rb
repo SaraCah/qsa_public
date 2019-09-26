@@ -19,7 +19,7 @@ class Ctx
   end
 
   def self.user_logged_in?
-    get.session && get.session.username
+    get.session && get.session.user_id
   end
 
   def self.username
@@ -38,7 +38,7 @@ class Ctx
 
   def self.log_bad_access(msg)
     username_label = self.user_logged_in? ?
-                       "QSA Public user '#{self.username}'" :
+                       "QSA Public user '#{self.user_id}'" :
                        "anonymous user (not logged in)"
 
     $LOG.warn("Access denied to #{username_label}.  Reason: #{msg}\n" +

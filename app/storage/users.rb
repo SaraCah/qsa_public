@@ -24,8 +24,30 @@ class Users < BaseStorage
     end
   end
 
-  def self.update_user(user_form_dto)
-    raise "DO ME"
+  def self.update_from_dto(user_form_dto)
+
+    user_for_email = db[:user][:email => user_form_dto.fetch('email')]
+    if !user_for_email.nil? && user_for_email[:id] != user_form_dto.fetch('id')
+      return [{code: "UNIQUE_CONSTRAINT", field: 'email'}]
+    end
+
+    data_for_update = {
+      email: user_form_dto.fetch('email'),
+      lock_version: user_form_dto.fetch('lock_version') + 1,
+      first_name: user_form_dto.fetch('first_name'),
+      last_name: user_form_dto.fetch('last_name'),
+      modified_time: java.lang.System.currentTimeMillis
+    }
+
+    updated = db[:user]
+                .filter(id: user_form_dto.fetch('id'))
+                .filter(lock_version: user_form_dto.fetch('lock_version'))
+                .update(data_for_update)
+
+    # FIXME handle this
+    raise StaleRecordException.new if updated == 0
+
+    []
   end
 
   def self.get(user_id)

@@ -8,6 +8,7 @@ const contextUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/fetch_context`;
 const loginUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/authenticate`;
 const loggedInUserUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/logged_in_user`;
 const registerUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users`;
+const updateContactDetailsUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/update`;
 
 
 interface ResultClass {
@@ -133,6 +134,25 @@ export class Http {
                 {
                     headers: {'Content-Type': 'multipart/form-data' }
                 })
+            .catch(error => {
+                console.log(error, error.status);
+                return error;
+            });
+
+        return response.data || [];
+    }
+
+    async updateUser(user: UserForm): Promise<any> {
+        const bodyFormData = new FormData();
+        bodyFormData.set('user', JSON.stringify(user));
+
+        const config = this.getConfig();
+        config.headers['Content-Type'] = 'multipart/form-data';
+
+        const response = await axios
+            .post(updateContactDetailsUrl,
+                bodyFormData,
+                config)
             .catch(error => {
                 console.log(error, error.status);
                 return error;

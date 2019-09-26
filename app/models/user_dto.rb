@@ -7,6 +7,7 @@ class UserDTO
   define_field(:last_name, String)
   define_field(:is_admin, Boolean)
   define_field(:is_verified, Boolean)
+  define_field(:lock_version, Integer)
 
   def self.from_row(row)
     new(id: row[:id],
@@ -14,6 +15,7 @@ class UserDTO
         first_name: row[:first_name],
         last_name: row[:last_name],
         is_admin: (row[:admin] == 1),
-        is_verified: (row[:verified] == 1))
+        is_verified: (row[:verified] == 1),
+        lock_version: row[:lock_version])
   end
 end

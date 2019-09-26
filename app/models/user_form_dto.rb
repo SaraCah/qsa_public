@@ -13,6 +13,7 @@ class UserFormDTO
   define_field(:is_admin, Boolean, default: false)
   define_field(:is_inactive, Boolean, default: false)
   define_field(:is_verified, Boolean, default: false)
+  define_field(:lock_version, Integer, default: 0)
   define_field(:create_time, Integer, required: false)
   define_field(:modified_time, Integer, required: false)
 

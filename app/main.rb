@@ -49,6 +49,7 @@ require 'models/dto'
 require 'models/user_form_dto'
 require 'models/user_dto'
 
+require 'storage/stale_record_exception'
 require 'storage/base_storage'
 require 'storage/users'
 require 'storage/sessions'
