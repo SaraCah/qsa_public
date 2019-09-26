@@ -46,6 +46,15 @@
  }
 }
 
+#qg-primary-content .login-box {
+  position: absolute;
+  top: -45px;
+  right: 10px;
+}
+
+#qg-secondary-content .login-box {
+  margin: 5px 10px;
+}
 
 .qg-aside {
   a:visited {

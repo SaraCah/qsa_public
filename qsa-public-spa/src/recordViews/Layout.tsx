@@ -160,11 +160,10 @@ const Layout: React.FC<any> = (props: any) => {
                     </div>
 
                     <div id="qg-content">
-                        { !props.aside && <UserSession></UserSession> }
-
                         <div id={ props.aside ? 'qg-three-col' : 'qg-two-col-nav' } className="row">
 
                             <div id="qg-primary-content" role="main">
+                                { !props.aside && <UserSession></UserSession> }
                                 {props.children}
                             </div>
 
