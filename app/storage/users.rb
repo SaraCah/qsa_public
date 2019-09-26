@@ -50,6 +50,38 @@ class Users < BaseStorage
     []
   end
 
+
+  def self.page(page, query = nil, start_date = nil, end_date = nil, page_size = 25)
+    dataset = db[:user]
+
+    if query
+      sanitised = query.downcase.gsub(/[^a-z0-9_\-\. ]/, '_')
+      dataset = dataset.filter(
+                  Sequel.|(
+                    Sequel.like(Sequel.function(:lower, Sequel[:user][:email]), "%#{sanitised}%"),
+                    Sequel.like(Sequel.function(:lower, Sequel[:user][:first_name]), "%#{sanitised}%"),
+                    Sequel.like(Sequel.function(:lower, Sequel[:user][:last_name]), "%#{sanitised}%")))
+    end
+
+    if start_date
+      dataset = dataset.filter(Sequel[:user][:create_time] >= start_date.to_time.to_i * 1000)
+    end
+
+    if end_date
+      dataset = dataset.filter(Sequel[:user][:create_time] <= (end_date + 1).to_time.to_i * 1000)
+    end
+
+    max_page = (dataset.count / page_size.to_f).ceil - 1
+    dataset = dataset.limit(page_size, page * page_size)
+
+    results = dataset.map do |row|
+      UserDTO.from_row(row)
+    end
+
+    PagedResults.new(results, page, max_page)
+  end
+
+
   def self.get(user_id)
     user = db[:user][:id => user_id]
 

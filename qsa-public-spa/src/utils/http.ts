@@ -9,6 +9,7 @@ const loginUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/authenticate`;
 const loggedInUserUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/logged_in_user`;
 const registerUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users`;
 const updateContactDetailsUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/update`;
+const usersUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/admin/users`;
 
 
 interface ResultClass {
@@ -157,6 +158,15 @@ export class Http {
                 console.log(error, error.status);
                 return error;
             });
+
+        return response.data || [];
+    }
+
+    async getUsers(page: number, filter: any): Promise<any> {
+        const params = Object.assign({}, {page: page}, filter, {version: undefined});
+        
+        const response = await axios.get(`${usersUrl}`,
+                                         Object.assign({}, this.getConfig(), {params: params}));
 
         return response.data || [];
     }

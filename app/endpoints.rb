@@ -263,6 +263,23 @@ class QSAPublic < Sinatra::Base
     end
   end
 
+  Endpoint.get('/api/admin/users')
+    .param(:q, String, "Filter user", optional: true)
+    .param(:start_date, String, "Filter after start date", optional: true)
+    .param(:end_date, String, "Filter before start date", optional: true)
+    .param(:page, Integer , "Page to return", optional: true) do
+    if Ctx.user_logged_in?
+      logged_in_user = Users.get(Ctx.get.session.user_id)
+      if logged_in_user.fetch('is_admin')
+        json_response(Users.page(params[:page] || 0, params[:q], DateParse.date_parse_down(params[:start_date]), DateParse.date_parse_up(params[:end_date])))
+      else
+        [404]
+      end
+    else
+      [404]
+    end
+  end
+
 
   Endpoint.get('/api/fetch')
     .param(:qsa_id, String, "Record QSA ID with prefix", optional: true)

@@ -48,6 +48,7 @@ require 'views/templates'
 require 'models/dto'
 require 'models/user_form_dto'
 require 'models/user_dto'
+require 'models/paged_results'
 
 require 'storage/stale_record_exception'
 require 'storage/base_storage'

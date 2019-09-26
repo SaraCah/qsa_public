@@ -3,6 +3,8 @@ require 'date'
 class DateParse
 
   def self.date_parse_down(s)
+    return nil if s.nil?
+
     begin
       return Date.strptime(s, '%Y-%m-%d')
     rescue ArgumentError
@@ -20,6 +22,8 @@ class DateParse
 
 
   def self.date_parse_up(s)
+    return nil if s.nil?
+
     begin
       return Date.strptime(s, '%Y-%m-%d')
     rescue ArgumentError

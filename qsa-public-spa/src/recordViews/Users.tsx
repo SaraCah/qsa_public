@@ -216,8 +216,7 @@ const AdminAccountSummary: React.FC = () => {
                             <h2>User management</h2>
                             <p>Review users, validate online users and
                                 review account profiles</p>
-                            <a href="#" className="btn btn-primary">User
-                                management</a>
+                            <Link to="/admin/users" className="btn btn-primary">User management</Link>
                         </div>
                     </div>
                 </article>
@@ -281,13 +280,15 @@ const LoginRequired: React.FC<any> = (props: any) => {
                 (context: any) => (
                     !context.sessionLoaded ?
                         <Layout skipFooter={ true }></Layout> :
-                        context.user ?
+                        context.user && ((props.adminOnly && context.user.is_admin) || !props.adminOnly) ?
                             <Layout showNavForUser={ true }>
                                 {
                                     props.children
                                 }
                             </Layout> :
-                            <Redirect to="/login" push={ true } />
+                            props.adminOnly ?
+                                <Redirect to="/404" push={ true } />:
+                                <Redirect to="/login" push={ true } />
 
                 )
             }
@@ -405,6 +406,146 @@ export const MyContactDetailsPage: React.FC<any> = (route: any) => {
                 {
                     (context: any) => (
                         <UserDetailsForm context={ context }/>
+                    )
+                }
+            </AppContext.Consumer>
+        </LoginRequired>
+    )
+}
+
+const UserManagementListing: React.FC = () => {
+    const [page, setPage]: [number, any] = useState(0);
+    const [filter, setFilter]: [any, any] = useState({ version: 0 });
+    const [results, setResults]: [any, any] = useState({});
+
+    useEffect(() => {
+        Http.get().getUsers(page, filter).then((results) => {
+            setResults(results);
+            console.log(results);
+        });
+    }, [page, filter.version]);
+
+    const onSubmit = () => {
+        setPage(0);
+        setFilter(Object.assign({...filter}, {version: filter.version + 1}));
+    }
+
+    return (
+        <div className="row">
+            <div className="col-sm-12">
+                <h1>User management</h1>
+
+                <h2>Filter the user lists</h2>
+                <section className="search-input">
+
+                    <form className="form-inline" onSubmit={ (e) => { e.preventDefault(); onSubmit() } }>
+
+                        <div className="qg-call-out-box">
+                            <div className="form-row">
+                                <div className="form-group col-xs-12 col-md-4">
+                                    <label htmlFor="name"
+                                           className="sr-only">Name</label>
+                                    <input type="text"
+                                           className="form-control-plaintext"
+                                           id="name" placeholder="Search names"
+                                           onChange={ (e) => setFilter(Object.assign({...filter}, { q: e.target.value })) }/>
+                                </div>
+                                <div className="input-group col-xs-12 col-md-8">
+                                    <div className="input-group-prepend">
+                                        <span
+                                            className="input-group-text small">Registration date</span>
+                                    </div>
+                                    <input type="text"
+                                           aria-label="Start date"
+                                           placeholder="start"
+                                           className="form-control"
+                                           onChange={ (e) => setFilter(Object.assign({...filter}, { start_date: e.target.value })) }/>
+                                    <input type="text"
+                                           aria-label="End date"
+                                           placeholder="end"
+                                           className="form-control"
+                                           onChange={ (e) => setFilter(Object.assign({...filter}, { end_date: e.target.value })) }/>
+                                </div>
+                                <div className="input-group col-md-12 col-md-8" style={ {marginTop: 10 } }>
+                                    <button type="submit"
+                                            className="qg-btn btn-primary">Filter
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                </section>
+
+                <h2>QSA user profiles</h2>
+                <table className="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Registration date</th>
+                            <th scope="col">Verified?</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {
+                        results.results && results.results.map((user:any) => (
+                            <tr key={ user.id }>
+                                <th scope="row">{user.id}</th>
+                                <td>{user.first_name} {user.last_name}</td>
+                                <td>{user.email}</td>
+                                <td>{new Date(user.create_time).toLocaleDateString()}</td>
+                                <td>
+                                    {
+                                        user.is_admin ?
+                                            <span className="badge badge-info">Admin</span> :
+                                                user.is_verified ?
+                                                    <span className="badge badge-primary">Verifed</span> :
+                                                    <span className="badge badge-secondary">Not verified</span>
+                                    }
+                                </td>
+                                <td>
+                                    FIXME Edit
+                                </td>
+                            </tr>
+                        ))
+                    }
+                    </tbody>
+                </table>
+
+                {
+                    results && results.results &&
+                    <nav>
+                        <div className="text-center">
+                            <ul className="pagination">
+                                <li className={'page-item prev ' + (results.current_page === 0 ? 'disabled' : '')}>
+                                    <a className="page-link" href="#" onClick={ (e) => {e.preventDefault(); setPage(results.current_page - 1)} }>
+                                        <span aria-hidden="true">«</span> Previous
+                                    </a>
+                                </li>
+                                <li className={"page-item next " + (results.current_page >= results.max_page ? 'disabled' : '')} >
+                                    <a className="page-link" href="#" onClick={ (e) => {e.preventDefault(); setPage(results.current_page + 1)} }>
+                                        Next <span aria-hidden="true">»</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </nav>
+                }
+            </div>
+        </div>
+    )
+}
+
+export const UserManagementPage: React.FC<any> = (route: any) => {
+    return (
+        <LoginRequired adminOnly={ true }>
+            <AppContext.Consumer>
+                {
+                    (context: any) => (
+                       <UserManagementListing />
                     )
                 }
             </AppContext.Consumer>
