@@ -2,7 +2,7 @@ class UserFormDTO
   include DTO
 
   define_field(:id, Integer, required: false)
-  define_field(:email, String, validator: proc {|s| UserFormDTO.validate_email(s)})
+  define_field(:email, String, validator: proc {|s, user| UserFormDTO.validate_email(s, user)})
   define_field(:password, String, required: false, validator: proc {|s, user|
     p ['***', user, s, user.new?] 
     user.new? && s.empty? ? "Password can't be blank" : nil
@@ -17,10 +17,10 @@ class UserFormDTO
   define_field(:create_time, Integer, required: false)
   define_field(:modified_time, Integer, required: false)
 
-  def self.validate_email(email)
+  def self.validate_email(email, user)
     if email.nil? || email.empty?
       "Email can't be blank"
-    elsif (email =~ URI::MailTo::EMAIL_REGEXP).nil?
+    elsif !user.fetch('is_admin') && (email =~ URI::MailTo::EMAIL_REGEXP).nil?
       "Email must be a valid email address"
     else
       nil
