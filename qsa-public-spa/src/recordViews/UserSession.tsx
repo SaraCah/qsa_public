@@ -69,7 +69,7 @@ export const LoginPage: React.FC<any> = (route: any) => {
                 <div className="col-sm-12">
                     <div className="alert alert-success" role="alert">
                         <h2><i className="fa fa-check-circle"></i>Login Success</h2>
-                        <p>Continue <Link to="/">searching</Link> or visit <Link to="/my-account">your account</Link>.</p>
+                        <p>Return to <Link to="/">Archives Search</Link> or visit <Link to="/my-account">your account</Link>.</p>
                     </div>
                 </div>
             </div>
