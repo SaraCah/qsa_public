@@ -3,7 +3,7 @@ class Users < BaseStorage
   def self.create_from_dto(user_form_dto)
     if db[:user][:email => user_form_dto.fetch('email')].nil?
 
-      if (user_form_dto.fetch('confirm_password') != user_form_dto.fetch('password'))
+      if user_form_dto.fetch('confirm_password') != user_form_dto.fetch('password')
         return [{code: 'CONFIRM_PASSWORD_MISMATCH', field: 'password'}]
       else
         user_id = db[:user].insert(:email => user_form_dto.fetch('email'),
@@ -46,6 +46,45 @@ class Users < BaseStorage
 
     # FIXME handle this
     raise StaleRecordException.new if updated == 0
+
+    []
+  end
+
+
+  def self.admin_update_from_dto(user_form_dto)
+    user_for_email = db[:user][:email => user_form_dto.fetch('email')]
+    if !user_for_email.nil? && user_for_email[:id] != user_form_dto.fetch('id')
+      return [{code: "UNIQUE_CONSTRAINT", field: 'email'}]
+    end
+
+    if user_form_dto.fetch('password', false)
+      if user_form_dto.fetch('confirm_password', nil) != user_form_dto.fetch('password')
+        return [{code: 'CONFIRM_PASSWORD_MISMATCH', field: 'password'}]
+      end
+    end
+
+    data_for_update = {
+      email: user_form_dto.fetch('email'),
+      lock_version: user_form_dto.fetch('lock_version') + 1,
+      first_name: user_form_dto.fetch('first_name'),
+      last_name: user_form_dto.fetch('last_name'),
+      admin: user_form_dto.fetch('is_admin') ? 1 : 0,
+      verified: user_form_dto.fetch('is_verified') ? 1 : 0,
+      modified_time: java.lang.System.currentTimeMillis
+    }
+
+    updated = db[:user]
+                .filter(id: user_form_dto.fetch('id'))
+                .filter(lock_version: user_form_dto.fetch('lock_version'))
+                .update(data_for_update)
+
+    # FIXME handle this
+    raise StaleRecordException.new if updated == 0
+
+
+    if user_form_dto.fetch('password', false)
+      DBAuth.set_user_password(user_form_dto.fetch('id'), user_form_dto.fetch('password'))
+    end
 
     []
   end

@@ -245,10 +245,18 @@ class QSAPublic < Sinatra::Base
 
       if can_edit
         if (errors = params[:user].validate).empty?
-          if (errors = Users.update_from_dto(params[:user])).empty?
-            json_response(status: 'updated')
+          if logged_in_user.fetch('is_admin')
+            if (errors = Users.admin_update_from_dto(params[:user])).empty?
+              json_response(status: 'updated')
+            else
+              json_response(errors: errors)
+            end
           else
-            json_response(errors: errors)
+            if (errors = Users.update_from_dto(params[:user])).empty?
+              json_response(status: 'updated')
+            else
+              json_response(errors: errors)
+            end
           end
         else
           json_response(errors: errors) unless errors.empty?
@@ -280,6 +288,19 @@ class QSAPublic < Sinatra::Base
     end
   end
 
+  Endpoint.get('/api/admin/user')
+    .param(:user_id, Integer, "User id") do
+    if Ctx.user_logged_in?
+      logged_in_user = Users.get(Ctx.get.session.user_id)
+      if logged_in_user.fetch('is_admin')
+        json_response(Users.get(params[:user_id]))
+      else
+        [404]
+      end
+    else
+      [404]
+    end
+  end
 
   Endpoint.get('/api/fetch')
     .param(:qsa_id, String, "Record QSA ID with prefix", optional: true)

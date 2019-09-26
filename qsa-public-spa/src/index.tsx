@@ -179,6 +179,7 @@ ReactDOM.render(
         <Route exact path="/my-account" component={wrappedRoute(MyAccountPage, {pageTitle: "My Account"})} />
         <Route exact path="/my-details" component={wrappedRoute(MyContactDetailsPage, {pageTitle: "My Contact Details"})} />
         <Route exact path="/admin/users" component={wrappedRoute(UserManagementPage, {pageTitle: "User Management"})} />
+        <Route exact path="/admin/users/:user_id" component={wrappedRoute(UserManagementPage, {pageTitle: "User Management"})} />
         <Route component={wrappedRoute(NotFound, {pageTitle: "Page not found"})} />
       </Switch>
     </BrowserRouter>

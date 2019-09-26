@@ -413,6 +413,154 @@ export const MyContactDetailsPage: React.FC<any> = (route: any) => {
     )
 }
 
+
+const AdminUserDetailsForm: React.FC<any> = ({ userId }) => {
+    const [user, setUser]: [any, any] = useState({lock_version: -1});
+    const [userToEdit, setUserToEdit]: [any, any] = useState(null);
+    const [errors, setErrors]: [any, any] = useState([]);
+    const [showUpdateSuccess, setShowUpdateSuccess]: [boolean, any] = useState(false);
+
+    useEffect(() => {
+        Http.get().getUser(userId).then((user:any) => {
+            setUser(user);
+            setUserToEdit(user);
+        });
+    }, [user.lock_version]);
+
+    const onSubmit = () => {
+        setErrors([]);
+        setShowUpdateSuccess(false);
+
+        Http.get().updateUser(userToEdit).then((response: any) => {
+            if (response.status === 'updated') {
+                setShowUpdateSuccess(true);
+                setUser(Object.assign({...userToEdit}, {lock_version: userToEdit.lock_version + 1}));
+            } else if (response.errors) {
+                setErrors(response.errors);
+            } else {
+                setErrors([{validation_code: "Update Failed -- please try again"}]);
+            }
+        })
+    }
+
+    return (
+        userToEdit ?
+        <div className="row">
+            <div className="col-sm-12">
+                <div><small><span aria-hidden="true">«</span> <Link to="/admin/users">Return to user listing</Link></small></div>
+                <h1>User management</h1>
+                <section>
+                    <h2>Profile for {user.first_name || ''} {user.last_name||''}</h2>
+
+                    {
+                        showUpdateSuccess &&
+                        <div className="alert alert-success" role="alert">
+                            <p>Contact details updated.</p>
+                        </div>
+                    }
+
+                    <form onSubmit={ (e) => { e.preventDefault(); onSubmit() } }>
+                        {
+                            errors && errors.length > 0 &&
+                            <FormErrors errors={ errors } />
+                        }
+
+                        <h3>Core details</h3>
+                        <div className="qg-call-out-box">
+
+                            <div className="form-group">
+                                <label htmlFor="email-address">Email
+                                    address</label>
+                                <input type="text" className="form-control"
+                                       id="email-address"
+                                       aria-describedby="emailHelp"
+                                       value={ userToEdit.email }
+                                       placeholder="Enter email"
+                                       onChange={ (e) => setUserToEdit(Object.assign({...userToEdit}, {email: e.target.value})) } />
+                            </div>
+                            <div className="form-group">
+                                <label
+                                    htmlFor="account-password">Update Password</label>
+                                <input type="password" className="form-control"
+                                       id="account-password"
+                                       placeholder="Password"
+                                       onChange={ (e) => setUserToEdit(Object.assign({...userToEdit}, {password: e.target.value})) } />
+                            </div>
+                            <div className="form-group">
+                                <label
+                                    htmlFor="confirm-password">Confirm Password</label>
+                                <input type="confirm_confirm" className="form-control"
+                                       id="confirm-password"
+                                       placeholder="Confirm Password"
+                                       onChange={ (e) => setUserToEdit(Object.assign({...userToEdit}, {confirm_password: e.target.value})) } />
+                                {
+                                    userToEdit && userToEdit.password && userToEdit.password !== userToEdit.confirm_password &&
+                                    <small id="passwordHelpInline" className="text-danger">
+                                        Password mismatch
+                                    </small>
+                                }
+                                {
+                                    userToEdit && userToEdit.password && userToEdit.password === userToEdit.confirm_password &&
+                                    <small id="passwordHelpInline" className="text-success">
+                                        Passwords match!
+                                    </small>
+                                }
+                            </div>
+                            <div className="form-group form-check">
+                                <input type="checkbox"
+                                       className="form-check-input"
+                                       id="verfied-check"
+                                       checked={ userToEdit.is_verified }
+                                       onChange={ (e) => setUserToEdit(Object.assign({...userToEdit}, {is_verified: e.target.checked})) } />
+                                <label className="form-check-label"
+                                       htmlFor="verfied-check">Verified
+                                    account?</label>
+                            </div>
+                            <div className="form-group form-check">
+                                <input type="checkbox"
+                                       className="form-check-input"
+                                       id="admin-check"
+                                       checked={ userToEdit.is_admin }
+                                       onChange={ (e) => setUserToEdit(Object.assign({...userToEdit}, {is_admin: e.target.checked})) } />
+                                <label className="form-check-label"
+                                       htmlFor="admin-check">Admin
+                                    account?</label>
+                            </div>
+                        </div>
+                        <h3>Verified user details</h3>
+                        <div className="qg-call-out-box">
+
+                            <div className="form-group">
+                                <label htmlFor="first-name">First Name</label>
+                                <input type="text" className="form-control"
+                                       id="first-name" placeholder="First name"
+                                       value={ userToEdit.first_name }
+                                       onChange={ (e) => setUserToEdit(Object.assign({...userToEdit}, {first_name: e.target.value})) }/>
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="first-name">Last Name</label>
+                                <input type="text" className="form-control"
+                                       id="last-name" placeholder="Last name"
+                                       value={ userToEdit.last_name }
+                                       onChange={ (e) => setUserToEdit(Object.assign({...userToEdit}, {last_name: e.target.value})) }/>
+                            </div>
+                        </div>
+
+                        <p>
+                            <button type="submit" className="btn btn-primary">Update
+                                account
+                            </button>
+                            &nbsp;&nbsp;<Link to="/admin/users">Return to user listing</Link>
+                        </p>
+                    </form>
+                </section>
+            </div>
+        </div>:
+        <></>
+    )
+}
+
+
 const UserManagementListing: React.FC = () => {
     const [page, setPage]: [number, any] = useState(0);
     const [filter, setFilter]: [any, any] = useState({ version: 0 });
@@ -434,12 +582,10 @@ const UserManagementListing: React.FC = () => {
         <div className="row">
             <div className="col-sm-12">
                 <h1>User management</h1>
-
                 <h2>Filter the user lists</h2>
                 <section className="search-input">
 
                     <form className="form-inline" onSubmit={ (e) => { e.preventDefault(); onSubmit() } }>
-
                         <div className="qg-call-out-box">
                             <div className="form-row">
                                 <div className="form-group col-xs-12 col-md-4">
@@ -452,8 +598,8 @@ const UserManagementListing: React.FC = () => {
                                 </div>
                                 <div className="input-group col-xs-12 col-md-8">
                                     <div className="input-group-prepend">
-                                        <span
-                                            className="input-group-text small">Registration date</span>
+                            <span
+                                className="input-group-text small">Registration date</span>
                                     </div>
                                     <input type="text"
                                            aria-label="Start date"
@@ -480,14 +626,14 @@ const UserManagementListing: React.FC = () => {
                 <h2>QSA user profiles</h2>
                 <table className="table table-striped">
                     <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Name</th>
-                            <th scope="col">Email</th>
-                            <th scope="col">Registration date</th>
-                            <th scope="col">Verified?</th>
-                            <th scope="col">Action</th>
-                        </tr>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Registration date</th>
+                        <th scope="col">Verified?</th>
+                        <th scope="col">Action</th>
+                    </tr>
                     </thead>
                     <tbody>
                     {
@@ -501,13 +647,13 @@ const UserManagementListing: React.FC = () => {
                                     {
                                         user.is_admin ?
                                             <span className="badge badge-info">Admin</span> :
-                                                user.is_verified ?
-                                                    <span className="badge badge-primary">Verifed</span> :
-                                                    <span className="badge badge-secondary">Not verified</span>
+                                            user.is_verified ?
+                                                <span className="badge badge-primary">Verifed</span> :
+                                                <span className="badge badge-secondary">Not verified</span>
                                     }
                                 </td>
                                 <td>
-                                    FIXME Edit
+                                    <Link to={ `/admin/users/${user.id}`} className="qg-btn btn-primary btn-xs">Edit Details</Link>
                                 </td>
                             </tr>
                         ))
@@ -540,12 +686,16 @@ const UserManagementListing: React.FC = () => {
 }
 
 export const UserManagementPage: React.FC<any> = (route: any) => {
+    const userId: string|null = route.match.params.user_id;
+
     return (
         <LoginRequired adminOnly={ true }>
             <AppContext.Consumer>
                 {
                     (context: any) => (
-                       <UserManagementListing />
+                        userId ?
+                            <AdminUserDetailsForm userId={ userId } />:
+                            <UserManagementListing />
                     )
                 }
             </AppContext.Consumer>
