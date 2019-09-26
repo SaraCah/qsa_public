@@ -79,8 +79,6 @@ export class Http {
     }
 
     async fetchByQSAID(qsa_id: string, record_type: string): Promise<any> {
-        console.log(this.getConfig());
-
         const response = await axios
             .get(`${fetchUrl}?qsa_id=${qsa_id}&type=${record_type}`, this.getConfig())
             .catch(error => {
