@@ -1,11 +1,13 @@
 import axios, {AxiosRequestConfig} from 'axios';
 import {AdvancedSearchQuery} from "../models/AdvancedSearch";
+import {UserForm} from "../models/User";
 
 const searchUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/advanced_search`;
 const fetchUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/fetch`;
 const contextUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/fetch_context`;
 const loginUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/authenticate`;
 const loggedInUserUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/logged_in_user`;
+const registerUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users`;
 
 
 interface ResultClass {
@@ -121,5 +123,23 @@ export class Http {
 
     async getCurrentUser(): Promise<any> {
         return await axios.get(`${loggedInUserUrl}`, this.getConfig());
+    }
+
+    async register(user: UserForm): Promise<any> {
+        const bodyFormData = new FormData();
+        bodyFormData.set('user', JSON.stringify(user));
+
+        const response = await axios
+            .post(registerUrl,
+                bodyFormData,
+                {
+                    headers: {'Content-Type': 'multipart/form-data' }
+                })
+            .catch(error => {
+                console.log(error, error.status);
+                return error;
+            });
+
+        return response.data || [];
     }
 }

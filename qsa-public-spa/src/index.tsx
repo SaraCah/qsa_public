@@ -23,6 +23,7 @@ import {LoginPage} from "./recordViews/UserSession";
 
 import AppContext from './context/AppContext';
 import AppContextProvider from './context/AppContextProvider';
+import {RegisterPage} from "./recordViews/Users";
 
 /* Establish error handling */
 class ErrorBuffer {
@@ -170,6 +171,7 @@ ReactDOM.render(
         <Route path="/items/:qsa_id" component={wrappedRoute(ItemPage, {pageTitle: "View item"})} />
         <Route exact path="/login" component={wrappedRoute(LoginPage, {pageTitle: "Login"})} />
         <Route exact path="/search" component={wrappedRoute(ResultsPage, {pageTitle: "Search records"})} />
+        <Route exact path="/register" component={wrappedRoute(RegisterPage, {pageTitle: "Register"})} />
         <Route component={wrappedRoute(NotFound, {pageTitle: "Page not found"})} />
       </Switch>
     </BrowserRouter>

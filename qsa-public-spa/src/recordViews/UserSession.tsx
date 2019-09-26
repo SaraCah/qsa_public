@@ -13,6 +13,14 @@ export const UserSession: React.FC = () => {
         appContext.clearSession();
     }
 
+    const displayName = (user: any) => {
+        if (user.first_name || user.last_name) {
+            return `${user.first_name || ''} ${ user.last_name || ''}`;
+        } else {
+            return user.email;
+        }
+    }
+
     return (
         <AppContext.Consumer>
             {
@@ -22,7 +30,7 @@ export const UserSession: React.FC = () => {
                           <div className="login-box pull-right">
                               { context.user ?
                                 <div>
-                                    Hello, { context.user.first_name || '' } { context.user.last_name || '' }
+                                    Hello, { displayName(context.user) }
                                     &nbsp;|<button onClick={ (e) => logout(context) } className="qg-btn btn-link btn-xs">Logout</button>
                                 </div> :
                                 <Link to="/login">Login</Link>
@@ -40,14 +48,14 @@ export const LoginPage: React.FC<any> = (route: any) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showLoginFailed, setShowLoginFailed] = useState(false);
-    const [needsRedirect, setNeedsRedirect] = useState('');
+    const [showLoginSuccess, setShowLoginSuccess] = useState(false);
 
     const onSubmit = (e: any, appContext: any) => {
         setShowLoginFailed(false);
         Http.get().login(email, password).then((login_response: any) => {
             if (login_response.authenticated) {
                 appContext.setSessionId(login_response.session_id);
-                setNeedsRedirect('/')
+                setShowLoginSuccess(true);
             } else {
                 appContext.setUser(null);
                 setShowLoginFailed(true);
@@ -55,8 +63,17 @@ export const LoginPage: React.FC<any> = (route: any) => {
         })
     }
 
-    if (needsRedirect) {
-        return <Redirect to={ needsRedirect } push={ true } ></Redirect>;
+    if (showLoginSuccess) {
+        return (<Layout>
+            <div className="row">
+                <div className="col-sm-12">
+                    <div className="alert alert-success" role="alert">
+                        <h2><i className="fa fa-check-circle"></i>Login Success</h2>
+                        <p>Continue <Link to="/">searching</Link> or visit <Link to="/my-account">your account</Link>.</p>
+                    </div>
+                </div>
+            </div>
+        </Layout>)
     }
 
     return (

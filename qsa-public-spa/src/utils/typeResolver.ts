@@ -47,6 +47,11 @@ const IconForType: { [name:string]:string } = {
     'function': 'fa fa-clipboard',
 }
 
+const ErrorForCode: { [name:string]: string } = {
+    'REQUIRED_VALUE_MISSING': "Can't be blank",
+    'CONFIRM_PASSWORD_MISMATCH': "Must match Confirm Password",
+}
+
 
 export const uriFor = (qsaIDPrefixed: string, recordType: string): string => {
     return PathMappingForType[recordType] + qsaIDPrefixed;
@@ -61,13 +66,21 @@ export const iconForType = (recordType: string): string => {
 }
 
 export const labelForRelator = (relator: string): string => {
-    return relator.split('_').map(uppercaseInitials).join(' ');
+    return snakeToUppercaseInitials(relator);
 }
 
 export const labelForMandateType = (type: string): string => {
     return uppercaseInitials(type);
 }
 
+export const snakeToUppercaseInitials = (s: string): string => {
+    return s.split('_').map(uppercaseInitials).join(' ');
+}
+
 export const uppercaseInitials = (str: string): string => {
     return str.split(' ').map((s: string) => (s.charAt(0).toUpperCase() + s.slice(1))).join(' ');
+}
+
+export const errorMessageForCode = (code: string): string => {
+    return ErrorForCode[code] || code;
 }

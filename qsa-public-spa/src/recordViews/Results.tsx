@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {Link, RouteComponentProps} from "react-router-dom";
+import React, {useState} from 'react';
+import {Link} from "react-router-dom";
 import Layout from './Layout';
 import AspaceAdvancedSearch from '../advancedSearch/AdvancedSearch'
 import {AdvancedSearchQuery, Filter} from "../models/AdvancedSearch";

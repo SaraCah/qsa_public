@@ -1,9 +1,9 @@
 class Users < BaseStorage
 
-  def self.create_user(user_form_dto)
+  def self.create_from_dto(user_form_dto)
     if db[:user][:email => user_form_dto.fetch('email')].nil?
 
-      if (user_form_dto.fetch('confirmation_password') != user_form_dto.fetch('password'))
+      if (user_form_dto.fetch('confirm_password') != user_form_dto.fetch('password'))
         return [{code: 'CONFIRM_PASSWORD_MISMATCH', field: 'password'}]
       else
         user_id = db[:user].insert(:email => user_form_dto.fetch('email'),

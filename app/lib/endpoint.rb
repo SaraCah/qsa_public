@@ -59,6 +59,8 @@ class Endpoint
       params[param] = if type.is_a?(Class) && Kernel.respond_to?(type.name.intern)
                         # Integer, String and friends
                         Kernel.send(type.name.intern, params[param])
+                      elsif type.included_modules.include?(DTO)
+                        type.from_json(params[param])
                       elsif type.is_a?(Array)
                         if params[param] && !params[param].is_a?(Array)
                           raise "Parameter #{param} must be an array.  Please send as #{param}[]"
