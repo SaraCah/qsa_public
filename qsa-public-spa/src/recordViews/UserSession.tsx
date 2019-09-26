@@ -29,12 +29,11 @@ export const UserSession: React.FC = () => {
                         { context.sessionLoaded &&
                           <div className="login-box pull-right">
                               { context.user ?
-                                <div>
+                                <small>
                                     Hello, { displayName(context.user) }
-                                    &nbsp;|&nbsp;<small><Link to="/my-account">My Account</Link></small>
-                                    &nbsp;|<button onClick={ (e) => logout(context) } className="qg-btn btn-link btn-xs">Logout</button>
-                                </div> :
-                                <Link to="/login">Login</Link>
+                                    &nbsp;|&nbsp;<a onClick={ (e) => { e.preventDefault(); logout(context) } } href="#">Logout</a>
+                                </small> :
+                                <small><Link to="/login">Login</Link></small>
                               }
                           </div>
                         }
