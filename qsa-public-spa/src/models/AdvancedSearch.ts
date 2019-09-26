@@ -25,6 +25,7 @@ export interface Filter {
   field: string,
   value: string,
   label: string,
+  isSticky: boolean,
 }
 
 export class AdvancedSearchQuery {
@@ -167,12 +168,21 @@ export class AdvancedSearchQuery {
   }
 
   addFilter(field: string, value: string, label: string): AdvancedSearchQuery {
-    const newFilter = {field, value, label};
+    const newFilter = {field, value, label, isSticky: false};
     const result = this.removeFilter(newFilter);
     result.criteria.filters.push(newFilter);
 
     return result;
   }
+
+  addStickyFilter(field: string, value: string, label: string): AdvancedSearchQuery {
+    const newFilter = {field, value, label, isSticky: true};
+    const result = this.removeFilter(newFilter);
+    result.criteria.filters.push(newFilter);
+
+    return result;
+  }
+
 
   removeFilter(filter: Filter): AdvancedSearchQuery {
     const newFilters = this.criteria.filters.filter((elt: Filter) => !(elt.field === filter.field && elt.value === filter.value));
@@ -194,7 +204,8 @@ export class AdvancedSearchQuery {
   }
 
   clearFilters(): AdvancedSearchQuery {
-    return new AdvancedSearchQuery(Object.assign({}, this.criteria, {filters: []}));
+    const newFilters = this.criteria.filters.filter((f: Filter) => f.isSticky);
+    return new AdvancedSearchQuery(Object.assign({}, this.criteria, {filters: newFilters}));
   }
 
   toQueryString() {
@@ -205,6 +216,7 @@ export class AdvancedSearchQuery {
       ff: this.criteria.filters.map((f: Filter) => f.field),
       fv: this.criteria.filters.map((f: Filter) => f.value),
       fl: this.criteria.filters.map((f: Filter) => f.label),
+      sf: this.criteria.filters.filter((f: Filter) => f.isSticky).map((f: Filter) => f.field),
       type: Object.keys(this.criteria.recordTypes || []).filter((recordType: string) => this.criteria.recordTypes && this.criteria.recordTypes[recordType]),
       from: this.criteria.fromDate,
       to: this.criteria.toDate,
@@ -246,6 +258,7 @@ export class AdvancedSearchQuery {
     if (!raw.ff) { raw.ff = []; }
     if (!raw.fv) { raw.fv = []; }
     if (!raw.fl) { raw.fl = []; }
+    if (!raw.sf) { raw.sf = []; }
 
     const result = AdvancedSearchQuery.emptyQuery();
 
@@ -268,6 +281,7 @@ export class AdvancedSearchQuery {
             field: filterField,
             value: raw.fv[idx],
             label: raw.fl[idx],
+            isSticky: raw.sf.indexOf(filterField) >= 0,
           }
         } else {
           return null;

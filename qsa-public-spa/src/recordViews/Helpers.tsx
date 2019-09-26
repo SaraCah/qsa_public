@@ -106,13 +106,13 @@ const RecordContextSiblings: React.FC<{context: Context}> = ({ context }) => {
     if (context.siblings_count > context.siblings.length) {
         const parent: any = context.path_to_root[context.path_to_root.length - 1];
         siblingsQuery = AdvancedSearchQuery.emptyQuery()
-                                           .addFilter('parent_id', parent.id, parent.display_string)
+                                           .addStickyFilter('parent_id', parent.id, parent.display_string)
     }
 
     if (context.children_count> context.children.length) {
         const current: any = context.siblings.find((record: any) => (record.uri === context.current_uri));
         childrenQuery = AdvancedSearchQuery.emptyQuery()
-            .addFilter('parent_id', current.id, current.display_string);
+            .addStickyFilter('parent_id', current.id, current.display_string);
     }
 
     return (
@@ -211,7 +211,7 @@ export const RecordContext: React.FC<{qsa_id: string, recordType: string}> = ({ 
     } else {
         const series: any = context.path_to_root.length > 0 ? context.path_to_root[0] : context.siblings[0];
         const seriesQuery = AdvancedSearchQuery.emptyQuery()
-                                               .addFilter('resource_id', series.id, series.display_string);
+                                               .addStickyFilter('resource_id', series.id, series.display_string);
 
         return (<div className="record-context">
                 {

@@ -46,8 +46,8 @@ const AgencyPage: React.FC<any> = (route: any) => {
   } else {
     route.setPageTitle(`Agency: ${agency.get('display_string')}`);
 
-    const controlledRecordsQuery = AdvancedSearchQuery.emptyQuery().addFilter('responsible_agency_id', agency.get('id'), agency.get('display_string'));
-    const createdRecordsQuery = AdvancedSearchQuery.emptyQuery().addFilter('creating_agency_id', agency.get('id'), agency.get('display_string'));
+    const controlledRecordsQuery = AdvancedSearchQuery.emptyQuery().addStickyFilter('responsible_agency_id', agency.get('id'), agency.get('display_string'));
+    const createdRecordsQuery = AdvancedSearchQuery.emptyQuery().addStickyFilter('creating_agency_id', agency.get('id'), agency.get('display_string'));
 
     return (
       <Layout>
