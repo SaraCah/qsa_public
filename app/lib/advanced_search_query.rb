@@ -7,6 +7,19 @@ class AdvancedSearchQuery
               :filter_end_date, :filter_types,
               :filter_open_records_only, :filter_linked_digital_objects_only
 
+  # These fields will be rewritten into queries that target multiple underlying Solr fields with specified weights
+  EXPANDED_FIELDS = {
+    'keywords' => [
+      {'field' => 'keywords', 'weight' => 2},
+      {'field' => 'keywords_stemmed', 'weight' => 1},
+    ],
+    'title' => [
+      {'field' => 'title', 'weight' => 2},
+      {'field' => 'title_stemmed', 'weight' => 1},
+    ]
+  }
+
+
   # space and double quote are also meaningful, but let those through for now
   SOLR_CHARS = '+-&|!(){}[]^~*?:\\/'
 
@@ -86,15 +99,19 @@ class AdvancedSearchQuery
         negated = true
       end
 
+      target_field = clause.fetch('field')
       [
         # combining operator if we're not on the first clause
-        (idx == 0) ? '' : operator,
-
-        # query
-        "%s%s:(%s)" % [
-          negated ? '-' : '',
-          clause.fetch('field'),
-          solr_escape(clause.fetch('query')),
+        "%s (%s)" % [
+          (idx == 0) ? '' : operator,
+          EXPANDED_FIELDS.fetch(target_field, [{'field' => target_field, 'weight' => 1}]).map {|fieldspec|
+            "%s%s:(%s)^%d" % [
+              negated ? '-' : '',
+              fieldspec.fetch('field'),
+              solr_escape(clause.fetch('query')),
+              fieldspec.fetch('weight'),
+            ]
+          }.join(' OR ')
         ]
       ]
     }.flatten.reject(&:empty?)

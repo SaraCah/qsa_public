@@ -9,11 +9,13 @@
   <field name="primary_type" type="string" indexed="true" stored="true" required="true" multiValued="false" />
   <field name="types" type="string" indexed="true" stored="true" required="true" multiValued="true" />
   <field name="title" type="text_general" indexed="true" stored="true" required="true" multiValued="false" />
+  <field name="title_stemmed" type="text_en" indexed="true" stored="false" required="false" multiValued="true" />
   <field name="qsa_id" type="string" indexed="true" stored="true" required="true" multiValued="false" />
   <field name="qsa_id_prefixed" type="string" indexed="true" stored="true" required="true" multiValued="false" />
 
   <field name="json" type="string" indexed="false" stored="true" multiValued="false" />
   <field name="keywords" type="text_general" indexed="true" stored="false" multiValued="true"/>
+  <field name="keywords_stemmed" type="text_en" indexed="true" stored="false" multiValued="true"/>
 
   <field name="start_date" type="pdate" stored="true" multiValued="false" />
   <field name="end_date" type="pdate" stored="true" multiValued="false" />
@@ -37,6 +39,10 @@
   <copyField source="qsa_id" dest="qsa_id_search" />
   <copyField source="qsa_id_prefixed" dest="qsa_id_search" />
   <field name="note_types" type="string" indexed="true" stored="true" multiValued="true"/>
+
+  <!-- Stemmed variants -->
+  <copyField source="keywords" dest="keywords_stemmed" />
+  <copyField source="title" dest="title_stemmed" />
 
   <!-- Sort fields -->
   <field name="title_sort" type="string" indexed="true" stored="false" multiValued="false" />
