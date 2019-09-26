@@ -161,7 +161,7 @@ const SearchFacets: React.FC<{ facets: any, advancedSearchQuery: AdvancedSearchQ
                 <ul>
                     {
                     props.advancedSearchQuery.filters().map((filter: Filter) => {
-                            return <li>
+                            return <li key={ filter.field }>
                                 <div className="facet-label">
                                     {FACET_LABELS[filter.field]}: {filter.label}&nbsp;
                                 </div>
