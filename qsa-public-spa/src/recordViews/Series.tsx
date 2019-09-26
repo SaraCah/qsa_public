@@ -111,7 +111,7 @@ const SeriesPage: React.FC<any> = (route: any) => {
                     ['repository_processing_note', 'Previous identifiers'],
                   ].map(([fieldName, fieldLabel]) => {
                     return series.getMaybe(fieldName, (value: any) => {
-                      return <li className="list-group-item list-group-item-action">
+                      return <li key={ fieldLabel } className="list-group-item list-group-item-action">
                         <div className="d-flex w-100 justify-content-between">
                           <h4 className="mb-1">{ fieldLabel }</h4>
                         </div>
@@ -192,8 +192,8 @@ const SeriesPage: React.FC<any> = (route: any) => {
                     <AccordionPanel id={series.generateId()}
                                     title='External Resources - Publications'
                                     children={
-                                      docs.map((doc: any) => (
-                                        <MaybeLink location={ doc.location } label={ doc.location }/>
+                                      docs.map((doc: any, idx: number) => (
+                                        <MaybeLink key={ idx } location={ doc.location } label={ doc.location }/>
                                       ))
                                     }/>
                 ))
