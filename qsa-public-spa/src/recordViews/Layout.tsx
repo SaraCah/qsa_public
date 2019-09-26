@@ -1,6 +1,62 @@
 import React from 'react';
 import {Link} from "react-router-dom";
 import {UserSession} from "./UserSession";
+import AppContext from '../context/AppContext';
+
+const LeftNavigation: React.FC<any> = (props: any) => {
+    return (
+        <AppContext.Consumer>
+            {
+                (context: any) => (
+                    <nav id="qg-side-nav" aria-label="side navigation" role="navigation">
+                        <h2><Link to={"/"}>Archives Search</Link></h2>
+                        {
+                            !props.showNavForUser &&
+                            <ul aria-label="section navigation" style={ context.user ? {paddingBottom: 0} : {} }>
+                                <li><Link
+                                    to={"/search?type[]=resource"}>Series</Link>
+                                </li>
+                                <li><Link
+                                    to={"/search?type[]=agent_corporate_entity"}>Agencies</Link>
+                                </li>
+                                <li><Link
+                                    to={"/search?type[]=function"}>Functions</Link>
+                                </li>
+                                <li><Link
+                                    to={"/search?type[]=mandate"}>Mandates</Link>
+                                </li>
+                            </ul>
+                        }
+                        {
+                            context.user &&
+                            <>
+                                <h2 style={ { paddingTop: 10, paddingBottom: (props.showNavForUser ? 0 : 35) } }><Link to={ "/my-account" }>My Account</Link></h2>
+                                {
+                                    props.showNavForUser &&
+                                    <ul aria-label="section navigation">
+                                        <li><a href="#">My Contact Details</a></li>
+                                        <li><a href="#">Change Password</a></li>
+                                        {
+                                            context.user.is_admin ?
+                                                <>
+                                                    <li><a href="#">Request list</a></li>
+                                                    <li><a href="#">User management</a></li>
+                                                    <li><a href="#">Admin ordering</a></li>
+                                                </> :
+                                                <>
+                                                    <li><a href="#">My Requests</a></li>
+                                                </>
+                                        }
+                                    </ul>
+                                }
+                            </>
+                        }
+                    </nav>
+                )
+            }
+        </AppContext.Consumer>
+    )
+}
 
 const Layout: React.FC<any> = (props: any) => {
     if (props.noindex) {
@@ -123,15 +179,7 @@ const Layout: React.FC<any> = (props: any) => {
                             }
 
                             <div id="qg-section-nav">
-                                <nav id="qg-side-nav" aria-label="side navigation" role="navigation">
-                                    <h2><Link to={ "/" }>Archives Search</Link></h2>
-                                    <ul aria-label="section navigation">
-                                        <li><Link to={ "/search?type[]=resource" }>Series</Link></li>
-                                        <li><Link to={ "/search?type[]=agent_corporate_entity" }>Agencies</Link></li>
-                                        <li><Link to={ "/search?type[]=function" }>Functions</Link></li>
-                                        <li><Link to={ "/search?type[]=mandate" }>Mandates</Link></li>
-                                    </ul>
-                                </nav>
+                                <LeftNavigation showNavForUser={ props.showNavForUser }></LeftNavigation>
                             </div>
                         </div>
                     </div>

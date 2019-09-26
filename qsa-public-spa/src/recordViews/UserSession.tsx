@@ -31,6 +31,7 @@ export const UserSession: React.FC = () => {
                               { context.user ?
                                 <div>
                                     Hello, { displayName(context.user) }
+                                    &nbsp;|&nbsp;<small><Link to="/my-account">My Account</Link></small>
                                     &nbsp;|<button onClick={ (e) => logout(context) } className="qg-btn btn-link btn-xs">Logout</button>
                                 </div> :
                                 <Link to="/login">Login</Link>

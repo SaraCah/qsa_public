@@ -175,3 +175,125 @@ export const RegisterPage: React.FC<any> = (route: any) => {
         </Layout>
     )
 }
+
+const AdminAccountSummary: React.FC = () => {
+    return (
+        <>
+            <h1>My Account</h1>
+            <section className="row qg-cards">
+                <article className="qg-card col-12 col-sm-6 col-lg-4">
+                    <div className="content">
+                        <div className="details">
+                            <h2>My Contact Details</h2>
+                            <p>Review and modify your name and contact details</p>
+                            <a href="#" className="btn btn-primary">My Contact Details</a> 
+                        </div>
+                    </div>
+                </article>
+                <article className="qg-card col-12 col-sm-6 col-lg-4">
+                    <div className="content">
+                        <div className="details">
+                            <h2>Change Password</h2>
+                            <p>Change your password</p>
+                            <a href="#" className="btn btn-primary">Change Password</a>
+                        </div>
+                    </div>
+                </article>
+                <article className="qg-card col-12 col-sm-6 col-lg-4">
+                    <div className="content">
+                        <div className="details">
+                            <h2>Request list</h2>
+                            <p>Review a daily request list including
+                                printing request slips</p>
+                            <a href="#" className="btn btn-primary">Request
+                                list</a>
+                        </div>
+                    </div>
+                </article>
+                <article className="qg-card col-12 col-sm-6 col-lg-4">
+                    <div className="content">
+                        <div className="details">
+                            <h2>User management</h2>
+                            <p>Review users, validate online users and
+                                review account profiles</p>
+                            <a href="#" className="btn btn-primary">User
+                                management</a>
+                        </div>
+                    </div>
+                </article>
+                <article className="qg-card col-12 col-sm-6 col-lg-4">
+                    <div className="content">
+                        <div className="details">
+                            <h2>Admin ordering</h2>
+                            <p>Order items or lodge a request on behalf of a
+                                user</p>
+                            <a href="#" className="btn btn-primary">Admin
+                                ordering</a>
+                        </div>
+                    </div>
+                </article>
+            </section>
+        </>
+    )
+}
+
+const UserAccountSummary: React.FC = () => {
+    return (
+        <>
+            <h1>My Account</h1>
+            <section className="row qg-cards">
+                <article className="qg-card col-12 col-sm-6 col-lg-4">
+                    <div className="content">
+                        <div className="details">
+                            <h2>My Contact Details</h2>
+                            <p>Review and modify your name and contact details</p>
+                            <a href="#" className="btn btn-primary">My Contact Details</a>
+                        </div>
+                    </div>
+                </article>
+                <article className="qg-card col-12 col-sm-6 col-lg-4">
+                    <div className="content">
+                        <div className="details">
+                            <h2>Change Password</h2>
+                            <p>Change your password</p>
+                            <a href="#" className="btn btn-primary">Change Password</a>
+                        </div>
+                    </div>
+                </article>
+                <article className="qg-card col-12 col-sm-6 col-lg-4">
+                    <div className="content">
+                        <div className="details">
+                            <h2>My Requests</h2>
+                            <p>Review all of your request slips</p>
+                            <a href="#" className="btn btn-primary">My Requests</a>
+                        </div>
+                    </div>
+                </article>
+            </section>
+        </>
+    )
+}
+
+
+export const MyAccountPage: React.FC<any> = (route: any) => {
+    return (
+        <AppContext.Consumer>
+            {
+                (context: any) => (
+                    !context.sessionLoaded ?
+                        <Layout skipFooter={ true }></Layout> :
+                        context.user ?
+                            <Layout showNavForUser={ true }>
+                                {
+                                    context.user.is_admin ?
+                                    <AdminAccountSummary></AdminAccountSummary> :
+                                    <UserAccountSummary></UserAccountSummary>
+                                }
+                            </Layout> :
+                            <Redirect to="/login" push={ true } />
+                        
+                )
+            }
+        </AppContext.Consumer>
+    )
+}

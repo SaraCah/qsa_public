@@ -84,8 +84,8 @@ const AppContextProvider: React.FC<any> = (props) => {
       Http.login(appContext.sessionId);
 
       Http.get().getCurrentUser().then((response) => {
-        appContext.setSessionLoaded(true);
         appContext.setUser(response.data)
+        appContext.setSessionLoaded(true);
       }, () => {
         appContext.clearSession();
       });
