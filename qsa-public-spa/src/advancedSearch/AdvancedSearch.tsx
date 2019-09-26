@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import { Redirect } from 'react-router';
 import { AdvancedSearchQuery } from '../models/AdvancedSearch';
 
-const AspaceAdvancedSearch: React.FC<{advancedSearchQuery: AdvancedSearchQuery }> = (props) => {
+const AspaceAdvancedSearch: React.FC<{advancedSearchQuery: AdvancedSearchQuery, limitedTo?: JSX.Element[] }> = (props) => {
   const [advancedSearchQuery, setAdvancedSearchQuery] = useState(props.advancedSearchQuery);
   const [needsRedirect, redirectForSearch] = useState('');
 
@@ -154,6 +154,7 @@ const AspaceAdvancedSearch: React.FC<{advancedSearchQuery: AdvancedSearchQuery }
           </div>
           <div>
             <button className="qg-btn btn-primary">Submit</button>
+            <small>{props.limitedTo && props.limitedTo}</small>
           </div>
         </form>
       </div>

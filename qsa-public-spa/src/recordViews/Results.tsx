@@ -7,6 +7,16 @@ import {Http} from "../utils/http";
 import {iconForType, labelForType, uriFor} from "../utils/typeResolver";
 import queryString from "query-string";
 
+const FACET_LABELS: {[name: string]: string} = {
+    'mandate_id': 'Mandates',
+    'function_id': 'Functions',
+    'parent_id': 'Parent Record',
+    'resource_id': 'Series',
+    'creating_agency_id': 'Creating Agency',
+    'responsible_agency_id': 'Responsible Agency',
+};
+
+
 const ResultsPage: React.FC<any> = (route: any) => {
     const [searchResults, setSearchResults] = useState<any | null>(null);
     const [advancedSearchQuery, setAdvancedSearchQuery] = useState<AdvancedSearchQuery>(AdvancedSearchQuery.fromQueryString(route.location.search));
@@ -36,6 +46,9 @@ const ResultsPage: React.FC<any> = (route: any) => {
 
         return <Layout skipFooter={ true }></Layout>
     } else {
+        const stickyFilters = advancedSearchQuery.filters().filter((f: Filter) => f.isSticky);
+        const limitedTo = stickyFilters.map((f: Filter) => <p><small>Limited to {FACET_LABELS[f.field]}: {f.label}</small></p>);
+
         return (
             <Layout skipFooter={ !searchResults }
                 aside={
@@ -43,10 +56,11 @@ const ResultsPage: React.FC<any> = (route: any) => {
                      <SearchFacets facets={ searchResults.facets } advancedSearchQuery={ advancedSearchQuery } />)
                 }>
                 <h1>Archives Search</h1>
+
                 {showCompact ?
-                 <CompactSearchSummary advancedSearchQuery={ advancedSearchQuery } modifySearch={ () => { setShowCompact(false); } } /> :
+                 <CompactSearchSummary advancedSearchQuery={ advancedSearchQuery } limitedTo={ limitedTo } modifySearch={ () => { setShowCompact(false); } } /> :
                  <div className="qg-call-out-box">
-                     <AspaceAdvancedSearch advancedSearchQuery={ advancedSearchQuery }></AspaceAdvancedSearch>
+                     <AspaceAdvancedSearch advancedSearchQuery={ advancedSearchQuery } limitedTo={ limitedTo }></AspaceAdvancedSearch>
                  </div>
                 }
                 {searchResults && <SearchResults searchResults={ searchResults } currentPage={ currentPage } advancedSearchQuery={ advancedSearchQuery }></SearchResults> }
@@ -55,7 +69,7 @@ const ResultsPage: React.FC<any> = (route: any) => {
     }
 };
 
-const CompactSearchSummary: React.FC<{ advancedSearchQuery: AdvancedSearchQuery, modifySearch: () => void }> = (props) => {
+const CompactSearchSummary: React.FC<{ advancedSearchQuery: AdvancedSearchQuery, limitedTo: JSX.Element[], modifySearch: () => void }> = (props) => {
     const buildAccessLabel = () => {
         const [openOnly, hasDigitalObjects] = [props.advancedSearchQuery.isOpenRecordsOnly(),
                                                props.advancedSearchQuery.hasDigitalObjects()];
@@ -85,10 +99,16 @@ const CompactSearchSummary: React.FC<{ advancedSearchQuery: AdvancedSearchQuery,
 
         if (clauseSummary.length === 0) {
             const accessLabel = buildAccessLabel();
-            return <span key={ accessLabel }> Showing all {accessLabel}</span>;
+            return <>
+                <span key={ accessLabel }> Showing all {accessLabel}</span>
+                {props.limitedTo}
+            </>;
         } else {
             const queryString = clauseSummary.join(' ');
-            return <span> Searching for {buildAccessLabel()} matching <strong>{ queryString }</strong></span>;
+            return <>
+                <span> Searching for {buildAccessLabel()} matching <strong>{ queryString }</strong></span>
+                {props.limitedTo}
+            </>;
         }
     };
 
@@ -143,15 +163,6 @@ const CompactSearchSummary: React.FC<{ advancedSearchQuery: AdvancedSearchQuery,
 };
 
 const SearchFacets: React.FC<{ facets: any, advancedSearchQuery: AdvancedSearchQuery }> = (props) => {
-    const FACET_LABELS: {[name: string]: string} = {
-        'mandate_id': 'Mandates',
-        'function_id': 'Functions',
-        'parent_id': 'Parent Record',
-        'resource_id': 'Series',
-        'creating_agency_id': 'Creating Agency',
-        'responsible_agency_id': 'Responsible Agency',
-    };
-
     return (<section className="search-filters">
         <h2>Results facets</h2>
         {
