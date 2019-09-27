@@ -40,7 +40,7 @@ const MandatePage: React.FC<any> = (route: any) => {
   } else {
     route.setPageTitle(`Mandate: ${currentMandate.get('title')}`);
 
-    const relatedQuery = AdvancedSearchQuery.emptyQuery().addFilter('mandate_id', currentMandate.get('id'), currentMandate.get('title'));
+    const relatedQuery = AdvancedSearchQuery.emptyQuery().addStickyFilter('mandate_id', currentMandate.get('id'), currentMandate.get('title'));
 
     return (
       <Layout>

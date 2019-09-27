@@ -36,7 +36,7 @@ const FunctionPage: React.FC<any> = (route: any) => {
   } else {
     route.setPageTitle(`Function: ${currentFunction.get('title')}`);
 
-    const relatedQuery = AdvancedSearchQuery.emptyQuery().addFilter('function_id', currentFunction.get('id'), currentFunction.get('title'));
+    const relatedQuery = AdvancedSearchQuery.emptyQuery().addStickyFilter('function_id', currentFunction.get('id'), currentFunction.get('title'));
 
     return (
       <Layout>
