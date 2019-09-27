@@ -453,7 +453,7 @@ const ChangePasswordForm: React.FC<{ context: any }> = ({ context }) => {
                     <div className="qg-call-out-box">
                         <div className="form-group">
                             <label htmlFor="current_password">Current Password</label>
-                            <input type="text" className="form-control"
+                            <input type="password" className="form-control"
                                    id="current_password"
                                    value={ data.current_password || '' }
                                    onChange={ (e) => setData(Object.assign({...data}, {current_password: e.target.value}))} />
@@ -461,7 +461,7 @@ const ChangePasswordForm: React.FC<{ context: any }> = ({ context }) => {
 
                         <div className="form-group">
                             <label htmlFor="new_password">New Password</label>
-                            <input type="text" className="form-control"
+                            <input type="password" className="form-control"
                                    id="new_password"
                                    value={ data.password || '' }
                                    onChange={ (e) => setData(Object.assign({...data}, {password: e.target.value}))} />
@@ -469,7 +469,7 @@ const ChangePasswordForm: React.FC<{ context: any }> = ({ context }) => {
 
                         <div className="form-group">
                             <label htmlFor="confirm_new_password">Confirm New Password</label>
-                            <input type="text" className="form-control"
+                            <input type="password" className="form-control"
                                    id="confirm_new_password"
                                    value={ data.confirm_password || '' }
                                    onChange={ (e) => setData(Object.assign({...data}, {confirm_password: e.target.value}))} />
