@@ -10,6 +10,7 @@ import AppContext from '../context/AppContext';
 export const UserSession: React.FC = () => {
 
     const logout = (appContext: any) => {
+        Http.get().logout();
         appContext.clearSession();
     }
 

@@ -6,6 +6,7 @@ const searchUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/advanced_search`;
 const fetchUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/fetch`;
 const contextUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/fetch_context`;
 const loginUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/authenticate`;
+const logoutUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/logout`;
 const loggedInUserUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/logged_in_user`;
 const registerUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users`;
 const updateContactDetailsUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/update`;
@@ -115,6 +116,18 @@ export class Http {
                   {
                     headers: {'Content-Type': 'multipart/form-data' }
                   })
+            .catch(error => {
+                console.log(error, error.status);
+                return error;
+            });
+
+        return response.data || [];
+    }
+
+    async logout(): Promise<any> {
+        const response = await axios
+            .post(logoutUrl,
+                this.getConfig())
             .catch(error => {
                 console.log(error, error.status);
                 return error;
