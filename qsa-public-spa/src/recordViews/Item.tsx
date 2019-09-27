@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import {Redirect} from 'react-router';
 import {Link, RouteComponentProps} from "react-router-dom";
 
 import {Http} from "../utils/http";
@@ -101,21 +102,28 @@ const DigitalRepresentation: React.FC<{representation: any, item: RecordDisplay}
 
 const ItemPage: React.FC<any> = (route: any) => {
   const [item, setCurrentItem] = useState<any | null>(null);
+  const [notFoundRedirect, setNotFoundRedirect] = useState(false);
   const qsa_id: string = route.match.params.qsa_id;
 
   /* FIXME: probably want a definition file of types to QSA prefixes here */
   if (!item) {
     Http.get().fetchByQSAID(qsa_id, 'archival_object')
         .then((json: any) => {
-          setCurrentItem(new RecordDisplay(json))
+          if (json) {
+            setCurrentItem(new RecordDisplay(json))
+          } else {
+            setNotFoundRedirect(true);
+          }
         })
         .catch((exception) => {
           console.error(exception);
-          window.location.href = '/404';
+          setNotFoundRedirect(true);
         });
   }
 
-  if (!item) {
+  if (notFoundRedirect) {
+    return <Redirect to="/404" push={ true } />
+  } else if (!item) {
     return <Layout footer={false}></Layout>;
   } else {
     route.setPageTitle(`Item: ${item.get('title')}`);

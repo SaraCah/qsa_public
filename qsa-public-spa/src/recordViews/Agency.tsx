@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import {Redirect} from 'react-router';
 import {Link, RouteComponentProps} from "react-router-dom";
 
 import {Http} from "../utils/http";
@@ -28,20 +29,27 @@ import {AdvancedSearchQuery} from "../models/AdvancedSearch";
 
 const AgencyPage: React.FC<any> = (route: any) => {
   const [agency, setCurrentAgency] = useState<any | null>(null);
+  const [notFoundRedirect, setNotFoundRedirect] = useState(false);
   const qsa_id: string = route.match.params.qsa_id;
 
   if (!agency) {
     Http.get().fetchByQSAID(qsa_id, 'agent_corporate_entity')
       .then((json: any) => {
-        setCurrentAgency(new RecordDisplay(json))
+        if (json) {
+          setCurrentAgency(new RecordDisplay(json))
+        } else {
+          setNotFoundRedirect(true);
+        }
       })
       .catch((exception) => {
         console.error(exception);
-        window.location.href = '/404';
+        setNotFoundRedirect(true);
       });
   }
 
-  if (!agency) {
+  if (notFoundRedirect) {
+    return <Redirect to="/404" push={ true } />
+  } else if (!agency) {
     return <Layout footer={false}></Layout>;
   } else {
     route.setPageTitle(`Agency: ${agency.get('display_string')}`);

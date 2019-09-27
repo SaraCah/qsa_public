@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import {Redirect} from 'react-router';
 import {Link, RouteComponentProps} from "react-router-dom";
 
 import {Http} from "../utils/http";
@@ -22,20 +23,27 @@ import {AdvancedSearchQuery} from "../models/AdvancedSearch";
 
 const MandatePage: React.FC<any> = (route: any) => {
   const [currentMandate, setCurrentMandate] = useState<any | null>(null);
+  const [notFoundRedirect, setNotFoundRedirect] = useState(false);
   const qsa_id: string = route.match.params.qsa_id;
 
   if (!currentMandate) {
     Http.get().fetchByQSAID(qsa_id, 'mandate')
       .then((json: any) => {
-        setCurrentMandate(new RecordDisplay(json))
+        if (json) {
+          setCurrentMandate(new RecordDisplay(json))
+        } else {
+          setNotFoundRedirect(true);
+        }
       })
       .catch((exception) => {
         console.error(exception);
-        window.location.href = '/404';
+        setNotFoundRedirect(true);
       });
   }
 
-  if (!currentMandate) {
+  if (notFoundRedirect) {
+    return <Redirect to="/404" push={ true } />
+  } else if (!currentMandate) {
     return <Layout footer={false}></Layout>;
   } else {
     route.setPageTitle(`Mandate: ${currentMandate.get('title')}`);

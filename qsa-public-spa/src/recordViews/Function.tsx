@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import {Redirect} from 'react-router';
 import {Link, RouteComponentProps} from "react-router-dom";
 
 import {Http} from "../utils/http";
@@ -18,20 +19,27 @@ import {AdvancedSearchQuery} from "../models/AdvancedSearch";
 
 const FunctionPage: React.FC<any> = (route: any) => {
   const [currentFunction, setCurrentFunction] = useState<any | null>(null);
+  const [notFoundRedirect, setNotFoundRedirect] = useState(false);
   const qsa_id: string = route.match.params.qsa_id;
 
   if (!currentFunction) {
     Http.get().fetchByQSAID(qsa_id, 'function')
       .then((json: any) => {
-        setCurrentFunction(new RecordDisplay(json))
+        if (json) {
+          setCurrentFunction(new RecordDisplay(json))
+        } else {
+          setNotFoundRedirect(true);
+        }
       })
       .catch((exception) => {
         console.error(exception);
-        window.location.href = '/404';
+        setNotFoundRedirect(true);
       });
   }
 
-  if (!currentFunction) {
+  if (notFoundRedirect) {
+    return <Redirect to="/404" push={ true } />
+  } else if (!currentFunction) {
     return <Layout footer={false}></Layout>;
   } else {
     route.setPageTitle(`Function: ${currentFunction.get('title')}`);

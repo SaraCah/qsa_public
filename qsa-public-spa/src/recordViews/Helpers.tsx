@@ -1,4 +1,5 @@
 import React, {useState} from "react";
+import {Redirect} from 'react-router';
 import {Note, RecordDisplay} from "../models/RecordDisplay";
 import {iconForType, labelForRelator, uriFor} from "../utils/typeResolver";
 import {Link} from "react-router-dom";
@@ -194,6 +195,7 @@ const RecordContextSiblings: React.FC<{context: Context}> = ({ context }) => {
 
 export const RecordContext: React.FC<{qsa_id: string, recordType: string}> = ({ qsa_id, recordType }) => {
     const [context, setContext] = useState<Context | null>(null);
+    const [notFoundRedirect, setNotFoundRedirect] = useState(false);
 
     if (!context) {
         Http.get().fetchContextByQSAID(qsa_id, recordType)
@@ -202,11 +204,13 @@ export const RecordContext: React.FC<{qsa_id: string, recordType: string}> = ({ 
             })
             .catch((exception) => {
                 console.error(exception);
-                window.location.href = '/404';
+                setNotFoundRedirect(true);
             });
     }
 
-    if (!context) {
+    if (notFoundRedirect) {
+        return <Redirect to="/404" push={ true } />
+    } else if (!context) {
         return <></>;
     } else {
         const series: any = context.path_to_root.length > 0 ? context.path_to_root[0] : context.siblings[0];

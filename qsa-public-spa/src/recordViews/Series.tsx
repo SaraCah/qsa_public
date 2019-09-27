@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import {Redirect} from 'react-router';
 import {Link, RouteComponentProps} from "react-router-dom";
 
 import {Http} from "../utils/http";
@@ -28,21 +29,28 @@ import {
 
 const SeriesPage: React.FC<any> = (route: any) => {
   const [series, setCurrentSeries] = useState<any | null>(null);
+  const [notFoundRedirect, setNotFoundRedirect] = useState(false);
   const qsa_id: string = route.match.params.qsa_id;
 
   /* FIXME: probably want a definition file of types to QSA prefixes here */
   if (!series) {
     Http.get().fetchByQSAID(qsa_id, 'resource')
       .then((json: any) => {
-        setCurrentSeries(new RecordDisplay(json))
+        if (json) {
+          setCurrentSeries(new RecordDisplay(json))
+        } else {
+          setNotFoundRedirect(true);
+        }
       })
       .catch((exception) => {
         console.error(exception);
-        window.location.href = '/404';
+        setNotFoundRedirect(true);
       });
   }
 
-  if (!series) {
+  if (notFoundRedirect) {
+    return <Redirect to="/404" push={ true } />
+  } else if (!series) {
     return <Layout footer={false} />;
   } else {
     route.setPageTitle(`Series: ${series.get('title')}`);
