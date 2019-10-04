@@ -4,11 +4,11 @@
 $black: #000000;
 
 // ## Primary blue ##
-$qg-blue: #007EB1; // Primary blue
+$qg-blue: #007eb1; // Primary blue
 $qg-blue-dark: #13578b; // Primary link colour (see bootstrap-variables.scss), accordion expan/collapse
 $qg-blue-darker: #005375;
 
-$qg-light-green: #9AC02C;
+$qg-light-green: #9ac02c;
 $qg-green: #78ba00;
 
 // ## Dark grey ##
@@ -25,44 +25,40 @@ $qg-light-gray-darker: #d1d1d1;
 $qg-grey-light: #f6f6f6; //Header light grey
 // $qg-light-gray-darker: #707070; // Dark grey
 
-
-
 // ## Red ##
-$qg-red: #F85C50;
+$qg-red: #f85c50;
 
 // ## Dark Blue ##
-$qg-dark-blue: #0B2E4C;
+$qg-dark-blue: #0b2e4c;
 $qg-dark-blue2: #005474;
-
 
 // ###################################
 
 // Light blue colours
-$qg-pale-blue-darker:	#cde8ec;
-$qg-pale-blue:			#e7f5fe;
+$qg-pale-blue-darker: #cde8ec;
+$qg-pale-blue: #e7f5fe;
 
-$qg-pale-blue-dark:		#cecece;
-$qg-pale-blue-light:	#f2f7f9;
+$qg-pale-blue-dark: #cecece;
+$qg-pale-blue-light: #f2f7f9;
 
-$qg-blueberry: #759BF3;
-
+$qg-blueberry: #759bf3;
 
 //Other colours
-$qg-light-lime: #F2F7EA;
-$qg-lime: #9CBF6D;
+$qg-light-lime: #f2f7ea;
+$qg-lime: #9cbf6d;
 
-$qg-light-peach: #FFEDDE;
+$qg-light-peach: #ffedde;
 $qg-peach: #f8ae70;
 
-$qg-light-watermelon: #FEECEF;
-$qg-watermelon: #EA6A7E;
+$qg-light-watermelon: #feecef;
+$qg-watermelon: #ea6a7e;
 
-$qg-beige: #F5EBDC;
-$qg-dark-beige: #AE8446;
+$qg-beige: #f5ebdc;
+$qg-dark-beige: #ae8446;
 $qg-beige-light: #faebcc;
 $qg-beige-light1: #fcf8e3;
 
-$qg-mustard: #F8D87B;
+$qg-mustard: #f8d87b;
 $qg-mustard-dark: #f2cb58;
 
 $qg-brown: #8a6d3b;
@@ -73,21 +69,21 @@ $qg-brown: #8a6d3b;
 // Note: Use US spelling for colour
 
 // ## Components
-$qg-icon-color: 		$qg-green;
+$qg-icon-color: $qg-green;
 
-$brand-success:         #9ebf6d; // #5cb85c;
-$brand-info:            #1E77AA;
-$brand-warning:         #f9af71;
-$brand-danger:          #B90824; //#fff;
+$brand-success: #9ebf6d; // #5cb85c;
+$brand-info: #1e77aa;
+$brand-warning: #f9af71;
+$brand-danger: #b90824; //#fff;
 
-$state-success-bg:      #f2f7ea;
-$state-success-border:  darken(adjust-hue($state-success-bg, -10), 5%) !default;
-$state-info-bg:      	#eff5f6;
-$state-info-border:  	darken(adjust-hue($state-success-bg, -10), 5%) !default;
-$state-warning-bg:      #ffedde;
-$state-warning-border:  darken(adjust-hue($state-success-bg, -10), 5%) !default;
-$state-danger-bg:       #B90824;
-$state-danger-border:   darken(adjust-hue($state-success-bg, -10), 5%) !default;
+$state-success-bg: #f2f7ea;
+$state-success-border: darken(adjust-hue($state-success-bg, -10), 5%) !default;
+$state-info-bg: #eff5f6;
+$state-info-border: darken(adjust-hue($state-success-bg, -10), 5%) !default;
+$state-warning-bg: #ffedde;
+$state-warning-border: darken(adjust-hue($state-success-bg, -10), 5%) !default;
+$state-danger-bg: #b90824;
+$state-danger-border: darken(adjust-hue($state-success-bg, -10), 5%) !default;
 
 // $qg-warning-color: #cc352d;
 $qg-correct-color: $qg-green;
@@ -97,7 +93,6 @@ $qg-correct-bg-color: #fafff2; // #fafff0; // #f7ffe8;
 $qg-incorrect-color: #d22d24; // #cc352d;
 $qg-incorrect-border-color: #d4534c; // #d06060;
 $qg-incorrect-bg-color: #fffafa; // #fff6f5; // #ffe2e0;
-
 
 // ## Layout
 // Site header
@@ -144,16 +139,14 @@ $qg-spacing-xs: 30px;
 $qg-spacing-xs-large: $qg-spacing-xs * 1.5;
 $qg-spacing-xs-small: $qg-spacing-xs / 2;
 
-
 // Notes:
 // $brand-danger = $qg-red5
 $qg-error-red: $qg-red;
 
 // #################################################
 // To convert to bootstrap naming convention
-$qg-light-blue-gray3: #EEF4F6;
+$qg-light-blue-gray3: #eef4f6;
 $qg-blue5: #115289;
 $qg-blue-green: #005375;
 //component variables
 $qg-box-background: $qg-light-blue-gray3;
-

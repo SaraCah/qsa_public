@@ -1,16 +1,16 @@
-#qg-search-widget{
+#qg-search-widget {
   background: #f2f7f9;
-  padding: .5em 1em;
+  padding: 0.5em 1em;
 
-  select{
+  select {
     width: 100%;
   }
-  .collapsing-section{
+  .collapsing-section {
     padding-left: 0;
     border-left: none;
     margin-left: 0;
   }
-  #qg-search-widget-form input{
+  #qg-search-widget-form input {
     position: initial;
     opacity: 1;
     z-index: initial;
@@ -21,20 +21,20 @@
   .qg-accordion .arrow {
     top: 18%;
   }
-  .qg-fl{
+  .qg-fl {
     display: flex;
-    #qg-app-geocoding{
+    #qg-app-geocoding {
       background: #78ba00;
     }
-    .qg-location-autocomplete{
+    .qg-location-autocomplete {
       width: 90%;
       margin-right: 11px;
     }
-    #qg-app-geocoding{
+    #qg-app-geocoding {
       width: 47px;
       position: relative;
-      bottom:0 !important;
-      svg{
+      bottom: 0 !important;
+      svg {
         display: block;
         margin: auto;
         position: absolute;
@@ -43,15 +43,14 @@
       }
     }
   }
-  #search{
+  #search {
     margin-right: 10px;
   }
-
 }
 
 .qg-result-title {
   margin-top: 20px;
-  h2{
+  h2 {
     margin-top: 16px;
     font-weight: normal;
     font-size: 1.2em;

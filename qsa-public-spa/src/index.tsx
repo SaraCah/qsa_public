@@ -1,9 +1,9 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
 import * as serviceWorker from './serviceWorker';
 import 'bootstrap/dist/js/bootstrap.bundle';
 import './index.scss';
-import { BrowserRouter, Switch, Route, RouteComponentProps } from 'react-router-dom'
+import { BrowserRouter, Switch, Route, RouteComponentProps } from 'react-router-dom';
 
 import axios from 'axios';
 
@@ -11,15 +11,15 @@ import './scss/qg-main.scss';
 import 'bootstrap/dist/js/bootstrap';
 import 'popper.js';
 
-import HomePage from "./recordViews/Home";
-import AgencyPage from "./recordViews/Agency";
-import NotFound from "./recordViews/NotFound";
-import ResultsPage from "./recordViews/Results";
-import SeriesPage from "./recordViews/Series";
-import FunctionPage from "./recordViews/Function";
-import MandatePage from "./recordViews/Mandate";
-import ItemPage from "./recordViews/Item";
-import {LoginPage} from "./recordViews/UserSession";
+import HomePage from './recordViews/Home';
+import AgencyPage from './recordViews/Agency';
+import NotFound from './recordViews/NotFound';
+import ResultsPage from './recordViews/Results';
+import SeriesPage from './recordViews/Series';
+import FunctionPage from './recordViews/Function';
+import MandatePage from './recordViews/Mandate';
+import ItemPage from './recordViews/Item';
+import { LoginPage } from './recordViews/UserSession';
 
 import AppContext from './context/AppContext';
 import AppContextProvider from './context/AppContextProvider';
@@ -27,15 +27,16 @@ import {
   ChangePasswordPage,
   MyAccountPage,
   MyContactDetailsPage,
-  RegisterPage, UserManagementPage
-} from "./recordViews/Users";
+  RegisterPage,
+  UserManagementPage
+} from './recordViews/Users';
 
 /* Establish error handling */
 class ErrorBuffer {
-  static FLUSH_DELAY_MS: number = 2000;
+  static FLUSH_DELAY_MS = 2000;
 
   private errors: ErrorEvent[];
-  private consoleMessages: { method: string, arguments: any[] }[];
+  private consoleMessages: { method: string; arguments: any[] }[];
   private flushing: boolean;
 
   constructor() {
@@ -47,7 +48,9 @@ class ErrorBuffer {
   }
 
   private startTimer() {
-    setInterval(() => { this.flush() }, ErrorBuffer.FLUSH_DELAY_MS);
+    setInterval(() => {
+      this.flush();
+    }, ErrorBuffer.FLUSH_DELAY_MS);
   }
 
   private flush() {
@@ -62,13 +65,14 @@ class ErrorBuffer {
     this.consoleMessages = [];
 
     this.flushing = true;
-    axios.post(`${process.env.REACT_APP_QSA_PUBLIC_URL}/api/error_report`,
-               {
-                 errors: this.formatErrors(errors),
-                 consoleMessages: this.formatMessages(consoleMessages)
-               }).finally(() => {
-                 this.flushing = false;
-               });
+    axios
+      .post(`${process.env.REACT_APP_QSA_PUBLIC_URL}/api/error_report`, {
+        errors: this.formatErrors(errors),
+        consoleMessages: this.formatMessages(consoleMessages)
+      })
+      .finally(() => {
+        this.flushing = false;
+      });
   }
 
   private formatErrors(errors: ErrorEvent[]): any[] {
@@ -78,7 +82,7 @@ class ErrorBuffer {
         filename: error.filename,
         lineno: error.lineno,
         colno: error.colno,
-        stack: error.error.stack,
+        stack: error.error.stack
       };
     });
   }
@@ -98,37 +102,33 @@ class ErrorBuffer {
 
 const appErrorBuffer = new ErrorBuffer();
 
-
-
 /* Hook console to capture messages */
 const browserConsole: any = console;
-const appConsole: any = {}
+const appConsole: any = {};
 
-Object.keys(browserConsole).forEach(function (key){
-  appConsole[key] = function (...rest: any[]) {
+Object.keys(browserConsole).forEach(function(key) {
+  appConsole[key] = function(...rest: any[]) {
     appErrorBuffer.addConsoleMessage({
       method: key,
-      arguments: rest,
+      arguments: rest
     });
-    browserConsole[key].apply(this, arguments)
+    browserConsole[key].apply(this, arguments);
   };
 });
 
 console = appConsole;
 
 /* Grab errors that hit the top-level */
-window.addEventListener('error', function (event) {
+window.addEventListener('error', function(event) {
   appErrorBuffer.addError(event);
 
   return false;
 });
 
+let routeKey = 0;
 
-
-let routeKey: number = 0;
-
-function wrappedRoute(component: any, opts: { alwaysRender?: boolean, pageTitle?: string } = {}): any {
-  if (typeof(opts.alwaysRender) === 'undefined') {
+function wrappedRoute(component: any, opts: { alwaysRender?: boolean; pageTitle?: string } = {}): any {
+  if (typeof opts.alwaysRender === 'undefined') {
     opts.alwaysRender = true;
   }
 
@@ -138,7 +138,7 @@ function wrappedRoute(component: any, opts: { alwaysRender?: boolean, pageTitle?
     }
 
     // Clear noindex that might have been added by the layout during a 404
-    document.head.querySelectorAll('meta[name="robots"][content="noindex"]').forEach((meta) => {
+    document.head.querySelectorAll('meta[name="robots"][content="noindex"]').forEach(meta => {
       meta && meta.parentNode && meta.parentNode.removeChild(meta);
     });
 
@@ -153,41 +153,69 @@ function wrappedRoute(component: any, opts: { alwaysRender?: boolean, pageTitle?
       setPageTitle(opts.pageTitle);
     }
 
-
     routeKey++;
-    return React.createElement(component,
-                               Object.assign({},
-                                             props,
-                                             {routeKey, setPageTitle},
-                                             opts.alwaysRender ? {key: routeKey} : {}));
-  }
+    return React.createElement(
+      component,
+      Object.assign({}, props, { routeKey, setPageTitle }, opts.alwaysRender ? { key: routeKey } : {})
+    );
+  };
 }
-
 
 ReactDOM.render(
   <AppContextProvider>
     <BrowserRouter>
       <Switch>
-        <Route exact path="/" component={wrappedRoute(HomePage, {pageTitle: "Archives Search: Home"})} />
-        <Route path="/agencies/:qsa_id" component={wrappedRoute(AgencyPage, {pageTitle: "View agency"})} />
-        <Route path="/series/:qsa_id" component={wrappedRoute(SeriesPage, {pageTitle: "View series"})} />
-        <Route path="/functions/:qsa_id" component={wrappedRoute(FunctionPage, {pageTitle: "View function"})} />
-        <Route path="/mandates/:qsa_id" component={wrappedRoute(MandatePage, {pageTitle: "View mandate"})} />
-        <Route path="/items/:qsa_id" component={wrappedRoute(ItemPage, {pageTitle: "View item"})} />
-        <Route exact path="/login" component={wrappedRoute(LoginPage, {pageTitle: "Login"})} />
-        <Route exact path="/search" component={wrappedRoute(ResultsPage, {pageTitle: "Search records"})} />
-        <Route exact path="/register" component={wrappedRoute(RegisterPage, {pageTitle: "Register"})} />
-        <Route exact path="/my-account" component={wrappedRoute(MyAccountPage, {pageTitle: "My Account"})} />
-        <Route exact path="/my-details" component={wrappedRoute(MyContactDetailsPage, {pageTitle: "My Contact Details"})} />
-        <Route exact path="/change-password" component={wrappedRoute(ChangePasswordPage, {pageTitle: "Change Password"})} />
-        <Route exact path="/admin/users" component={wrappedRoute(UserManagementPage, {pageTitle: "User Management"})} />
-        <Route exact path="/admin/users/:user_id" component={wrappedRoute(UserManagementPage, {pageTitle: "User Management"})} />
-        <Route component={wrappedRoute(NotFound, {pageTitle: "Page not found"})} />
+        <Route
+          exact
+          path="/"
+          component={wrappedRoute(HomePage, {
+            pageTitle: 'Archives Search: Home'
+          })}
+        />
+        <Route path="/agencies/:qsaId" component={wrappedRoute(AgencyPage, { pageTitle: 'View agency' })} />
+        <Route path="/series/:qsaId" component={wrappedRoute(SeriesPage, { pageTitle: 'View series' })} />
+        <Route path="/functions/:qsaId" component={wrappedRoute(FunctionPage, { pageTitle: 'View function' })} />
+        <Route path="/mandates/:qsaId" component={wrappedRoute(MandatePage, { pageTitle: 'View mandate' })} />
+        <Route path="/items/:qsaId" component={wrappedRoute(ItemPage, { pageTitle: 'View item' })} />
+        <Route exact path="/login" component={wrappedRoute(LoginPage, { pageTitle: 'Login' })} />
+        <Route exact path="/search" component={wrappedRoute(ResultsPage, { pageTitle: 'Search records' })} />
+        <Route exact path="/register" component={wrappedRoute(RegisterPage, { pageTitle: 'Register' })} />
+        <Route exact path="/my-account" component={wrappedRoute(MyAccountPage, { pageTitle: 'My Account' })} />
+        <Route
+          exact
+          path="/my-details"
+          component={wrappedRoute(MyContactDetailsPage, {
+            pageTitle: 'My Contact Details'
+          })}
+        />
+        <Route
+          exact
+          path="/change-password"
+          component={wrappedRoute(ChangePasswordPage, {
+            pageTitle: 'Change Password'
+          })}
+        />
+        <Route
+          exact
+          path="/admin/users"
+          component={wrappedRoute(UserManagementPage, {
+            pageTitle: 'User Management'
+          })}
+        />
+        <Route
+          exact
+          path="/admin/users/:user_id"
+          component={wrappedRoute(UserManagementPage, {
+            pageTitle: 'User Management'
+          })}
+        />
+        <Route component={wrappedRoute(NotFound, { pageTitle: 'Page not found' })} />
       </Switch>
     </BrowserRouter>
   </AppContextProvider>,
 
-  document.getElementById('root'));
+  document.getElementById('root')
+);
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
