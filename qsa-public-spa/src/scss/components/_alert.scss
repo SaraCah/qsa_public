@@ -12,7 +12,7 @@
     border-left: 5px solid $brand-danger;
     background-color: #b90824;
     a {
-      color: #FF0;
+      color: #ff0;
     }
   }
   &.alert-success {
@@ -30,7 +30,11 @@
     border-left: 5px solid $brand-warning;
     background-color: #ffedde;
   }
-  &.alert-success, &.alert-info, &.alert-warning, &.alert-tip, &.alert-danger{
+  &.alert-success,
+  &.alert-info,
+  &.alert-warning,
+  &.alert-tip,
+  &.alert-danger {
     font-weight: normal;
     color: #000;
     margin: 0;
@@ -39,23 +43,22 @@
     ul {
       padding-left: 0 !important;
     }
-    h2{
+    h2 {
       i {
         @include rem(font-size, 24px);
         margin-right: 10px;
       }
     }
   }
-
 }
 
-.status{
+.status {
   margin: 24px 0 24px 0 !important;
   & > .inner {
-      margin-left: 32px;
-     h3{
-       margin-top: 5px;
-     }
+    margin-left: 32px;
+    h3 {
+      margin-top: 5px;
+    }
     ul {
       padding-left: 0;
     }
@@ -63,12 +66,16 @@
   &.warn {
     border-color: #f9af71 !important;
   }
-  &.success , &.info, &.tip , &.warn{
+  &.success,
+  &.info,
+  &.tip,
+  &.warn {
     position: relative;
     border: 0;
     border-left: 5px solid;
     padding: 1em;
-    &:before, &:hover:before {
+    &:before,
+    &:hover:before {
       @include rem(font-size, 24px);
       margin-left: -14px;
       top: 6px;
@@ -78,7 +85,8 @@
   &.success {
     border-color: #9ebf6d;
   }
-  &.info, &.tip{
+  &.info,
+  &.tip {
     border-color: $brand-info;
   }
 }

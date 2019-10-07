@@ -11,7 +11,7 @@ export abstract class AspaceResult {
   public startDate: string;
   public endDate: string;
 
-  protected constructor (result: any) {
+  protected constructor(result: any) {
     this.id = result.id;
     this.title = result.title;
     this.displayString = result.display_string;
@@ -20,7 +20,7 @@ export abstract class AspaceResult {
     this.types = result.types;
     this.qsaId = result.qsa_id;
     this.qsaIdPrefixed = result.qsa_id_prefixed;
-    if (!!result.json) {
+    if (result.json) {
       this.json = result.json;
     }
     this.startDate = result.start_date;

@@ -1,13 +1,13 @@
-.qg-featured{
-  &.qg-aside{
+.qg-featured {
+  &.qg-aside {
     .carousel {
       margin-bottom: 0;
     }
   }
-  .carousel{
+  .carousel {
     @include rem(margin-top, 16px);
     position: relative;
-    .carousel-inner{
+    .carousel-inner {
       .carousel-item {
         a {
           text-decoration: none !important;
@@ -41,10 +41,10 @@
         z-index: 2;
       }
     }
-    .carousel-caption{
+    .carousel-caption {
       position: static;
       padding: 0;
-      margin-bottom:0;
+      margin-bottom: 0;
       background: none;
       h3 {
         text-align: left;
@@ -55,12 +55,12 @@
       p {
         text-align: left;
         color: #000;
-        &.more{
+        &.more {
           text-align: right;
         }
       }
     }
-    .carousel-indicators{
+    .carousel-indicators {
       position: inherit;
       margin-left: 0;
       float: left;
@@ -77,7 +77,7 @@
         margin-right: 10px;
         width: 10px;
         height: 10px;
-        &.active{
+        &.active {
           background-color: #000;
         }
       }
@@ -94,13 +94,14 @@
         display: inline-block;
         margin-right: 18px;
         line-height: 1;
-        &:last-child{
+        &:last-child {
           margin-right: 0;
         }
         a {
           text-decoration: none !important;
         }
-        a:active, a:focus {
+        a:active,
+        a:focus {
           color: #c00;
           i {
             color: #c00;
@@ -109,17 +110,17 @@
         .fa {
           color: #000;
           &.fa-sync {
-            &:before{
+            &:before {
               content: "\f021";
               font-family: FontAwesome;
             }
           }
         }
-        .toggleCarousel{
+        .toggleCarousel {
           position: relative;
           top: -4px;
         }
-        .carousel-control{
+        .carousel-control {
           position: initial;
           left: inherit;
           top: 0;
@@ -128,22 +129,23 @@
           background-image: none;
           color: #000;
           text-shadow: none;
-          .icon-prev,.icon-next{
+          .icon-prev,
+          .icon-next {
             position: inherit;
           }
-          &.right{
+          &.right {
             top: -8px;
-            .icon-next:before{
+            .icon-next:before {
               content: "\f0da";
               position: inherit;
               font-family: FontAwesome;
               font-size: 27px;
             }
           }
-          &.left{
+          &.left {
             top: -8px;
             right: 74px;
-            .icon-prev:before{
+            .icon-prev:before {
               content: "\f0d9";
               font-family: FontAwesome;
               position: inherit;
@@ -159,8 +161,3 @@
     }
   }
 }
-
-
-
-
-

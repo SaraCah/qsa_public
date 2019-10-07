@@ -1,4 +1,4 @@
-import React from "react"
+import React from 'react';
 
 const Cart: React.FC = () => {
   return (
@@ -11,12 +11,26 @@ const Cart: React.FC = () => {
               <p className="ssq-minicart-noscript">Edit cart or checkout to place your order.</p>
               <div className="ssq-minicart-submit">
                 <input type="hidden" id="ssq-cart-contents" name="ssq-cart-contents" value="" />
-                <img src="https://www.smartservice.qld.gov.au/payment/minicart/synchronise?cartId=(cartId)" id="ssq-synch-img" height="0" width="0" alt="" />
+                <img
+                  src="https://www.smartservice.qld.gov.au/payment/minicart/synchronise?cartId=(cartId)"
+                  id="ssq-synch-img"
+                  height="0"
+                  width="0"
+                  alt=""
+                />
                 <a href="https://www.smartservice.qld.gov.au/payment/cart/checkout" id="ssq-cart-checkout">
-                  <img id="ssq_minicart_checkout" src="https://www.smartservice.qld.gov.au/payment/minicart/btn-checkout.png" alt="Checkout" />
+                  <img
+                    id="ssq_minicart_checkout"
+                    src="https://www.smartservice.qld.gov.au/payment/minicart/btn-checkout.png"
+                    alt="Checkout"
+                  />
                 </a>
                 <a href="https://www.smartservice.qld.gov.au/payment/cart/view" id="ssq-cart-edit">
-                  <img id="ssq_minicart_cart" src="https://www.smartservice.qld.gov.au/payment/minicart/btn-cart.png" alt="Edit cart" />
+                  <img
+                    id="ssq_minicart_cart"
+                    src="https://www.smartservice.qld.gov.au/payment/minicart/btn-cart.png"
+                    alt="Edit cart"
+                  />
                 </a>
               </div>
             </noscript>

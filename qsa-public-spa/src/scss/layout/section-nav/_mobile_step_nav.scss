@@ -10,7 +10,7 @@
     &:after {
       content: " \25bc";
     }
-    &:hover{
+    &:hover {
       text-decoration: none !important;
       color: #fff !important;
       background: #53b2d2;
@@ -31,7 +31,7 @@
         padding: 0;
         display: none;
         background: #006584;
-        &.show{
+        &.show {
           transition: all 0.3s ease;
           display: block;
         }
@@ -47,7 +47,8 @@
               padding: 0.2em 0.5em;
               background: #ddecf1;
             }
-            &:hover, &.active{
+            &:hover,
+            &.active {
               background: #53b2d2;
               text-decoration: none;
               color: #fff;
@@ -55,7 +56,7 @@
                 background: #fff;
               }
             }
-            &:visited{
+            &:visited {
               color: #fff;
             }
           }
@@ -64,5 +65,3 @@
     }
   }
 }
-
-
