@@ -5,6 +5,11 @@ class UserDTO
   define_field(:email, String)
   define_field(:first_name, String)
   define_field(:last_name, String)
+  define_field(:street_address, String)
+  define_field(:city_suburb, String)
+  define_field(:state, String)
+  define_field(:post_code, String)
+  define_field(:phone, String)
   define_field(:is_admin, Boolean)
   define_field(:is_verified, Boolean)
   define_field(:lock_version, Integer)
@@ -16,6 +21,11 @@ class UserDTO
         email: row[:email],
         first_name: row[:first_name],
         last_name: row[:last_name],
+        street_address: row[:street_address],
+        city_suburb: row[:city_suburb],
+        state: row[:state],
+        post_code: row[:post_code],
+        phone: row[:phone],
         is_admin: (row[:admin] == 1),
         is_verified: (row[:verified] == 1),
         lock_version: row[:lock_version],

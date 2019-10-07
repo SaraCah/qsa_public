@@ -5,5 +5,10 @@ export interface UserForm {
   confirm_password: string;
   first_name?: string;
   last_name?: string;
+  street_address?: string;
+  city_suburb?: string;
+  state?: string;
+  post_code?: string;
+  phone?: string;
   lock_version: number;
 }

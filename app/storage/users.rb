@@ -9,6 +9,11 @@ class Users < BaseStorage
         user_id = db[:user].insert(:email => user_form_dto.fetch('email'),
                                    :first_name => user_form_dto.fetch('first_name', nil),
                                    :last_name => user_form_dto.fetch('last_name', nil),
+                                   :street_address => user_form_dto.fetch('street_address'),
+                                   :city_suburb => user_form_dto.fetch('city_suburb'),
+                                   :state => user_form_dto.fetch('state'),
+                                   :post_code => user_form_dto.fetch('post_code'),
+                                   :phone => user_form_dto.fetch('phone'),
                                    :admin => 0,
                                    :inactive => 0,
                                    :verified => 0,
@@ -36,6 +41,11 @@ class Users < BaseStorage
       lock_version: user_form_dto.fetch('lock_version') + 1,
       first_name: user_form_dto.fetch('first_name'),
       last_name: user_form_dto.fetch('last_name'),
+      street_address: user_form_dto.fetch('street_address'),
+      city_suburb: user_form_dto.fetch('city_suburb'),
+      state: user_form_dto.fetch('state'),
+      post_code: user_form_dto.fetch('post_code'),
+      phone: user_form_dto.fetch('phone'),
       modified_time: java.lang.System.currentTimeMillis
     }
 
@@ -68,6 +78,11 @@ class Users < BaseStorage
       lock_version: user_form_dto.fetch('lock_version') + 1,
       first_name: user_form_dto.fetch('first_name'),
       last_name: user_form_dto.fetch('last_name'),
+      street_address: user_form_dto.fetch('street_address'),
+      city_suburb: user_form_dto.fetch('city_suburb'),
+      state: user_form_dto.fetch('state'),
+      post_code: user_form_dto.fetch('post_code'),
+      phone: user_form_dto.fetch('phone'),
       admin: user_form_dto.fetch('is_admin') ? 1 : 0,
       verified: user_form_dto.fetch('is_verified') ? 1 : 0,
       modified_time: java.lang.System.currentTimeMillis

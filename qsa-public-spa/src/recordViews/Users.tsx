@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, SyntheticEvent } from 'react';
 import { Http } from '../utils/http';
 import { Redirect } from 'react-router';
 import AppContext from '../context/AppContext';
@@ -47,6 +47,12 @@ const FormErrors: React.FC<{ errors: any }> = ({ errors }) => {
       </ol>
     </div>
   );
+};
+
+const scrollToRef = (ref?: React.RefObject<HTMLDivElement>): void => {
+  if (ref && ref.current) {
+    window.scrollTo(0, ref.current.offsetTop);
+  }
 };
 
 export const RegisterPage: React.FC<any> = (route: any) => {
@@ -186,6 +192,56 @@ export const RegisterPage: React.FC<any> = (route: any) => {
                   id="last_name"
                   placeholder="Last name"
                   onChange={e => setUser(Object.assign({}, user, { last_name: e.target.value }))}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="street_address">Street Address</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="street_address"
+                  placeholder="Street Address"
+                  onChange={e => setUser(Object.assign({}, user, { street_address: e.target.value }))}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="city_suburb">City/Suburb</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="city_suburb"
+                  placeholder="City/Suburb"
+                  onChange={e => setUser(Object.assign({}, user, { city_suburb: e.target.value }))}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="state">State</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="state"
+                  placeholder="State"
+                  onChange={e => setUser(Object.assign({}, user, { state: e.target.value }))}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="post_code">Post Code</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="post_code"
+                  placeholder="Post Code"
+                  onChange={e => setUser(Object.assign({}, user, { post_code: e.target.value }))}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="phone">Phone</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="phone"
+                  placeholder="Phone Number"
+                  onChange={e => setUser(Object.assign({}, user, { phone: e.target.value }))}
                 />
               </div>
             </div>
@@ -344,12 +400,13 @@ const UserDetailsForm: React.FC<{ context: any }> = ({ context }) => {
   const [user, setUser]: [UserForm, any] = useState({ ...context.user });
   const [errors, setErrors]: [any, any] = useState([]);
   const [showUpdateSuccess, setShowUpdateSuccess]: [boolean, any] = useState(false);
+  const updateUserRef = useRef<HTMLDivElement>(null);
 
-  const onSubmit = (e: any) => {
+  const onSubmit = (): Promise<AxiosResponse> => {
     setErrors([]);
     setShowUpdateSuccess(false);
 
-    Http.get()
+    return Http.get()
       .updateUser(user)
       .then((response: any) => {
         if (response.status === 'updated') {
@@ -369,7 +426,7 @@ const UserDetailsForm: React.FC<{ context: any }> = ({ context }) => {
   };
 
   return (
-    <div className="row">
+    <div ref={updateUserRef} className="row">
       <div className="col-sm-12">
         <h1>My contact details</h1>
         {showUpdateSuccess && (
@@ -379,9 +436,10 @@ const UserDetailsForm: React.FC<{ context: any }> = ({ context }) => {
         )}
         <form
           method="GET"
-          onSubmit={e => {
+          onSubmit={async (e: SyntheticEvent): Promise<void> => {
             e.preventDefault();
-            onSubmit(e);
+            await onSubmit();
+            scrollToRef(updateUserRef);
           }}
         >
           {errors && errors.length > 0 && <FormErrors errors={errors} />}
@@ -427,6 +485,61 @@ const UserDetailsForm: React.FC<{ context: any }> = ({ context }) => {
                 placeholder="Last name"
                 value={user.last_name}
                 onChange={e => setUser(Object.assign({}, user, { last_name: e.target.value }))}
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="street_address">Street Address</label>
+              <input
+                type="text"
+                className="form-control"
+                id="street_address"
+                placeholder="Street Address"
+                value={user.street_address}
+                onChange={e => setUser(Object.assign({}, user, { street_address: e.target.value }))}
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="city_suburb">City/Suburb</label>
+              <input
+                type="text"
+                className="form-control"
+                id="city_suburb"
+                placeholder="City/Suburb"
+                value={user.city_suburb}
+                onChange={e => setUser(Object.assign({}, user, { city_suburb: e.target.value }))}
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="state">State</label>
+              <input
+                type="text"
+                className="form-control"
+                id="state"
+                placeholder="State"
+                value={user.state}
+                onChange={e => setUser(Object.assign({}, user, { state: e.target.value }))}
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="post_code">Post Code</label>
+              <input
+                type="text"
+                className="form-control"
+                id="post_code"
+                placeholder="Post Code"
+                value={user.post_code}
+                onChange={e => setUser(Object.assign({}, user, { post_code: e.target.value }))}
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="phone">Phone</label>
+              <input
+                type="text"
+                className="form-control"
+                id="phone"
+                placeholder="Phone Number"
+                value={user.phone}
+                onChange={e => setUser(Object.assign({}, user, { phone: e.target.value }))}
               />
             </div>
           </div>
@@ -564,6 +677,7 @@ const AdminUserDetailsForm: React.FC<any> = ({ userId }) => {
   const [userToEdit, setUserToEdit]: [any, any] = useState(null);
   const [errors, setErrors]: [any, any] = useState([]);
   const [showUpdateSuccess, setShowUpdateSuccess]: [boolean, any] = useState(false);
+  const updateUserRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     Http.get()
@@ -574,11 +688,11 @@ const AdminUserDetailsForm: React.FC<any> = ({ userId }) => {
       });
   }, [user.lock_version]);
 
-  const onSubmit = () => {
+  const onSubmit = (): AxiosResponse => {
     setErrors([]);
     setShowUpdateSuccess(false);
 
-    Http.get()
+    return Http.get()
       .updateUser(userToEdit)
       .then((response: any) => {
         if (response.status === 'updated') {
@@ -593,7 +707,7 @@ const AdminUserDetailsForm: React.FC<any> = ({ userId }) => {
   };
 
   return userToEdit ? (
-    <div className="row">
+    <div ref={updateUserRef} className="row">
       <div className="col-sm-12">
         <div>
           <small>
@@ -613,9 +727,10 @@ const AdminUserDetailsForm: React.FC<any> = ({ userId }) => {
           )}
 
           <form
-            onSubmit={e => {
+            onSubmit={async (e: SyntheticEvent): Promise<void> => {
               e.preventDefault();
-              onSubmit();
+              await onSubmit();
+              scrollToRef(updateUserRef);
             }}
           >
             {errors && errors.length > 0 && <FormErrors errors={errors} />}
@@ -711,6 +826,61 @@ const AdminUserDetailsForm: React.FC<any> = ({ userId }) => {
                   placeholder="Last name"
                   value={userToEdit.last_name}
                   onChange={e => setUserToEdit(Object.assign({ ...userToEdit }, { last_name: e.target.value }))}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="street_address">Street Address</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="street_address"
+                  placeholder="Street Address"
+                  value={userToEdit.street_address}
+                  onChange={e => setUserToEdit(Object.assign({}, user, { street_address: e.target.value }))}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="city_suburb">City/Suburb</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="suburb"
+                  placeholder="City/Suburb"
+                  value={userToEdit.city_suburb}
+                  onChange={e => setUserToEdit(Object.assign({}, user, { city_suburb: e.target.value }))}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="state">State</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="state"
+                  placeholder="State"
+                  value={userToEdit.state}
+                  onChange={e => setUserToEdit(Object.assign({}, user, { state: e.target.value }))}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="post_code">Post Code</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="post_code"
+                  placeholder="Post Code"
+                  value={userToEdit.post_code}
+                  onChange={e => setUserToEdit(Object.assign({}, user, { post_code: e.target.value }))}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="phone">Phone</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="phone"
+                  placeholder="Phone Number"
+                  value={userToEdit.phone}
+                  onChange={e => setUserToEdit(Object.assign({}, user, { phone: e.target.value }))}
                 />
               </div>
             </div>
