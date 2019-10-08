@@ -16,8 +16,7 @@ class Carts < BaseStorage
     documents = Search.get_records_by_ids(items.map{|item| item.fetch(:item_id)})
 
     items.each do |item|
-      representation_solr_doc = documents.fetch(item.fetch(:item_id))
-      item[:record] = JSON.parse(representation_solr_doc.fetch('json'))
+      item[:record] = documents.fetch(item.fetch(:item_id))
     end
 
     items
