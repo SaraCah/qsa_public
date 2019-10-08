@@ -8,6 +8,7 @@ class Carts < BaseStorage
       .filter(user_id: user_id)
       .map do |row|
       {
+        id: row[:id],
         item_id: row[:item_id],
         request_type: row[:request_type]
       }
@@ -25,10 +26,21 @@ class Carts < BaseStorage
   def self.add_item(user_id, request_type, item_id)
     raise "Request type not supported: #{request_type}" unless VALID_REQUEST_TYPES.include?(request_type)
 
+    begin
+      db[:cart_item]
+        .insert(user_id: user_id,
+                request_type: request_type,
+                item_id: item_id)
+    rescue Sequel::UniqueConstraintViolation
+      # ok it's already in there
+    end
+  end
+
+  def self.remove_item(user_id, cart_item_id)
     db[:cart_item]
-      .insert(user_id: user_id,
-              request_type: request_type,
-              item_id: item_id)
+      .filter(user_id: user_id)
+      .filter(id: cart_item_id)
+      .delete
   end
 
 end

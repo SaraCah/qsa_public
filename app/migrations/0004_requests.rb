@@ -8,6 +8,10 @@ Sequel.migration do
       String :request_type, null: false
     end
 
+    alter_table(:cart_item) do
+      add_unique_constraint([:user_id, :item_id, :request_type])
+    end
+
     create_table(:agency_request) do
       primary_key :id
 
