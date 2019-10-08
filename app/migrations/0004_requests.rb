@@ -41,7 +41,7 @@ Sequel.migration do
       String :item_id, null: false
       String :item_uri, null: false
       String :status, null: false
-      Bignum :date_requested
+      Bignum :date_required
 
       String :created_by, null: false
       String :modified_by, null: false
