@@ -45,7 +45,7 @@ const AppContextProvider: React.FC<any> = (props: any) => {
           /* Record the current user session token */
           setSessionId: (sessionId: string) => {
             const isSecure = window.location.protocol === 'https:' ? ';secure' : '';
-            document.cookie = `archives_search_session=${sessionId};samesite=strict${isSecure}`;
+            document.cookie = `archives_search_session=${sessionId};samesite=strict${isSecure};path=/`;
 
             Http.login(sessionId);
 
