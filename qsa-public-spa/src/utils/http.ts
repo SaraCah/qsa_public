@@ -13,6 +13,9 @@ const updateContactDetailsUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/use
 const updatePasswordUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/update_password`;
 const userUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/admin/user`;
 const usersUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/admin/users`;
+const cartUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/cart`;
+const addToCartUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/cart/add_item`;
+const removeFromCartUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/cart/remove_item`;
 
 export class Http {
   static config: AxiosRequestConfig = {
@@ -182,6 +185,43 @@ export class Http {
     const params = { user_id: userId };
 
     const response = await axios.get(`${userUrl}`, Object.assign({}, this.getConfig(), { params: params }));
+
+    return response.data || [];
+  }
+
+  async getCart(): Promise<any> {
+    const response = await axios.get(`${cartUrl}`, this.getConfig());
+
+    return response.data || [];
+  }
+
+  async addToCart(item_id: string, request_type: string): Promise<any> {
+    const bodyFormData = new FormData();
+    bodyFormData.set('item_id', item_id);
+    bodyFormData.set('request_type', request_type);
+
+    const config = this.getConfig();
+    config.headers['Content-Type'] = 'multipart/form-data';
+
+    const response = await axios.post(addToCartUrl, bodyFormData, config).catch(error => {
+      console.log(error, error.status);
+      return error;
+    });
+
+    return response.data || [];
+  }
+
+  async removeFromCart(cartItemId: number): Promise<any> {
+    const bodyFormData = new FormData();
+    bodyFormData.set('id', String(cartItemId));
+
+    const config = this.getConfig();
+    config.headers['Content-Type'] = 'multipart/form-data';
+
+    const response = await axios.post(removeFromCartUrl, bodyFormData, config).catch(error => {
+      console.log(error, error.status);
+      return error;
+    });
 
     return response.data || [];
   }

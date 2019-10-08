@@ -1,4 +1,9 @@
 import React from 'react';
+import AppContext from "../context/AppContext";
+import {Link} from "react-router-dom";
+import {iconForType, labelForType} from "../utils/typeResolver";
+import Layout from "../recordViews/Layout";
+import {Http} from "../utils/http";
 
 const Cart: React.FC = () => {
   return (
@@ -51,5 +56,84 @@ const Cart: React.FC = () => {
     </div>
   );
 };
+
+export const CartSummary: React.FC<any> = ({cart}) => {
+  return (
+      <small className="cart-summary">
+        <Link to="/my-cart"
+              className="qg-btn btn-xs btn-default">
+                <span className="fa fa-shopping-cart">
+                </span>&nbsp;
+          {
+            cart && cart.length
+          }
+        </Link>
+      </small>
+  )
+}
+
+export const MyCartPage: React.FC<any> = (route: any) => {
+  const removeItem = (id: number, context: any) => {
+    Http.get()
+        .removeFromCart(id)
+        .then((json: any) => {
+          context.refreshCart();
+        })
+        .catch((exception: Error) => {
+          console.error(exception);
+        });
+  }
+
+  return (
+    <AppContext.Consumer>
+      {(context: any): React.ReactElement => (
+          <>
+            {
+              !context.sessionLoaded && <Layout footer={false}/>
+            }
+            {
+              context.sessionLoaded &&
+              <Layout>
+                <div className="row">
+                  <div className="col-sm-12">
+                    <h1>My Cart</h1>
+                    {
+                      !context.user &&
+                      <div className="alert alert-warning">
+                        Please login to access your cart
+                      </div>
+                    }
+                    {
+                      context.user && context.cart.length === 0 &&
+                      <div className="alert alert-info">
+                        Cart empty
+                      </div>
+                    }
+                    {
+                      context.user && context.cart.length > 0 &&
+                      <ul>
+                        {
+                          context.cart.map((cart_item: any) => (
+                            <li key={cart_item.id}>
+                              {cart_item.record.display_string}
+                              <button
+                                className="qg-btn btn-danger btn-xs"
+                                onClick={() => removeItem(cart_item.id, context)}>
+                                Remove
+                              </button>
+                            </li>
+                          ))
+                        }
+                      </ul>
+                    }
+                  </div>
+                </div>
+              </Layout>
+            }
+          </>
+      )}
+    </AppContext.Consumer>
+  )
+}
 
 export default Cart;

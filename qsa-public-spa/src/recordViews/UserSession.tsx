@@ -4,6 +4,7 @@ import Layout from './Layout';
 import { Http } from '../utils/http';
 
 import AppContext from '../context/AppContext';
+import {CartSummary} from "../cart/Cart";
 
 export const UserSession: React.FC = () => {
   const logout = (appContext: any) => {
@@ -25,6 +26,7 @@ export const UserSession: React.FC = () => {
         <>
           {context.sessionLoaded && (
             <div className="login-box pull-right">
+              <CartSummary cart={context.cart} />
               {context.user ? (
                 <small>
                   Hello, {displayName(context.user)}

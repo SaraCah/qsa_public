@@ -33,7 +33,7 @@ const AppContextProvider: React.FC<any> = (props: any) => {
         {
           initialised: true,
           sessionLoaded: !existingSession,
-          cart: null,
+          cart: [],
           user: null,
           sessionId: existingSession,
 
@@ -59,6 +59,18 @@ const AppContextProvider: React.FC<any> = (props: any) => {
             setAppContext((oldState: any) => {
               return Object.assign({}, oldState, { sessionLoaded: value });
             });
+          },
+
+          refreshCart: () => {
+            Http.get()
+                .getCart()
+                .then(
+                    (data: any) => {
+                      setAppContext((oldState: any) => Object.assign({}, oldState, { cart: data }));
+                    },
+                    () => {
+                    }
+                );
           },
 
           /* Log out the current user */
@@ -95,6 +107,7 @@ const AppContextProvider: React.FC<any> = (props: any) => {
           (response: any) => {
             appContext.setUser(response.data);
             appContext.setSessionLoaded(true);
+            appContext.refreshCart();
           },
           () => {
             appContext.clearSession();

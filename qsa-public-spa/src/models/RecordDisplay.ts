@@ -63,7 +63,7 @@ export class RecordDisplay {
     }
   }
 
-  getNotes(noteType: string, noteLabel: string, callback: any): any {
+  getNotes(noteType: string, noteLabel: string|null, callback: any): any {
     const notes: any = this.getArray('notes');
     const result: Note[] = [];
 

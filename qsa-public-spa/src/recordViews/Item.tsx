@@ -5,6 +5,7 @@ import Layout from './Layout';
 import { iconForType, labelForType } from '../utils/typeResolver';
 import { Note, RecordDisplay } from '../models/RecordDisplay';
 import { AccordionPanel, MaybeLink, NoteDisplay, RecordContext, Relationship } from './Helpers';
+import AppContext from "../context/AppContext";
 
 const PhysicalRepresentation: React.FC<{
   representation: any;
@@ -81,6 +82,59 @@ const DigitalRepresentation: React.FC<{
   );
 };
 
+const RequestActions: React.FC<any> = ({item}) => {
+  if (item.getArray('physical_representations').length > 1) {
+    return (
+        <pre>DO SOMETHING SPECIAL AS MULTIPLE PHYS REPS</pre>
+    )
+  }
+
+  const openRepresentations: any[] = [];
+  const closedRepresentations: any[] = [];
+
+  item.getArray('physical_representations').forEach((representation: any) => {
+    if (representation['rap_access_status'] === 'Open Access') {
+      openRepresentations.push(representation);
+    } else {
+      closedRepresentations.push(representation);
+    }
+  });
+
+  const requestItem = (item_id: string, request_type: string, context: any) => {
+    Http.get()
+        .addToCart(item_id, request_type)
+        .then((json: any) => {
+          context.refreshCart();
+        })
+        .catch((exception: Error) => {
+          console.error(exception);
+        });
+  }
+
+  return (
+    <AppContext.Consumer>
+      {(context: any): React.ReactElement => (
+        <div className="row">
+          <div className="col-sm-12">
+            {
+              openRepresentations.length > 0 &&
+              <button className="qg-btn btn-primary" onClick={() => requestItem(openRepresentations[0].id, 'READING_ROOM', context)}>
+                Request item
+              </button>
+            }
+            {
+              closedRepresentations.length > 0 &&
+              <button className="qg-btn btn-primary" onClick={() => requestItem(closedRepresentations[0].id, 'READING_ROOM', context)}>
+                Request access
+              </button>
+            }
+          </div>
+        </div>
+      )}
+    </AppContext.Consumer>
+  )
+}
+
 const ItemPage: React.FC<any> = (route: any) => {
   const [item, setCurrentItem] = useState<any | null>(null);
   const [notFoundRedirect, setNotFoundRedirect] = useState(false);
@@ -127,6 +181,8 @@ const ItemPage: React.FC<any> = (route: any) => {
                 </div>
               </div>
             </h1>
+
+            <RequestActions item={item}/>
 
             <section className="core-information">
               <h2 className="sr-only">Basic information</h2>

@@ -30,6 +30,7 @@ import {
   RegisterPage,
   UserManagementPage
 } from './recordViews/Users';
+import {MyCartPage} from "./cart/Cart";
 
 /* Establish error handling */
 class ErrorBuffer {
@@ -181,6 +182,7 @@ ReactDOM.render(
         <Route exact path="/search" component={wrappedRoute(ResultsPage, { pageTitle: 'Search records' })} />
         <Route exact path="/register" component={wrappedRoute(RegisterPage, { pageTitle: 'Register' })} />
         <Route exact path="/my-account" component={wrappedRoute(MyAccountPage, { pageTitle: 'My Account' })} />
+        <Route exact path="/my-cart" component={wrappedRoute(MyCartPage, { pageTitle: 'My Cart' })} />
         <Route
           exact
           path="/my-details"
