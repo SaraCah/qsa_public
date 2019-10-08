@@ -59,9 +59,14 @@ while [ "$#" -gt 0 ]; do
     shift
 done
 
+TRAPPED=0
+
 function stop_solr() {
-    solr_dist/bin/solr stop -p $solr_port
-    kill 0
+    if [ "$TRAPPED" = "0" ]; then
+        TRAPPED=1
+        solr_dist/bin/solr stop -p $solr_port
+        kill 0
+    fi
 }
 
 function fail() {
