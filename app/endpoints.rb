@@ -376,6 +376,16 @@ class QSAPublic < Sinatra::Base
     end
   end
 
+  Endpoint.post('/api/users/cart/handle_open_records')
+    .param(:date_required, String, "Date of pick up from reading room", optional: true) do
+    if Ctx.user_logged_in?
+      Carts.handle_open_records(Ctx.get.session.user_id, params[:date_required])
+      json_response({status: 'success'})
+    else
+      [404]
+    end
+  end
+
 
   if !defined?(STATIC_DIR) 
     STATIC_DIR = File.realpath(File.absolute_path(File.join(File.dirname(__FILE__), '..', 'static')))

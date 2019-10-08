@@ -84,6 +84,18 @@ export const MyCartPage: React.FC<any> = (route: any) => {
         });
   }
 
+  const submitReadingRoomRequests = (context: any) => {
+    Http.get()
+        .submitReadingRoomRequests()
+        .then(() => {
+          // FIXME SHOW MESSAGE WITH LINK TO READING ROOM REQUESTS PAGE
+          context.refreshCart();
+        })
+        .catch((exception: Error) => {
+          console.error(exception);
+        });
+  }
+
   return (
     <AppContext.Consumer>
       {(context: any): React.ReactElement => (
@@ -111,20 +123,25 @@ export const MyCartPage: React.FC<any> = (route: any) => {
                     }
                     {
                       context.user && context.cart.length > 0 &&
-                      <ul>
-                        {
-                          context.cart.map((cart_item: any) => (
-                            <li key={cart_item.id}>
-                              {cart_item.record.display_string}
-                              <button
-                                className="qg-btn btn-danger btn-xs"
-                                onClick={() => removeItem(cart_item.id, context)}>
-                                Remove
-                              </button>
-                            </li>
-                          ))
-                        }
-                      </ul>
+                      <>
+                        <ul>
+                          {
+                            context.cart.map((cart_item: any) => (
+                              <li key={cart_item.id}>
+                                {cart_item.record.display_string}
+                                <button
+                                  className="qg-btn btn-danger btn-xs"
+                                  onClick={() => removeItem(cart_item.id, context)}>
+                                  Remove
+                                </button>
+                              </li>
+                            ))
+                          }
+                        </ul>
+                        <button className="qg-btn btn-primary" onClick={(e) => submitReadingRoomRequests(context)}>
+                          Submit Reading Room Requests
+                        </button>
+                      </>
                     }
                   </div>
                 </div>

@@ -36,11 +36,41 @@ class Carts < BaseStorage
     end
   end
 
+  def self.clear(user_id)
+    db[:cart_item]
+      .filter(user_id: user_id)
+      .delete
+  end
+
   def self.remove_item(user_id, cart_item_id)
     db[:cart_item]
       .filter(user_id: user_id)
       .filter(id: cart_item_id)
       .delete
+  end
+
+  def self.handle_open_records(user_id, date_required)
+    now = Time.now.to_i
+
+    user = Users.get(user_id)
+    cart_items = get(user_id)
+    open_items = cart_items.select{|item| item[:request_type] == REQUEST_TYPE_READING_ROOM && item.fetch(:record).fetch('rap_access_status') == 'Open Access'}
+    open_items.each do |item|
+      db[:reading_room_request]
+        .insert(
+          user_id: user_id,
+          item_id: item.fetch(:record).fetch('id'),
+          item_uri: item.fetch(:record).fetch('uri'),
+          status: 'PENDING',
+          date_required: date_required ? date_required.to_i : date_required,
+          created_by: user.fetch('email'),
+          modified_by: user.fetch('email'),
+          create_time: now,
+          modified_time: now,
+        )
+
+      remove_item(user_id, item.fetch(:id))
+    end
   end
 
 end

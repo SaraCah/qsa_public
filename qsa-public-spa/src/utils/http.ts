@@ -16,6 +16,7 @@ const usersUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/admin/users`;
 const cartUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/cart`;
 const addToCartUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/cart/add_item`;
 const removeFromCartUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/cart/remove_item`;
+const submitReadingRoomRequestsUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/cart/handle_open_records`;
 
 export class Http {
   static config: AxiosRequestConfig = {
@@ -219,6 +220,22 @@ export class Http {
     config.headers['Content-Type'] = 'multipart/form-data';
 
     const response = await axios.post(removeFromCartUrl, bodyFormData, config).catch(error => {
+      console.log(error, error.status);
+      return error;
+    });
+
+    return response.data || [];
+  }
+
+  async submitReadingRoomRequests(): Promise<any> {
+    const bodyFormData = new FormData();
+    // FIXME support date_required
+    // bodyFormData.set('date_required', date_required);
+
+    const config = this.getConfig();
+    config.headers['Content-Type'] = 'multipart/form-data';
+
+    const response = await axios.post(submitReadingRoomRequestsUrl, bodyFormData, config).catch(error => {
       console.log(error, error.status);
       return error;
     });
