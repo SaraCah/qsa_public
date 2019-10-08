@@ -39,6 +39,7 @@ Sequel.migration do
       foreign_key :agency_request_id, :agency_request, null: true
 
       String :item_id, null: false
+      String :item_uri, null: false
       String :status, null: false
       Bignum :date_requested
 
