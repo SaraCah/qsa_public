@@ -34,6 +34,8 @@
   <field name="digital_representation_count" type="pint" indexed="false" stored="true" multiValued="false"/>
   <field name="physical_representation_count" type="pint" indexed="false" stored="true" multiValued="false"/>
 
+  <field name="parent_solr_doc_uri" type="string" indexed="true" stored="true" multiValued="false" />
+
   <!-- Search fields -->
   <field name="qsa_id_search" type="keyword" indexed="true" stored="false" required="false" multiValued="true" />
   <copyField source="qsa_id" dest="qsa_id_search" />

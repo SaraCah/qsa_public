@@ -152,6 +152,18 @@ class Search
   end
 
 
+  def self.get_records_by_ids(doc_ids)
+    solr_handle_search(q: "{!terms f=id}#{doc_ids.join(',')}",
+                       rows: doc_ids.length)
+      .fetch('response')
+      .fetch('docs')
+      .map {|doc|
+        json = JSON.parse(doc.fetch('json'))
+        [doc['id'], json]
+      }.to_h
+  end
+
+
   def self.get_records_by_uris(uris)
     solr_handle_search(q: "{!terms f=uri}#{uris.join(',')}",
                        rows: uris.length)
@@ -484,5 +496,9 @@ class Search
       'results' => response.fetch('docs', []),
       'facets' => facets,
     }
+  end
+
+  def self.exists?(id)
+    !get_records_by_ids([id]).empty?
   end
 end

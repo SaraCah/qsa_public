@@ -343,6 +343,28 @@ class QSAPublic < Sinatra::Base
     response
   end
 
+  Endpoint.get('/api/users/cart') do
+    if Ctx.user_logged_in?
+      json_response(Carts.get(Ctx.get.session.user_id))
+    else
+      [404]
+    end
+  end
+
+  Endpoint.post('/api/users/cart/add_item')
+    .param(:request_type, String, "Type of request")
+    .param(:item_id, String, "SOLR document ID for the record") do
+    if Ctx.user_logged_in?
+      if Search.exists?(params[:item_id])
+        Carts.add_item(Ctx.get.session.user_id, params[:request_type], params[:item_id])
+        json_response({status: 'added'})
+      else
+        [404, "Record does not exist"]
+      end
+    else
+      [404]
+    end
+  end
 
 
   if !defined?(STATIC_DIR) 

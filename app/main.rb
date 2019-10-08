@@ -55,6 +55,7 @@ require 'storage/base_storage'
 require 'storage/users'
 require 'storage/sessions'
 require 'storage/db_auth'
+require 'storage/carts'
 
 require 'endpoints'
 

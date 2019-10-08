@@ -59,8 +59,10 @@ class SolrIndexer
           record_uris << row[:record_uri]
         end
 
+        uri_query = record_uris.map {|uri| '"%s"' % [uri]}.join(' OR ')
+
         delete_query = {'delete' =>
-                        {'query' => 'uri:(%s)' % record_uris.map {|uri| '"%s"' % [uri]}.join(' OR ')}}
+                          {'query' => 'uri:(%s) OR parent_solr_doc_uri:(%s)' % [uri_query, uri_query]}}
 
         $LOG.info("Deleting #{record_uris.length} records")
 
