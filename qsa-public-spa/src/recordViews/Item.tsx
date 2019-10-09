@@ -118,7 +118,7 @@ const AddToCartButton: React.FC<any> = ({itemId}) => {
             <div className="col-sm-12">
               {
                 inCart(context.cart, itemId) ?
-                    <button className="qg-btn btn-default disabled">Already added to cart</button> :
+                    <button className="qg-btn btn-default disabled">Added to cart</button> :
                     <button className="qg-btn btn-primary" onClick={() => requestItem(itemId, 'READING_ROOM', context)}>
                       Add to cart
                     </button>
