@@ -1099,7 +1099,7 @@ const RequestsSummary: React.FC<any> = ({context}) => {
                 <td>{request.status}</td>
                 <td>{request.record.display_string}</td>
                 <td>{request.date_required && new Date(request.date_required).toLocaleString()}</td>
-                <td>{new Date(request.create_time * 1000).toLocaleString()}</td>
+                <td>{new Date(request.create_time).toLocaleString()}</td>
               </tr>
             ))
           }

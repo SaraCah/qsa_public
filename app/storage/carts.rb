@@ -50,7 +50,7 @@ class Carts < BaseStorage
   end
 
   def self.handle_open_records(user_id, date_required)
-    now = Time.now.to_i
+    now = Time.now
 
     user = Users.get(user_id)
     cart_items = get(user_id)
@@ -65,8 +65,9 @@ class Carts < BaseStorage
           date_required: date_required ? date_required.to_i : date_required,
           created_by: user.fetch('email'),
           modified_by: user.fetch('email'),
-          create_time: now,
-          modified_time: now,
+          create_time: now.to_i * 1000,
+          modified_time: now.to_i * 1000,
+          system_mtime: now,
         )
 
       remove_item(user_id, item.fetch(:id))

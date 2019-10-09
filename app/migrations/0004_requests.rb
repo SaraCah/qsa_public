@@ -30,6 +30,10 @@ Sequel.migration do
       String :modified_by, null: false
       Bignum :create_time, null: false
       Bignum :modified_time, null: false
+
+      # This here for ArchivesSpace ASModel compatibility
+      Integer :lock_version, :default => 1, :null => false
+      DateTime :system_mtime, :index => true, :null => false
     end
 
     create_table(:reading_room_request) do
@@ -47,6 +51,10 @@ Sequel.migration do
       String :modified_by, null: false
       Bignum :create_time, null: false
       Bignum :modified_time, null: false
+
+      # This here for ArchivesSpace ASModel compatibility
+      Integer :lock_version, :default => 1, :null => false
+      DateTime :system_mtime, :index => true, :null => false
     end
 
     create_table(:agency_request_item) do
@@ -61,6 +69,10 @@ Sequel.migration do
       String :modified_by, null: false
       Bignum :create_time, null: false
       Bignum :modified_time, null: false
+
+      # This here for ArchivesSpace ASModel compatibility
+      Integer :lock_version, :default => 1, :null => false
+      DateTime :system_mtime, :index => true, :null => false
     end
 
     create_table(:notification) do
