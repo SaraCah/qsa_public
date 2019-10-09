@@ -387,6 +387,14 @@ class QSAPublic < Sinatra::Base
   end
 
 
+  Endpoint.get('/api/users/requests') do
+    if Ctx.user_logged_in?
+      json_response(Requests.all(Ctx.get.session.user_id))
+    else
+      [404]
+    end
+  end
+
   if !defined?(STATIC_DIR) 
     STATIC_DIR = File.realpath(File.absolute_path(File.join(File.dirname(__FILE__), '..', 'static')))
   end

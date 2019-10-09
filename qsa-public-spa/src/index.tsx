@@ -26,7 +26,7 @@ import AppContextProvider from './context/AppContextProvider';
 import {
   ChangePasswordPage,
   MyAccountPage,
-  MyContactDetailsPage,
+  MyContactDetailsPage, MyRequestsPage,
   RegisterPage,
   UserManagementPage
 } from './recordViews/Users';
@@ -183,6 +183,7 @@ ReactDOM.render(
         <Route exact path="/register" component={wrappedRoute(RegisterPage, { pageTitle: 'Register' })} />
         <Route exact path="/my-account" component={wrappedRoute(MyAccountPage, { pageTitle: 'My Account' })} />
         <Route exact path="/my-cart" component={wrappedRoute(MyCartPage, { pageTitle: 'My Cart' })} />
+        <Route exact path="/my-requests" component={wrappedRoute(MyRequestsPage, { pageTitle: 'My Requests' })} />
         <Route
           exact
           path="/my-details"

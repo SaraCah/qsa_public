@@ -17,6 +17,7 @@ const cartUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/cart`;
 const addToCartUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/cart/add_item`;
 const removeFromCartUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/cart/remove_item`;
 const submitReadingRoomRequestsUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/cart/handle_open_records`;
+const userRequestsUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/requests`;
 
 export class Http {
   static config: AxiosRequestConfig = {
@@ -239,6 +240,12 @@ export class Http {
       console.log(error, error.status);
       return error;
     });
+
+    return response.data || [];
+  }
+
+  async getRequests(): Promise<any> {
+    const response = await axios.get(`${userRequestsUrl}`, this.getConfig());
 
     return response.data || [];
   }

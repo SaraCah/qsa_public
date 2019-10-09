@@ -357,9 +357,9 @@ const UserAccountSummary: React.FC = () => {
             <div className="details">
               <h2>My requests</h2>
               <p>Review all of your request slips</p>
-              <a href="#" className="btn btn-primary">
+              <Link to="/my-requests" className="btn btn-primary">
                 My requests
-              </a>
+              </Link>
             </div>
           </div>
         </article>
@@ -1062,5 +1062,59 @@ export const UserManagementPage: React.FC<any> = (route: any) => {
         {(context: any) => (userId ? <AdminUserDetailsForm userId={userId} /> : <UserManagementListing />)}
       </AppContext.Consumer>
     </LoginRequired>
+  );
+};
+
+const RequestsSummary: React.FC<any> = ({context}) => {
+  const [results, setResults] = useState({results: []});
+
+  useEffect(() => {
+    Http.get()
+        .getRequests()
+        .then((data: any) => {
+          setResults(data);
+        });
+  }, []);
+
+  return(
+    <>
+      <h1>My Requests</h1>
+      <table className="table table-striped">
+        <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Request Type</th>
+          <th scope="col">Status</th>
+          <th scope="col">Item Title</th>
+          <th scope="col">Required Date</th>
+          <th scope="col">Requested Date</th>
+        </tr>
+        </thead>
+        <tbody>
+          {
+            results.results && results.results.map((request:any) => (
+              <tr>
+                <td>{request.id}</td>
+                <td>{request.request_type}</td>
+                <td>{request.status}</td>
+                <td>{request.record.display_string}</td>
+                <td>{request.date_required && new Date(request.date_required).toLocaleString()}</td>
+                <td>{new Date(request.create_time * 1000).toLocaleString()}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </>
+  );
+}
+
+export const MyRequestsPage: React.FC<any> = (route: any) => {
+  return (
+      <LoginRequired>
+        <AppContext.Consumer>
+          {(context: any) => <RequestsSummary context={context}/>}
+        </AppContext.Consumer>
+      </LoginRequired>
   );
 };
