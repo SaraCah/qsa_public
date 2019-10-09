@@ -315,7 +315,11 @@ export const MyCartPage: React.FC<any> = () => {
                           </article>
                         )}
                         <div className="mt-5">
-                          <button type="submit" className="qg-btn btn-secondary">
+                          <button
+                            type="submit"
+                            className="qg-btn btn-secondary"
+                            onClick={e => Http.get().clearCart().then(() => context.refreshCart())}
+                          >
                             Clear cart
                           </button>
                         </div>

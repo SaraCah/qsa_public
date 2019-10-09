@@ -394,10 +394,18 @@ class QSAPublic < Sinatra::Base
     end
   end
 
-
   Endpoint.get('/api/users/requests') do
     if Ctx.user_logged_in?
       json_response(Requests.all(Ctx.get.session.user_id))
+    else
+      [404]
+    end
+  end
+
+  Endpoint.post('/api/users/cart/clear') do
+    if Ctx.user_logged_in?
+      Carts.clear(Ctx.get.session.user_id)
+      json_response({status: 'success'})
     else
       [404]
     end
