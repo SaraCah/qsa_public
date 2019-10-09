@@ -89,8 +89,8 @@ export const MyCartPage: React.FC<any> = () => {
     Http.get()
       .submitReadingRoomRequests(requiredDate)
       .then(() => {
-        setShowReadingRoomSuccess(true);
         context.refreshCart();
+        setShowReadingRoomSuccess(true);
       })
       .catch((exception: Error) => {
         console.error(exception);
@@ -125,15 +125,15 @@ export const MyCartPage: React.FC<any> = () => {
               <div className="row">
                 <div className="col-sm-12">
                   <h1>My Cart</h1>
+                  {showReadingRoomSuccess && (
+                      <div className="alert alert-success">
+                        Reading room requests created! View them at <Link to="/my-requests">My requests</Link>.
+                      </div>
+                  )}
                   {!context.user && <div className="alert alert-warning">Please login to access your cart</div>}
                   {context.user && context.cart.length === 0 && <div className="alert alert-info">Cart empty</div>}
                   {context.user && context.cart.length > 0 && (
                     <>
-                      {showReadingRoomSuccess && (
-                        <div className="alert alert-success">
-                          Reading room requests created! View them at <Link to="/my-requests">My requests</Link>.
-                        </div>
-                      )}
                       <section className="qg-accordion qg-dark-accordion" aria-label="All Requests">
                         {filterReadingRoomRequests(context.cart).length > 0 && (
                           <article>
