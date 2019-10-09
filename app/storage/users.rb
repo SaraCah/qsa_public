@@ -57,6 +57,8 @@ class Users < BaseStorage
     # FIXME handle this
     raise StaleRecordException.new if updated == 0
 
+    Requests.update_mtimes_for_user_id(user_form_dto.fetch('id'))
+
     []
   end
 
@@ -100,6 +102,8 @@ class Users < BaseStorage
     if user_form_dto.fetch('password', false)
       DBAuth.set_user_password(user_form_dto.fetch('id'), user_form_dto.fetch('password'))
     end
+
+    Requests.update_mtimes_for_user_id(user_form_dto.fetch('id'))
 
     []
   end

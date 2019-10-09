@@ -18,4 +18,15 @@ class Requests < BaseStorage
     }
   end
 
+  def self.update_mtimes_for_user_id(user_id)
+    now = Time.now
+
+    db[:reading_room_request]
+      .filter(user_id: user_id)
+      .update(system_mtime: now)
+
+    db[:agency_request]
+      .filter(user_id: user_id)
+      .update(system_mtime: now)
+  end
 end
