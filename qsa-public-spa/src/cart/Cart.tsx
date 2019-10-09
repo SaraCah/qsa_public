@@ -1,7 +1,7 @@
 import React from 'react';
 import AppContext from "../context/AppContext";
 import {Link} from "react-router-dom";
-import {iconForType, labelForType} from "../utils/typeResolver";
+import {iconForType, labelForType, uriFor} from "../utils/typeResolver";
 import Layout from "../recordViews/Layout";
 import {Http} from "../utils/http";
 
@@ -128,7 +128,9 @@ export const MyCartPage: React.FC<any> = (route: any) => {
                           {
                             context.cart.map((cart_item: any) => (
                               <li key={cart_item.id}>
-                                {cart_item.record.display_string}
+                                <Link to={uriFor(cart_item.record.parent_qsa_id, 'archival_object')}>
+                                  {cart_item.record.display_string}
+                                </Link>
                                 <button
                                   className="qg-btn btn-danger btn-xs"
                                   onClick={() => removeItem(cart_item.id, context)}>

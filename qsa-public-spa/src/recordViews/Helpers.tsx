@@ -83,11 +83,12 @@ export const Relationship: React.FC<{ relationship: any }> = ({ relationship }) 
 
 export const AccordionPanel: React.FC<{
   id: string;
+  anchor?: string;
   title: string;
   children: any;
-}> = ({ id, title, children }) => {
+}> = ({ id, anchor, title, children }) => {
   return (
-    <article>
+    <article id={anchor}>
       <input
         id={id}
         type="checkbox"

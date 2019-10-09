@@ -14,28 +14,33 @@ const PhysicalRepresentation: React.FC<{
   representation = new RecordDisplay(representation);
 
   return (
-    <dl>
-      <dt>ID</dt>
-      <dd>{representation.get('qsa_id_prefixed')}</dd>
-      <dt>Title</dt>
-      <dd>{representation.get('title')}</dd>
-      <dt>Format</dt>
-      <dd>{representation.get('format')}</dd>
-      {representation.getMaybe('agency_assigned_id', (value: string) => (
-        <>
-          <dt>Agency ID</dt>
-          <dd>{value}</dd>
-        </>
-      ))}
-      <dt>Previous System Identifier</dt>
-      <dd>FIXME MISSING FIELD</dd>
-      {representation.get('rap_applied').uri !== item.get('rap_applied').uri && (
-        <>
-          <dt>Access notifications</dt>
-          <dd>{representation.get('rap_applied').display_string}</dd>
-        </>
-      )}
-    </dl>
+    <>
+      <div className="pull-right">
+          <AddToCartButton itemId={representation.get('id')}/>
+      </div>
+      <dl>
+        <dt>ID</dt>
+        <dd>{representation.get('qsa_id_prefixed')}</dd>
+        <dt>Title</dt>
+        <dd>{representation.get('title')}</dd>
+        <dt>Format</dt>
+        <dd>{representation.get('format')}</dd>
+        {representation.getMaybe('agency_assigned_id', (value: string) => (
+          <>
+            <dt>Agency ID</dt>
+            <dd>{value}</dd>
+          </>
+        ))}
+        <dt>Previous System Identifier</dt>
+        <dd>FIXME MISSING FIELD</dd>
+        {representation.get('rap_applied').uri !== item.get('rap_applied').uri && (
+          <>
+            <dt>Access notifications</dt>
+            <dd>{representation.get('rap_applied').display_string}</dd>
+          </>
+        )}
+      </dl>
+    </>
   );
 };
 
@@ -82,24 +87,7 @@ const DigitalRepresentation: React.FC<{
   );
 };
 
-const RequestActions: React.FC<any> = ({item}) => {
-  if (item.getArray('physical_representations').length > 1) {
-    return (
-        <pre>DO SOMETHING SPECIAL AS MULTIPLE PHYS REPS</pre>
-    )
-  }
-
-  const openRepresentations: any[] = [];
-  const closedRepresentations: any[] = [];
-
-  item.getArray('physical_representations').forEach((representation: any) => {
-    if (representation['rap_access_status'] === 'Open Access') {
-      openRepresentations.push(representation);
-    } else {
-      closedRepresentations.push(representation);
-    }
-  });
-
+const AddToCartButton: React.FC<any> = ({itemId}) => {
   const requestItem = (item_id: string, request_type: string, context: any) => {
     Http.get()
         .addToCart(item_id, request_type)
@@ -111,27 +99,66 @@ const RequestActions: React.FC<any> = ({item}) => {
         });
   }
 
+  const inCart = (cart: any, itemId: string) => {
+    let result = false;
+
+    cart.forEach((cartItem: any) => {
+      if (cartItem.item_id === itemId) {
+        result = true;
+      }
+    });
+
+    return result;
+  }
+
   return (
     <AppContext.Consumer>
       {(context: any): React.ReactElement => (
-        <div className="row">
-          <div className="col-sm-12">
-            {
-              openRepresentations.length > 0 &&
-              <button className="qg-btn btn-primary" onClick={() => requestItem(openRepresentations[0].id, 'READING_ROOM', context)}>
-                Request item
-              </button>
-            }
-            {
-              closedRepresentations.length > 0 &&
-              <button className="qg-btn btn-primary" onClick={() => requestItem(closedRepresentations[0].id, 'READING_ROOM', context)}>
-                Request access
-              </button>
-            }
+          <div className="row">
+            <div className="col-sm-12">
+              {
+                inCart(context.cart, itemId) ?
+                    <button className="qg-btn btn-default disabled">Already added to cart</button> :
+                    <button className="qg-btn btn-primary" onClick={() => requestItem(itemId, 'READING_ROOM', context)}>
+                      Add to cart
+                    </button>
+              }
+            </div>
           </div>
-        </div>
       )}
     </AppContext.Consumer>
+  );
+}
+
+const RequestActions: React.FC<any> = ({item}) => {
+  if (item.getArray('physical_representations').length > 1) {
+    const scrollToRepresentations = () => {
+      const target = document.getElementById('physical_representations');
+      if (target) {
+        target.scrollIntoView({behavior: "smooth"});
+        const checkbox = target.querySelector('input[type=checkbox]') as HTMLInputElement;
+        if (checkbox && !checkbox.checked) {
+          checkbox.click();
+        }
+      }
+    }
+
+    return (
+        <div className="row">
+          <div className="col-sm-12">
+            <button className="qg-btn btn-primary" onClick={() => scrollToRepresentations()}>
+              Add to cart&nbsp;
+              <span className="fa fa-chevron-circle-down" aria-hidden="true"/>
+            </button>
+          </div>
+        </div>
+    )
+  }
+
+  const itemIdToRequest = item.getArray('physical_representations')[0].id;
+
+  return (
+    <AddToCartButton itemId={itemIdToRequest}/>
   )
 }
 
@@ -319,6 +346,7 @@ const ItemPage: React.FC<any> = (route: any) => {
               {item.getArray('physical_representations').length > 0 && (
                 <AccordionPanel
                   id={item.generateId()}
+                  anchor="physical_representations"
                   title="Physical representations"
                   children={
                     <ul className="list-group list-group-flush">
