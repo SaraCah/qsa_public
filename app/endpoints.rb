@@ -379,7 +379,15 @@ class QSAPublic < Sinatra::Base
   Endpoint.post('/api/users/cart/handle_open_records')
     .param(:date_required, String, "Date of pick up from reading room", optional: true) do
     if Ctx.user_logged_in?
-      Carts.handle_open_records(Ctx.get.session.user_id, params[:date_required])
+      date_required = nil
+      if params[:date_required]
+        begin
+          date_required = Date.parse(params[:date_required])
+        rescue
+          # FIXME at least we tried
+        end
+      end
+      Carts.handle_open_records(Ctx.get.session.user_id, date_required)
       json_response({status: 'success'})
     else
       [404]

@@ -62,7 +62,7 @@ class Carts < BaseStorage
           item_id: item.fetch(:record).fetch('id'),
           item_uri: item.fetch(:record).fetch('uri'),
           status: 'PENDING',
-          date_required: date_required ? date_required.to_i : date_required,
+          date_required: date_required ? date_required.to_time.to_i * 1000 : date_required,
           created_by: user.fetch('email'),
           modified_by: user.fetch('email'),
           create_time: now.to_i * 1000,

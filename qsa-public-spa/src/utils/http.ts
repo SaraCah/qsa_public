@@ -228,10 +228,11 @@ export class Http {
     return response.data || [];
   }
 
-  async submitReadingRoomRequests(): Promise<any> {
+  async submitReadingRoomRequests(dateRequired?: string): Promise<any> {
     const bodyFormData = new FormData();
-    // FIXME support date_required
-    // bodyFormData.set('date_required', date_required);
+    if (dateRequired) {
+      bodyFormData.set('date_required', dateRequired);
+    }
 
     const config = this.getConfig();
     config.headers['Content-Type'] = 'multipart/form-data';

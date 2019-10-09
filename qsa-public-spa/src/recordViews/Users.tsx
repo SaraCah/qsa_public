@@ -5,7 +5,11 @@ import AppContext from '../context/AppContext';
 import Layout from './Layout';
 import { Link } from 'react-router-dom';
 import { UserForm } from '../models/User';
-import { errorMessageForCode, snakeToUppercaseInitials } from '../utils/typeResolver';
+import {
+  errorMessageForCode,
+  snakeToUppercaseInitials,
+  uriFor
+} from '../utils/typeResolver';
 import { AxiosResponse } from 'axios';
 
 const FormErrors: React.FC<{ errors: any }> = ({ errors }) => {
@@ -1093,12 +1097,16 @@ const RequestsSummary: React.FC<any> = ({context}) => {
         <tbody>
           {
             results.results && results.results.map((request:any) => (
-              <tr>
+              <tr key={request.id}>
                 <td>{request.id}</td>
                 <td>{request.request_type}</td>
                 <td>{request.status}</td>
-                <td>{request.record.display_string}</td>
-                <td>{request.date_required && new Date(request.date_required).toLocaleString()}</td>
+                <td>
+                  <Link to={uriFor(request.record.parent_qsa_id, 'archival_object')}>
+                    {request.record.display_string}
+                  </Link>
+                </td>
+                <td>{request.date_required && new Date(request.date_required).toLocaleDateString()}</td>
                 <td>{new Date(request.create_time).toLocaleString()}</td>
               </tr>
             ))
