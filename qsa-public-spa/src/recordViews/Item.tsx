@@ -147,6 +147,10 @@ const AddToCartButton: React.FC<any> = ({itemId}) => {
 }
 
 const RequestActions: React.FC<any> = ({item}) => {
+  if (item.getArray('physical_representations').length === 0) {
+    return (<></>);
+  }
+
   if (item.getArray('physical_representations').length > 1) {
     const scrollToRepresentations = () => {
       const target = document.getElementById('physical_representations');

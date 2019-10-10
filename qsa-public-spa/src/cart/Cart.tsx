@@ -249,22 +249,16 @@ export const MyCartPage: React.FC<any> = () => {
                                   <hr/>
                                   <h3>Requested items:</h3>
                                   {context.cart.closed_records[agency_uri].map((cartItem: any) => (
-                                    <div key={cartItem.id} role="list-item">
-                                      <div className="btn-group pull-right">
-                                        <button
-                                            className="qg-btn btn-default btn-xs"
-                                            onClick={(e) => {e.preventDefault(); removeItem(cartItem.id, context)}}
-                                        >
-                                          <i className="fa fa-trash" aria-hidden="true" />
-                                          &nbsp; Remove item
-                                        </button>
+                                    <div key={cartItem.id} role="list-item" style={{marginBottom: 40}}>
+                                      <div className="pull-right">
+                                        <span className="badge pull-right">Closed record</span>
                                       </div>
                                       <h4>
                                         <Link to={uriFor(cartItem.record.parent_qsa_id, 'archival_object')}>
                                           {cartItem.record.parent_qsa_id} {cartItem.record.display_string}
                                         </Link>
                                       </h4>
-                                      <dl className="row">
+                                      <dl className="row" style={{marginBottom: 0}}>
                                         <dt className="col-xs-6">Item type</dt>
                                         <dd className="col-xs-6">Physical representation</dd>
                                         <dt className="col-xs-6">Parent item</dt>
@@ -274,6 +268,15 @@ export const MyCartPage: React.FC<any> = () => {
                                           </Link>
                                         </dd>
                                       </dl>
+                                      <p>
+                                        <button
+                                            className="qg-btn btn-default btn-xs"
+                                            onClick={(e) => {e.preventDefault(); removeItem(cartItem.id, context)}}
+                                        >
+                                          <i className="fa fa-trash" aria-hidden="true" />
+                                          &nbsp; Remove item
+                                        </button>
+                                      </p>
                                     </div>
                                   ))}
                                   <hr/>

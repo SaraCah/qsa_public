@@ -23,6 +23,7 @@ class Carts < BaseStorage
     open_records = items.select{|item| item[:record].fetch('rap_access_status') == 'Open Access'}
     closed_records = items.select{|item| item[:record].fetch('rap_access_status') == 'Restricted Access'}.group_by{|item| item[:record].fetch('responsible_agency').fetch('ref')}
 
+    # FIXME filter only fields we need: qsa_id_prefixed, display_string
     agencies = Search.get_records_by_uris(closed_records.keys)
 
     {
