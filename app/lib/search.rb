@@ -153,6 +153,8 @@ class Search
 
 
   def self.get_records_by_ids(doc_ids)
+    return {} if doc_ids.empty?
+
     solr_handle_search(q: "{!terms f=id}#{doc_ids.join(',')}",
                        rows: doc_ids.length)
       .fetch('response')
@@ -165,6 +167,8 @@ class Search
 
 
   def self.get_records_by_uris(uris)
+    return {} if uris.empty?
+
     solr_handle_search(q: "{!terms f=uri}#{uris.join(',')}",
                        rows: uris.length)
       .fetch('response')

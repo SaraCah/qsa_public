@@ -16,12 +16,11 @@ Sequel.migration do
       primary_key :id
 
       foreign_key :user_id, :user, null: false
-      foreign_key :agency_request_id, :agency_request, null: true
 
       String :agency_id, null: false
+      String :agency_uri, null: false
 
       String :status, null: false
-      Bignum :date_requested
 
       String :purpose, text: true
       String :publication_details, text: true
@@ -63,6 +62,8 @@ Sequel.migration do
       foreign_key :agency_request_id, :agency_request, null: true
 
       String :item_id, null: false
+      String :item_uri, null: false
+
       String :status, null: false
 
       String :created_by, null: false

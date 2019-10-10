@@ -20,7 +20,17 @@ class Carts < BaseStorage
       item[:record] = documents.fetch(item.fetch(:item_id))
     end
 
-    items
+    open_records = items.select{|item| item[:record].fetch('rap_access_status') == 'Open Access'}
+    closed_records = items.select{|item| item[:record].fetch('rap_access_status') == 'Restricted Access'}.group_by{|item| item[:record].fetch('responsible_agency').fetch('ref')}
+
+    agencies = Search.get_records_by_uris(closed_records.keys)
+
+    {
+      total_count: items.length,
+      open_records: open_records,
+      closed_records: closed_records,
+      agencies: agencies,
+    }
   end
 
   def self.add_item(user_id, request_type, item_id)
@@ -53,9 +63,9 @@ class Carts < BaseStorage
     now = Time.now
 
     user = Users.get(user_id)
-    cart_items = get(user_id)
-    open_items = cart_items.select{|item| item[:request_type] == REQUEST_TYPE_READING_ROOM && item.fetch(:record).fetch('rap_access_status') == 'Open Access'}
-    open_items.each do |item|
+    cart = get(user_id)
+
+    cart[:open_records].each do |item|
       db[:reading_room_request]
         .insert(
           user_id: user_id,
@@ -71,6 +81,63 @@ class Carts < BaseStorage
         )
 
       remove_item(user_id, item.fetch(:id))
+    end
+  end
+
+  def self.handle_closed_records(user_id, agency_fields)
+    now = Time.now
+
+    user = Users.get(user_id)
+    cart = get(user_id)
+
+    cart[:closed_records].each do |agency_uri, closed_items|
+      agency_id = "agent_corporate_entity:#{agency_uri.split('/').last}"
+
+      agency_request_id = db[:agency_request]
+                            .insert(
+                              user_id: user_id,
+                              agency_id: agency_id,
+                              agency_uri: agency_uri,
+                              status: 'PENDING',
+                              purpose: agency_fields.fetch(agency_uri).fetch('purpose'),
+                              publication_details: agency_fields.fetch(agency_uri).fetch('publication_details'),
+                              created_by: user.fetch('email'),
+                              modified_by: user.fetch('email'),
+                              create_time: now.to_i * 1000,
+                              modified_time: now.to_i * 1000,
+                              system_mtime: now,
+                              )
+
+      closed_items.each do |item|
+        db[:agency_request_item]
+          .insert(
+            agency_request_id: agency_request_id,
+            item_id: item.fetch(:record).fetch('id'),
+            item_uri: item.fetch(:record).fetch('uri'),
+            status: 'PENDING',
+            created_by: user.fetch('email'),
+            modified_by: user.fetch('email'),
+            create_time: now.to_i * 1000,
+            modified_time: now.to_i * 1000,
+            system_mtime: now,
+          )
+
+        db[:reading_room_request]
+          .insert(
+            user_id: user_id,
+            item_id: item.fetch(:record).fetch('id'),
+            item_uri: item.fetch(:record).fetch('uri'),
+            status: 'AWAITING_AGENCY_APPROVAL',
+            date_required: nil,
+            created_by: user.fetch('email'),
+            modified_by: user.fetch('email'),
+            create_time: now.to_i * 1000,
+            modified_time: now.to_i * 1000,
+            system_mtime: now,
+            )
+
+        remove_item(user_id, item.fetch(:id))
+      end
     end
   end
 

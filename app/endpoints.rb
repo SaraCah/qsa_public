@@ -376,18 +376,26 @@ class QSAPublic < Sinatra::Base
     end
   end
 
-  Endpoint.post('/api/users/cart/handle_open_records')
-    .param(:date_required, String, "Date of pick up from reading room", optional: true) do
+  Endpoint.post('/api/users/cart/create_reading_room_requests')
+    .param(:date_required, String, "Date of pick up from reading room", optional: true)
+    .param(:agency_fields, String, "JSON Blob of agency fields", optional: true) do
     if Ctx.user_logged_in?
       date_required = nil
       if params[:date_required]
         begin
           date_required = Date.parse(params[:date_required])
         rescue
-          # FIXME at least we tried
         end
       end
+
+      agency_fields = {}
+      if params[:agency_fields]
+        agency_fields = JSON.parse(params[:agency_fields])
+      end
+
       Carts.handle_open_records(Ctx.get.session.user_id, date_required)
+      Carts.handle_closed_records(Ctx.get.session.user_id, agency_fields)
+
       json_response({status: 'success'})
     else
       [404]

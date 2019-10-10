@@ -16,7 +16,7 @@ const usersUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/admin/users`;
 const cartUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/cart`;
 const addToCartUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/cart/add_item`;
 const removeFromCartUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/cart/remove_item`;
-const submitReadingRoomRequestsUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/cart/handle_open_records`;
+const submitReadingRoomRequestsUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/cart/create_reading_room_requests`;
 const userRequestsUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/requests`;
 const clearCartUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/cart/clear`;
 
@@ -229,11 +229,16 @@ export class Http {
     return response.data || [];
   }
 
-  async submitReadingRoomRequests(dateRequired?: string): Promise<any> {
+  async submitReadingRoomRequests(dateRequired?: string, agencyFields?: any): Promise<any> {
     const bodyFormData = new FormData();
     if (dateRequired) {
       bodyFormData.set('date_required', dateRequired);
     }
+
+    if (agencyFields) {
+      bodyFormData.set('agency_fields', JSON.stringify(agencyFields));
+    }
+      
 
     const config = this.getConfig();
     config.headers['Content-Type'] = 'multipart/form-data';

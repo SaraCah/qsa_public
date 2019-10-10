@@ -102,11 +102,27 @@ const AddToCartButton: React.FC<any> = ({itemId}) => {
   const inCart = (cart: any, itemId: string) => {
     let result = false;
 
-    cart.forEach((cartItem: any) => {
-      if (cartItem.item_id === itemId) {
-        result = true;
-      }
-    });
+    if (cart.open_records) {
+      cart.open_records.forEach((cartItem: any) => {
+        if (cartItem.item_id === itemId) {
+          result = true;
+        }
+      });
+    }
+
+    if (result) {
+      return true;
+    }
+
+    if (cart.closed_records) {
+      Object.keys(cart.closed_records).forEach((agency_uri: string) => {
+        cart.closed_records[agency_uri].forEach((cartItem: any) => {
+          if (cartItem.item_id === itemId) {
+            result = true;
+          }
+        })
+      });
+    }
 
     return result;
   }
