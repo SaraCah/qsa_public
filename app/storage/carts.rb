@@ -125,6 +125,7 @@ class Carts < BaseStorage
 
         db[:reading_room_request]
           .insert(
+            agency_request_id: agency_request_id,
             user_id: user_id,
             item_id: item.fetch(:record).fetch('id'),
             item_uri: item.fetch(:record).fetch('uri'),
