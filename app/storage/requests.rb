@@ -10,11 +10,11 @@ class Requests < BaseStorage
 
     results.each do |row|
       row[:request_type] = Carts::REQUEST_TYPE_READING_ROOM # FIXME
-      row[:record] = resolved.fetch(row[:item_id])
+      row[:record] = Search.resolve_refs!(resolved.fetch(row[:item_id]))
     end
 
     {
-      results: results 
+      results: results
     }
   end
 
