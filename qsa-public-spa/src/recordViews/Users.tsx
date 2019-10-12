@@ -1109,7 +1109,7 @@ const RequestSummary: React.FC<any> = (props) => {
               <th>Item ID</th>
               <td>
                 <Link
-                    to={uriFor(request.record.qsa_id_prefixed, 'physical_representation')}
+                    to={uriFor(request.record.parent_qsa_id, 'archival_object')}
                     target="_blank"
                 >
                   {request.record.qsa_id_prefixed}
