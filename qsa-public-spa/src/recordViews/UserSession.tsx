@@ -4,7 +4,7 @@ import Layout from './Layout';
 import { Http } from '../utils/http';
 
 import AppContext from '../context/AppContext';
-import {CartSummary} from "../cart/Cart";
+import { CartSummary } from '../cart/Cart';
 
 export const UserSession: React.FC = () => {
   const logout = (appContext: any) => {
@@ -147,7 +147,7 @@ export const LoginPage: React.FC<any> = (route: any) => {
                     <small>
                       New user? <Link to="/register">Create an account here</Link>
                     </small>
-                    <br/>
+                    <br />
                     <small>
                       <Link to="/recover-password">Recover password</Link>
                     </small>

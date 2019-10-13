@@ -72,7 +72,7 @@ export const CartSummary: React.FC<any> = ({ cart }) => {
 export const MyCartPage: React.FC<any> = () => {
   const [requiredDate, setRequiredDate] = useState('');
   const [showReadingRoomSuccess, setShowReadingRoomSuccess] = useState(false);
-  const [agencyFields, setAgencyFields]:[any, any] = useState({});
+  const [agencyFields, setAgencyFields]: [any, any] = useState({});
 
   const removeItem = (id: number, context: any): void => {
     Http.get()
@@ -131,17 +131,19 @@ export const MyCartPage: React.FC<any> = () => {
           {!context.sessionLoaded && <Layout footer={false} />}
           {context.sessionLoaded && (
             <Layout>
-              <form onSubmit={(e) => handleSubmit(e, context)}>
+              <form onSubmit={e => handleSubmit(e, context)}>
                 <div className="row">
                   <div className="col-sm-12">
                     <h1>Submit Your Reading Room Requests</h1>
                     {showReadingRoomSuccess && (
-                        <div className="alert alert-success">
-                          Reading room requests created! View them at <Link to="/my-requests">My requests</Link>.
-                        </div>
+                      <div className="alert alert-success">
+                        Reading room requests created! View them at <Link to="/my-requests">My requests</Link>.
+                      </div>
                     )}
                     {!context.user && <div className="alert alert-warning">Please login to access your cart</div>}
-                    {context.user && context.cart.total_count === 0 && <div className="alert alert-info">Cart empty</div>}
+                    {context.user && context.cart.total_count === 0 && (
+                      <div className="alert alert-info">Cart empty</div>
+                    )}
                     {context.user && context.cart.total_count > 0 && (
                       <>
                         <section>
@@ -162,15 +164,15 @@ export const MyCartPage: React.FC<any> = () => {
                                     Date required
                                   </label>
                                   <input
-                                      type="date"
-                                      className="form-control"
-                                      id="date-required"
-                                      style={{ position: 'relative', opacity: 1, zIndex: 'initial' }}
-                                      onChange={e => setRequiredDate(e.target.value)}
-                                      required
+                                    type="date"
+                                    className="form-control"
+                                    id="date-required"
+                                    style={{ position: 'relative', opacity: 1, zIndex: 'initial' }}
+                                    onChange={e => setRequiredDate(e.target.value)}
+                                    required
                                   />
                                   {requiredDate && new Date(requiredDate) <= new Date() && (
-                                      <small className="text-danger">Date required must be in the future</small>
+                                    <small className="text-danger">Date required must be in the future</small>
                                   )}
                                 </div>
                               </div>
@@ -203,7 +205,10 @@ export const MyCartPage: React.FC<any> = () => {
                                     <div className="btn-group">
                                       <button
                                         className="qg-btn btn-default btn-xs"
-                                        onClick={(e) => {e.preventDefault(); removeItem(cartItem.id, context)}}
+                                        onClick={e => {
+                                          e.preventDefault();
+                                          removeItem(cartItem.id, context);
+                                        }}
                                       >
                                         <i className="fa fa-trash" aria-hidden="true" />
                                         &nbsp; Remove item
@@ -224,9 +229,9 @@ export const MyCartPage: React.FC<any> = () => {
                                   Requesting restricted access records
                                 </h2>
                                 <p>
-                                  You have requested some restricted access records. Please provide some details regarding
-                                  your request and access will be requested from the responsible agency. Queensland State
-                                  Archives cannot guarantee access will be granted to the records.
+                                  You have requested some restricted access records. Please provide some details
+                                  regarding your request and access will be requested from the responsible agency.
+                                  Queensland State Archives cannot guarantee access will be granted to the records.
                                 </p>
                               </div>
                               {Object.keys(context.cart.closed_records).map((agency_uri: string) => (
@@ -237,8 +242,14 @@ export const MyCartPage: React.FC<any> = () => {
                                   <dl className="row">
                                     <dt className="col-xs-6">Agency</dt>
                                     <dd className="col-xs-6">
-                                      <Link to={uriFor(context.cart.agencies[agency_uri].qsa_id_prefixed, 'agent_corporate_entity')}>
-                                        {context.cart.agencies[agency_uri].qsa_id_prefixed} {context.cart.agencies[agency_uri].display_string}
+                                      <Link
+                                        to={uriFor(
+                                          context.cart.agencies[agency_uri].qsa_id_prefixed,
+                                          'agent_corporate_entity'
+                                        )}
+                                      >
+                                        {context.cart.agencies[agency_uri].qsa_id_prefixed}{' '}
+                                        {context.cart.agencies[agency_uri].display_string}
                                       </Link>
                                     </dd>
                                     <dt className="col-xs-6">Delivery location</dt>
@@ -246,10 +257,10 @@ export const MyCartPage: React.FC<any> = () => {
                                     <dt className="col-xs-6">Cost</dt>
                                     <dd className="col-xs-6">Free</dd>
                                   </dl>
-                                  <hr/>
+                                  <hr />
                                   <h3>Requested items:</h3>
                                   {context.cart.closed_records[agency_uri].map((cartItem: any) => (
-                                    <div key={cartItem.id} role="list-item" style={{marginBottom: 40}}>
+                                    <div key={cartItem.id} role="list-item" style={{ marginBottom: 40 }}>
                                       <div className="pull-right">
                                         <span className="badge pull-right">Closed record</span>
                                       </div>
@@ -258,7 +269,7 @@ export const MyCartPage: React.FC<any> = () => {
                                           {cartItem.record.parent_qsa_id} {cartItem.record.display_string}
                                         </Link>
                                       </h4>
-                                      <dl className="row" style={{marginBottom: 0}}>
+                                      <dl className="row" style={{ marginBottom: 0 }}>
                                         <dt className="col-xs-6">Item type</dt>
                                         <dd className="col-xs-6">Physical representation</dd>
                                         <dt className="col-xs-6">Parent item</dt>
@@ -270,8 +281,11 @@ export const MyCartPage: React.FC<any> = () => {
                                       </dl>
                                       <p>
                                         <button
-                                            className="qg-btn btn-default btn-xs"
-                                            onClick={(e) => {e.preventDefault(); removeItem(cartItem.id, context)}}
+                                          className="qg-btn btn-default btn-xs"
+                                          onClick={e => {
+                                            e.preventDefault();
+                                            removeItem(cartItem.id, context);
+                                          }}
                                         >
                                           <i className="fa fa-trash" aria-hidden="true" />
                                           &nbsp; Remove item
@@ -279,36 +293,43 @@ export const MyCartPage: React.FC<any> = () => {
                                       </p>
                                     </div>
                                   ))}
-                                  <hr/>
+                                  <hr />
                                   <div className="form-row">
                                     <div className="form-group col-xs-12 col-md-12">
-                                      <label htmlFor={`request-purpose-${agency_uri}`}>Purpose of request and why you need this information</label>
-                                      <textarea 
+                                      <label htmlFor={`request-purpose-${agency_uri}`}>
+                                        Purpose of request and why you need this information
+                                      </label>
+                                      <textarea
                                         className="form-control col-xs-12"
                                         id={`request-purpose-${agency_uri}`}
-                                        rows={5} required
-                                        onChange={(e) => {
-                                          let newValues:any = {};
-                                          newValues[agency_uri] = {...agencyFields[agency_uri]};
+                                        rows={5}
+                                        required
+                                        onChange={e => {
+                                          const newValues: any = {};
+                                          newValues[agency_uri] = { ...agencyFields[agency_uri] };
                                           newValues[agency_uri]['purpose'] = e.target.value;
-                                          setAgencyFields(Object.assign({}, agencyFields, newValues))
-                                        }} 
+                                          setAgencyFields(Object.assign({}, agencyFields, newValues));
+                                        }}
                                       />
                                     </div>
                                   </div>
                                   <div className="form-row">
                                     <div className="form-group col-xs-12 col-md-12">
-                                      <label htmlFor={`intention-to-publish-${agency_uri}`}>Any intention to publish, and details of this publication</label>
+                                      <label htmlFor={`intention-to-publish-${agency_uri}`}>
+                                        Any intention to publish, and details of this publication
+                                      </label>
                                       <textarea
                                         className="form-control col-xs-12"
                                         id={`intention-to-publish-${agency_uri}`}
-                                        rows={3} required
-                                        onChange={(e) => {
-                                          let newValues:any = {};
-                                          newValues[agency_uri] = {...agencyFields[agency_uri]};
+                                        rows={3}
+                                        required
+                                        onChange={e => {
+                                          const newValues: any = {};
+                                          newValues[agency_uri] = { ...agencyFields[agency_uri] };
                                           newValues[agency_uri]['publication_details'] = e.target.value;
-                                          setAgencyFields(Object.assign({}, agencyFields, newValues))
-                                        }} />
+                                          setAgencyFields(Object.assign({}, agencyFields, newValues));
+                                        }}
+                                      />
                                     </div>
                                   </div>
                                 </div>
@@ -317,15 +338,18 @@ export const MyCartPage: React.FC<any> = () => {
                           )}
                           <div className="mt-5">
                             <p>
-                              <button
-                                type="submit"  
-                                className="qg-btn btn-primary"
-                              >
+                              <button type="submit" className="qg-btn btn-primary">
                                 Submit Requests
-                              </button>&nbsp;&nbsp;
+                              </button>
+                              &nbsp;&nbsp;
                               <button
                                 className="qg-btn btn-secondary"
-                                onClick={(e) => {e.preventDefault(); Http.get().clearCart().then(() => context.refreshCart())}}
+                                onClick={e => {
+                                  e.preventDefault();
+                                  Http.get()
+                                    .clearCart()
+                                    .then(() => context.refreshCart());
+                                }}
                               >
                                 Clear cart
                               </button>

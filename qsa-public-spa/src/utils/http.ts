@@ -1,7 +1,7 @@
-import axios, {AxiosRequestConfig, AxiosResponse} from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { AdvancedSearchQuery } from '../models/AdvancedSearch';
 import { UserForm } from '../models/User';
-import {PasswordRecoveryResponse} from "../models/HttpResponse";
+import { PasswordRecoveryResponse } from '../models/HttpResponse';
 
 const searchUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/advanced_search`;
 const fetchUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/fetch`;
@@ -251,7 +251,6 @@ export class Http {
     if (agencyFields) {
       bodyFormData.set('agency_fields', JSON.stringify(agencyFields));
     }
-      
 
     const config = this.getConfig();
     config.headers['Content-Type'] = 'multipart/form-data';

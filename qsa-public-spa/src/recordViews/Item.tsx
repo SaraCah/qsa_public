@@ -5,7 +5,7 @@ import Layout from './Layout';
 import { iconForType, labelForType } from '../utils/typeResolver';
 import { Note, RecordDisplay } from '../models/RecordDisplay';
 import { AccordionPanel, MaybeLink, NoteDisplay, RecordContext, Relationship } from './Helpers';
-import AppContext from "../context/AppContext";
+import AppContext from '../context/AppContext';
 
 const PhysicalRepresentation: React.FC<{
   representation: any;
@@ -16,7 +16,7 @@ const PhysicalRepresentation: React.FC<{
   return (
     <>
       <div className="pull-right">
-          <AddToCartButton itemId={representation.get('id')}/>
+        <AddToCartButton itemId={representation.get('id')} />
       </div>
       <dl>
         <dt>ID</dt>
@@ -87,17 +87,17 @@ const DigitalRepresentation: React.FC<{
   );
 };
 
-const AddToCartButton: React.FC<any> = ({itemId}) => {
+const AddToCartButton: React.FC<any> = ({ itemId }) => {
   const requestItem = (item_id: string, request_type: string, context: any) => {
     Http.get()
-        .addToCart(item_id, request_type)
-        .then((json: any) => {
-          context.refreshCart();
-        })
-        .catch((exception: Error) => {
-          console.error(exception);
-        });
-  }
+      .addToCart(item_id, request_type)
+      .then((json: any) => {
+        context.refreshCart();
+      })
+      .catch((exception: Error) => {
+        console.error(exception);
+      });
+  };
 
   const inCart = (cart: any, itemId: string) => {
     let result = false;
@@ -120,67 +120,65 @@ const AddToCartButton: React.FC<any> = ({itemId}) => {
           if (cartItem.item_id === itemId) {
             result = true;
           }
-        })
+        });
       });
     }
 
     return result;
-  }
+  };
 
   return (
     <AppContext.Consumer>
       {(context: any): React.ReactElement => (
-          <div className="row">
-            <div className="col-sm-12">
-              {
-                inCart(context.cart, itemId) ?
-                    <button className="qg-btn btn-default disabled">Added to cart</button> :
-                    <button className="qg-btn btn-primary" onClick={() => requestItem(itemId, 'READING_ROOM', context)}>
-                      Add to cart
-                    </button>
-              }
-            </div>
+        <div className="row">
+          <div className="col-sm-12">
+            {inCart(context.cart, itemId) ? (
+              <button className="qg-btn btn-default disabled">Added to cart</button>
+            ) : (
+              <button className="qg-btn btn-primary" onClick={() => requestItem(itemId, 'READING_ROOM', context)}>
+                Add to cart
+              </button>
+            )}
           </div>
+        </div>
       )}
     </AppContext.Consumer>
   );
-}
+};
 
-const RequestActions: React.FC<any> = ({item}) => {
+const RequestActions: React.FC<any> = ({ item }) => {
   if (item.getArray('physical_representations').length === 0) {
-    return (<></>);
+    return <></>;
   }
 
   if (item.getArray('physical_representations').length > 1) {
     const scrollToRepresentations = () => {
       const target = document.getElementById('physical_representations');
       if (target) {
-        target.scrollIntoView({behavior: "smooth"});
+        target.scrollIntoView({ behavior: 'smooth' });
         const checkbox = target.querySelector('input[type=checkbox]') as HTMLInputElement;
         if (checkbox && !checkbox.checked) {
           checkbox.click();
         }
       }
-    }
+    };
 
     return (
-        <div className="row">
-          <div className="col-sm-12">
-            <button className="qg-btn btn-primary" onClick={() => scrollToRepresentations()}>
-              Add to cart&nbsp;
-              <span className="fa fa-chevron-circle-down" aria-hidden="true"/>
-            </button>
-          </div>
+      <div className="row">
+        <div className="col-sm-12">
+          <button className="qg-btn btn-primary" onClick={() => scrollToRepresentations()}>
+            Add to cart&nbsp;
+            <span className="fa fa-chevron-circle-down" aria-hidden="true" />
+          </button>
         </div>
-    )
+      </div>
+    );
   }
 
   const itemIdToRequest = item.getArray('physical_representations')[0].id;
 
-  return (
-    <AddToCartButton itemId={itemIdToRequest}/>
-  )
-}
+  return <AddToCartButton itemId={itemIdToRequest} />;
+};
 
 const ItemPage: React.FC<any> = (route: any) => {
   const [item, setCurrentItem] = useState<any | null>(null);
@@ -229,7 +227,7 @@ const ItemPage: React.FC<any> = (route: any) => {
               </div>
             </h1>
 
-            <RequestActions item={item}/>
+            <RequestActions item={item} />
 
             <section className="core-information">
               <h2 className="sr-only">Basic information</h2>

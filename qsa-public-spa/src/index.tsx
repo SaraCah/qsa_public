@@ -31,8 +31,8 @@ import {
   RegisterPage,
   UserManagementPage
 } from './recordViews/Users';
-import {PasswordRecoveryPage} from "./recordViews/PasswordRecovery";
-import {MyCartPage} from "./cart/Cart";
+import { PasswordRecoveryPage } from './recordViews/PasswordRecovery';
+import { MyCartPage } from './cart/Cart';
 
 /* Establish error handling */
 class ErrorBuffer {
@@ -183,7 +183,11 @@ ReactDOM.render(
         <Route exact path="/login" component={wrappedRoute(LoginPage, { pageTitle: 'Login' })} />
         <Route exact path="/search" component={wrappedRoute(ResultsPage, { pageTitle: 'Search records' })} />
         <Route exact path="/register" component={wrappedRoute(RegisterPage, { pageTitle: 'Register' })} />
-        <Route exact path="/recover-password/:token?" component={wrappedRoute(PasswordRecoveryPage, { pageTitle: 'Password Recovery' })} />
+        <Route
+          exact
+          path="/recover-password/:token?"
+          component={wrappedRoute(PasswordRecoveryPage, { pageTitle: 'Password Recovery' })}
+        />
         <Route exact path="/my-account" component={wrappedRoute(MyAccountPage, { pageTitle: 'My Account' })} />
         <Route exact path="/my-cart" component={wrappedRoute(MyCartPage, { pageTitle: 'My Cart' })} />
         <Route exact path="/my-requests" component={wrappedRoute(MyRequestsPage, { pageTitle: 'My Requests' })} />
