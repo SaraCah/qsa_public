@@ -34,12 +34,19 @@ class DBAuth < BaseStorage
   end
 
   def self.set_recovery_token(user_id)
-    db[:dbauth]
+    token = SecureRandom.hex(64)
+
+    result = db[:dbauth]
       .where(:user_id => user_id)
       .update(
-        :recovery_token => SecureRandom.hex(64),
+        :recovery_token => token,
         :recovery_token_expiry => DateTime.now.to_s,
       )
+
+    # FIXME remove this log once reset password workflow sends email
+    $LOG.info("Email Reset Token: #{token}")
+
+    result
   end
 
   def self.update_password_from_token(token, password)

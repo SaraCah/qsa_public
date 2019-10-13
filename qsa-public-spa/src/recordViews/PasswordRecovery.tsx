@@ -127,7 +127,6 @@ export const PasswordRecoveryPage: React.FC<any> = (route: any) => {
                   type="password"
                   className="form-control"
                   id="password"
-                  placeholder="Email Address"
                   onChange={(e: SyntheticEvent): void => {
                     const passwordInput = e.target as HTMLInputElement;
                     setPassword(passwordInput.value);
