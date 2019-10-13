@@ -147,6 +147,10 @@ export const LoginPage: React.FC<any> = (route: any) => {
                     <small>
                       New user? <Link to="/register">Create an account here</Link>
                     </small>
+                    <br/>
+                    <small>
+                      <Link to="/recover-password">Recover password</Link>
+                    </small>
                   </p>
                 </div>
 

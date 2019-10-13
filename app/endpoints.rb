@@ -401,6 +401,27 @@ class QSAPublic < Sinatra::Base
       [404]
     end
   end
+  Endpoint.get('/api/generate_token')
+    .param(:email, String, "User email to reset") do
+    email_match = Users.get_for_email(params[:email])
+
+    if email_match
+      result = DBAuth.set_recovery_token(email_match.fetch('id'))
+      if result != 1
+        $LOG.warn("Unable to update record. Response: #{result}")
+      end
+    end
+    [200]
+  end
+
+  Endpoint.get('/api/token_update_password')
+      .param(:token, String, "Recovery token")
+      .param(:password, String, "New password") do
+
+    result = DBAuth.update_password_from_token(params[:token], params[:password])
+
+    json_response(result)
+  end
 
   Endpoint.get('/api/users/requests') do
     if Ctx.user_logged_in?

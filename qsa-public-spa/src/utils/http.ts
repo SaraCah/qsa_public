@@ -1,6 +1,7 @@
 import axios, {AxiosRequestConfig, AxiosResponse} from 'axios';
 import { AdvancedSearchQuery } from '../models/AdvancedSearch';
 import { UserForm } from '../models/User';
+import {PasswordRecoveryResponse} from "../models/HttpResponse";
 
 const searchUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/advanced_search`;
 const fetchUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/fetch`;
@@ -11,6 +12,8 @@ const loggedInUserUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/logged_in_u
 const registerUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users`;
 const updateContactDetailsUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/update`;
 const updatePasswordUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/update_password`;
+const recoveryTokenUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/generate_token`;
+const recoveryTokenPasswordUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/token_update_password`;
 const userUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/admin/user`;
 const usersUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/admin/users`;
 const cartUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/cart`;
@@ -179,17 +182,27 @@ export class Http {
       version: undefined
     });
 
-    const response = await axios.get(`${usersUrl}`, Object.assign({}, this.getConfig(), { params: params }));
+    const response = await axios.get(`${usersUrl}`, Object.assign({}, this.getConfig(), { params }));
 
     return response.data || [];
   }
 
   async getUser(userId: number): Promise<any> {
     const params = { user_id: userId };
-
-    const response = await axios.get(`${userUrl}`, Object.assign({}, this.getConfig(), { params: params }));
-
+    const response = await axios.get(`${userUrl}`, Object.assign({}, this.getConfig(), { params }));
     return response.data || [];
+  }
+
+  async generateRecoveryToken(email: string): Promise<PasswordRecoveryResponse> {
+    const params = { email };
+    const response = await axios.get(`${recoveryTokenUrl}`, Object.assign({}, this.getConfig(), { params }));
+    return response.data;
+  }
+
+  async recoverPassword(token: string, password: string): Promise<PasswordRecoveryResponse> {
+    const params = { token, password };
+    const response = await axios.get(`${recoveryTokenPasswordUrl}`, Object.assign({}, this.getConfig(), { params }));
+    return response.data;
   }
 
   async getCart(): Promise<any> {
