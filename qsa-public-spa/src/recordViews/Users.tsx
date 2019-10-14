@@ -762,7 +762,7 @@ const AdminUserDetailsForm: React.FC<any> = ({ userId }) => {
               <div className="form-group">
                 <label htmlFor="confirm-password">Confirm Password</label>
                 <input
-                  type="confirm_confirm"
+                  type="password"
                   className="form-control"
                   id="confirm-password"
                   placeholder="Confirm Password"
