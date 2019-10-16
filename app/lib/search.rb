@@ -262,13 +262,47 @@ class Search
   end
 
 
+  # Return the `count` siblings on either side of `record`
+  #
+  # E.g. count = 4 will return up to 9 records: 4 jokers to the left; 4 jokers
+  # to the right and the one `record_id` stuck in the middle.
+  #
+  # If `record` is the first of its siblings, we'll return the 8 records
+  # following it.  If it's the second sibling, we'll return the 1 record to the
+  # left and 7 records following it.
+  #
+  def self.siblings(record, count)
+    position = record['position']
+    parent_id = record['parent_id']
+
+    left_siblings = Array(solr_handle_search(q: "parent_id:#{solr_escape(parent_id)} AND position:[* TO #{position - 1}]",
+                                             rows: count * 2,
+                                             sort: "position desc")
+                            .dig('response', 'docs'))
+
+    right_siblings = Array(solr_handle_search(q: "parent_id:#{solr_escape(parent_id)} AND position:[#{position + 1} TO *]",
+                                              rows: count * 2,
+                                              sort: "position asc")
+                             .dig('response', 'docs'))
+
+    result = [record]
+    slots_remaining = count * 2
+
+    while (!left_siblings.empty? || !right_siblings.empty?) && result.length < (1 + (count * 2))
+      result.unshift(left_siblings.shift) if !left_siblings.empty?
+      result.push(right_siblings.shift) if !right_siblings.empty?
+    end
+
+    result
+  end
+
   def self.children(parent_id, page, sort_by = "position_asc", min_position = nil, max_position = nil)
     start_index = (page * AppConfig[:page_size])
     query = "parent_id:#{solr_escape(parent_id)}"
     if min_position && max_position
       query += " AND position:[#{min_position} TO #{max_position}]"
     end
-    response = solr_handle_search(q:query,
+    response = solr_handle_search(q: query,
                                   start: start_index,
                                   sort: parse_sort(sort_by)).fetch('response', {})
 

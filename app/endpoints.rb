@@ -111,28 +111,9 @@ class QSAPublic < Sinatra::Base
 
           siblings_count = Search.children(raw_record.fetch('parent_id'), 0).fetch('total_count')
 
-          min_sibling_position = position
-          max_sibling_position = position
-
-          max_iterations = 1000
-          iteration = 0
-
-          while iteration < max_iterations && ((max_sibling_position - min_sibling_position) < 8) do
-            iteration += 1
-            min_sibling_position -= 1 if min_sibling_position > 0
-            max_sibling_position += 1 if max_sibling_position < siblings_count - 1
-
-            break if min_sibling_position == 0 && max_sibling_position == siblings_count - 1
-          end
-
-          if iteration == max_iterations
-            $stderr.puts("RUNAWAY LOOP FOR QSA ID #{params[:qsa_id]}; URI: #{params[:uri]}; POSITION: #{position}; SIBLINGS_COUNT: #{siblings_count}")
-            return [404]
-          end
-
           response = json_response(current_uri: record.fetch('uri'),
                                    path_to_root: Search.resolve_refs!(record['ancestors']).map{|ref| ref['_resolved']},
-                                   siblings: Search.children(raw_record.fetch('parent_id'), 0, 'position_asc', min_sibling_position, max_sibling_position).fetch('results'),
+                                   siblings: Search.siblings(raw_record, 4).map {|doc| JSON.parse(doc['json'])},
                                    children: Search.children(raw_record.fetch('id'), 0, 'position_asc', 0, 4).fetch('results'),
                                    siblings_count: siblings_count,
                                    children_count: Search.children(raw_record.fetch('id'), 0).fetch('total_count'))
