@@ -114,12 +114,20 @@ class QSAPublic < Sinatra::Base
           min_sibling_position = position
           max_sibling_position = position
 
+          max_iterations = 1000
+          iteration = 0
 
-          while((max_sibling_position - min_sibling_position) < 8)do
+          while iteration < max_iterations && ((max_sibling_position - min_sibling_position) < 8) do
+            iteration += 1
             min_sibling_position -= 1 if min_sibling_position > 0
             max_sibling_position += 1 if max_sibling_position < siblings_count - 1
 
             break if min_sibling_position == 0 && max_sibling_position == siblings_count - 1
+          end
+
+          if iteration == max_iterations
+            $stderr.puts("RUNAWAY LOOP FOR QSA ID #{params[:qsa_id]}; URI: #{params[:uri]}; POSITION: #{position}; SIBLINGS_COUNT: #{siblings_count}")
+            return [404]
           end
 
           response = json_response(current_uri: record.fetch('uri'),
