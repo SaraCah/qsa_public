@@ -132,13 +132,20 @@ const AddToCartButton: React.FC<any> = ({ itemId }) => {
       {(context: any): React.ReactElement => (
         <div className="row">
           <div className="col-sm-12">
-            {inCart(context.cart, itemId) ? (
+            {!context.user &&
+              <>
+                <button className="qg-btn btn-default disabled">Add to cart</button>
+                <div>
+                  <small className="text-muted">Login to access your cart</small>
+                </div>
+              </>}
+            {context.user && (inCart(context.cart, itemId) ? (
               <button className="qg-btn btn-default disabled">Added to cart</button>
             ) : (
               <button className="qg-btn btn-primary" onClick={() => requestItem(itemId, 'READING_ROOM', context)}>
                 Add to cart
               </button>
-            )}
+            ))}
           </div>
         </div>
       )}
@@ -164,14 +171,31 @@ const RequestActions: React.FC<any> = ({ item }) => {
     };
 
     return (
-      <div className="row">
-        <div className="col-sm-12">
-          <button className="qg-btn btn-primary" onClick={() => scrollToRepresentations()}>
-            Add to cart&nbsp;
-            <span className="fa fa-chevron-circle-down" aria-hidden="true" />
-          </button>
-        </div>
-      </div>
+      <AppContext.Consumer>
+        {(context: any): React.ReactElement => (
+          <div className="row">
+            <div className="col-sm-12">
+              {context.user ?
+                  <button className="qg-btn btn-primary"
+                          onClick={() => scrollToRepresentations()}>
+                    Add to cart&nbsp;
+                    <span className="fa fa-chevron-circle-down" aria-hidden="true"/>
+                  </button> :
+                  <>
+                    <button className="qg-btn btn-default disabled"
+                            onClick={() => scrollToRepresentations()}>
+                      Add to cart&nbsp;
+                      <span className="fa fa-chevron-circle-down" aria-hidden="true"/>
+                    </button>
+                    <div>
+                      <small className="text-muted">Login to access your
+                        cart</small>
+                    </div>
+                  </>}
+            </div>
+          </div>
+        )}
+      </AppContext.Consumer>
     );
   }
 
