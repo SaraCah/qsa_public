@@ -4,7 +4,6 @@ class UserFormDTO
   define_field(:id, Integer, required: false)
   define_field(:email, String, validator: proc {|s, user| UserFormDTO.validate_email(s, user)})
   define_field(:password, String, required: false, validator: proc {|s, user|
-    p ['***', user, s, user.new?] 
     user.new? && s.empty? ? "Password can't be blank" : nil
   })
   define_field(:confirm_password, String, required: false, validator: proc {|s, user| user.new? && s.empty? ? "Confirm Password can't be blank" : nil})
