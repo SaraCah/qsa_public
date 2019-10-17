@@ -69,7 +69,7 @@ module DTO
     self.class.dto_fields.each do |field_def|
       field_value = self.fetch(field_def.name, nil)
 
-      if field_def.required && field_value.nil?
+      if field_def.required && (field_value.nil? || (field_value.is_a?(String) && field_value.empty?))
         errors << {code: "REQUIRED_VALUE_MISSING", field: field_def.name}
         next
       end
