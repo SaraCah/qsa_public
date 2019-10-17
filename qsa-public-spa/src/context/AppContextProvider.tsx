@@ -118,7 +118,11 @@ const AppContextProvider: React.FC<any> = (props: any) => {
     }
   }, [appContext.initialised, appContext.sessionId]);
 
-  return <AppContext.Provider value={appContext}>{props.children}</AppContext.Provider>;
+  if (appContext.initialised) {
+    return <AppContext.Provider value={appContext}>{props.children}</AppContext.Provider>;
+  } else {
+    return <></>;
+  }
 };
 
 export default AppContextProvider;
