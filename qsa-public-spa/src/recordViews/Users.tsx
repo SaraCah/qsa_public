@@ -1164,7 +1164,7 @@ const RequestSummary: React.FC<any> = props => {
                   {props.context.user.first_name} {props.context.user.last_name}
                 </td>
                 <th>Date Requested</th>
-                <td>{new Date(request.date_required).toLocaleDateString()}</td>
+                <td>{request.date_required && new Date(request.date_required).toLocaleDateString()}</td>
               </tr>
             </tbody>
           </table>
