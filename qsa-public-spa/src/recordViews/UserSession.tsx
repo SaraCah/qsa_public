@@ -161,7 +161,7 @@ export const LogoutPage: React.FC<any> = (route: any) => {
   const [logoutTriggered, setLogoutTriggered] = useState(false);
 
   const logout = (context: any) => {
-    if (!logoutTriggered) {
+    if (!logoutTriggered && context.sessionId) {
       setLogoutTriggered(true);
       Http.get().logout();
       context.clearSession();
