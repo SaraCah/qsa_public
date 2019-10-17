@@ -86,7 +86,7 @@ export class RecordDisplay {
           if (subnote.jsonmodel_type === 'note_text') {
             result.push({
               kind: 'text',
-              text: [note.content]
+              text: [subnote.content]
             });
           } else if (subnote.jsonmodel_type === 'note_chronology') {
             result.push({
