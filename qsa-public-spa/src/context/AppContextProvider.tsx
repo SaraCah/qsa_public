@@ -73,7 +73,7 @@ const AppContextProvider: React.FC<any> = (props: any) => {
           },
 
           /* Log out the current user */
-          clearSession: () => {
+          clearSession: (showLogout?: boolean) => {
             Http.logout();
             SessionCookie.clearSessionCookie();
 
@@ -81,7 +81,8 @@ const AppContextProvider: React.FC<any> = (props: any) => {
               return Object.assign({}, oldState, {
                 sessionId: null,
                 sessionLoaded: true,
-                user: null
+                user: null,
+                cart: [],
               });
             });
           }

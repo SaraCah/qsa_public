@@ -19,7 +19,7 @@ import SeriesPage from './recordViews/Series';
 import FunctionPage from './recordViews/Function';
 import MandatePage from './recordViews/Mandate';
 import ItemPage from './recordViews/Item';
-import { LoginPage } from './recordViews/UserSession';
+import {LoginPage, LogoutPage} from './recordViews/UserSession';
 
 import AppContext from './context/AppContext';
 import AppContextProvider from './context/AppContextProvider';
@@ -217,6 +217,13 @@ ReactDOM.render(
           path="/admin/users/:user_id"
           component={wrappedRoute(UserManagementPage, {
             pageTitle: 'User Management'
+          })}
+        />
+        <Route
+          exact
+          path="/logout"
+          component={wrappedRoute(LogoutPage, {
+            pageTitle: 'Logged Out'
           })}
         />
         <Route component={wrappedRoute(NotFound, { pageTitle: 'Page not found' })} />

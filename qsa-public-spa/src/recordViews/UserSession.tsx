@@ -7,11 +7,6 @@ import AppContext from '../context/AppContext';
 import { CartSummary } from '../cart/Cart';
 
 export const UserSession: React.FC = () => {
-  const logout = (appContext: any) => {
-    Http.get().logout();
-    appContext.clearSession();
-  };
-
   const displayName = (user: any) => {
     if (user.first_name || user.last_name) {
       return `${user.first_name || ''} ${user.last_name || ''}`;
@@ -31,15 +26,7 @@ export const UserSession: React.FC = () => {
                 <small>
                   Hello, {displayName(context.user)}
                   &nbsp;|&nbsp;
-                  <a
-                    onClick={e => {
-                      e.preventDefault();
-                      logout(context);
-                    }}
-                    href="#"
-                  >
-                    Logout
-                  </a>
+                  <Link to="/logout">Logout</Link>
                 </small>
               ) : (
                 <small>
@@ -169,3 +156,37 @@ export const LoginPage: React.FC<any> = (route: any) => {
     </AppContext.Consumer>
   );
 };
+
+export const LogoutPage: React.FC<any> = (route: any) => {
+  const [logoutTriggered, setLogoutTriggered] = useState(false);
+
+  const logout = (context: any) => {
+    if (!logoutTriggered) {
+      setLogoutTriggered(true);
+      Http.get().logout();
+      context.clearSession();
+    }
+
+    return true;
+  };
+
+  return (
+    <Layout>
+      <AppContext.Consumer>
+        {
+          (context: any) => (
+            logout(context) &&
+            <div className="row">
+              <div className="col-sm-12">
+                <div className="alert alert-success" role="alert">
+                  <h2><i className="fa fa-check-circle"/>Logout Success</h2>
+                  <p>Return to <Link to="/">Archives Search</Link> or login again <Link to="/login">here</Link>.</p>
+                </div>
+              </div>
+            </div>
+          )
+        }
+      </AppContext.Consumer>
+    </Layout>
+  )
+}
