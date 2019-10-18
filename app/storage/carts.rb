@@ -12,7 +12,7 @@ class Carts < BaseStorage
         id: row[:id],
         item_id: row[:item_id],
         request_type: row[:request_type],
-        options: CartItemOptionsDTO.from_row(row),
+        options: CartItemDTO.from_row(row),
       }
     end
 
@@ -45,11 +45,23 @@ class Carts < BaseStorage
     cart
   end
 
-  def self.update_item(user_id, cart_item_id, cart_item_options)
+  def self.update_items(user_id, request_type, cart_item_dtos)
+    cart_item_dtos.each do |cart_item_dto|
+      cart_item_options = cart_item_dto.to_hash
+      cart_item_options.delete(:id)
+
+      db[:cart_item]
+        .filter(user_id: user_id)
+        .filter(id: cart_item_dto.fetch('id'))
+        .update(cart_item_options)
+    end
+
+    cart_item_ids = cart_item_dtos.map{|dto| dto.fetch('id')}
     db[:cart_item]
       .filter(user_id: user_id)
-      .filter(id: cart_item_id)
-      .update(cart_item_options.to_hash)
+      .filter(request_type: request_type)
+      .filter(Sequel.~(id: cart_item_ids))
+      .delete
   end
 
   def self.add_item(user_id, request_type, item_id)

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import AppContext from '../context/AppContext';
 import { Link } from 'react-router-dom';
 import { uriFor } from '../utils/typeResolver';
@@ -355,50 +355,96 @@ export const MyReadingRoomRequestsCartPage: React.FC<any> = () => {
     </AppContext.Consumer>
   );
 };
+
+let cartItemsUpdateTimeout: any = undefined;
+
 export const MyDigitalCopyRequestsCartPage: React.FC<any> = () => {
-  const removeItem = (id: number, context: any): void => {
-    Http.get()
-        .removeFromCart(id)
-        .then(() => {
-          context.refreshCart();
+  const [cart, setCart]:[any, any] = useState(null);
+
+  const removeItem = (cartItemId: number): void => {
+    setCart(
+        Object.assign({}, cart, {
+          digital_copy_requests: Object.assign({}, cart.digital_copy_requests, {
+            quotable_records: cart.digital_copy_requests.quotable_records.filter((cartItem: any) => {
+              return cartItem.id !== cartItemId;
+            })
+          })
         })
-        .catch((exception: Error) => {
-          console.error(exception);
-        });
+    );
   };
 
-  const updateCartItem = (context: any, id: number, field: string, value: string) => {
+  const updateCartItem = (context: any, cartItemId: number, field: string, value: string) => {
+    console.log(value);
     const options: any = {};
     options[field] = value;
 
-    Http.get()
-        .updateCartItem(id, options)
-        .then(() => {
-          context.refreshCart();
+    setCart(
+      Object.assign({}, cart, {
+        digital_copy_requests: Object.assign({}, cart.digital_copy_requests, {
+          quotable_records: cart.digital_copy_requests.quotable_records.map((cartItem: any) => {
+            if (cartItem.id === cartItemId) {
+              return Object.assign({}, cartItem, {
+                options: Object.assign({}, cartItem.options, {
+                  [field]: value
+                })
+              });
+            } else {
+              return cartItem;
+            }
+          })
         })
-        .catch((exception: Error) => {
-          console.error(exception);
-        });
-  }
+      })
+    );
+  };
+
+  useEffect(() => {
+    if (!cart) {
+      return;
+    }
+
+    if (cartItemsUpdateTimeout) {
+      clearTimeout(cartItemsUpdateTimeout);
+    }
+
+    cartItemsUpdateTimeout = setTimeout(() => {
+      Http.get()
+          .updateCartItems(cart.digital_copy_requests.quotable_records, 'DIGITAL_COPY')
+          .then(() => {
+            if (cart.digital_copy_requests.quotable_records.length === 0) {
+              cart.refreshCart();
+            }
+          })
+          .catch((exception: Error) => {
+            console.error(exception);
+          });
+    }, 2000);
+  }, [cart]);
 
   return (
       <AppContext.Consumer>
-        {(context: any): React.ReactElement => (
-            <Layout>
-              <div className="row">
-                <div className="col-sm-12">
-                  <h1>
-                    <i className="fa fa-copy" aria-hidden="true"/>&nbsp;
-                    Submit Your Digital Copy Requests
-                  </h1>
-                  {!context.user && <div className="alert alert-warning">Please login to access your cart</div>}
-                  {context.user && context.cart && context.cart.digital_copy_requests.total_count === 0 && (
-                      <div className="alert alert-info">Cart empty</div>
-                  )}
-                  {context.user && context.cart && context.cart.digital_copy_requests.total_count > 0 && (
+        {(context: any): React.ReactElement => {
+          if (!cart && context.user) {
+            if (context.cart) {
+              setCart(Object.assign({}, context.cart, {refreshCart: context.refreshCart}));
+            }
+            return <></>
+          } else {
+            return (
+              <Layout>
+                <div className="row">
+                  <div className="col-sm-12">
+                    <h1>
+                      <i className="fa fa-copy" aria-hidden="true"/>&nbsp;
+                      Submit Your Digital Copy Requests
+                    </h1>
+                    {!context.user && <div className="alert alert-warning">Please login to access your cart</div>}
+                    {context.user && cart && cart.digital_copy_requests.total_count === 0 && (
+                        <div className="alert alert-info">Cart empty</div>
+                    )}
+                    {context.user && cart && cart.digital_copy_requests.total_count > 0 && (
                       <>
                         {
-                          context.cart.digital_copy_requests.set_price_records.length > 0 &&
+                          cart.digital_copy_requests.set_price_records.length > 0 &&
                           <article>
                             <h2>Set Price Digital Copy Requests</h2>
                             <div className="alert alert-success" role="alert">
@@ -414,7 +460,7 @@ export const MyDigitalCopyRequestsCartPage: React.FC<any> = () => {
                           </article>
                         }
                         {
-                          context.cart.digital_copy_requests.quotable_records.length > 0 &&
+                          cart.digital_copy_requests.quotable_records.length > 0 &&
                           <article>
                             <h2>Digital Copy Quote Requests</h2>
                             <div className="alert alert-warning" role="alert">
@@ -430,172 +476,173 @@ export const MyDigitalCopyRequestsCartPage: React.FC<any> = () => {
                               </p>
                             </div>
                             {
-                              context.cart.digital_copy_requests.quotable_records.map((cartItem: any) => (
-                                <div key={cartItem.id}>
-                                  <div className="mb-2 qg-grab" role="listitem">
-                                    <div className="d-flex w-100 justify-content-between">
-                                      <h2>
-                                        <Link to={uriFor(cartItem.record.parent_qsa_id, 'archival_object')}>
-                                          {cartItem.record.qsa_id_prefixed}: {cartItem.record.display_string}
-                                        </Link>
-                                      </h2>
-                                      <span className="badge">Open record</span>
-                                    </div>
-                                    <dl className="row">
-                                      <dt className="col-xs-6">Item type</dt>
-                                      <dd className="col-xs-6">Physical representation</dd>
-                                      <dt className="col-xs-6">Parent item</dt>
-                                      <dd className="col-xs-6">
-                                        <Link to={uriFor(cartItem.record.parent_qsa_id, 'archival_object')}>
-                                          {cartItem.record.parent_qsa_id} {cartItem.record.display_string}
-                                        </Link>
-                                      </dd>
-                                      <dt className="col-xs-6">
-                                        <label htmlFor={`item_${cartItem.id}_digital_copy_type`}>
-                                          Copy Type
-                                        </label>
-                                      </dt>
-                                      <dd className="col-xs-6">
-                                        <select id={`item_${cartItem.id}_digital_copy_type`}
-                                                className="form-control"
-                                                value={cartItem.options.digital_copy_type}
-                                                onChange={(e) => updateCartItem(context, cartItem.id, 'digital_copy_type', e.target.value)}>
-                                          <option disabled value=""> -- Please Select a Copy Type -- </option>
-                                          <option value="digital copy">Digital Copy</option>
-                                          <option value="photocopy">Photocopy</option>
-                                          <option value="photo">Photo</option>
-                                        </select>
-                                      </dd>
-                                      {
-                                        cartItem.options.digital_copy_type === 'digital copy' &&
-                                        <>
-                                          <dt className="col-xs-6">
-                                            <label htmlFor={`item_${cartItem.id}_digital_copy_delivery`}>
-                                              Preferred Mode of Delivery
-                                            </label>
-                                          </dt>
-                                          <dd className="col-xs-6">
-                                            <select id={`item_${cartItem.id}_digital_copy_delivery`}
-                                                    className="form-control"
-                                                    value={cartItem.options.digital_copy_delivery}
-                                                    onChange={(e) => updateCartItem(context, cartItem.id, 'digital_copy_delivery', e.target.value)}>
-                                              <option disabled value=""> -- Please select a mode of delivery -- </option>
-                                              <option value="email">Email</option>
-                                              <option value="USB">USB</option>
-                                              <option value="CD">CD</option>
-                                            </select>
-                                          </dd>
-                                          <dt className="col-xs-6">
-                                            <label htmlFor={`item_${cartItem.id}_digital_copy_format`}>
-                                              Preferred Format
-                                            </label>
-                                          </dt>
-                                          <dd className="col-xs-6">
-                                            <select id={`item_${cartItem.id}_digital_copy_format`}
-                                                    className="form-control"
-                                                    value={cartItem.options.digital_copy_format}
-                                                    onChange={(e) => updateCartItem(context, cartItem.id, 'digital_copy_format', e.target.value)}>
-                                              <option disabled value=""> -- Please select a format --</option>
-                                              <option value="jpg">JPG</option>
-                                              <option value="tiff">TIFF</option>
-                                              <option value="pdf">PDF</option>
-                                            </select>
-                                          </dd>
-                                          <dt className="col-xs-6">
-                                            <label htmlFor={`item_${cartItem.id}_digital_copy_resolution`}>
-                                              Preferred Resolution
-                                            </label>
-                                          </dt>
-                                          <dd className="col-xs-6">
-                                            <select id={`item_${cartItem.id}_digital_copy_resolution`}
-                                                    className="form-control"
-                                                    value={cartItem.options.digital_copy_resolution}
-                                                    onChange={(e) => updateCartItem(context, cartItem.id, 'digital_copy_resolution', e.target.value)}>
-                                              <option disabled value=""> -- Please select a resolution --</option>
-                                              <option value="300dpi">300dpi</option>
-                                              <option value="other">Other (please detail in the notes field below)</option>
-                                            </select>
-                                          </dd>
-                                        </>
-                                      }
-                                      {
-                                        cartItem.options.digital_copy_type === 'photocopy' &&
-                                        <>
-                                          <dt className="col-xs-6">
-                                            <label htmlFor={`item_${cartItem.id}_digital_copy_mode`}>
-                                              Preferred Mode
-                                            </label>
-                                          </dt>
-                                          <dd className="col-xs-6">
-                                            <select id={`item_${cartItem.id}_digital_copy_mode`}
-                                                    className="form-control"
-                                                    value={cartItem.options.digital_copy_mode}
-                                                    onChange={(e) => updateCartItem(context, cartItem.id, 'digital_copy_mode', e.target.value)}>
-                                              <option disabled value=""> -- Please select a resolution --</option>
-                                              <option value="colour">Colour</option>
-                                              <option value="grayscale">Grayscale</option>
-                                            </select>
-                                          </dd>
-                                        </>
-                                      }
-                                      {
-                                        cartItem.options.digital_copy_type === 'photo' &&
-                                        <>
-                                          <dt className="col-xs-6">
-                                            <label htmlFor={`item_${cartItem.id}_digital_copy_size`}>
-                                              Preferred Size
-                                            </label>
-                                          </dt>
-                                          <dd className="col-xs-6">
-                                            <select id={`item_${cartItem.id}_digital_copy_size`}
-                                                    className="form-control"
-                                                    value={cartItem.options.digital_copy_size}
-                                                    onChange={(e) => updateCartItem(context, cartItem.id, 'digital_copy_size', e.target.value)}>
-                                              <option disabled value=""> -- Please select a size --</option>
-                                              <option value="5x7">5x7</option>
-                                              <option value="8x10">8x10</option>
-                                            </select>
-                                          </dd>
-                                        </>
-                                      }
-                                      <dt className="col-xs-6">
-                                        <label htmlFor={`item_${cartItem.id}_digital_copy_notes`}>
-                                          Please provide further details or special requirements here:
-                                        </label>
-                                      </dt>
-                                      <dd className="col-xs-6">
-                                        <textarea id={`item_${cartItem.id}_digital_copy_notes`}
+                              cart.digital_copy_requests.quotable_records.map((cartItem: any) => (
+                                  <div key={cartItem.id}>
+                                    <div className="mb-2 qg-grab" role="listitem">
+                                      <div className="d-flex w-100 justify-content-between">
+                                        <h2>
+                                          <Link to={uriFor(cartItem.record.parent_qsa_id, 'archival_object')}>
+                                            {cartItem.record.qsa_id_prefixed}: {cartItem.record.display_string}
+                                          </Link>
+                                        </h2>
+                                        <span className="badge">Open record</span>
+                                      </div>
+                                      <dl className="row">
+                                        <dt className="col-xs-6">Item type</dt>
+                                        <dd className="col-xs-6">Physical representation</dd>
+                                        <dt className="col-xs-6">Parent item</dt>
+                                        <dd className="col-xs-6">
+                                          <Link to={uriFor(cartItem.record.parent_qsa_id, 'archival_object')}>
+                                            {cartItem.record.parent_qsa_id} {cartItem.record.display_string}
+                                          </Link>
+                                        </dd>
+                                        <dt className="col-xs-6">
+                                          <label htmlFor={`item_${cartItem.id}_digital_copy_type`}>
+                                            Copy Type
+                                          </label>
+                                        </dt>
+                                        <dd className="col-xs-6">
+                                          <select id={`item_${cartItem.id}_digital_copy_type`}
                                                   className="form-control"
-                                                  value={cartItem.options.digital_copy_notes}
-                                                  onChange={(e) => updateCartItem(context, cartItem.id, 'digital_copy_notes', e.target.value)} />
-                                      </dd>
-                                    </dl>
-                                    <h3 className="sr-only">Actions</h3>
-                                    <div className="btn-group">
-                                      <button
-                                          className="qg-btn btn-default btn-xs"
-                                          onClick={e => {
-                                            e.preventDefault();
-                                            removeItem(cartItem.id, context);
-                                          }}
-                                      >
-                                        <i className="fa fa-trash" aria-hidden="true" />
-                                        &nbsp; Remove item
-                                      </button>
+                                                  value={cartItem.options.digital_copy_type}
+                                                  onChange={(e) => updateCartItem(context, cartItem.id, 'digital_copy_type', e.target.value)}>
+                                            <option disabled value=""> -- Please Select a Copy Type -- </option>
+                                            <option value="digital copy">Digital Copy</option>
+                                            <option value="photocopy">Photocopy</option>
+                                            <option value="photo">Photo</option>
+                                          </select>
+                                        </dd>
+                                        {
+                                          cartItem.options.digital_copy_type === 'digital copy' &&
+                                          <>
+                                            <dt className="col-xs-6">
+                                              <label htmlFor={`item_${cartItem.id}_digital_copy_delivery`}>
+                                                Preferred Mode of Delivery
+                                              </label>
+                                            </dt>
+                                            <dd className="col-xs-6">
+                                              <select id={`item_${cartItem.id}_digital_copy_delivery`}
+                                                      className="form-control"
+                                                      value={cartItem.options.digital_copy_delivery}
+                                                      onChange={(e) => updateCartItem(context, cartItem.id, 'digital_copy_delivery', e.target.value)}>
+                                                <option disabled value=""> -- Please select a mode of delivery -- </option>
+                                                <option value="email">Email</option>
+                                                <option value="USB/CD">USB/CD</option>
+                                              </select>
+                                            </dd>
+                                            <dt className="col-xs-6">
+                                              <label htmlFor={`item_${cartItem.id}_digital_copy_format`}>
+                                                Preferred Format
+                                              </label>
+                                            </dt>
+                                            <dd className="col-xs-6">
+                                              <select id={`item_${cartItem.id}_digital_copy_format`}
+                                                      className="form-control"
+                                                      value={cartItem.options.digital_copy_format}
+                                                      onChange={(e) => updateCartItem(context, cartItem.id, 'digital_copy_format', e.target.value)}>
+                                                <option disabled value=""> -- Please select a format --</option>
+                                                <option value="jpg">JPG</option>
+                                                <option value="tiff">TIFF</option>
+                                                <option value="pdf">PDF</option>
+                                              </select>
+                                            </dd>
+                                            <dt className="col-xs-6">
+                                              <label htmlFor={`item_${cartItem.id}_digital_copy_resolution`}>
+                                                Preferred Resolution
+                                              </label>
+                                            </dt>
+                                            <dd className="col-xs-6">
+                                              <select id={`item_${cartItem.id}_digital_copy_resolution`}
+                                                      className="form-control"
+                                                      value={cartItem.options.digital_copy_resolution}
+                                                      onChange={(e) => updateCartItem(context, cartItem.id, 'digital_copy_resolution', e.target.value)}>
+                                                <option disabled value=""> -- Please select a resolution --</option>
+                                                <option value="300dpi">300dpi</option>
+                                                <option value="other">Other (please detail in the notes field below)</option>
+                                              </select>
+                                            </dd>
+                                          </>
+                                        }
+                                        {
+                                          cartItem.options.digital_copy_type === 'photocopy' &&
+                                          <>
+                                            <dt className="col-xs-6">
+                                              <label htmlFor={`item_${cartItem.id}_digital_copy_mode`}>
+                                                Preferred Mode
+                                              </label>
+                                            </dt>
+                                            <dd className="col-xs-6">
+                                              <select id={`item_${cartItem.id}_digital_copy_mode`}
+                                                      className="form-control"
+                                                      value={cartItem.options.digital_copy_mode}
+                                                      onChange={(e) => updateCartItem(context, cartItem.id, 'digital_copy_mode', e.target.value)}>
+                                                <option disabled value=""> -- Please select a resolution --</option>
+                                                <option value="colour">Colour</option>
+                                                <option value="grayscale">Grayscale</option>
+                                              </select>
+                                            </dd>
+                                          </>
+                                        }
+                                        {
+                                          cartItem.options.digital_copy_type === 'photo' &&
+                                          <>
+                                            <dt className="col-xs-6">
+                                              <label htmlFor={`item_${cartItem.id}_digital_copy_size`}>
+                                                Preferred Size
+                                              </label>
+                                            </dt>
+                                            <dd className="col-xs-6">
+                                              <select id={`item_${cartItem.id}_digital_copy_size`}
+                                                      className="form-control"
+                                                      value={cartItem.options.digital_copy_size}
+                                                      onChange={(e) => updateCartItem(context, cartItem.id, 'digital_copy_size', e.target.value)}>
+                                                <option disabled value=""> -- Please select a size --</option>
+                                                <option value="5x7">5x7</option>
+                                                <option value="8x10">8x10</option>
+                                              </select>
+                                            </dd>
+                                          </>
+                                        }
+                                        <dt className="col-xs-6">
+                                          <label htmlFor={`item_${cartItem.id}_digital_copy_notes`}>
+                                            Please provide further details or special requirements here:
+                                          </label>
+                                        </dt>
+                                        <dd className="col-xs-6">
+                                          <textarea id={`item_${cartItem.id}_digital_copy_notes`}
+                                                    className="form-control"
+                                                    value={cartItem.options.digital_copy_notes}
+                                                    onChange={(e) => updateCartItem(context, cartItem.id, 'digital_copy_notes', e.target.value)} />
+                                        </dd>
+                                      </dl>
+                                      <h3 className="sr-only">Actions</h3>
+                                      <div className="btn-group">
+                                        <button
+                                            className="qg-btn btn-default btn-xs"
+                                            onClick={e => {
+                                              e.preventDefault();
+                                              removeItem(cartItem.id);
+                                            }}
+                                        >
+                                          <i className="fa fa-trash" aria-hidden="true" />
+                                          &nbsp; Remove item
+                                        </button>
+                                      </div>
                                     </div>
+                                    <div className="clearfix" />
                                   </div>
-                                  <div className="clearfix" />
-                                </div>
                               ))
                             }
                           </article>
                         }
                       </>
-                  )}
+                    )}
+                  </div>
                 </div>
-              </div>
-            </Layout>
-        )}
+              </Layout>
+            )
+          }
+        }}
       </AppContext.Consumer>
   );
 };

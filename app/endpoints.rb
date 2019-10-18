@@ -407,11 +407,11 @@ class QSAPublic < Sinatra::Base
     end
   end
 
-  Endpoint.post('/api/users/cart/update_item')
-    .param(:id, String, "Cart item")
-    .param(:options, CartItemOptionsDTO, :body => true) do
+  Endpoint.post('/api/users/cart/update_items')
+    .param(:request_type, String, "Request Type")
+    .param(:cart_items, [CartItemDTO], "Cart Items (those missing will be removed)", optional: true) do
     if Ctx.user_logged_in?
-      Carts.update_item(Ctx.get.session.user_id, params[:id], params[:options])
+      Carts.update_items(Ctx.get.session.user_id, params[:request_type], Array(params[:cart_items]))
       json_response({status: 'success'})
     else
       [404]
