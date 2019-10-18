@@ -60,6 +60,7 @@ class QSAPublic < Sinatra::Base
                                uri: params[:uri],
                                id: params[:id])
           Search.resolve_refs!(record)
+          Search.filter_representations!(record)
           response = json_response(record)
         end
       end

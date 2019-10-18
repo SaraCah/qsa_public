@@ -262,6 +262,30 @@ class Search
   end
 
 
+  # Records and representations are indexed separately, and there may be some
+  # period of time between when a record hits the index and when its
+  # representations do.
+  #
+  # Avoid strange behaviour by excluding any representations that have not yet
+  # been indexed.
+  def self.filter_representations!(record)
+    representation_fields = ['physical_representations', 'digital_representations']
+
+    representation_ids = representation_fields.flat_map {|field| Array(record[field]).map {|rep| rep['id']}}
+    indexed_representations = Set.new(existing_ids(representation_ids))
+
+    representation_fields.each do |representation_key|
+      if record[representation_key]
+        record[representation_key].reject! {|representation|
+          !indexed_representations.include?(representation['id'])
+        }
+      end
+    end
+
+    record
+  end
+
+
   # Return the `count` siblings on either side of `record`
   #
   # E.g. count = 4 will return up to 9 records: 4 jokers to the left; 4 jokers
@@ -536,7 +560,19 @@ class Search
     }
   end
 
+  # Return the elements of `ids` that have corresponding Solr documents
+  def self.existing_ids(ids)
+    return [] if ids.empty?
+
+    solr_handle_search(q: "{!terms f=id}#{ids.join(',')}",
+                       rows: ids.length,
+                       fl: 'id')
+      .fetch('response')
+      .fetch('docs')
+      .map {|doc| doc['id']}
+  end
+
   def self.exists?(id)
-    !get_records_by_ids([id]).empty?
+    !existing_ids[[id]].empty?
   end
 end
