@@ -573,6 +573,6 @@ class Search
   end
 
   def self.exists?(id)
-    !existing_ids[[id]].empty?
+    !existing_ids([id]).empty?
   end
 end
