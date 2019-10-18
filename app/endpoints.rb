@@ -308,30 +308,6 @@ class QSAPublic < Sinatra::Base
     end
   end
 
-  Endpoint.get('/api/fetch')
-    .param(:qsa_id, String, "Record QSA ID with prefix", optional: true)
-    .param(:uri, String, "Record URI", optional: true)
-    .param(:id, String, "Record SOLR ID", optional: true)
-    .param(:type, String, "Scope to record type", optional: true) do
-    response = [404]
-
-    begin
-      # FIXME scope fetch by type if provided
-      if params[:qsa_id] || params[:uri] || params[:id]
-        if record = Search.get(qsa_id: params[:qsa_id],
-                               uri: params[:uri],
-                               id: params[:id])
-          Search.resolve_refs!(record)
-          response = json_response(record)
-        end
-      end
-    rescue
-      $LOG.error($!)
-    end
-
-    response
-  end
-
   Endpoint.get('/api/users/cart') do
     if Ctx.user_logged_in?
       json_response(Carts.get(Ctx.get.session.user_id))
