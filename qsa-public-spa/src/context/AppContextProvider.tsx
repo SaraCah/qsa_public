@@ -33,7 +33,7 @@ const AppContextProvider: React.FC<any> = (props: any) => {
         {
           initialised: true,
           sessionLoaded: !existingSession,
-          cart: [],
+          cart: null,
           user: null,
           sessionId: existingSession,
 
@@ -82,7 +82,7 @@ const AppContextProvider: React.FC<any> = (props: any) => {
                 sessionId: null,
                 sessionLoaded: true,
                 user: null,
-                cart: [],
+                cart: null,
               });
             });
           }

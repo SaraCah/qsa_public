@@ -420,9 +420,10 @@ class QSAPublic < Sinatra::Base
     end
   end
 
-  Endpoint.post('/api/users/cart/clear') do
+  Endpoint.post('/api/users/cart/clear')
+    .param(:request_type, String, "Request Type") do
     if Ctx.user_logged_in?
-      Carts.clear(Ctx.get.session.user_id)
+      Carts.clear(Ctx.get.session.user_id, params[:request_type])
       json_response({status: 'success'})
     else
       [404]

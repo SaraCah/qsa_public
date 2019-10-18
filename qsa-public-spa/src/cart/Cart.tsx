@@ -59,17 +59,26 @@ const Cart: React.FC = () => {
 
 export const CartSummary: React.FC<any> = ({ cart }) => {
   return (
-    <small className="cart-summary">
-      <Link to="/my-cart" className="qg-btn btn-xs btn-default">
-        <span className="fa fa-shopping-cart" />
-        &nbsp;
-        {cart && cart.total_count}
-      </Link>
-    </small>
+    <>
+      <small className="cart-summary">
+        <Link to="/reading-room-requests-cart" className="qg-btn btn-xs btn-default" title="Pending Reading Room Requests">
+          <span className="fa fa-institution" aria-hidden="true" />
+          &nbsp;
+          {cart && cart.reading_room_requests.total_count}
+        </Link>
+      </small>
+      <small className="cart-summary">
+        <Link to="/digital-copies-cart" className="qg-btn btn-xs btn-default" title="Pending Digital Copy Requests">
+          <span className="fa fa-copy" aria-hidden="true" />
+          &nbsp;
+          {cart && cart.digital_copy_requests.total_count}
+        </Link>
+      </small>
+    </>
   );
 };
 
-export const MyCartPage: React.FC<any> = () => {
+export const MyReadingRoomRequestsCartPage: React.FC<any> = () => {
   const [requiredDate, setRequiredDate] = useState('');
   const [showReadingRoomSuccess, setShowReadingRoomSuccess] = useState(false);
   const [agencyFields, setAgencyFields]: [any, any] = useState({});
@@ -83,31 +92,6 @@ export const MyCartPage: React.FC<any> = () => {
       .catch((exception: Error) => {
         console.error(exception);
       });
-  };
-
-  const submitReadingRoomRequests = (context: any): void => {
-    setShowReadingRoomSuccess(false);
-    Http.get()
-      .submitReadingRoomRequests(requiredDate)
-      .then(() => {
-        context.refreshCart();
-        setShowReadingRoomSuccess(true);
-      })
-      .catch((exception: Error) => {
-        console.error(exception);
-      });
-  };
-
-  const filterReadingRoomRequests = (cart: any[]): any[] => {
-    return cart.filter((cartItem: any) => {
-      return cartItem.record.rap_access_status === 'Open Access';
-    });
-  };
-
-  const filterClosedItemRequests = (cart: any[]): any[] => {
-    return cart.filter((cartItem: any) => {
-      return cartItem.record.rap_access_status === 'Restricted Access';
-    });
   };
 
   const handleSubmit = (event: any, context: any): void => {
@@ -141,13 +125,13 @@ export const MyCartPage: React.FC<any> = () => {
                       </div>
                     )}
                     {!context.user && <div className="alert alert-warning">Please login to access your cart</div>}
-                    {context.user && context.cart.total_count === 0 && (
+                    {context.user && context.cart && context.cart.reading_room_requests.total_count === 0 && (
                       <div className="alert alert-info">Cart empty</div>
                     )}
-                    {context.user && context.cart.total_count > 0 && (
+                    {context.user && context.cart && context.cart.reading_room_requests.total_count > 0 && (
                       <>
                         <section>
-                          {context.cart.open_records.length > 0 && (
+                          {context.cart.reading_room_requests.open_records.length > 0 && (
                             <article>
                               <h2>Open Records</h2>
                               <div className="alert alert-success" role="alert">
@@ -176,7 +160,7 @@ export const MyCartPage: React.FC<any> = () => {
                                   )}
                                 </div>
                               </div>
-                              {context.cart.open_records.map((cartItem: any) => (
+                              {context.cart.reading_room_requests.open_records.map((cartItem: any) => (
                                 <div key={cartItem.id}>
                                   <div className="mb-2 qg-grab" role="listitem">
                                     <div className="d-flex w-100 justify-content-between">
@@ -220,7 +204,7 @@ export const MyCartPage: React.FC<any> = () => {
                               ))}
                             </article>
                           )}
-                          {Object.keys(context.cart.closed_records).length > 0 && (
+                          {Object.keys(context.cart.reading_room_requests.closed_records).length > 0 && (
                             <article>
                               <h2>Closed Records</h2>
                               <div className="alert alert-warning" role="alert">
@@ -234,7 +218,7 @@ export const MyCartPage: React.FC<any> = () => {
                                   Queensland State Archives cannot guarantee access will be granted to the records.
                                 </p>
                               </div>
-                              {Object.keys(context.cart.closed_records).map((agency_uri: string) => (
+                              {Object.keys(context.cart.reading_room_requests.closed_records).map((agency_uri: string) => (
                                 <div className="mb-2 qg-grab" role="listitem" key={agency_uri}>
                                   <div className="d-flex w-100 justify-content-between">
                                     <h2>Agency Access Request</h2>
@@ -244,12 +228,12 @@ export const MyCartPage: React.FC<any> = () => {
                                     <dd className="col-xs-6">
                                       <Link
                                         to={uriFor(
-                                          context.cart.agencies[agency_uri].qsa_id_prefixed,
+                                          context.cart.reading_room_requests.agencies[agency_uri].qsa_id_prefixed,
                                           'agent_corporate_entity'
                                         )}
                                       >
-                                        {context.cart.agencies[agency_uri].qsa_id_prefixed}{' '}
-                                        {context.cart.agencies[agency_uri].display_string}
+                                        {context.cart.reading_room_requests.agencies[agency_uri].qsa_id_prefixed}{' '}
+                                        {context.cart.reading_room_requests.agencies[agency_uri].display_string}
                                       </Link>
                                     </dd>
                                     <dt className="col-xs-6">Delivery location</dt>
@@ -259,7 +243,7 @@ export const MyCartPage: React.FC<any> = () => {
                                   </dl>
                                   <hr />
                                   <h3>Requested items:</h3>
-                                  {context.cart.closed_records[agency_uri].map((cartItem: any) => (
+                                  {context.cart.reading_room_requests.closed_records[agency_uri].map((cartItem: any) => (
                                     <div key={cartItem.id} role="list-item" style={{ marginBottom: 40 }}>
                                       <div className="pull-right">
                                         <span className="badge pull-right">Closed record</span>
@@ -347,7 +331,7 @@ export const MyCartPage: React.FC<any> = () => {
                                 onClick={e => {
                                   e.preventDefault();
                                   Http.get()
-                                    .clearCart()
+                                    .clearCart('READING_ROOM')
                                     .then(() => context.refreshCart());
                                 }}
                               >
@@ -366,6 +350,17 @@ export const MyCartPage: React.FC<any> = () => {
         </>
       )}
     </AppContext.Consumer>
+  );
+};
+export const MyDigitalCopyRequestsCartPage: React.FC<any> = () => {
+  return (
+      <AppContext.Consumer>
+        {(context: any): React.ReactElement => (
+            <Layout>
+              <h1>TODO</h1>
+            </Layout>
+        )}
+      </AppContext.Consumer>
   );
 };
 

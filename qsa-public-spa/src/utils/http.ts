@@ -269,9 +269,13 @@ export class Http {
     return response.data || [];
   }
 
-  async clearCart(): Promise<any> {
+  async clearCart(requestType: string): Promise<any> {
     const config = this.getConfig();
-    const response = await axios.post(clearCartUrl, {}, config).catch(error => {
+
+    const bodyFormData = new FormData();
+    bodyFormData.set('request_type', requestType);
+
+    const response = await axios.post(clearCartUrl, bodyFormData, config).catch(error => {
       console.log(error, error.status);
       return error;
     });

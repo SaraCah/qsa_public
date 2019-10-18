@@ -16,7 +16,8 @@ const PhysicalRepresentation: React.FC<{
   return (
     <>
       <div className="pull-right">
-        <AddToCartButton itemId={representation.get('id')} />
+        <div style={{marginBottom: 10}}><AddToReadingRoomRequestCartButton itemId={representation.get('id')} /></div>
+        <AddToDigitalCopyRequestCartButton itemId={representation.get('id')} />
       </div>
       <dl>
         <dt>ID</dt>
@@ -87,7 +88,70 @@ const DigitalRepresentation: React.FC<{
   );
 };
 
-const AddToCartButton: React.FC<any> = ({ itemId }) => {
+const AddToDigitalCopyRequestCartButton: React.FC<any> = ({ itemId }) => {
+  const requestItem = (item_id: string, request_type: string, context: any) => {
+    Http.get()
+        .addToCart(item_id, request_type)
+        .then((json: any) => {
+          context.refreshCart();
+        })
+        .catch((exception: Error) => {
+          console.error(exception);
+        });
+  };
+
+  const inCart = (cart: any, itemId: string) => {
+    let result = false;
+
+    console.log(cart);
+    console.log(itemId);
+
+    cart.digital_copy_requests.set_price_records.concat(cart.digital_copy_requests.quotable_records).forEach((cartItem: any) => {
+      if (cartItem.item_id === itemId) {
+        result = true
+      }
+    });
+
+    return result;
+  };
+
+  return (
+      <AppContext.Consumer>
+        {(context: any): React.ReactElement => (
+          <>
+            {
+              !context.user &&
+              <>
+                <button className="qg-btn btn-default disabled">
+                  <i className="fa fa-copy" aria-hidden="true"/>&nbsp;
+                  Request digital copy
+                </button>
+                <div>
+                  <small className="text-muted">Login to access your cart</small>
+                </div>
+              </>
+            }
+            {
+              (context.user && context.cart && inCart(context.cart, itemId)) ? (
+                <>
+                  <button className="qg-btn btn-default disabled">
+                    <i className="fa fa-copy" aria-hidden="true"/>&nbsp;
+                    Added to cart
+                  </button>
+                </>
+              ) : (
+                <button className="qg-btn btn-secondary" onClick={() => requestItem(itemId, 'DIGITAL_COPY', context)}>
+                  <i className="fa fa-copy" aria-hidden="true"/>&nbsp;
+                  Request digital copy
+                </button>
+            )}
+          </>
+        )}
+      </AppContext.Consumer>
+  );
+};
+
+const AddToReadingRoomRequestCartButton: React.FC<any> = ({ itemId }) => {
   const requestItem = (item_id: string, request_type: string, context: any) => {
     Http.get()
       .addToCart(item_id, request_type)
@@ -102,8 +166,8 @@ const AddToCartButton: React.FC<any> = ({ itemId }) => {
   const inCart = (cart: any, itemId: string) => {
     let result = false;
 
-    if (cart.open_records) {
-      cart.open_records.forEach((cartItem: any) => {
+    if (cart.reading_room_requests.open_records) {
+      cart.reading_room_requests.open_records.forEach((cartItem: any) => {
         if (cartItem.item_id === itemId) {
           result = true;
         }
@@ -114,9 +178,9 @@ const AddToCartButton: React.FC<any> = ({ itemId }) => {
       return true;
     }
 
-    if (cart.closed_records) {
-      Object.keys(cart.closed_records).forEach((agency_uri: string) => {
-        cart.closed_records[agency_uri].forEach((cartItem: any) => {
+    if (cart.reading_room_requests.closed_records) {
+      Object.keys(cart.reading_room_requests.closed_records).forEach((agency_uri: string) => {
+        cart.reading_room_requests.closed_records[agency_uri].forEach((cartItem: any) => {
           if (cartItem.item_id === itemId) {
             result = true;
           }
@@ -130,30 +194,101 @@ const AddToCartButton: React.FC<any> = ({ itemId }) => {
   return (
     <AppContext.Consumer>
       {(context: any): React.ReactElement => (
-        <div className="row">
-          <div className="col-sm-12">
-            {!context.user &&
-              <>
-                <button className="qg-btn btn-default disabled">Add to cart</button>
-                <div>
-                  <small className="text-muted">Login to access your cart</small>
-                </div>
-              </>}
-            {context.user && (inCart(context.cart, itemId) ? (
-              <button className="qg-btn btn-default disabled">Added to cart</button>
-            ) : (
-              <button className="qg-btn btn-primary" onClick={() => requestItem(itemId, 'READING_ROOM', context)}>
-                Add to cart
+        <>
+        {
+          !context.user &&
+          <>
+            <button className="qg-btn btn-default disabled">
+              <i className="fa fa-institution" aria-hidden="true"/>&nbsp;
+              Request to view in Reading Room
+            </button>
+            <div>
+              <small className="text-muted">Login to access your cart</small>
+            </div>
+          </>
+        }
+        {
+          context.user && context.cart && (inCart(context.cart, itemId) ? (
+            <>
+              <button className="qg-btn btn-default disabled">
+                <i className="fa fa-institution" aria-hidden="true"/>&nbsp;
+                Added to cart
               </button>
-            ))}
-          </div>
-        </div>
-      )}
+            </>
+          ) : (
+            <button className="qg-btn btn-primary"
+                    onClick={() => requestItem(itemId, 'READING_ROOM', context)}>
+              <i className="fa fa-institution" aria-hidden="true"/>&nbsp;
+              Request to view in Reading Room
+            </button>
+          )) 
+        }
+      </>)}
     </AppContext.Consumer>
   );
 };
 
 const RequestActions: React.FC<any> = ({ item }) => {
+  return (
+    <div className="row">
+      <div className="col-sm-12">
+        <span style={{marginRight: 10, display: 'inline-block'}}><ReadingRoomRequestAction item={item}/></span>
+        <span><DigitalCopyRequestAction item={item}/></span>
+      </div>
+    </div>
+  )
+}
+
+const DigitalCopyRequestAction: React.FC<any> = ({ item }) => {
+  if (item.getArray('physical_representations').length === 0) {
+    return <></>;
+  }
+
+  if (item.getArray('physical_representations').length > 1) {
+    const scrollToRepresentations = () => {
+      const target = document.getElementById('physical_representations');
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth' });
+        const checkbox = target.querySelector('input[type=checkbox]') as HTMLInputElement;
+        if (checkbox && !checkbox.checked) {
+          checkbox.click();
+        }
+      }
+    };
+
+    return (
+        <AppContext.Consumer>
+          {(context: any): React.ReactElement => (
+            context.user ?
+              <button className="qg-btn btn-secondary"
+                      onClick={() => scrollToRepresentations()}>
+                <i className="fa fa-copy" aria-hidden="true"/>&nbsp;
+                Request digital copy&nbsp;
+                <span className="fa fa-chevron-circle-down" aria-hidden="true"/>
+              </button> :
+              <>
+                <button className="qg-btn btn-default disabled"
+                        onClick={() => scrollToRepresentations()}>
+                  <i className="fa fa-copy" aria-hidden="true"/>&nbsp;
+                  Request digital copy&nbsp;
+                  <span className="fa fa-chevron-circle-down" aria-hidden="true"/>
+                </button>
+                <div>
+                  <small className="text-muted">Login to access your
+                    cart</small>
+                </div>
+              </>
+          )}
+        </AppContext.Consumer>
+    );
+  }
+
+  const itemIdToRequest = item.getArray('physical_representations')[0].id;
+
+  return <AddToDigitalCopyRequestCartButton itemId={itemIdToRequest} />;
+};
+
+const ReadingRoomRequestAction: React.FC<any> = ({ item }) => {
   if (item.getArray('physical_representations').length === 0) {
     return <></>;
   }
@@ -173,27 +308,25 @@ const RequestActions: React.FC<any> = ({ item }) => {
     return (
       <AppContext.Consumer>
         {(context: any): React.ReactElement => (
-          <div className="row">
-            <div className="col-sm-12">
-              {context.user ?
-                  <button className="qg-btn btn-primary"
-                          onClick={() => scrollToRepresentations()}>
-                    Add to cart&nbsp;
-                    <span className="fa fa-chevron-circle-down" aria-hidden="true"/>
-                  </button> :
-                  <>
-                    <button className="qg-btn btn-default disabled"
-                            onClick={() => scrollToRepresentations()}>
-                      Add to cart&nbsp;
-                      <span className="fa fa-chevron-circle-down" aria-hidden="true"/>
-                    </button>
-                    <div>
-                      <small className="text-muted">Login to access your
-                        cart</small>
-                    </div>
-                  </>}
-            </div>
-          </div>
+          context.user ?
+            <button className="qg-btn btn-primary"
+                    onClick={() => scrollToRepresentations()}>
+              <i className="fa fa-institution" aria-hidden="true"/>&nbsp;
+              Request to view in Reading Room&nbsp;
+              <span className="fa fa-chevron-circle-down" aria-hidden="true"/>
+            </button> :
+            <>
+              <button className="qg-btn btn-default disabled"
+                      onClick={() => scrollToRepresentations()}>
+                <i className="fa fa-institution" aria-hidden="true"/>&nbsp;
+                Request to view in Reading Room&nbsp;
+                <span className="fa fa-chevron-circle-down" aria-hidden="true"/>
+              </button>
+              <div>
+                <small className="text-muted">Login to access your
+                  cart</small>
+              </div>
+            </>
         )}
       </AppContext.Consumer>
     );
@@ -201,7 +334,7 @@ const RequestActions: React.FC<any> = ({ item }) => {
 
   const itemIdToRequest = item.getArray('physical_representations')[0].id;
 
-  return <AddToCartButton itemId={itemIdToRequest} />;
+  return <AddToReadingRoomRequestCartButton itemId={itemIdToRequest} />;
 };
 
 const ItemPage: React.FC<any> = (route: any) => {
@@ -405,6 +538,7 @@ const ItemPage: React.FC<any> = (route: any) => {
               {item.getArray('digital_representations').length > 0 && (
                 <AccordionPanel
                   id={item.generateId()}
+                  anchor="digital_representations"
                   title="Digital representations"
                   children={
                     <ul className="list-group list-group-flush">

@@ -1,7 +1,8 @@
 class Carts < BaseStorage
 
   REQUEST_TYPE_READING_ROOM = "READING_ROOM"
-  VALID_REQUEST_TYPES = [REQUEST_TYPE_READING_ROOM]
+  REQUEST_TYPE_DIGITAL_COPY = "DIGITAL_COPY"
+  VALID_REQUEST_TYPES = [REQUEST_TYPE_READING_ROOM, REQUEST_TYPE_DIGITAL_COPY]
 
   def self.get(user_id)
     items = db[:cart_item]
@@ -20,18 +21,27 @@ class Carts < BaseStorage
       item[:record] = documents.fetch(item.fetch(:item_id))
     end
 
-    open_records = items.select{|item| item[:record].fetch('rap_access_status') == 'Open Access'}
-    closed_records = items.select{|item| item[:record].fetch('rap_access_status') == 'Restricted Access'}.group_by{|item| item[:record].fetch('responsible_agency').fetch('ref')}
+    reading_room_requests = items.select{|item| item[:request_type] == REQUEST_TYPE_READING_ROOM}
+    digital_copy_requests = items.select{|item| item[:request_type] == REQUEST_TYPE_DIGITAL_COPY}
+
+    cart = {
+      reading_room_requests: {
+        total_count: reading_room_requests.count,
+        open_records: reading_room_requests.select{|item| item[:record].fetch('rap_access_status') == 'Open Access'},
+        closed_records: reading_room_requests.select{|item| item[:record].fetch('rap_access_status') == 'Restricted Access'}.group_by{|item| item[:record].fetch('responsible_agency').fetch('ref')},
+        agencies: [],
+      },
+      digital_copy_requests: {
+        total_count: digital_copy_requests.count,
+        set_price_records: [], # FIXME need a way to know this
+        quotable_records: digital_copy_requests,
+      },
+    }
 
     # FIXME filter only fields we need: qsa_id_prefixed, display_string
-    agencies = Search.get_records_by_uris(closed_records.keys)
+    cart[:reading_room_requests][:agencies] = Search.get_records_by_uris(cart[:reading_room_requests][:closed_records].keys)
 
-    {
-      total_count: items.length,
-      open_records: open_records,
-      closed_records: closed_records,
-      agencies: agencies,
-    }
+    cart
   end
 
   def self.add_item(user_id, request_type, item_id)
@@ -47,9 +57,12 @@ class Carts < BaseStorage
     end
   end
 
-  def self.clear(user_id)
+  def self.clear(user_id, request_type)
+    raise "Request type not supported: #{request_type}" unless VALID_REQUEST_TYPES.include?(request_type)
+
     db[:cart_item]
       .filter(user_id: user_id)
+      .filter(request_type: request_type)
       .delete
   end
 

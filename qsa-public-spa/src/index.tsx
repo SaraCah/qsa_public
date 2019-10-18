@@ -32,7 +32,10 @@ import {
   UserManagementPage
 } from './recordViews/Users';
 import { PasswordRecoveryPage } from './recordViews/PasswordRecovery';
-import { MyCartPage } from './cart/Cart';
+import {
+  MyDigitalCopyRequestsCartPage,
+  MyReadingRoomRequestsCartPage
+} from './cart/Cart';
 
 /* Establish error handling */
 class ErrorBuffer {
@@ -189,7 +192,8 @@ ReactDOM.render(
           component={wrappedRoute(PasswordRecoveryPage, { pageTitle: 'Password Recovery' })}
         />
         <Route exact path="/my-account" component={wrappedRoute(MyAccountPage, { pageTitle: 'My Account' })} />
-        <Route exact path="/my-cart" component={wrappedRoute(MyCartPage, { pageTitle: 'My Cart' })} />
+        <Route exact path="/reading-room-requests-cart" component={wrappedRoute(MyReadingRoomRequestsCartPage, { pageTitle: 'Pending Reading Room Requests' })} />
+        <Route exact path="/digital-copies-cart" component={wrappedRoute(MyDigitalCopyRequestsCartPage, { pageTitle: 'Pending Digital Copy Requests' })} />
         <Route exact path="/my-requests" component={wrappedRoute(MyRequestsPage, { pageTitle: 'My Requests' })} />
         <Route
           exact
