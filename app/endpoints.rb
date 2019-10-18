@@ -407,6 +407,17 @@ class QSAPublic < Sinatra::Base
     end
   end
 
+  Endpoint.post('/api/users/cart/update_item')
+    .param(:id, String, "Cart item")
+    .param(:options, CartItemOptionsDTO, :body => true) do
+    if Ctx.user_logged_in?
+      Carts.update_item(Ctx.get.session.user_id, params[:id], params[:options])
+      json_response({status: 'success'})
+    else
+      [404]
+    end
+  end
+
   if !defined?(STATIC_DIR) 
     STATIC_DIR = File.realpath(File.absolute_path(File.join(File.dirname(__FILE__), '..', 'static')))
   end

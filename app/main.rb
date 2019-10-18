@@ -49,6 +49,7 @@ require 'models/dto'
 require 'models/user_form_dto'
 require 'models/user_dto'
 require 'models/paged_results'
+require 'models/cart_item_options_dto'
 
 require 'storage/stale_record_exception'
 require 'storage/base_storage'

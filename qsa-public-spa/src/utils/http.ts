@@ -18,6 +18,7 @@ const userUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/admin/user`;
 const usersUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/admin/users`;
 const cartUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/cart`;
 const addToCartUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/cart/add_item`;
+const updateCartItemUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/cart/update_item`;
 const removeFromCartUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/cart/remove_item`;
 const submitReadingRoomRequestsUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/cart/create_reading_room_requests`;
 const userRequestsUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/requests`;
@@ -220,6 +221,22 @@ export class Http {
     config.headers['Content-Type'] = 'multipart/form-data';
 
     const response = await axios.post(addToCartUrl, bodyFormData, config).catch(error => {
+      console.log(error, error.status);
+      return error;
+    });
+
+    return response.data || [];
+  }
+
+  async updateCartItem(item_id: string, options: any): Promise<any> {
+    const bodyFormData = new FormData();
+    bodyFormData.set('id', item_id);
+    bodyFormData.set('options', JSON.stringify(options));
+
+    const config = this.getConfig();
+    config.headers['Content-Type'] = 'multipart/form-data';
+
+    const response = await axios.post(updateCartItemUrl, bodyFormData, config).catch(error => {
       console.log(error, error.status);
       return error;
     });

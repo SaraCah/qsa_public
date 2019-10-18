@@ -15,7 +15,7 @@ const PhysicalRepresentation: React.FC<{
 
   return (
     <>
-      <div className="pull-right">
+      <div className="pull-right text-right">
         <div style={{marginBottom: 10}}><AddToReadingRoomRequestCartButton itemId={representation.get('id')} /></div>
         <AddToDigitalCopyRequestCartButton itemId={representation.get('id')} />
       </div>

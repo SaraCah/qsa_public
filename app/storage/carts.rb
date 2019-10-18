@@ -11,7 +11,8 @@ class Carts < BaseStorage
       {
         id: row[:id],
         item_id: row[:item_id],
-        request_type: row[:request_type]
+        request_type: row[:request_type],
+        options: CartItemOptionsDTO.from_row(row),
       }
     end
 
@@ -42,6 +43,13 @@ class Carts < BaseStorage
     cart[:reading_room_requests][:agencies] = Search.get_records_by_uris(cart[:reading_room_requests][:closed_records].keys)
 
     cart
+  end
+
+  def self.update_item(user_id, cart_item_id, cart_item_options)
+    db[:cart_item]
+      .filter(user_id: user_id)
+      .filter(id: cart_item_id)
+      .update(cart_item_options.to_hash)
   end
 
   def self.add_item(user_id, request_type, item_id)
