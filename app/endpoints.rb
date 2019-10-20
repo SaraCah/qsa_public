@@ -362,6 +362,8 @@ class QSAPublic < Sinatra::Base
       Carts.handle_open_records(Ctx.get.session.user_id, date_required)
       Carts.handle_closed_records(Ctx.get.session.user_id, agency_fields)
 
+      Carts.clear(Ctx.get.session.user_id, Carts::REQUEST_TYPE_READING_ROOM)
+
       json_response({status: 'success'})
     else
       [404]

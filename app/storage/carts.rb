@@ -22,9 +22,11 @@ class Carts < BaseStorage
 
     documents = Search.get_records_by_ids(items.map{|item| item.fetch(:item_id)})
 
-    items.each do |item|
-      item[:record] = documents.fetch(item.fetch(:item_id))
-    end
+    items = items.map do |item|
+      record = documents.fetch(item.fetch(:item_id), nil)
+      next unless record
+      item.merge(:record => record)
+    end.compact
 
     reading_room_requests = items.select{|item| item[:request_type] == REQUEST_TYPE_READING_ROOM}
     digital_copy_requests = items.select{|item| item[:request_type] == REQUEST_TYPE_DIGITAL_COPY}
@@ -104,7 +106,7 @@ class Carts < BaseStorage
     user = Users.get(user_id)
     cart = get(user_id)
 
-    cart[:open_records].each do |item|
+    cart[:reading_room_requests][:open_records].each do |item|
       db[:reading_room_request]
         .insert(
           user_id: user_id,
@@ -129,7 +131,7 @@ class Carts < BaseStorage
     user = Users.get(user_id)
     cart = get(user_id)
 
-    cart[:closed_records].each do |agency_uri, closed_items|
+    cart[:reading_room_requests][:closed_records].each do |agency_uri, closed_items|
       agency_id = "agent_corporate_entity:#{agency_uri.split('/').last}"
 
       agency_request_id = db[:agency_request]
