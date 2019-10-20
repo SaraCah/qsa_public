@@ -8,10 +8,12 @@ class Requests < BaseStorage
     doc_ids = results.map{|row| row[:item_id]}
     resolved = Search.get_records_by_ids(doc_ids)
 
-    results.each do |row|
-      row[:request_type] = Carts::REQUEST_TYPE_READING_ROOM # FIXME
-      row[:record] = Search.resolve_refs!(resolved.fetch(row[:item_id]))
-    end
+    results = results.map do |row|
+      next unless resolved.include?(row[:item_id])
+
+      row.merge(:request_type => Carts::REQUEST_TYPE_READING_ROOM,
+                :record => Search.resolve_refs!(resolved.fetch(row[:item_id])))
+    end.compact
 
     {
       results: results
