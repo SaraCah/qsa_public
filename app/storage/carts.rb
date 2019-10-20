@@ -4,6 +4,10 @@ class Carts < BaseStorage
   REQUEST_TYPE_DIGITAL_COPY = "DIGITAL_COPY"
   VALID_REQUEST_TYPES = [REQUEST_TYPE_READING_ROOM, REQUEST_TYPE_DIGITAL_COPY]
 
+  def self.build_cart_item_hash(user_id, item_id, request_type)
+    Digest::MD5.hexdigest([user_id, item_id, request_type].inspect)
+  end
+
   def self.get(user_id)
     items = db[:cart_item]
       .filter(user_id: user_id)
@@ -71,7 +75,8 @@ class Carts < BaseStorage
       db[:cart_item]
         .insert(user_id: user_id,
                 request_type: request_type,
-                item_id: item_id)
+                item_id: item_id,
+                uniq_hash: build_cart_item_hash(user_id, item_id, request_type))
     rescue Sequel::UniqueConstraintViolation
       # ok it's already in there
     end
