@@ -330,7 +330,7 @@ export const MyReadingRoomRequestsCartPage: React.FC<any> = () => {
                               </button>
                               &nbsp;&nbsp;
                               <button
-                                className="qg-btn btn-secondary"
+                                className="qg-btn btn-default"
                                 onClick={e => {
                                   e.preventDefault();
                                   Http.get()
@@ -360,6 +360,7 @@ let cartItemsUpdateTimeout: any = undefined;
 
 export const MyDigitalCopyRequestsCartPage: React.FC<any> = () => {
   const [cart, setCart]:[any, any] = useState(null);
+  const [dirtyCart, setDirtyCart]:[any, any] = useState(false);
   const [cartNeedsRefresh, setCartNeedsRefresh]:[any, any] = useState(true);
 
   const removeItem = (cartItemId: number): void => {
@@ -377,10 +378,11 @@ export const MyDigitalCopyRequestsCartPage: React.FC<any> = () => {
           digital_copy_requests: updated_digital_copy_requests
         })
     );
+
+    setDirtyCart(true);
   };
 
   const updateCartItem = (context: any, cartItemId: number, field: string, value: string) => {
-    console.log(value);
     const options: any = {};
     options[field] = value;
 
@@ -401,19 +403,22 @@ export const MyDigitalCopyRequestsCartPage: React.FC<any> = () => {
         })
       })
     );
+
+    setDirtyCart(true);
   };
 
-  const updateCart = () => {
+  const updateQuotableItems = () => {
     Http.get()
         .updateCartItems(cart.digital_copy_requests.quotable_records, 'DIGITAL_COPY')
         .then(() => {
-          if (cart.digital_copy_requests.quotable_records.length === 0) {
-            cart.refreshCart();
-          }
+          cart.refreshCart().then(() => {
+            setCartNeedsRefresh(true);
+            setDirtyCart(false);
+          });
         })
         .catch((exception: Error) => {
           console.error(exception);
-        });
+        })
   };
 
   return (
@@ -634,41 +639,61 @@ export const MyDigitalCopyRequestsCartPage: React.FC<any> = () => {
                         }
                       </>
                     )}
-                    {context.sessionLoaded &&
+                    {cart &&
                       <div className="mt-5">
                         <p>
-                          <button className="qg-btn btn-primary"
-                                  onClick={e => {
-                                    alert("TODO");
-                                  }}>
-                            Submit Quote Requests
-                          </button>
-                      &nbsp;&nbsp;
-                      <button className="qg-btn btn-secondary"
-                              onClick={e => {
-                                Http.get()
-                                    .updateCartItems(cart.digital_copy_requests.quotable_records, 'DIGITAL_COPY')
-                                    .then(() => {
-                                      cart.refreshCart().then(() => {
-                                        setCartNeedsRefresh(true);
-                                      });
-                                    })
-                                    .catch((exception: Error) => {
-                                      console.error(exception);
-                                    });
+                          {
+                            (cart.digital_copy_requests.quotable_records.length > 0 || dirtyCart) &&
+                            <>
+                              {!dirtyCart &&
+                                <>
+                                  <button className="qg-btn btn-primary"
+                                          onClick={e => {
+                                            alert("TODO");
+                                          }}>
+                                    Submit Quote Requests
+                                  </button>
+                                  &nbsp;&nbsp;
+                                </>
                               }
-                              }>
-                        Update cart
-                      </button>
-                      &nbsp;&nbsp;
-                      <button
-                        className="qg-btn btn-default"
-                        onClick={e => {
-                          alert("TODO");
-                        }}
-                      >
-                        Clear cart
-                      </button>
+                              {
+                                dirtyCart &&
+                                <>
+                                  <button className="qg-btn btn-secondary"
+                                          onClick={e => {
+                                            updateQuotableItems()
+                                          }}
+                                  >Update cart</button>
+                                  &nbsp;&nbsp;
+                                  <button className="qg-btn btn-default"
+                                          onClick={e => {
+                                            cart.refreshCart().then(() => {
+                                              setCartNeedsRefresh(true);
+                                              setDirtyCart(false);
+                                            })
+                                          }}
+                                  >Revert cart</button>
+                                  &nbsp;&nbsp;
+                                </>
+                              }
+                            </>
+                          }
+                          {
+                            cart.digital_copy_requests.total_count > 0 && !dirtyCart &&
+                            <button
+                                className="qg-btn btn-default"
+                                onClick={e => {
+                                  Http.get().clearCart('DIGITAL_COPY').then(() => {
+                                    cart.refreshCart().then(() => {
+                                      setCartNeedsRefresh(true);
+                                      setDirtyCart(false);
+                                    })
+                                  });
+                                }}
+                            >
+                              Clear cart
+                            </button>
+                          }
                         </p>
                       </div>
                     }
