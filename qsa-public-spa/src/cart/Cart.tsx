@@ -649,7 +649,17 @@ export const MyDigitalCopyRequestsCartPage: React.FC<any> = () => {
                                 <>
                                   <button className="qg-btn btn-primary"
                                           onClick={e => {
-                                            alert("TODO");
+                                            Http.get()
+                                                .submitDigitalQuoteRequest()
+                                                .then(() => {
+                                                  cart.refreshCart().then(() => {
+                                                    setCartNeedsRefresh(true);
+                                                    /* FIXME: Show success message */
+                                                  });
+                                                })
+                                                .catch((exception: Error) => {
+                                                  console.error(exception);
+                                                });
                                           }}>
                                     Submit Quote Requests
                                   </button>

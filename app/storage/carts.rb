@@ -104,9 +104,20 @@ class Carts < BaseStorage
     user = Users.get(user_id)
     cart = get(user_id)
 
-    cart.digital_copy_requests.quotable_records.each do |cart_item|
-      
-    end
+    now = java.lang.System.currentTimeMillis
+    quote_request_id = db[:quote_request].insert(:user_id => user_id, :create_time => now, :modified_time => now)
+
+    quote_request_items = cart.fetch(:digital_copy_requests).fetch(:quotable_records, []).map {|cart_item|
+      item = cart_item.fetch(:options).to_hash.merge(:quote_request_id => quote_request_id,
+                                                     :item_id => cart_item.fetch(:item_id))
+
+      item.delete(:id)
+      item
+    }
+
+    db[:quote_request_item].multi_insert(quote_request_items)
+
+    # TODO: CLEAR CART FOR QUOTE STUFF ONLY!  Create task!
   end
 
   def self.handle_open_records(user_id, date_required)

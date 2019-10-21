@@ -373,7 +373,7 @@ class QSAPublic < Sinatra::Base
   Endpoint.post('/api/users/cart/create_digital_copy_quote_requests') do
     if Ctx.user_logged_in?
       Carts.handle_digital_copy_quote_records(Ctx.get.session.user_id)
-      
+
       json_response({status: 'success'})
     else
       [404]

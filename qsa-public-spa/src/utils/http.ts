@@ -23,6 +23,8 @@ const removeFromCartUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/car
 const submitReadingRoomRequestsUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/cart/create_reading_room_requests`;
 const userRequestsUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/requests`;
 const clearCartUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/cart/clear`;
+const submitDigitalQuoteUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/cart/create_digital_copy_quote_requests`;
+
 
 export class Http {
   static config: AxiosRequestConfig = {
@@ -301,4 +303,19 @@ export class Http {
 
     return response.data || [];
   }
+
+  async submitDigitalQuoteRequest(): Promise<any> {
+    const bodyFormData = new FormData();
+
+    const config = this.getConfig();
+    config.headers['Content-Type'] = 'multipart/form-data';
+
+    const response = await axios.post(submitDigitalQuoteUrl, bodyFormData, config).catch(error => {
+      console.log(error, error.status);
+      return error;
+    });
+
+    return response.data || [];
+  }
+
 }

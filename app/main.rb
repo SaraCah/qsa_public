@@ -42,6 +42,9 @@ require 'lib/advanced_search_query'
 require 'lib/search'
 require 'lib/date_parse'
 
+require 'lib/deferred_task_runner'
+require 'lib/quote_request_task'
+
 require 'lib/templates'
 require 'views/templates'
 
@@ -114,6 +117,9 @@ class QSAPublic < Sinatra::Base
     DB.connect
 
     SolrIndexer.start
+
+    DeferredTaskRunner.add_handler_for_type('quote_request', QuoteRequestTask)
+    DeferredTaskRunner.start
   end
 
   error do
