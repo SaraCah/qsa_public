@@ -103,9 +103,6 @@ const AddToDigitalCopyRequestCartButton: React.FC<any> = ({ itemId }) => {
   const inCart = (cart: any, itemId: string) => {
     let result = false;
 
-    console.log(cart);
-    console.log(itemId);
-
     cart.digital_copy_requests.set_price_records.concat(cart.digital_copy_requests.quotable_records).forEach((cartItem: any) => {
       if (cartItem.item_id === itemId) {
         result = true
