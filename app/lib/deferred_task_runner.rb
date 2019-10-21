@@ -51,7 +51,7 @@ class DeferredTaskRunner
       abandoned_tasks = db[:deferred_task_running].where { last_checked_time < ((Time.now.to_i * 1000) - MAX_TASK_AGE_MS) }.select(:task_id)
 
       db[:deferred_task].filter(:id => abandoned_tasks).update(:status => PENDING_STATUS)
-      db[:deferred_task_running].filter(:task_id => abandoned_tasks).delete
+      db[:deferred_task_running].filter(:task_id => abandoned_tasks.map{|row| row[:task_id]}).delete
 
       db[:deferred_task].filter(:status => PENDING_STATUS).each do |task|
         tasks_by_type[task[:type]] ||= []
