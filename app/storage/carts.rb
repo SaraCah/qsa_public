@@ -117,7 +117,21 @@ class Carts < BaseStorage
 
     db[:quote_request_item].multi_insert(quote_request_items)
 
-    # TODO: CLEAR CART FOR QUOTE STUFF ONLY!  Create task!
+    # remove from the cart
+    db[:cart_item]
+      .filter(user_id: user_id)
+      .filter(id: cart.fetch(:digital_copy_requests).fetch(:quotable_records, []).map{|cart_item| cart_item[:id]})
+      .delete
+
+    # create a task to email the archivist
+    db[:deferred_task]
+      .insert(type: 'quote_request',
+              blob: {
+                quote_request_id: quote_request_id,
+              }.to_json,
+              status: DeferredTaskRunner::PENDING_STATUS,
+              retries_remaining: 10,
+              create_time: java.lang.System.currentTimeMillis)
   end
 
   def self.handle_open_records(user_id, date_required)

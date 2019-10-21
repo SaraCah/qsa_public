@@ -109,6 +109,7 @@ class DeferredTaskRunner
           db[:deferred_task].filter(:id => task_results.map(&:id)).update(:status => PENDING_STATUS)
         rescue
           $LOG.error("FATAL ERROR running tasks of type #{type}: #{tasks.inspect}: #{$!}")
+          $LOG.error($@.join("\n"))
           db[:deferred_task].filter(:id => tasks.map {|task| task[:id]}).update(:status => 'ABORTED')
         end
       end
