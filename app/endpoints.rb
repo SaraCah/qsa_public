@@ -369,6 +369,17 @@ class QSAPublic < Sinatra::Base
       [404]
     end
   end
+
+  Endpoint.post('/api/users/cart/create_digital_copy_quote_requests') do
+    if Ctx.user_logged_in?
+      Carts.handle_digital_copy_quote_records(Ctx.get.session.user_id)
+      
+      json_response({status: 'success'})
+    else
+      [404]
+    end
+  end
+
   Endpoint.get('/api/generate_token')
     .param(:email, String, "User email to reset") do
     email_match = Users.get_for_email(params[:email])

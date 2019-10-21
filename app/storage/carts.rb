@@ -100,6 +100,15 @@ class Carts < BaseStorage
       .delete
   end
 
+  def self.handle_digital_copy_quote_records(user_id)
+    user = Users.get(user_id)
+    cart = get(user_id)
+
+    cart.digital_copy_requests.quotable_records.each do |cart_item|
+      
+    end
+  end
+
   def self.handle_open_records(user_id, date_required)
     now = Time.now
 
