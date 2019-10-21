@@ -168,7 +168,7 @@ export const MyReadingRoomRequestsCartPage: React.FC<any> = () => {
                                   <div className="mb-2 qg-grab" role="listitem">
                                     <div className="d-flex w-100 justify-content-between">
                                       <h2>
-                                        <Link to={uriFor(cartItem.record.parent_qsa_id, 'archival_object')}>
+                                        <Link to={uriFor(cartItem.record.controlling_record.qsa_id_prefixed, 'archival_object')}>
                                           {cartItem.record.qsa_id_prefixed}: {cartItem.record.display_string}
                                         </Link>
                                       </h2>
@@ -179,8 +179,8 @@ export const MyReadingRoomRequestsCartPage: React.FC<any> = () => {
                                       <dd className="col-xs-6">Physical representation</dd>
                                       <dt className="col-xs-6">Parent item</dt>
                                       <dd className="col-xs-6">
-                                        <Link to={uriFor(cartItem.record.parent_qsa_id, 'archival_object')}>
-                                          {cartItem.record.parent_qsa_id} {cartItem.record.display_string}
+                                        <Link to={uriFor(cartItem.record.controlling_record.qsa_id_prefixed, 'archival_object')}>
+                                          {cartItem.record.controlling_record.qsa_id_prefixed}
                                         </Link>
                                       </dd>
                                       <dt className="col-xs-6">Delivery location</dt>
@@ -252,8 +252,8 @@ export const MyReadingRoomRequestsCartPage: React.FC<any> = () => {
                                         <span className="badge pull-right">Closed record</span>
                                       </div>
                                       <h4>
-                                        <Link to={uriFor(cartItem.record.parent_qsa_id, 'archival_object')}>
-                                          {cartItem.record.parent_qsa_id} {cartItem.record.display_string}
+                                        <Link to={uriFor(cartItem.record.controlling_record.qsa_id_prefixed, 'archival_object')}>
+                                          {cartItem.record.qsa_id_prefixed} {cartItem.record.display_string}
                                         </Link>
                                       </h4>
                                       <dl className="row" style={{ marginBottom: 0 }}>
@@ -261,8 +261,8 @@ export const MyReadingRoomRequestsCartPage: React.FC<any> = () => {
                                         <dd className="col-xs-6">Physical representation</dd>
                                         <dt className="col-xs-6">Parent item</dt>
                                         <dd className="col-xs-6">
-                                          <Link to={uriFor(cartItem.record.parent_qsa_id, 'archival_object')}>
-                                            {cartItem.record.parent_qsa_id} {cartItem.record.display_string}
+                                          <Link to={uriFor(cartItem.record.controlling_record.qsa_id_prefixed, 'archival_object')}>
+                                            {cartItem.record.controlling_record.qsa_id_prefixed}
                                           </Link>
                                         </dd>
                                       </dl>
@@ -374,27 +374,40 @@ export const MyDigitalCopyRequestsCartPage: React.FC<any> = () => {
   };
 
   const updateCartItem = (context: any, cartItemId: number, field: string, value: string) => {
-    console.log(value);
-    const options: any = {};
-    options[field] = value;
+    // console.log(value);
+    // const options: any = {};
+    // options[field] = value;
+    //
+    // setCart(
+    //   Object.assign({}, cart, {
+    //     digital_copy_requests: Object.assign({}, cart.digital_copy_requests, {
+    //       quotable_records: cart.digital_copy_requests.quotable_records.map((cartItem: any) => {
+    //         if (cartItem.id === cartItemId) {
+    //           return Object.assign({}, cartItem, {
+    //             options: Object.assign({}, cartItem.options, {
+    //               [field]: value
+    //             })
+    //           });
+    //         } else {
+    //           return cartItem;
+    //         }
+    //       })
+    //     })
+    //   })
+    // );
+  };
 
-    setCart(
-      Object.assign({}, cart, {
-        digital_copy_requests: Object.assign({}, cart.digital_copy_requests, {
-          quotable_records: cart.digital_copy_requests.quotable_records.map((cartItem: any) => {
-            if (cartItem.id === cartItemId) {
-              return Object.assign({}, cartItem, {
-                options: Object.assign({}, cartItem.options, {
-                  [field]: value
-                })
-              });
-            } else {
-              return cartItem;
-            }
-          })
+  const updateCart = () => {
+    Http.get()
+        .updateCartItems(cart.digital_copy_requests.quotable_records, 'DIGITAL_COPY')
+        .then(() => {
+          if (cart.digital_copy_requests.quotable_records.length === 0) {
+            cart.refreshCart();
+          }
         })
-      })
-    );
+        .catch((exception: Error) => {
+          console.error(exception);
+        });
   };
 
   useEffect(() => {
@@ -481,7 +494,7 @@ export const MyDigitalCopyRequestsCartPage: React.FC<any> = () => {
                                     <div className="mb-2 qg-grab" role="listitem">
                                       <div className="d-flex w-100 justify-content-between">
                                         <h2>
-                                          <Link to={uriFor(cartItem.record.parent_qsa_id, 'archival_object')}>
+                                          <Link to={uriFor(cartItem.record.controlling_record.qsa_id_prefixed, 'archival_object')}>
                                             {cartItem.record.qsa_id_prefixed}: {cartItem.record.display_string}
                                           </Link>
                                         </h2>
@@ -492,8 +505,8 @@ export const MyDigitalCopyRequestsCartPage: React.FC<any> = () => {
                                         <dd className="col-xs-6">Physical representation</dd>
                                         <dt className="col-xs-6">Parent item</dt>
                                         <dd className="col-xs-6">
-                                          <Link to={uriFor(cartItem.record.parent_qsa_id, 'archival_object')}>
-                                            {cartItem.record.parent_qsa_id} {cartItem.record.display_string}
+                                          <Link to={uriFor(cartItem.record.controlling_record.qsa_id_prefixed, 'archival_object')}>
+                                            {cartItem.record.controlling_record.qsa_id_prefixed}
                                           </Link>
                                         </dd>
                                         <dt className="col-xs-6">
@@ -633,6 +646,32 @@ export const MyDigitalCopyRequestsCartPage: React.FC<any> = () => {
                                   </div>
                               ))
                             }
+                            <div className="mt-5">
+                              <p>
+                                <button className="qg-btn btn-primary"
+                                        onClick={e => {
+                                          alert("TODO");
+                                        }}>
+                                  Submit Quote Requests
+                                </button>
+                                &nbsp;&nbsp;
+                                <button className="qg-btn btn-secondary"
+                                        onClick={e => {
+                                          alert("TODO");
+                                        }}>
+                                  Update cart
+                                </button>
+                                &nbsp;&nbsp;
+                                <button
+                                    className="qg-btn btn-default"
+                                    onClick={e => {
+                                     alert("TODO");
+                                    }}
+                                >
+                                  Clear cart
+                                </button>
+                              </p>
+                            </div>
                           </article>
                         }
                       </>
