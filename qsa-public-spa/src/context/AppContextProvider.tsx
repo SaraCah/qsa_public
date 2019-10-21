@@ -61,15 +61,20 @@ const AppContextProvider: React.FC<any> = (props: any) => {
             });
           },
 
-          refreshCart: () => {
-            Http.get()
-              .getCart()
-              .then(
-                (data: any) => {
-                  setAppContext((oldState: any) => Object.assign({}, oldState, { cart: data }));
-                },
-                () => {}
-              );
+          refreshCart: (): Promise<any> => {
+            return new Promise((resolve, reject) => {
+              Http.get()
+                  .getCart()
+                  .then(
+                    (data: any) => {
+                      setAppContext((oldState: any) => Object.assign({}, oldState, { cart: data }));
+                      resolve();
+                    },
+                    () => {
+                      reject();
+                    }
+                  )
+              });
           },
 
           /* Log out the current user */

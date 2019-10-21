@@ -360,41 +360,47 @@ let cartItemsUpdateTimeout: any = undefined;
 
 export const MyDigitalCopyRequestsCartPage: React.FC<any> = () => {
   const [cart, setCart]:[any, any] = useState(null);
+  const [cartNeedsRefresh, setCartNeedsRefresh]:[any, any] = useState(true);
 
   const removeItem = (cartItemId: number): void => {
+    let updated_digital_copy_requests = Object.assign({}, cart.digital_copy_requests, {
+      quotable_records: cart.digital_copy_requests.quotable_records.filter((cartItem: any) => {
+        return cartItem.id !== cartItemId;
+      })
+    });
+
+    updated_digital_copy_requests.total_count = (updated_digital_copy_requests.quotable_records.length +
+                                                 updated_digital_copy_requests.set_price_records.length);
+
     setCart(
         Object.assign({}, cart, {
-          digital_copy_requests: Object.assign({}, cart.digital_copy_requests, {
-            quotable_records: cart.digital_copy_requests.quotable_records.filter((cartItem: any) => {
-              return cartItem.id !== cartItemId;
-            })
-          })
+          digital_copy_requests: updated_digital_copy_requests
         })
     );
   };
 
   const updateCartItem = (context: any, cartItemId: number, field: string, value: string) => {
-    // console.log(value);
-    // const options: any = {};
-    // options[field] = value;
-    //
-    // setCart(
-    //   Object.assign({}, cart, {
-    //     digital_copy_requests: Object.assign({}, cart.digital_copy_requests, {
-    //       quotable_records: cart.digital_copy_requests.quotable_records.map((cartItem: any) => {
-    //         if (cartItem.id === cartItemId) {
-    //           return Object.assign({}, cartItem, {
-    //             options: Object.assign({}, cartItem.options, {
-    //               [field]: value
-    //             })
-    //           });
-    //         } else {
-    //           return cartItem;
-    //         }
-    //       })
-    //     })
-    //   })
-    // );
+    console.log(value);
+    const options: any = {};
+    options[field] = value;
+
+    setCart(
+      Object.assign({}, cart, {
+        digital_copy_requests: Object.assign({}, cart.digital_copy_requests, {
+          quotable_records: cart.digital_copy_requests.quotable_records.map((cartItem: any) => {
+            if (cartItem.id === cartItemId) {
+              return Object.assign({}, cartItem, {
+                options: Object.assign({}, cartItem.options, {
+                  [field]: value
+                })
+              });
+            } else {
+              return cartItem;
+            }
+          })
+        })
+      })
+    );
   };
 
   const updateCart = () => {
@@ -410,37 +416,15 @@ export const MyDigitalCopyRequestsCartPage: React.FC<any> = () => {
         });
   };
 
-  useEffect(() => {
-    if (!cart) {
-      return;
-    }
-
-    if (cartItemsUpdateTimeout) {
-      clearTimeout(cartItemsUpdateTimeout);
-    }
-
-    cartItemsUpdateTimeout = setTimeout(() => {
-      Http.get()
-          .updateCartItems(cart.digital_copy_requests.quotable_records, 'DIGITAL_COPY')
-          .then(() => {
-            if (cart.digital_copy_requests.quotable_records.length === 0) {
-              cart.refreshCart();
-            }
-          })
-          .catch((exception: Error) => {
-            console.error(exception);
-          });
-    }, 2000);
-  }, [cart]);
-
   return (
       <AppContext.Consumer>
         {(context: any): React.ReactElement => {
-          if (!cart && context.user) {
+          if (cartNeedsRefresh && context.user) {
             if (context.cart) {
+              setCartNeedsRefresh(false);
               setCart(Object.assign({}, context.cart, {refreshCart: context.refreshCart}));
             }
-            return <></>
+            return <Layout footer={ false }></Layout>;
           } else {
             return (
               <Layout>
@@ -450,7 +434,7 @@ export const MyDigitalCopyRequestsCartPage: React.FC<any> = () => {
                       <i className="fa fa-copy" aria-hidden="true"/>&nbsp;
                       Submit Your Digital Copy Requests
                     </h1>
-                    {!context.user && <div className="alert alert-warning">Please login to access your cart</div>}
+                    {!context.user && context.sessionLoaded && <div className="alert alert-warning">Please login to access your cart</div>}
                     {context.user && cart && cart.digital_copy_requests.total_count === 0 && (
                         <div className="alert alert-info">Cart empty</div>
                     )}
@@ -646,36 +630,48 @@ export const MyDigitalCopyRequestsCartPage: React.FC<any> = () => {
                                   </div>
                               ))
                             }
-                            <div className="mt-5">
-                              <p>
-                                <button className="qg-btn btn-primary"
-                                        onClick={e => {
-                                          alert("TODO");
-                                        }}>
-                                  Submit Quote Requests
-                                </button>
-                                &nbsp;&nbsp;
-                                <button className="qg-btn btn-secondary"
-                                        onClick={e => {
-                                          alert("TODO");
-                                        }}>
-                                  Update cart
-                                </button>
-                                &nbsp;&nbsp;
-                                <button
-                                    className="qg-btn btn-default"
-                                    onClick={e => {
-                                     alert("TODO");
-                                    }}
-                                >
-                                  Clear cart
-                                </button>
-                              </p>
-                            </div>
                           </article>
                         }
                       </>
                     )}
+                    {context.sessionLoaded &&
+                      <div className="mt-5">
+                        <p>
+                          <button className="qg-btn btn-primary"
+                                  onClick={e => {
+                                    alert("TODO");
+                                  }}>
+                            Submit Quote Requests
+                          </button>
+                      &nbsp;&nbsp;
+                      <button className="qg-btn btn-secondary"
+                              onClick={e => {
+                                Http.get()
+                                    .updateCartItems(cart.digital_copy_requests.quotable_records, 'DIGITAL_COPY')
+                                    .then(() => {
+                                      cart.refreshCart().then(() => {
+                                        setCartNeedsRefresh(true);
+                                      });
+                                    })
+                                    .catch((exception: Error) => {
+                                      console.error(exception);
+                                    });
+                              }
+                              }>
+                        Update cart
+                      </button>
+                      &nbsp;&nbsp;
+                      <button
+                        className="qg-btn btn-default"
+                        onClick={e => {
+                          alert("TODO");
+                        }}
+                      >
+                        Clear cart
+                      </button>
+                        </p>
+                      </div>
+                    }
                   </div>
                 </div>
               </Layout>
