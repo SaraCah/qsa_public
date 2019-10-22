@@ -362,6 +362,7 @@ export const MyDigitalCopyRequestsCartPage: React.FC<any> = () => {
   const [cart, setCart]:[any, any] = useState(null);
   const [dirtyCart, setDirtyCart]:[any, any] = useState(false);
   const [cartNeedsRefresh, setCartNeedsRefresh]:[any, any] = useState(true);
+  const [showQuoteRequestSentSuccessMessage, setShowQuoteRequestSentSuccessMessage]:[any, any] = useState(false);
 
   const removeItem = (cartItemId: number): void => {
     let updated_digital_copy_requests = Object.assign({}, cart.digital_copy_requests, {
@@ -439,6 +440,9 @@ export const MyDigitalCopyRequestsCartPage: React.FC<any> = () => {
                       <i className="fa fa-copy" aria-hidden="true"/>&nbsp;
                       Submit Your Digital Copy Requests
                     </h1>
+                    {showQuoteRequestSentSuccessMessage &&
+                      <div className="alert alert-success">Your quote request has been successfully submitted.</div>
+                    }
                     {!context.user && context.sessionLoaded && <div className="alert alert-warning">Please login to access your cart</div>}
                     {context.user && cart && cart.digital_copy_requests.total_count === 0 && (
                         <div className="alert alert-info">Cart empty</div>
@@ -654,7 +658,7 @@ export const MyDigitalCopyRequestsCartPage: React.FC<any> = () => {
                                                 .then(() => {
                                                   cart.refreshCart().then(() => {
                                                     setCartNeedsRefresh(true);
-                                                    /* FIXME: Show success message */
+                                                    setShowQuoteRequestSentSuccessMessage(true);
                                                   });
                                                 })
                                                 .catch((exception: Error) => {
