@@ -26,11 +26,11 @@ export const UserSession: React.FC = () => {
                 <small>
                   Hello, {displayName(context.user)}
                   &nbsp;|&nbsp;
-                  <Link to="/logout">Logout</Link>
+                  <Link to="/logout">Log Out</Link>
                 </small>
               ) : (
                 <small>
-                  <Link to="/login">Login</Link>
+                  <Link to="/login">Log In</Link>
                 </small>
               )}
             </div>
