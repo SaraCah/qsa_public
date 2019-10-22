@@ -1205,7 +1205,7 @@ const RequestsSummary: React.FC<any> = props => {
                 <td>{request.request_type}</td>
                 <td>{request.status}</td>
                 <td>
-                  <Link to={uriFor(request.record.parent_qsa_id, 'archival_object')}>
+                  <Link to={uriFor(request.record.controlling_record['_resolved'].qsa_id_prefixed, 'archival_object')}>
                     {request.record.display_string}
                   </Link>
                 </td>
