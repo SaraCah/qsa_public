@@ -121,12 +121,12 @@ export const MaybeLink: React.FC<{ location: string; label: string }> = ({ locat
       </a>
     );
   } else if (label === location) {
-    return <p>{location}</p>;
+    return <span>{location}</span>;
   } else {
     return (
-      <p>
+      <span>
         {label}: {location}
-      </p>
+      </span>
     );
   }
 };
