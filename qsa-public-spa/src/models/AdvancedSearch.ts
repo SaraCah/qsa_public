@@ -122,7 +122,7 @@ export class AdvancedSearchQuery {
     if (!this.criteria.recordTypes || Object.keys(this.criteria.recordTypes).length === 0) {
       return false;
     } else {
-      return this.criteria.recordTypes[recordType];
+      return !!this.criteria.recordTypes[recordType];
     }
   }
 

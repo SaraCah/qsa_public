@@ -18,7 +18,7 @@ const FACET_LABELS: { [name: string]: string } = {
 
 const ResultsPage: React.FC<any> = (route: any) => {
   const [searchResults, setSearchResults] = useState<any | null>(null);
-  const [advancedSearchQuery, setAdvancedSearchQuery] = useState<AdvancedSearchQuery>(
+  const [advancedSearchQuery] = useState<AdvancedSearchQuery>(
     AdvancedSearchQuery.fromQueryString(route.location.search)
   );
   const [showCompact, setShowCompact] = useState<boolean>(false);
@@ -200,17 +200,14 @@ const CompactSearchSummary: React.FC<{
     }
   };
 
-  {
-    /* <div className="query-subclause">{  }</div>,
-        <div className="query-subclause">{  }</div>
-      */
-  }
   let clauses = [buildQuerySummary(), buildTypeSummary(), buildDateSummary()].filter(elt => elt);
 
   if (clauses.length > 2) {
     clauses = clauses.map((clause, idx) =>
-      idx > 0 ? <div className="query-subclause">{clause}</div> : <div>{clause}</div>
+      idx > 0 ? <div key={idx} className="query-subclause">{clause}</div> : <div key={idx}>{clause}</div>
     );
+  } else {
+    clauses = clauses.map((clause, idx) => (<span key={idx}>{clause}</span>));
   }
 
   return (
@@ -261,43 +258,45 @@ const SearchFacets: React.FC<{
       )}
       {Object.keys(props.facets).map((field: string) => {
         const facets = props.facets[field];
-        if (facets.length > 0) {
-          return (
-            <section className="available-filters" key={field}>
-              <h4>{FACET_LABELS[field]}</h4>
-              <ul>
-                {facets.map((facet: any) => {
-                  if (props.advancedSearchQuery.hasFilter(facet.facet_field, facet.facet_value)) {
-                    return (
-                      <li key={facet.facet_field + '_' + facet.facet_label}>
-                        <div className="facet-label">{facet.facet_label}</div>
-                        <div className="facet-count">{facet.facet_count}</div>
-                      </li>
-                    );
-                  } else {
-                    return (
-                      <li key={facet.facet_field + '_' + facet.facet_label}>
-                        <div className="facet-label">
-                          <Link
-                            to={{
-                              pathname: '/search',
-                              search: props.advancedSearchQuery
-                                .addFilter(facet.facet_field, facet.facet_value, facet.facet_label)
-                                .toQueryString()
-                            }}
-                          >
-                            {facet.facet_label}
-                          </Link>
-                        </div>
-                        <div className="facet-count">{facet.facet_count}</div>
-                      </li>
-                    );
-                  }
-                })}
-              </ul>
-            </section>
-          );
+        if (facets.length === 0) {
+          return <></>;
         }
+
+        return (
+          <section className="available-filters" key={field}>
+            <h4>{FACET_LABELS[field]}</h4>
+            <ul>
+              {facets.map((facet: any) => {
+                if (props.advancedSearchQuery.hasFilter(facet.facet_field, facet.facet_value)) {
+                  return (
+                    <li key={facet.facet_field + '_' + facet.facet_label}>
+                      <div className="facet-label">{facet.facet_label}</div>
+                      <div className="facet-count">{facet.facet_count}</div>
+                    </li>
+                  );
+                } else {
+                  return (
+                    <li key={facet.facet_field + '_' + facet.facet_label}>
+                      <div className="facet-label">
+                        <Link
+                          to={{
+                            pathname: '/search',
+                            search: props.advancedSearchQuery
+                                         .addFilter(facet.facet_field, facet.facet_value, facet.facet_label)
+                                         .toQueryString()
+                          }}
+                        >
+                          {facet.facet_label}
+                        </Link>
+                      </div>
+                      <div className="facet-count">{facet.facet_count}</div>
+                    </li>
+                  );
+                }
+              })}
+            </ul>
+          </section>
+        );
       })}
     </section>
   );

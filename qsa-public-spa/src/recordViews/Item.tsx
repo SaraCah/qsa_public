@@ -56,7 +56,7 @@ const DigitalRepresentation: React.FC<{
       <dt>Download link</dt>
       <dd>
         FIXME{' '}
-        <a href="https://teaspoon-consulting.com/dropbox/c7513962474ea1c6ec6ac2b01cd273486df4f107.jpg" target="_blank">
+        <a href="https://teaspoon-consulting.com/dropbox/c7513962474ea1c6ec6ac2b01cd273486df4f107.jpg" target="_blank" rel="noopener noreferrer">
           Link to file
         </a>
       </dd>

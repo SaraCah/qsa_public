@@ -497,9 +497,6 @@ class Search
   def self.advanced(search_opts)
     query = search_opts.fetch(:query)
 
-    # query
-    require 'pp';$stderr.puts("\n*** DEBUG #{(Time.now.to_f * 1000).to_i} [search.rb:354 YouthfulLungfish]: " + {%Q^query^ => query}.pretty_inspect + "\n")
-
     record_types = parse_types(query.filter_types)
 
     # Our query date range overlaps with our record's date range UNLESS:

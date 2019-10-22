@@ -68,11 +68,11 @@ export class RecordDisplay {
     const result: Note[] = [];
 
     notes.forEach((note: any) => {
-      if (note.type != noteType) {
+      if (note.type !== noteType) {
         return;
       }
 
-      if (noteLabel && note.note_label && note.note_label.trim().toLowerCase() != noteLabel.trim().toLowerCase()) {
+      if (noteLabel && note.note_label && note.note_label.trim().toLowerCase() !== noteLabel.trim().toLowerCase()) {
         return;
       }
 

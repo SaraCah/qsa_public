@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import AppContext from '../context/AppContext';
 import { Link } from 'react-router-dom';
 import { uriFor } from '../utils/typeResolver';
@@ -355,8 +355,6 @@ export const MyReadingRoomRequestsCartPage: React.FC<any> = () => {
     </AppContext.Consumer>
   );
 };
-
-let cartItemsUpdateTimeout: any = undefined;
 
 export const MyDigitalCopyRequestsCartPage: React.FC<any> = () => {
   const [cart, setCart]:[any, any] = useState(null);

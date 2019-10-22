@@ -21,7 +21,6 @@ import MandatePage from './recordViews/Mandate';
 import ItemPage from './recordViews/Item';
 import {LoginPage, LogoutPage} from './recordViews/UserSession';
 
-import AppContext from './context/AppContext';
 import AppContextProvider from './context/AppContextProvider';
 import {
   ChangePasswordPage,

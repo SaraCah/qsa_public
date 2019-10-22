@@ -193,32 +193,32 @@ const Layout: React.FC<any> = (props: any) => {
               </h2>
               <ol className="list-inline">
                 <li id="qldGov">
-                  <a href="http://www.qld.gov.au/" target="_blank">
+                  <a href="http://www.qld.gov.au/" target="_blank" rel="noopener noreferrer">
                     Queensland Government home
                   </a>
                 </li>
                 <li>
-                  <a href="https://www.qld.gov.au/queenslanders/" target="_blank">
+                  <a href="https://www.qld.gov.au/queenslanders/" target="_blank" rel="noopener noreferrer">
                     For Queenslanders
                   </a>
                 </li>
                 <li className="qldGovBreadcrumb">
-                  <a href="https://www.qld.gov.au/recreation/" target="_blank">
+                  <a href="https://www.qld.gov.au/recreation/" target="_blank" rel="noopener noreferrer">
                     Recreation, sport and arts
                   </a>
                 </li>
                 <li className="qldGovBreadcrumb">
-                  <a href="https://www.qld.gov.au/recreation/arts/" target="_blank">
+                  <a href="https://www.qld.gov.au/recreation/arts/" target="_blank" rel="noopener noreferrer">
                     Arts, culture and heritage
                   </a>
                 </li>
                 <li className="qldGovBreadcrumb">
-                  <a href="https://www.qld.gov.au/recreation/arts/heritage/" target="_blank">
+                  <a href="https://www.qld.gov.au/recreation/arts/heritage/" target="_blank" rel="noopener noreferrer">
                     Heritage
                   </a>
                 </li>
                 <li className="qldGovBreadcrumb">
-                  <a href="https://www.qld.gov.au/recreation/arts/heritage/archives/" target="_blank">
+                  <a href="https://www.qld.gov.au/recreation/arts/heritage/archives/" target="_blank" rel="noopener noreferrer">
                     Queensland's archives
                   </a>
                 </li>

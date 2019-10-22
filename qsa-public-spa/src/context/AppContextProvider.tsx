@@ -97,6 +97,7 @@ const AppContextProvider: React.FC<any> = (props: any) => {
   }, []);
 
   /* If a child component sets a new session ID, fetch the current user */
+
   useEffect(() => {
     if (!appContext.initialised) {
       /* Wait for our initial state to turn up. */
@@ -121,7 +122,11 @@ const AppContextProvider: React.FC<any> = (props: any) => {
     } else {
       appContext.clearSession();
     }
-  }, [appContext.initialised, appContext.sessionId]);
+  },
+  // Adding appContext to the deps array here (as suggested by jslint) creates a loop.
+  //
+  // eslint-disable-next-line react-hooks/exhaustive-deps 
+  [appContext.initialised, appContext.sessionId]);
 
   if (appContext.initialised) {
     return <AppContext.Provider value={appContext}>{props.children}</AppContext.Provider>;

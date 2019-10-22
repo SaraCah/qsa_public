@@ -686,7 +686,11 @@ const AdminUserDetailsForm: React.FC<any> = ({ userId }) => {
         setUser(user);
         setUserToEdit(user);
       });
-  }, [user.lock_version]);
+  },
+  // lock_version here is a proxy for the user being updated.
+  //
+  // eslint-disable-next-line react-hooks/exhaustive-deps 
+  [user.lock_version]);
 
   const onSubmit = (): AxiosResponse => {
     setErrors([]);
@@ -910,9 +914,12 @@ const UserManagementListing: React.FC = () => {
       .getUsers(page, filter)
       .then((results: AxiosResponse) => {
         setResults(results);
-        console.log(results);
       });
-  }, [page, filter.version]);
+  },
+  // filter.version here is a proxy for the user being updated.
+  //
+  // eslint-disable-next-line react-hooks/exhaustive-deps 
+  [page, filter.version]);
 
   const onSubmit = () => {
     setPage(0);
@@ -1066,17 +1073,7 @@ export const UserManagementPage: React.FC<any> = (route: any) => {
 };
 
 const RequestSummary: React.FC<any> = props => {
-  const [request, setRequest] = useState(props.request);
-
-  const refreshRequest = () => {
-    Http.get().getRequestStatus(request.id);
-  };
-
-  const setStatus = (status: string) => {
-    Http.get()
-      .setRequestStatus(request.id, status)
-      .then(refreshRequest);
-  };
+  const [request] = useState(props.request);
 
   return (
     <>
