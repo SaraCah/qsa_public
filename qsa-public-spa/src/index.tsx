@@ -31,10 +31,10 @@ import {
   UserManagementPage
 } from './recordViews/Users';
 import { PasswordRecoveryPage } from './recordViews/PasswordRecovery';
-import {
-  MyDigitalCopyRequestsCartPage,
-  MyReadingRoomRequestsCartPage
-} from './cart/Cart';
+
+import { MyReadingRoomRequestsCartPage } from './cart/MyReadingRoomRequestsCartPage';
+import { MyDigitalCopyRequestsCartPage } from './cart/MyDigitalCopyRequestsCartPage';
+
 
 /* Establish error handling */
 class ErrorBuffer {

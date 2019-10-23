@@ -4,7 +4,7 @@ import Layout from './Layout';
 import { Http } from '../utils/http';
 
 import AppContext from '../context/AppContext';
-import { CartSummary } from '../cart/Cart';
+import { CartSummary } from '../cart/CartSummary';
 
 export const UserSession: React.FC = () => {
   const displayName = (user: any) => {
