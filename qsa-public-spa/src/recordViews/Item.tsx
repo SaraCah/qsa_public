@@ -513,7 +513,7 @@ const ItemPage: React.FC<any> = (route: any) => {
               </ul>
             </section>
 
-            <section className="qg-accordion qg-dark-accordion" aria-label="Accordion Label">
+            <section className="qg-accordion qg-dark-accordion" aria-label="Item Details">
               <h2 id="accordion">Item details</h2>
 
               {/*<input type="radio" name="control" id="collapse" className="controls collapse" value="collapse" role="radio"/>*/}
