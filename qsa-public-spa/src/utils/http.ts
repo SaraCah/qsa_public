@@ -16,6 +16,7 @@ const recoveryTokenUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/generate_t
 const recoveryTokenPasswordUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/token_update_password`;
 const userUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/admin/user`;
 const usersUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/admin/users`;
+const becomeUserUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/admin/become_user`;
 const cartUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/cart`;
 const addToCartUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/cart/add_item`;
 const updateCartItemsUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/cart/update_items`;
@@ -311,6 +312,21 @@ export class Http {
     config.headers['Content-Type'] = 'multipart/form-data';
 
     const response = await axios.post(submitDigitalQuoteUrl, bodyFormData, config).catch(error => {
+      console.log(error, error.status);
+      return error;
+    });
+
+    return response.data || [];
+  }
+
+  async becomeUser(userId: number): Promise<any> {
+    const bodyFormData = new FormData();
+    bodyFormData.set('user_id', ''+userId);
+
+    const config = this.getConfig();
+    config.headers['Content-Type'] = 'multipart/form-data';
+
+    const response = await axios.post(becomeUserUrl, bodyFormData, config).catch(error => {
       console.log(error, error.status);
       return error;
     });

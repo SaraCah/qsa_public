@@ -26,7 +26,11 @@ export const UserSession: React.FC = () => {
                 <small>
                   Hello, {displayName(context.user)}
                   &nbsp;|&nbsp;
-                  <Link to="/logout">Log Out</Link>
+                  <Link to="/logout">
+                    {
+                      context.masterSessionId ? "Return to admin" : "Log Out"
+                    }
+                  </Link>
                 </small>
               ) : (
                 <small>
@@ -164,7 +168,11 @@ export const LogoutPage: React.FC<any> = (route: any) => {
     if (!logoutTriggered) {
       setLogoutTriggered(true);
       Http.get().logout();
+
+      const masterSessionId = context.masterSessionId;
+
       context.clearSession();
+      context.setSessionId(masterSessionId);
     }
 
     return true;
@@ -178,10 +186,17 @@ export const LogoutPage: React.FC<any> = (route: any) => {
             logout(context) &&
             <div className="row">
               <div className="col-sm-12">
-                <div className="alert alert-success" role="alert">
-                  <h2><i className="fa fa-check-circle"/>Logout Success</h2>
-                  <p>Return to <Link to="/">Archives Search</Link> or login again <Link to="/login">here</Link>.</p>
-                </div>
+                {
+                  (context.user && context.user.is_admin) ?
+                      <div className="alert alert-success" role="alert">
+                        You are now logged in
+                        as <strong>{context.user.email}</strong> again.
+                      </div> :
+                      <div className="alert alert-success" role="alert">
+                        <h2><i className="fa fa-check-circle"/>Logout Success</h2>
+                        <p>Return to <Link to="/">Archives Search</Link> or login again <Link to="/login">here</Link>.</p>
+                      </div>
+                }
               </div>
             </div>
           )

@@ -431,6 +431,26 @@ class QSAPublic < Sinatra::Base
     end
   end
 
+  Endpoint.post('/api/admin/become_user')
+    .param(:user_id, Integer, "User ID") do
+    if Ctx.user_logged_in?
+      logged_in_user = Users.get(Ctx.get.session.user_id)
+      if logged_in_user.fetch('is_admin')
+        user_to_become = Users.get(params[:user_id])
+        if user_to_become
+          session_id = Sessions.create_session(user_to_become.fetch('id'))
+          json_response(session_id: session_id)
+        else
+          raise 'user does not exist'
+        end
+      else
+        [404]
+      end
+    else
+      [404]
+    end
+  end
+
   if !defined?(STATIC_DIR) 
     STATIC_DIR = File.realpath(File.absolute_path(File.join(File.dirname(__FILE__), '..', 'static')))
   end
