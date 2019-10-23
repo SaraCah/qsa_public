@@ -20,7 +20,7 @@ class Carts < BaseStorage
       }
     end
 
-    documents = Search.get_records_by_ids(items.map{|item| item.fetch(:item_id)})
+    documents = Search.resolve_refs!(Search.get_records_by_ids(items.map{|item| item.fetch(:item_id)}))
 
     items = items.map do |item|
       record = documents.fetch(item.fetch(:item_id), nil)
@@ -31,6 +31,8 @@ class Carts < BaseStorage
     reading_room_requests = items.select{|item| item[:request_type] == REQUEST_TYPE_READING_ROOM}
     digital_copy_requests = items.select{|item| item[:request_type] == REQUEST_TYPE_DIGITAL_COPY}
 
+    (digital_copy_set_price_requests, digital_copy_quotable_requests) = group_by_pricing_scheme(digital_copy_requests)
+
     cart = {
       reading_room_requests: {
         total_count: reading_room_requests.count,
@@ -40,8 +42,8 @@ class Carts < BaseStorage
       },
       digital_copy_requests: {
         total_count: digital_copy_requests.count,
-        set_price_records: [], # FIXME need a way to know this
-        quotable_records: digital_copy_requests,
+        set_price_records: digital_copy_set_price_requests,
+        quotable_records: digital_copy_quotable_requests,
       },
     }
 
@@ -51,6 +53,36 @@ class Carts < BaseStorage
     cart
   end
 
+  def self.group_by_pricing_scheme(digital_copy_requests)
+    request_to_linked_uris = digital_copy_requests.map {|request|
+      [
+        request,
+        [
+          request[:record].fetch('controlling_record').fetch('ref'),
+          *Array(request[:record].dig('controlling_record', '_resolved', 'ancestors')).map {|a| a['ref']}
+        ]
+      ]
+    }.to_h
+
+    DB.open do |db|
+      set_price_uris = Set.new(db[:digital_copy_pricing]
+                                 .filter(:aspace_record_uri => request_to_linked_uris.values.flatten)
+                                 .map(:aspace_record_uri))
+
+      set_price_requests = []
+      quote_requests = []
+
+      request_to_linked_uris.each do |request, linked_uris|
+        if linked_uris.any? {|uri| set_price_uris.include?(uri)}
+          set_price_requests << request
+        else
+          quote_requests << request
+        end
+      end
+
+      [set_price_requests, quote_requests]
+    end
+  end
   def self.update_items(user_id, request_type, cart_item_dtos)
     cart_item_dtos.each do |cart_item_dto|
       cart_item_options = cart_item_dto.to_hash
