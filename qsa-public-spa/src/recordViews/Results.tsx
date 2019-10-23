@@ -259,7 +259,7 @@ const SearchFacets: React.FC<{
       {Object.keys(props.facets).map((field: string) => {
         const facets = props.facets[field];
         if (facets.length === 0) {
-          return <></>;
+          return <React.Fragment key={field}></React.Fragment>
         }
 
         return (
