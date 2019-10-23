@@ -457,11 +457,11 @@ const ItemPage: React.FC<any> = (route: any) => {
                     <div className="d-flex w-100 justify-content-between">
                       <h4 className="mb-1">Preferred citations</h4>
                     </div>
-                    <p className="mb-1">
-                      {notes.map((note: Note) => (
-                        <NoteDisplay note={note} />
+                    <div className="mb-1">
+                      {notes.map((note: Note, idx: number) => (
+                        <NoteDisplay key={idx} note={note} />
                       ))}
-                    </p>
+                    </div>
                   </li>
                 ))}
                 {item.getNotes('odd', 'Remarks', (notes: Note[]) => (
@@ -469,11 +469,11 @@ const ItemPage: React.FC<any> = (route: any) => {
                     <div className="d-flex w-100 justify-content-between">
                       <h4 className="mb-1">Preferred citations</h4>
                     </div>
-                    <p className="mb-1">
-                      {notes.map((note: Note) => (
-                        <NoteDisplay note={note} />
+                    <div className="mb-1">
+                      {notes.map((note: Note, idx: number) => (
+                        <NoteDisplay key={idx} note={note} />
                       ))}
-                    </p>
+                    </div>
                   </li>
                 ))}
                 {item.getExternalDocuments('Finding Aid', (docs: any) => (
@@ -482,8 +482,8 @@ const ItemPage: React.FC<any> = (route: any) => {
                       <h4 className="mb-1">Finding Aid</h4>
                     </div>
                     <p className="mb-1">
-                      {docs.map((doc: any) => (
-                        <MaybeLink location={doc.location} label={doc.location} />
+                      {docs.map((doc: any, idx: number) => (
+                        <MaybeLink key={idx} location={doc.location} label={doc.location} />
                       ))}
                     </p>
                   </li>
@@ -494,8 +494,8 @@ const ItemPage: React.FC<any> = (route: any) => {
                       <h4 className="mb-1">Publications</h4>
                     </div>
                     <p className="mb-1">
-                      {docs.map((doc: any) => (
-                        <MaybeLink location={doc.location} label={doc.location} />
+                      {docs.map((doc: any, idx: number) => (
+                        <MaybeLink key={idx} location={doc.location} label={doc.location} />
                       ))}
                     </p>
                   </li>

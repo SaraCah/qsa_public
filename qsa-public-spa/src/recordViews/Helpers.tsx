@@ -12,8 +12,8 @@ export const NoteDisplay: React.FC<{ note: Note }> = ({ note }) => {
       return (
         <div>
           {' '}
-          {note.text.map((content: string) => (
-            <p>{content}</p>
+          {note.text.map((content: string, idx: number) => (
+            <p key={idx}>{content}</p>
           ))}
         </div>
       );
@@ -22,8 +22,8 @@ export const NoteDisplay: React.FC<{ note: Note }> = ({ note }) => {
         <div>
           <p>{note.title}</p>
           <ol>
-            {note.items.map((item: string) => (
-              <li>{item}</li>
+            {note.items.map((item: string, idx: number) => (
+              <li key={idx}>{item}</li>
             ))}
           </ol>
         </div>
@@ -33,12 +33,12 @@ export const NoteDisplay: React.FC<{ note: Note }> = ({ note }) => {
         <div>
           <p>{note.title}</p>
           <dl>
-            {note.items.map(({ label, value }) => {
+            {note.items.map(({ label, value }, idx: number) => {
               return (
-                <>
+                <React.Fragment key={idx}>
                   <dt>{label}</dt>
                   <dd>{value}</dd>
-                </>
+                </React.Fragment>
               );
             })}
           </dl>
@@ -49,14 +49,14 @@ export const NoteDisplay: React.FC<{ note: Note }> = ({ note }) => {
         <div>
           <p>{note.title}</p>
           <dl>
-            {note.items.map(({ event_date, events }) => {
+            {note.items.map(({ event_date, events }, idx: number) => {
               return (
-                <>
+                <React.Fragment key={idx}>
                   <dt>{event_date}</dt>
                   {events.map((event: string) => {
                     return <dd>{event}</dd>;
                   })}
-                </>
+                </React.Fragment>
               );
             })}
           </dl>
