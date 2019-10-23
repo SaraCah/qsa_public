@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { uriFor } from '../utils/typeResolver';
 import Layout from '../recordViews/Layout';
 import { Http } from '../utils/http';
+import { centsToString } from '../utils/currency';
 
 const Cart: React.FC = () => {
   return (
@@ -460,7 +461,50 @@ export const MyDigitalCopyRequestsCartPage: React.FC<any> = () => {
                                 These copy charges are based on the average size of files within a series (a group of related records), not on the number of pages within individual records. The relevant charge is then applied to all items within the series.
                               </p>
                             </div>
-                            <p>TODO</p>
+
+                            {
+                              cart.digital_copy_requests.set_price_records.map((cartItem: any) => (
+                                  <div key={cartItem.id}>
+                                    <div className="mb-2 qg-grab" role="listitem">
+                                      <div className="d-flex w-100 justify-content-between">
+                                        <h2>
+                                          <Link to={uriFor(cartItem.record.controlling_record.qsa_id_prefixed, 'archival_object')}>
+                                            {cartItem.record.qsa_id_prefixed}: {cartItem.record.display_string}
+                                          </Link>
+                                        </h2>
+                                        <span className="badge">Open record</span>
+                                      </div>
+                                      <dl className="row">
+                                        <dt className="col-xs-6">Item type</dt>
+                                        <dd className="col-xs-6">Physical representation</dd>
+                                        <dt className="col-xs-6">Parent item</dt>
+                                        <dd className="col-xs-6">
+                                          <Link to={uriFor(cartItem.record.controlling_record.qsa_id_prefixed, 'archival_object')}>
+                                            {cartItem.record.controlling_record.qsa_id_prefixed}
+                                          </Link>
+                                        </dd>
+                                        <dt className="col-xs-6">Unit price</dt>
+                                        <dd className="col-xs-6">{centsToString(cartItem.price)}</dd>
+
+                                      </dl>
+                                      <h3 className="sr-only">Actions</h3>
+                                      <div className="btn-group">
+                                        <button
+                                            className="qg-btn btn-default btn-xs"
+                                            onClick={e => {
+                                              e.preventDefault();
+                                              removeItem(cartItem.id);
+                                            }}
+                                        >
+                                          <i className="fa fa-trash" aria-hidden="true" />
+                                          &nbsp; Remove item
+                                        </button>
+                                      </div>
+                                    </div>
+                                    <div className="clearfix" />
+                                  </div>
+                              ))
+                            }
                           </article>
                         }
                         {

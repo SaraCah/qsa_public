@@ -31,7 +31,7 @@ class Carts < BaseStorage
     reading_room_requests = items.select{|item| item[:request_type] == REQUEST_TYPE_READING_ROOM}
     digital_copy_requests = items.select{|item| item[:request_type] == REQUEST_TYPE_DIGITAL_COPY}
 
-    (digital_copy_set_price_requests, digital_copy_quotable_requests) = group_by_pricing_scheme(digital_copy_requests)
+    add_pricing_to_requests(digital_copy_requests)
 
     cart = {
       reading_room_requests: {
@@ -42,8 +42,8 @@ class Carts < BaseStorage
       },
       digital_copy_requests: {
         total_count: digital_copy_requests.count,
-        set_price_records: digital_copy_set_price_requests,
-        quotable_records: digital_copy_quotable_requests,
+        set_price_records: digital_copy_requests.select {|r| r[:price]},
+        quotable_records: digital_copy_requests.select {|r| !r[:price]},
       },
     }
 
@@ -53,7 +53,8 @@ class Carts < BaseStorage
     cart
   end
 
-  def self.group_by_pricing_scheme(digital_copy_requests)
+  # Adds a :price key to any request whose record has set pricing.
+  def self.add_pricing_to_requests(digital_copy_requests)
     request_to_linked_uris = digital_copy_requests.map {|request|
       [
         request,
@@ -65,24 +66,28 @@ class Carts < BaseStorage
     }.to_h
 
     DB.open do |db|
-      set_price_uris = Set.new(db[:digital_copy_pricing]
-                                 .filter(:aspace_record_uri => request_to_linked_uris.values.flatten)
-                                 .map(:aspace_record_uri))
-
-      set_price_requests = []
-      quote_requests = []
+      prices_by_uri = db[:digital_copy_pricing]
+                        .filter(:aspace_record_uri => request_to_linked_uris.values.flatten)
+                        .select(:aspace_record_uri, :price_cents)
+                        .map {|row| [row[:aspace_record_uri], row[:price_cents]]}
+                        .to_h
 
       request_to_linked_uris.each do |request, linked_uris|
-        if linked_uris.any? {|uri| set_price_uris.include?(uri)}
-          set_price_requests << request
-        else
-          quote_requests << request
+        # Our linked URIs are in order of most specific to least specific
+        # (controlling record through to series).  This allows prices to be set
+        # at the series level but overridden at a lower point in the tree.
+        linked_uris.each do |uri|
+          if prices_by_uri.include?(uri)
+            request[:price] ||= prices_by_uri[uri]
+          end
         end
       end
-
-      [set_price_requests, quote_requests]
     end
+
+    digital_copy_requests
   end
+
+
   def self.update_items(user_id, request_type, cart_item_dtos)
     cart_item_dtos.each do |cart_item_dto|
       cart_item_options = cart_item_dto.to_hash
