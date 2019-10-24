@@ -93,9 +93,9 @@ export const DigitalCopyCartSummaryPage: React.FC<RouteComponentProps<any>> = (r
 
                     <div className="checkout-actions mt-5">
                       {context.cart.digital_copy_requests.set_price_records.length > 0 &&
-                        <button type="submit" className="qg-btn btn-primary">
+                        <Link to="/digital-copies-cart/set-price-checkout" className="qg-btn btn-primary">
                           Checkout Set Price copies
-                        </button>
+                        </Link>
                       }
 
                       {context.cart.digital_copy_requests.quotable_records.length > 0 &&
