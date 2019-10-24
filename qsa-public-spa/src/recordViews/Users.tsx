@@ -290,33 +290,11 @@ const AdminAccountSummary: React.FC = () => {
         <article className="qg-card col-12 col-sm-6 col-lg-4">
           <div className="content">
             <div className="details">
-              <h2>Request list</h2>
-              <p>Review a daily request list including printing request slips</p>
-              <a href="#" className="btn btn-primary">
-                Request list
-              </a>
-            </div>
-          </div>
-        </article>
-        <article className="qg-card col-12 col-sm-6 col-lg-4">
-          <div className="content">
-            <div className="details">
               <h2>User management</h2>
               <p>Review users, validate online users and review account profiles</p>
               <Link to="/admin/users" className="btn btn-primary">
                 User management
               </Link>
-            </div>
-          </div>
-        </article>
-        <article className="qg-card col-12 col-sm-6 col-lg-4">
-          <div className="content">
-            <div className="details">
-              <h2>Admin ordering</h2>
-              <p>Order items or lodge a request on behalf of a user</p>
-              <a href="#" className="btn btn-primary">
-                Admin ordering
-              </a>
             </div>
           </div>
         </article>
@@ -369,29 +347,24 @@ const UserAccountSummary: React.FC = () => {
 };
 
 const LoginRequired: React.FC<any> = (props: any) => {
-  return (
-    <AppContext.Consumer>
-      {(context: any) =>
-        !context.sessionLoaded ? (
-          <Layout skipFooter={true} />
-        ) : context.user && ((props.adminOnly && context.user.is_admin) || !props.adminOnly) ? (
-          <Layout showNavForUser={true}>{props.children}</Layout>
-        ) : props.adminOnly ? (
-          <Redirect to="/404" push={true} />
-        ) : (
-          <Redirect to="/login" push={true} />
-        )
-      }
-    </AppContext.Consumer>
-  );
+  const context = props.context;
+
+  if (!context.sessionLoaded) {
+    return <Layout skipFooter={true} />;
+  } else if (context.user && ((props.adminOnly && context.user.is_admin) || !props.adminOnly)) {
+    return <Layout showNavForUser={true}>{props.children}</Layout>;
+  } else if (props.adminOnly) {
+    return <Redirect to="/404" push={true} />;
+  } else {
+    return <Redirect to="/login" push={true} />;
+  }
 };
 
 export const MyAccountPage: React.FC<any> = (route: any) => {
+  const context = route.context;
   return (
-    <LoginRequired>
-      <AppContext.Consumer>
-        {(context: any) => (context.user.is_admin ? <AdminAccountSummary /> : <UserAccountSummary />)}
-      </AppContext.Consumer>
+    <LoginRequired context={context}>
+      {((context.user && context.user.is_admin) ? <AdminAccountSummary /> : <UserAccountSummary />)}
     </LoginRequired>
   );
 };
@@ -559,8 +532,8 @@ const UserDetailsForm: React.FC<{ context: any }> = ({ context }) => {
 
 export const MyContactDetailsPage: React.FC<any> = (route: any) => {
   return (
-    <LoginRequired>
-      <AppContext.Consumer>{(context: any) => <UserDetailsForm context={context} />}</AppContext.Consumer>
+    <LoginRequired context={route.context}>
+      <UserDetailsForm context={route.context} />
     </LoginRequired>
   );
 };
@@ -666,8 +639,8 @@ const ChangePasswordForm: React.FC<{ context: any }> = ({ context }) => {
 
 export const ChangePasswordPage: React.FC<any> = (route: any) => {
   return (
-    <LoginRequired>
-      <AppContext.Consumer>{(context: any) => <ChangePasswordForm context={context} />}</AppContext.Consumer>
+    <LoginRequired context={route.context}>
+      <ChangePasswordForm context={route.context} />
     </LoginRequired>
   );
 };
@@ -904,7 +877,9 @@ const AdminUserDetailsForm: React.FC<any> = ({ userId }) => {
   );
 };
 
-const UserManagementListing: React.FC = () => {
+const UserManagementListing: React.FC<any> = (props: any) => {
+  const context = props.context;
+
   const [page, setPage]: [number, any] = useState(0);
   const [filter, setFilter]: [any, any] = useState({ version: 0 });
   const [results, setResults]: [any, any] = useState({});
@@ -944,148 +919,144 @@ const UserManagementListing: React.FC = () => {
   }
 
   return (
-    <AppContext.Consumer>
-      {(context: any) => (
-          <div className="row">
-            <div className="col-sm-12">
-              <h1>User management</h1>
-              <h2>Filter the user lists</h2>
-              <section className="search-input">
-                <form
-                    className="form-inline"
-                    onSubmit={e => {
-                      e.preventDefault();
-                      onSubmit();
-                    }}
-                >
-                  <div className="qg-call-out-box">
-                    <div className="form-row">
-                      <div className="form-group col-xs-12 col-md-4">
-                        <label htmlFor="name" className="sr-only">
-                          Name
-                        </label>
-                        <input
-                            type="text"
-                            className="form-control-plaintext"
-                            id="name"
-                            placeholder="Search names"
-                            onChange={e => setFilter(Object.assign({ ...filter }, { q: e.target.value }))}
-                        />
-                      </div>
-                      <div className="input-group col-xs-12 col-md-8">
-                        <div className="input-group-prepend">
-                          <span className="input-group-text small">Registration date</span>
-                        </div>
-                        <input
-                            type="text"
-                            aria-label="Start date"
-                            placeholder="start"
-                            className="form-control"
-                            onChange={e => setFilter(Object.assign({ ...filter }, { start_date: e.target.value }))}
-                        />
-                        <input
-                            type="text"
-                            aria-label="End date"
-                            placeholder="end"
-                            className="form-control"
-                            onChange={e => setFilter(Object.assign({ ...filter }, { end_date: e.target.value }))}
-                        />
-                      </div>
-                      <div className="input-group col-md-12 col-md-8" style={{ marginTop: 10 }}>
-                        <button type="submit" className="qg-btn btn-primary">
-                          Filter
-                        </button>
-                      </div>
-                    </div>
+    <div className="row">
+      <div className="col-sm-12">
+        <h1>User management</h1>
+        <h2>Filter the user lists</h2>
+        <section className="search-input">
+          <form
+            className="form-inline"
+            onSubmit={e => {
+              e.preventDefault();
+              onSubmit();
+            }}
+          >
+            <div className="qg-call-out-box">
+              <div className="form-row">
+                <div className="form-group col-xs-12 col-md-4">
+                  <label htmlFor="name" className="sr-only">
+                    Name
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control-plaintext"
+                    id="name"
+                    placeholder="Search names"
+                    onChange={e => setFilter(Object.assign({ ...filter }, { q: e.target.value }))}
+                  />
+                </div>
+                <div className="input-group col-xs-12 col-md-8">
+                  <div className="input-group-prepend">
+                    <span className="input-group-text small">Registration date</span>
                   </div>
-                </form>
-              </section>
-
-              <h2>QSA user profiles</h2>
-              <table className="table table-striped">
-                <thead>
-                <tr>
-                  <th scope="col">#</th>
-                  <th scope="col">Name</th>
-                  <th scope="col">Email</th>
-                  <th scope="col">Registration date</th>
-                  <th scope="col">Verified?</th>
-                  <th scope="col">Action</th>
-                </tr>
-                </thead>
-                <tbody>
-                {results.results &&
-                results.results.map((user: any) => (
-                    <tr key={user.id}>
-                      <th scope="row">{user.id}</th>
-                      <td>
-                        {user.first_name} {user.last_name}
-                      </td>
-                      <td>{user.email}</td>
-                      <td>{new Date(user.create_time).toLocaleDateString()}</td>
-                      <td>
-                        {user.is_admin ? (
-                            <span className="badge badge-info">Admin</span>
-                        ) : user.is_verified ? (
-                            <span className="badge badge-primary">Verifed</span>
-                        ) : (
-                            <span className="badge badge-secondary">Not verified</span>
-                        )}
-                      </td>
-                      <td>
-                        <Link to={`/admin/users/${user.id}`} className="qg-btn btn-primary btn-xs">
-                          Edit Details
-                        </Link>&nbsp;
-                        {
-                          user.id !== context.user.id && !user.is_admin &&
-                          <button
-                              className="qg-btn btn-secondary btn-xs"
-                              onClick={e => becomeUser(user, context)}>
-                            Become User
-                          </button>
-                        }
-                      </td>
-                    </tr>
-                ))}
-                </tbody>
-              </table>
-
-              {results && results.results && (
-                  <nav>
-                    <div className="text-center">
-                      <ul className="pagination">
-                        <li className={'page-item prev ' + (results.current_page === 0 ? 'disabled' : '')}>
-                          <a
-                              className="page-link"
-                              href="#"
-                              onClick={e => {
-                                e.preventDefault();
-                                setPage(results.current_page - 1);
-                              }}
-                          >
-                            <span aria-hidden="true">«</span> Previous
-                          </a>
-                        </li>
-                        <li className={'page-item next ' + (results.current_page >= results.max_page ? 'disabled' : '')}>
-                          <a
-                              className="page-link"
-                              href="#"
-                              onClick={e => {
-                                e.preventDefault();
-                                setPage(results.current_page + 1);
-                              }}
-                          >
-                            Next <span aria-hidden="true">»</span>
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
-                  </nav>
-              )}
+                  <input
+                    type="text"
+                    aria-label="Start date"
+                    placeholder="start"
+                    className="form-control"
+                    onChange={e => setFilter(Object.assign({ ...filter }, { start_date: e.target.value }))}
+                  />
+                  <input
+                    type="text"
+                    aria-label="End date"
+                    placeholder="end"
+                    className="form-control"
+                    onChange={e => setFilter(Object.assign({ ...filter }, { end_date: e.target.value }))}
+                  />
+                </div>
+                <div className="input-group col-md-12 col-md-8" style={{ marginTop: 10 }}>
+                  <button type="submit" className="qg-btn btn-primary">
+                    Filter
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
-      )}
-    </AppContext.Consumer>
+          </form>
+        </section>
+
+        <h2>QSA user profiles</h2>
+        <table className="table table-striped">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Name</th>
+              <th scope="col">Email</th>
+              <th scope="col">Registration date</th>
+              <th scope="col">Verified?</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {results.results &&
+              results.results.map((user: any) => (
+                <tr key={user.id}>
+                  <th scope="row">{user.id}</th>
+                  <td>
+                    {user.first_name} {user.last_name}
+                  </td>
+                  <td>{user.email}</td>
+                  <td>{new Date(user.create_time).toLocaleDateString()}</td>
+                  <td>
+                    {user.is_admin ? (
+                      <span className="badge badge-info">Admin</span>
+                    ) : user.is_verified ? (
+                      <span className="badge badge-primary">Verifed</span>
+                    ) : (
+                      <span className="badge badge-secondary">Not verified</span>
+                    )}
+                  </td>
+                  <td>
+                    <Link to={`/admin/users/${user.id}`} className="qg-btn btn-primary btn-xs">
+                      Edit Details
+                    </Link>&nbsp;
+                {
+                  user.id !== context.user.id && !user.is_admin &&
+                    <button
+                      className="qg-btn btn-secondary btn-xs"
+                      onClick={e => becomeUser(user, context)}>
+                      Become User
+                    </button>
+                }
+                  </td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+
+        {results && results.results && (
+          <nav>
+            <div className="text-center">
+              <ul className="pagination">
+                <li className={'page-item prev ' + (results.current_page === 0 ? 'disabled' : '')}>
+                  <a
+                    className="page-link"
+                    href="#"
+                    onClick={e => {
+                      e.preventDefault();
+                      setPage(results.current_page - 1);
+                    }}
+                  >
+                    <span aria-hidden="true">«</span> Previous
+                  </a>
+                </li>
+                <li className={'page-item next ' + (results.current_page >= results.max_page ? 'disabled' : '')}>
+                  <a
+                    className="page-link"
+                    href="#"
+                    onClick={e => {
+                      e.preventDefault();
+                      setPage(results.current_page + 1);
+                    }}
+                  >
+                    Next <span aria-hidden="true">»</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </nav>
+        )}
+      </div>
+    </div>
   );
 };
 
@@ -1093,10 +1064,8 @@ export const UserManagementPage: React.FC<any> = (route: any) => {
   const userId: string | null = route.match.params.user_id;
 
   return (
-    <LoginRequired adminOnly={true}>
-      <AppContext.Consumer>
-        {(context: any) => (userId ? <AdminUserDetailsForm userId={userId} /> : <UserManagementListing />)}
-      </AppContext.Consumer>
+    <LoginRequired adminOnly={true} context={route.context}>
+      {(userId ? <AdminUserDetailsForm userId={userId} /> : <UserManagementListing context={route.context} />)}
     </LoginRequired>
   );
 };
@@ -1256,16 +1225,14 @@ const RequestsSummary: React.FC<any> = props => {
 export const MyRequestsPage: React.FC<any> = (route: any) => {
   const [selectedRequest, setSelectedRequest] = useState(null);
   return (
-    <LoginRequired>
-      <AppContext.Consumer>
-        {(context: any) =>
-          selectedRequest ? (
-            <RequestSummary context={context} request={selectedRequest} onClear={() => setSelectedRequest(null)} />
-          ) : (
-            <RequestsSummary context={context} onSelectRequest={setSelectedRequest} />
-          )
-        }
-      </AppContext.Consumer>
+    <LoginRequired context={route.context}>
+      {
+        selectedRequest ? (
+          <RequestSummary context={route.context} request={selectedRequest} onClear={() => setSelectedRequest(null)} />
+        ) : (
+          <RequestsSummary context={route.context} onSelectRequest={setSelectedRequest} />
+        )
+      }
     </LoginRequired>
   );
 };

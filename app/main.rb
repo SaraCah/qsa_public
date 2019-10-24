@@ -79,6 +79,26 @@ class QSAPublic < Sinatra::Base
     FileUtils.mkdir_p(File.join(File.dirname(__FILE__), '..', 'static'))
   end
 
+  configure do
+    # Write our frontend config
+
+    target = if QSAPublic.development?
+      File.join(File.dirname(__FILE__), '..', 'qsa-public-spa', 'public', 'AppConfig.js')
+    else
+      File.join(File.dirname(__FILE__), '..', 'static', 'AppConfig.js')
+    end
+
+    exported_properties = [:minicart_base_url, :minicart_css_url, :minicart_contents_url, :minicart_script_url].map {|prop| [prop.to_s, AppConfig[prop]]}.to_h
+
+    File.open(target, 'w') do |fh|
+      fh.write("// AUTO-GENERATED: Do not edit!\n")
+      fh.write("window.AppConfig = ")
+      fh.write(exported_properties.to_json)
+      fh.write(";\n")
+    end
+  end
+
+
 
   # Add CORS headers
   class CORSHeaders

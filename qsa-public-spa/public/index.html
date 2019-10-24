@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#000000" />
     <meta
       name="description"
-      content="Web site created using create-react-app"
+      content="Queensland State Archives: Archives Search"
     />
     <link rel="apple-touch-icon" href="logo192.png" />
     <!--
@@ -26,15 +26,26 @@
     -->
     <link rel="stylesheet" href="%PUBLIC_URL%/assets/fontawesome/css/all.min.css" />
 
-    <link type="text/css"
-          href="https://test.smartservice.qld.gov.au/payment/ui/minicart_1.0.css"
-          rel="stylesheet" />
-    <script src="https://test.smartservice.qld.gov.au/payment/minicart/contents_1.0.js"
-            type="text/javascript">
+    <title>Archives Search | Queensland State Archives | Queensland Government</title>
+
+    <script src="%PUBLIC_URL%/AppConfig.js"></script>
+
+    <script>
+      // Prepare the cart!
+      const minicartCSS = document.createElement('link');
+      minicartCSS.href = window.AppConfig.minicart_css_url;
+      minicartCSS.rel = "stylesheet";
+      minicartCSS.type = "text/css";
+
+      const minicartContents = document.createElement('script');
+      minicartContents.src = window.AppConfig.minicart_contents_url;
+      minicartContents.async = false;
+
+      document.head.appendChild(minicartCSS);
+      document.head.appendChild(minicartContents);
     </script>
 
 
-    <title>Archives Search | Queensland State Archives | Queensland Government</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

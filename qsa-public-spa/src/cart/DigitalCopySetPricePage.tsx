@@ -7,9 +7,9 @@ import Layout from '../recordViews/Layout';
 import { Http } from '../utils/http';
 import {centsToString} from "../utils/currency";
 
-declare var SSQ: any;
+export const DigitalCopySetPricePage: React.FC<any> = (route: any) => {
+  const context = route.context;
 
-export const DigitalCopySetPricePage: React.FC<any> = () => {
   const [deliveryMethod, setDeliveryMethod] = useState('digital');
   const [registeredPost, setRegisteredPost] = useState(false);
 
@@ -18,7 +18,7 @@ export const DigitalCopySetPricePage: React.FC<any> = () => {
   const [showError, setShowError]: [string?, any?] = useState(undefined);
   const [showMinicart, setShowMinicart] = useState(false);
   const [minicartLoaded, setMinicartLoaded] = useState(false);
-  const [minicartId] = useState(SSQ.cart.id);
+  const [minicartId] = useState((window as any).SSQ.cart.id);
   const [submitDisabled, setSubmitDisabled] = useState(false);
 
   useEffect(() => {
@@ -59,139 +59,132 @@ export const DigitalCopySetPricePage: React.FC<any> = () => {
     }
   }, [deliveryMethod]);
 
+  if (showMinicart) {
+    return <Redirect to="/digital-copies-cart/minicart" push={true} />
+  }
+
+  if (!context.user) {
+    return <></>;
+  }
+
+  if (typeof(digitalCopyPricing) === 'undefined') {
+    return <Layout skipFooter={true} />
+  }
+
+  if (!digitalCopyPricing) {
+    return <Layout>
+      <div className="row">
+        <div className="col-sm-12">
+          <div className="alert alert-danger" role="alert">Unable to process payments at this time.  Please contact Queensland State Archives for assistance.</div>
+        </div>
+      </div>
+    </Layout>
+  }
+
   return (
-    <AppContext.Consumer>
-      {(context: any): React.ReactElement => {
-        if (showMinicart) {
-          return <Redirect to="/digital-copies-cart/minicart" push={true} />
-        }
+    <Layout>
+      <div className="row">
+        <div className="col-sm-12">
+          {showError && <div className="alert alert-danger">{showError}</div>}
 
-        if (!context.user) {
-          return <></>;
-        }
-
-        if (typeof(digitalCopyPricing) === 'undefined') {
-          return <Layout skipFooter={true} />
-        }
-
-        if (!digitalCopyPricing) {
-          return <Layout>
-            <div className="row">
-              <div className="col-sm-12">
-                <div className="alert alert-danger" role="alert">Unable to process payments at this time.  Please contact Queensland State Archives for assistance.</div>
-              </div>
+          <article>
+            <h2>Digital Copy Set Price Requests</h2>
+            <div className="alert alert-success" role="alert">
+              <h2>
+                <i className="fa fa-comments" />
+                Set Price Requests
+              </h2>
+              <p>
+                These copy charges are based on the average size of files within a series (a group of related records), not on the number of pages within individual records. The relevant charge is then applied to all items within the series.
+              </p>
             </div>
-          </Layout>
-        }
-
-        return (
-          <Layout>
-            <div className="row">
-              <div className="col-sm-12">
-                {showError && <div className="alert alert-danger">{showError}</div>}
-
-                <article>
-                  <h2>Digital Copy Set Price Requests</h2>
-                  <div className="alert alert-success" role="alert">
-                    <h2>
-                      <i className="fa fa-comments" />
-                      Set Price Requests
-                    </h2>
-                    <p>
-                      These copy charges are based on the average size of files within a series (a group of related records), not on the number of pages within individual records. The relevant charge is then applied to all items within the series.
-                    </p>
+            {
+              context.cart && context.cart.digital_copy_requests.set_price_records.map((cartItem: any) => (
+                <div key={cartItem.id}>
+                  <div className="mb-2 qg-grab" role="listitem">
+                    <div className="d-flex w-100 justify-content-between">
+                      <h2>
+                        <Link to={uriFor(cartItem.record.controlling_record.qsa_id_prefixed, 'archival_object')}>
+                          {cartItem.record.qsa_id_prefixed}: {cartItem.record.display_string}
+                        </Link>
+                      </h2>
+                      <span className="badge">Open record</span>
+                    </div>
+                    <dl className="row">
+                      <dt className="col-xs-6">Item type</dt>
+                      <dd className="col-xs-6">Physical representation</dd>
+                      <dt className="col-xs-6">Parent item</dt>
+                      <dd className="col-xs-6">
+                        <Link to={uriFor(cartItem.record.controlling_record.qsa_id_prefixed, 'archival_object')}>
+                          {cartItem.record.controlling_record.qsa_id_prefixed}
+                        </Link>
+                      </dd>
+                      <dt className="col-xs-6">Unit price</dt>
+                      <dd className="col-xs-6">{centsToString(cartItem.price)}</dd>
+                    </dl>
                   </div>
-                  {
-                    context.cart && context.cart.digital_copy_requests.set_price_records.map((cartItem: any) => (
-                      <div key={cartItem.id}>
-                        <div className="mb-2 qg-grab" role="listitem">
-                          <div className="d-flex w-100 justify-content-between">
-                            <h2>
-                              <Link to={uriFor(cartItem.record.controlling_record.qsa_id_prefixed, 'archival_object')}>
-                                {cartItem.record.qsa_id_prefixed}: {cartItem.record.display_string}
-                              </Link>
-                            </h2>
-                            <span className="badge">Open record</span>
-                          </div>
-                          <dl className="row">
-                            <dt className="col-xs-6">Item type</dt>
-                            <dd className="col-xs-6">Physical representation</dd>
-                            <dt className="col-xs-6">Parent item</dt>
-                            <dd className="col-xs-6">
-                              <Link to={uriFor(cartItem.record.controlling_record.qsa_id_prefixed, 'archival_object')}>
-                                {cartItem.record.controlling_record.qsa_id_prefixed}
-                              </Link>
-                            </dd>
-                            <dt className="col-xs-6">Unit price</dt>
-                            <dd className="col-xs-6">{centsToString(cartItem.price)}</dd>
-                          </dl>
-                        </div>
-                        <div className="clearfix" />
-                      </div>
-                    ))
-                  }
+                  <div className="clearfix" />
+                </div>
+              ))
+            }
 
-                  {context.cart && context.cart.digital_copy_requests.set_price_records.length > 0 &&
-                    <section>
-                      <div className="row">
-                        <div className="col-sm-12">
-                          <label>Delivery method:&nbsp;
-                            <select value={deliveryMethod} onChange={e => setDeliveryMethod(e.target.value)}>
-                              <option value="digital">Digital Download (No extra cost)</option>
-                              <option value="usb">USB via post ({centsToString(digitalCopyPricing.usb + digitalCopyPricing.usb_postage)})</option>
-                            </select>
-                          </label>
-                        </div>
+            {context.cart && context.cart.digital_copy_requests.set_price_records.length > 0 &&
+              <section>
+                <div className="row">
+                  <div className="col-sm-12">
+                    <label>Delivery method:&nbsp;
+                      <select value={deliveryMethod} onChange={e => setDeliveryMethod(e.target.value)}>
+                        <option value="digital">Digital Download (No extra cost)</option>
+                        <option value="usb">USB via post ({centsToString(digitalCopyPricing.usb + digitalCopyPricing.usb_postage)})</option>
+                      </select>
+                    </label>
+                  </div>
+                </div>
+                {
+                  deliveryMethod === 'usb' &&
+                    <div className="row">
+                      <div className="col-sm-12">
+                        <label>Registered Mail ({centsToString(digitalCopyPricing.registered_mail)}):&nbsp;
+                          <input type="checkbox" checked={registeredPost} value="registeredPost" onChange={e => setRegisteredPost(e.target.checked)}/>
+                        </label>
                       </div>
-                      {
-                        deliveryMethod === 'usb' &&
-                        <div className="row">
-                          <div className="col-sm-12">
-                            <label>Registered Mail ({centsToString(digitalCopyPricing.registered_mail)}):&nbsp;
-                              <input type="checkbox" checked={registeredPost} value="registeredPost" onChange={e => setRegisteredPost(e.target.checked)}/>
-                            </label>
-                          </div>
-                        </div>
-                      }
-                      <div className="row">
-                        <div className="col-sm-12">
-                          <hr/>
-                          <strong>Total:</strong> {centsToString(calculateTotal(context.cart))}
-                          <hr/>
-                        </div>
-                      </div>
+                    </div>
+                }
+                <div className="row">
+                  <div className="col-sm-12">
+                    <hr/>
+                    <strong>Total:</strong> {centsToString(calculateTotal(context.cart))}
+                    <hr/>
+                  </div>
+                </div>
 
-                      <div>
-                        <p>
-                          <button className="qg-btn btn-primary"
-                                  disabled={!minicartId || submitDisabled}
-                                  onClick={e => {
-                                    setSubmitDisabled(true);
-                                    Http.get().goToPayment({
-                                      deliveryMethod,
-                                      registeredPost,
-                                      minicartId,
-                                    }).then(() => { context.refreshCart().then(() => {setShowMinicart(true); }) },
-                                            () => {
-                                              setSubmitDisabled(false);
-                                              setShowError("Your payment could not be completed at this time");
-                                            });
-                                  }}>
-                            Continue to payment
-                          </button>&nbsp;&nbsp;
-                          <Link className="qg-btn btn-default" to="/digital-copies-cart">Back to Digital Copy Requests</Link>
-                        </p>
-                      </div>
-                    </section>
-                  }
-                </article>
-              </div>
+                <div>
+                  <p>
+                    <button className="qg-btn btn-primary"
+                            disabled={!minicartId || submitDisabled}
+                            onClick={e => {
+                              setSubmitDisabled(true);
+                              Http.get().goToPayment({
+                                deliveryMethod,
+                                registeredPost,
+                                minicartId,
+                              }).then(() => { context.refreshCart().then(() => {setShowMinicart(true); }) },
+                                      () => {
+                                        setSubmitDisabled(false);
+                                        setShowError("Your payment could not be completed at this time");
+                                      });
+                            }}>
+                      Continue to payment
+                    </button>&nbsp;&nbsp;
+            <Link className="qg-btn btn-default" to="/digital-copies-cart">Back to Digital Copy Requests</Link>
+                  </p>
+                </div>
+              </section>
+            }
+          </article>
+        </div>
 
-            </div>
-          </Layout>
-        )
-        }
-      }
-    </AppContext.Consumer>
+      </div>
+    </Layout>
   );
-};
+}

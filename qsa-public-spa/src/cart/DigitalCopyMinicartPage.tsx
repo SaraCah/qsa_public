@@ -1,22 +1,19 @@
 import React, { useEffect } from 'react';
 import Layout from '../recordViews/Layout';
 
+declare var AppConfig: any;
+
 export const DigitalCopyMinicartPage: React.FC<any> = () => {
 
     useEffect(() => {
         const cartContents = document.createElement('script');
-        cartContents.src = "https://test.smartservice.qld.gov.au/payment/minicart/contents_1.0.js";
+        cartContents.src = AppConfig.minicart_contents_url;
         cartContents.async = false;
 
-        /* const jquery = document.createElement('script');
-         * jquery.src = "https://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js";
-         * jquery.async = false; */
-
         const minicart = document.createElement('script');
-        minicart.src = "https://test.smartservice.qld.gov.au/payment/ui/minicart_1.0.js";
+        minicart.src = AppConfig.minicart_script_url;
         minicart.async = false;
 
-        /* document.body.appendChild(jquery); */
         document.body.appendChild(cartContents);
         document.body.appendChild(minicart);
     }, []);
@@ -33,9 +30,9 @@ export const DigitalCopyMinicartPage: React.FC<any> = () => {
                       <div className="ssq-minicart-cards">
                           <h3>Cards accepted</h3>
                           <ul>
-                              <li><img src="https://test.smartservice.qld.gov.au/payment/minicart/visa.png"
+                              <li><img src="{AppConfig.minicart_base_url + '/payment/minicart/visa.png'}"
                                        alt="Visa" /></li>
-                              <li><img src="https://test.smartservice.qld.gov.au/payment/minicart/mastercard.png"
+                              <li><img src="{AppConfig.minicart_base_url + '/payment/minicart/mastercard.png'}"
                                        alt="MasterCard" /></li>
                           </ul>
                       </div>

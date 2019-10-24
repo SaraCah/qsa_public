@@ -4,6 +4,7 @@ import * as serviceWorker from './serviceWorker';
 import 'bootstrap/dist/js/bootstrap.bundle';
 import './index.scss';
 import { BrowserRouter, Switch, Route, RouteComponentProps } from 'react-router-dom';
+import AppContext from './context/AppContext';
 
 import axios from 'axios';
 
@@ -37,6 +38,7 @@ import { DigitalCopyCartSummaryPage } from './cart/DigitalCopyCartSummaryPage';
 import { DigitalCopyRequestQuotePage } from './cart/DigitalCopyRequestQuotePage';
 import { DigitalCopySetPricePage } from "./cart/DigitalCopySetPricePage";
 import { DigitalCopyMinicartPage } from "./cart/DigitalCopyMinicartPage";
+
 
 /* Establish error handling */
 class ErrorBuffer {
@@ -161,10 +163,22 @@ function wrappedRoute(component: any, opts: { alwaysRender?: boolean; pageTitle?
     }
 
     routeKey++;
-    return React.createElement(
-      component,
-      Object.assign({}, props, { routeKey, setPageTitle }, opts.alwaysRender ? { key: routeKey } : {})
-    );
+    return (<AppContext.Consumer>
+      {
+        (context: any) => {
+          return React.createElement(
+            component,
+            Object.assign({},
+                          props,
+                          {
+                            routeKey,
+                            setPageTitle,
+                            context,
+                          },
+                          opts.alwaysRender ? { key: routeKey } : {}));
+        }
+      }
+    </AppContext.Consumer>);
   };
 }
 
