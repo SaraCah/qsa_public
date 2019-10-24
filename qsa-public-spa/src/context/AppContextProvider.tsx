@@ -19,7 +19,7 @@ class SessionCookie {
 
   static setCookie(name: string, value: string): void {
     const isSecure = window.location.protocol === 'https:' ? ';secure' : '';
-    document.cookie = `${name}=${value};samesite=strict${isSecure};path=/`;
+    document.cookie = `${name}=${value};samesite=Lax${isSecure};path=/`;
   }
 }
 

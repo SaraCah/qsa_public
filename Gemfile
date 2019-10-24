@@ -9,4 +9,5 @@ gem "json", "2.2.0"
 gem "sequel", "5.19.0"
 gem "bcrypt", "3.1.12"
 gem "jdbc-mysql", "5.1.47"
+gem "savon", "2.12.0"
 

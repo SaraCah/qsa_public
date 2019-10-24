@@ -1,17 +1,28 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    akami (1.3.1)
+      gyoku (>= 0.4.0)
+      nokogiri
     backports (3.15.0)
     bcrypt (3.1.12-java)
+    builder (3.2.3)
     erubis (2.7.0)
     fishwife (1.10.1-java)
       rack (>= 1.6.4, < 2.1)
       rjack-jetty (>= 9.2.11, < 9.5)
       rjack-slf4j (~> 1.7.2)
+    gyoku (1.3.1)
+      builder (>= 2.1.2)
+    httpi (2.4.4)
+      rack
+      socksify
     jdbc-mysql (5.1.47)
     json (2.2.0-java)
-    multi_json (1.13.1)
+    multi_json (1.14.1)
     mustermann (1.0.3)
+    nokogiri (1.10.4-java)
+    nori (2.6.0)
     rack (2.0.7)
     rack-protection (2.0.5)
       rack
@@ -19,6 +30,14 @@ GEM
     rjack-logback (1.9.0-java)
       rjack-slf4j (~> 1.7.16)
     rjack-slf4j (1.7.25.0-java)
+    savon (2.12.0)
+      akami (~> 1.2)
+      builder (>= 2.1.2)
+      gyoku (~> 1.2)
+      httpi (~> 2.3)
+      nokogiri (>= 1.8.1)
+      nori (~> 2.4)
+      wasabi (~> 3.4)
     sequel (5.19.0)
     sinatra (2.0.5)
       mustermann (~> 1.0)
@@ -32,7 +51,11 @@ GEM
       rack-protection (= 2.0.5)
       sinatra (= 2.0.5)
       tilt (>= 1.3, < 3)
+    socksify (1.7.1)
     tilt (2.0.10)
+    wasabi (3.5.0)
+      httpi (~> 2.0)
+      nokogiri (>= 1.4.2)
 
 PLATFORMS
   java
@@ -44,6 +67,7 @@ DEPENDENCIES
   jdbc-mysql (= 5.1.47)
   json (= 2.2.0)
   rjack-logback (= 1.9.0)
+  savon (= 2.12.0)
   sequel (= 5.19.0)
   sinatra (= 2.0.5)
   sinatra-contrib (= 2.0.5)

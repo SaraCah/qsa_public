@@ -119,7 +119,7 @@ const Layout: React.FC<any> = (props: any) => {
             </div>
             <ul className="qg-utilities list-inline col-xs-6 col-md-5">
               <li>
-                <a href="#">
+                <a href="/digital-copies-cart/minicart">
                   <span className="fa fa-shopping-cart fa-2x" aria-hidden="true" />
                 </a>
               </li>

@@ -26,6 +26,7 @@ const userRequestsUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/reque
 const clearCartUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/cart/clear`;
 const submitDigitalQuoteUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/cart/create_digital_copy_quote_requests`;
 const digitalCopyPricingUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/digital_copy_pricing`;
+const submitOrderUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/submit_order`;
 
 
 export class Http {
@@ -341,4 +342,16 @@ export class Http {
     return response.data || {};
   }
 
+  async goToPayment(options: any): Promise<any> {
+    const bodyFormData = new FormData();
+
+    Object.keys(options).forEach((key: string) => {
+      bodyFormData.set(key, options[key]);
+    });
+
+    const config = this.getConfig();
+    config.headers['Content-Type'] = 'multipart/form-data';
+
+    return await axios.post(submitOrderUrl, bodyFormData, config);
+  }
 }

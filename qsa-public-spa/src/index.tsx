@@ -35,7 +35,8 @@ import { PasswordRecoveryPage } from './recordViews/PasswordRecovery';
 import { MyReadingRoomRequestsCartPage } from './cart/MyReadingRoomRequestsCartPage';
 import { DigitalCopyCartSummaryPage } from './cart/DigitalCopyCartSummaryPage';
 import { DigitalCopyRequestQuotePage } from './cart/DigitalCopyRequestQuotePage';
-import {DigitalCopySetPricePage} from "./cart/DigitalCopySetPricePage";
+import { DigitalCopySetPricePage } from "./cart/DigitalCopySetPricePage";
+import { DigitalCopyMinicartPage } from "./cart/DigitalCopyMinicartPage";
 
 /* Establish error handling */
 class ErrorBuffer {
@@ -88,7 +89,7 @@ class ErrorBuffer {
         filename: error.filename,
         lineno: error.lineno,
         colno: error.colno,
-        stack: error.error.stack
+        stack: (error.error && error.error.stack) ? error.error.stack : [],
       };
     });
   }
@@ -196,6 +197,7 @@ ReactDOM.render(
         <Route exact path="/digital-copies-cart" component={wrappedRoute(DigitalCopyCartSummaryPage, { pageTitle: 'Pending Digital Copy Requests' })} />
         <Route exact path="/digital-copies-cart/request-quote" component={wrappedRoute(DigitalCopyRequestQuotePage, { pageTitle: 'Request Quote for Digital Copies' })} />
         <Route exact path="/digital-copies-cart/set-price-checkout" component={wrappedRoute(DigitalCopySetPricePage, { pageTitle: 'Checkout Set Price Digital Copies' })} />
+        <Route exact path="/digital-copies-cart/minicart" component={wrappedRoute(DigitalCopyMinicartPage, { pageTitle: 'Confirm Your Order' })} />
         <Route exact path="/my-requests" component={wrappedRoute(MyRequestsPage, { pageTitle: 'My Requests' })} />
         <Route
           exact

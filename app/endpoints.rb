@@ -455,7 +455,35 @@ class QSAPublic < Sinatra::Base
     json_response(Carts.get_pricing)
   end
 
+  Endpoint.post('/api/submit_order')
+    .param(:deliveryMethod, String, "Delivery method")
+    .param(:registeredPost, String, "Registered post?") \
+    .param(:minicartId, String, "Minicart ID") \
+  do
+    if Ctx.user_logged_in?
+      cart = Carts.get(Ctx.get.session.user_id)
 
+      $LOG.info("Submitting order for user #{Ctx.get.session.user_id}")
+
+      minicart = Minicart.new(params[:minicartId], env['HTTP_ORIGIN'])
+
+      minicart.add_cart(cart)
+      minicart.add_registered_post if params[:registeredPost] == 'true'
+      minicart.set_delivery_method(params[:deliveryMethod])
+
+      minicart.submit!
+
+      cart.fetch(:digital_copy_requests).fetch(:set_price_records).each do |item|
+        Carts.remove_item(Ctx.get.session.user_id, item.fetch(:id))
+      end
+
+      $LOG.info("Order succeeded for user #{Ctx.get.session.user_id}")
+
+      [200]
+    else
+      [404]
+    end
+  end
 
   if !defined?(STATIC_DIR)
     STATIC_DIR = File.realpath(File.absolute_path(File.join(File.dirname(__FILE__), '..', 'static')))

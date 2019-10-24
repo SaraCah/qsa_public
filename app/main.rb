@@ -24,6 +24,8 @@ RJack::Logback.configure do
   RJack::Logback.root.level = RJack::Logback::INFO
 end
 
+require 'savon'
+
 require 'securerandom'
 require 'fileutils'
 require 'net/http'
@@ -53,6 +55,7 @@ require 'models/user_form_dto'
 require 'models/user_dto'
 require 'models/paged_results'
 require 'models/cart_item_dto'
+require 'models/minicart'
 
 require 'storage/stale_record_exception'
 require 'storage/base_storage'

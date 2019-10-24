@@ -7,12 +7,19 @@ import Layout from '../recordViews/Layout';
 import { Http } from '../utils/http';
 import {centsToString} from "../utils/currency";
 
+declare var SSQ: any;
 
 export const DigitalCopySetPricePage: React.FC<any> = () => {
   const [deliveryMethod, setDeliveryMethod] = useState('digital');
   const [registeredPost, setRegisteredPost] = useState(false);
 
   const [digitalCopyPricing, setDigitalCopyPricing]: [any, any] = useState(undefined);
+
+  const [showError, setShowError]: [string?, any?] = useState(undefined);
+  const [showMinicart, setShowMinicart] = useState(false);
+  const [minicartLoaded, setMinicartLoaded] = useState(false);
+  const [minicartId] = useState(SSQ.cart.id);
+  const [submitDisabled, setSubmitDisabled] = useState(false);
 
   useEffect(() => {
     if (typeof(digitalCopyPricing) === 'undefined') {
@@ -55,6 +62,10 @@ export const DigitalCopySetPricePage: React.FC<any> = () => {
   return (
     <AppContext.Consumer>
       {(context: any): React.ReactElement => {
+        if (showMinicart) {
+          return <Redirect to="/digital-copies-cart/minicart" push={true} />
+        }
+
         if (!context.user) {
           return <></>;
         }
@@ -77,6 +88,8 @@ export const DigitalCopySetPricePage: React.FC<any> = () => {
           <Layout>
             <div className="row">
               <div className="col-sm-12">
+                {showError && <div className="alert alert-danger">{showError}</div>}
+
                 <article>
                   <h2>Digital Copy Set Price Requests</h2>
                   <div className="alert alert-success" role="alert">
@@ -151,7 +164,19 @@ export const DigitalCopySetPricePage: React.FC<any> = () => {
                       <div>
                         <p>
                           <button className="qg-btn btn-primary"
-                                  onClick={e => { alert("bang!") }}>
+                                  disabled={!minicartId || submitDisabled}
+                                  onClick={e => {
+                                    setSubmitDisabled(true);
+                                    Http.get().goToPayment({
+                                      deliveryMethod,
+                                      registeredPost,
+                                      minicartId,
+                                    }).then(() => { context.refreshCart().then(() => {setShowMinicart(true); }) },
+                                            () => {
+                                              setSubmitDisabled(false);
+                                              setShowError("Your payment could not be completed at this time");
+                                            });
+                                  }}>
                             Continue to payment
                           </button>&nbsp;&nbsp;
                           <Link className="qg-btn btn-default" to="/digital-copies-cart">Back to Digital Copy Requests</Link>
@@ -161,6 +186,7 @@ export const DigitalCopySetPricePage: React.FC<any> = () => {
                   }
                 </article>
               </div>
+
             </div>
           </Layout>
         )

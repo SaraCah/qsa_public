@@ -115,6 +115,10 @@ export const DigitalCopyCartSummaryPage: React.FC<RouteComponentProps<any>> = (r
                     </div>
                   </>
                 )}
+
+                <p>
+                  <small><Link to="/digital-copies-cart/minicart">View your QGov Cart</Link></small>
+                </p>
               </div>
             </div>
           </Layout>
