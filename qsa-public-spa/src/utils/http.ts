@@ -3,30 +3,33 @@ import { AdvancedSearchQuery } from '../models/AdvancedSearch';
 import { UserForm } from '../models/User';
 import { PasswordRecoveryResponse } from '../models/HttpResponse';
 
-const searchUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/advanced_search`;
-const fetchUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/fetch`;
-const contextUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/fetch_context`;
-const loginUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/authenticate`;
-const logoutUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/logout`;
-const loggedInUserUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/logged_in_user`;
-const registerUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users`;
-const updateContactDetailsUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/update`;
-const updatePasswordUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/update_password`;
-const recoveryTokenUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/generate_token`;
-const recoveryTokenPasswordUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/token_update_password`;
-const userUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/admin/user`;
-const usersUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/admin/users`;
-const becomeUserUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/admin/become_user`;
-const cartUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/cart`;
-const addToCartUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/cart/add_item`;
-const updateCartItemsUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/cart/update_items`;
-const removeFromCartUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/cart/remove_item`;
-const submitReadingRoomRequestsUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/cart/create_reading_room_requests`;
-const userRequestsUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/requests`;
-const clearCartUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/cart/clear`;
-const submitDigitalQuoteUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/cart/create_digital_copy_quote_requests`;
-const digitalCopyPricingUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/digital_copy_pricing`;
-const submitOrderUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/submit_order`;
+// This will only be set in development mode.  Production runs everything on the same domain.
+const baseURL = process.env.REACT_APP_QSA_PUBLIC_URL || '';
+
+const searchUrl = `${baseURL}/api/advanced_search`;
+const fetchUrl = `${baseURL}/api/fetch`;
+const contextUrl = `${baseURL}/api/fetch_context`;
+const loginUrl = `${baseURL}/api/authenticate`;
+const logoutUrl = `${baseURL}/api/logout`;
+const loggedInUserUrl = `${baseURL}/api/logged_in_user`;
+const registerUrl = `${baseURL}/api/users`;
+const updateContactDetailsUrl = `${baseURL}/api/users/update`;
+const updatePasswordUrl = `${baseURL}/api/users/update_password`;
+const recoveryTokenUrl = `${baseURL}/api/generate_token`;
+const recoveryTokenPasswordUrl = `${baseURL}/api/token_update_password`;
+const userUrl = `${baseURL}/api/admin/user`;
+const usersUrl = `${baseURL}/api/admin/users`;
+const becomeUserUrl = `${baseURL}/api/admin/become_user`;
+const cartUrl = `${baseURL}/api/users/cart`;
+const addToCartUrl = `${baseURL}/api/users/cart/add_item`;
+const updateCartItemsUrl = `${baseURL}/api/users/cart/update_items`;
+const removeFromCartUrl = `${baseURL}/api/users/cart/remove_item`;
+const submitReadingRoomRequestsUrl = `${baseURL}/api/users/cart/create_reading_room_requests`;
+const userRequestsUrl = `${baseURL}/api/users/requests`;
+const clearCartUrl = `${baseURL}/api/users/cart/clear`;
+const submitDigitalQuoteUrl = `${baseURL}/api/users/cart/create_digital_copy_quote_requests`;
+const digitalCopyPricingUrl = `${baseURL}/api/digital_copy_pricing`;
+const submitOrderUrl = `${baseURL}/api/submit_order`;
 
 
 export class Http {
