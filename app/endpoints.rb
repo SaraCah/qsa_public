@@ -465,7 +465,11 @@ class QSAPublic < Sinatra::Base
 
       $LOG.info("Submitting order for user #{Ctx.get.session.user_id}")
 
-      minicart = Minicart.new(params[:minicartId], env['HTTP_ORIGIN'])
+      scheme = env['X_FORWARDED_PROTO'] || env['rack.url_scheme'] || 'http'
+      host = env['HTTP_HOST']
+      our_url = "#{scheme}://#{host}"
+
+      minicart = Minicart.new(params[:minicartId], our_url)
 
       minicart.add_cart(cart)
       minicart.add_registered_post if params[:registeredPost] == 'true'
