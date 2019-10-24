@@ -30,3 +30,6 @@
 /qsa-public-spa/yarn-error.log*
 
 /qsa-public-spa/.idea/
+
+# Generated on startup from config.rb
+/qsa-public-spa/public/AppConfig.js
