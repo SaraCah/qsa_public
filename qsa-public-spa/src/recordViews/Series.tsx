@@ -31,7 +31,7 @@ const SeriesPage: React.FC<any> = (route: any) => {
   if (notFoundRedirect) {
     return <Redirect to="/404" push={true} />;
   } else if (!series) {
-    return <Layout footer={false} />;
+    return <Layout skipFooter={true} />;
   } else {
     route.setPageTitle(`Series: ${series.get('title')}`);
 

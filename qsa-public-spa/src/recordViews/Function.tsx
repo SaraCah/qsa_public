@@ -32,7 +32,7 @@ const FunctionPage: React.FC<any> = (route: any) => {
   if (notFoundRedirect) {
     return <Redirect to="/404" push={true} />;
   } else if (!currentFunction) {
-    return <Layout footer={false} />;
+    return <Layout skipFooter={true} />;
   } else {
     route.setPageTitle(`Function: ${currentFunction.get('title')}`);
 

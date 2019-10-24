@@ -12,6 +12,21 @@ export const DigitalCopySetPricePage: React.FC<any> = () => {
   const [deliveryMethod, setDeliveryMethod] = useState('digital');
   const [registeredPost, setRegisteredPost] = useState(false);
 
+  const [digitalCopyPricing, setDigitalCopyPricing]: [any, any] = useState(undefined);
+
+  useEffect(() => {
+    if (typeof(digitalCopyPricing) === 'undefined') {
+      Http.get().getDigitalCopyPricing().then(
+        (pricing: any) => {
+          setDigitalCopyPricing(pricing);
+        },
+        () => {
+          setDigitalCopyPricing(null);
+        }
+      );
+    }
+  }, []);
+
   const calculateTotal = (cart: any) => {
     let total_in_cents = 0;
 
@@ -20,11 +35,12 @@ export const DigitalCopySetPricePage: React.FC<any> = () => {
     });
 
     if (deliveryMethod === 'usb') {
-      total_in_cents += 1700;
+      total_in_cents += digitalCopyPricing.usb;
+      total_in_cents += digitalCopyPricing.usb_postage;
     }
 
     if (registeredPost) {
-      total_in_cents += 710;
+      total_in_cents += digitalCopyPricing.registered_mail;
     }
 
     return total_in_cents;
@@ -41,6 +57,20 @@ export const DigitalCopySetPricePage: React.FC<any> = () => {
       {(context: any): React.ReactElement => {
         if (!context.user) {
           return <></>;
+        }
+
+        if (typeof(digitalCopyPricing) === 'undefined') {
+          return <Layout skipFooter={true} />
+        }
+
+        if (!digitalCopyPricing) {
+          return <Layout>
+            <div className="row">
+              <div className="col-sm-12">
+                <div className="alert alert-danger" role="alert">Unable to process payments at this time.  Please contact Queensland State Archives for assistance.</div>
+              </div>
+            </div>
+          </Layout>
         }
 
         return (
@@ -95,7 +125,7 @@ export const DigitalCopySetPricePage: React.FC<any> = () => {
                           <label>Delivery method:&nbsp;
                             <select value={deliveryMethod} onChange={e => setDeliveryMethod(e.target.value)}>
                               <option value="digital">Digital Download (No extra cost)</option>
-                              <option value="usb">USB via post ($17.00)</option>
+                              <option value="usb">USB via post ({centsToString(digitalCopyPricing.usb + digitalCopyPricing.usb_postage)})</option>
                             </select>
                           </label>
                         </div>
@@ -104,7 +134,7 @@ export const DigitalCopySetPricePage: React.FC<any> = () => {
                         deliveryMethod === 'usb' &&
                         <div className="row">
                           <div className="col-sm-12">
-                            <label>Registered Post ($7.10):&nbsp;
+                            <label>Registered Mail ({centsToString(digitalCopyPricing.registered_mail)}):&nbsp;
                               <input type="checkbox" checked={registeredPost} value="registeredPost" onChange={e => setRegisteredPost(e.target.checked)}/>
                             </label>
                           </div>

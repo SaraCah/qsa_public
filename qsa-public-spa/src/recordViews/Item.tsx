@@ -366,7 +366,7 @@ const ItemPage: React.FC<any> = (route: any) => {
   if (notFoundRedirect) {
     return <Redirect to="/404" push={true} />;
   } else if (!item) {
-    return <Layout footer={false} />;
+    return <Layout skipFooter={true} />;
   } else {
     route.setPageTitle(`Item: ${item.get('title')}`);
 

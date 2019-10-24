@@ -32,7 +32,7 @@ const AgencyPage: React.FC<any> = (route: any) => {
   if (notFoundRedirect) {
     return <Redirect to="/404" push={true} />;
   } else if (!agency) {
-    return <Layout footer={false} />;
+    return <Layout skipFooter={true} />;
   } else {
     route.setPageTitle(`Agency: ${agency.get('display_string')}`);
 

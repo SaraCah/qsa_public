@@ -25,6 +25,7 @@ const submitReadingRoomRequestsUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/ap
 const userRequestsUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/requests`;
 const clearCartUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/cart/clear`;
 const submitDigitalQuoteUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/users/cart/create_digital_copy_quote_requests`;
+const digitalCopyPricingUrl = `${process.env.REACT_APP_QSA_PUBLIC_URL}/api/digital_copy_pricing`;
 
 
 export class Http {
@@ -332,6 +333,12 @@ export class Http {
     });
 
     return response.data || [];
+  }
+
+  async getDigitalCopyPricing(): Promise<any> {
+    const response = await axios.get(`${digitalCopyPricingUrl}`, this.getConfig());
+
+    return response.data || {};
   }
 
 }

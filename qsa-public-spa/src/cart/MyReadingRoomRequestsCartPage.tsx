@@ -39,7 +39,7 @@ export const MyReadingRoomRequestsCartPage: React.FC<any> = () => {
     <AppContext.Consumer>
       {(context: any): React.ReactElement => (
         <>
-          {!context.sessionLoaded && <Layout footer={false} />}
+          {!context.sessionLoaded && <Layout skipFooter={true} />}
           {context.sessionLoaded && (
             <Layout>
               <form onSubmit={e => handleSubmit(e, context)}>

@@ -248,4 +248,12 @@ class Carts < BaseStorage
     end
   end
 
+  def self.get_pricing
+    db[:digital_copy_pricing]
+      .filter(Sequel.~(:type => 'record'))
+      .filter(:active => 1).map {|row|
+      [row[:type], row[:price_cents]]
+    }.to_h
+  end
+
 end

@@ -80,7 +80,7 @@ export const MyDigitalCopyRequestsCartPage: React.FC<any> = () => {
             setCartNeedsRefresh(false);
             setCart(Object.assign({}, context.cart, { refreshCart: context.refreshCart }));
           }
-          return <Layout footer={false}></Layout>;
+          return <Layout skipFooter={true}></Layout>;
         } else {
           return (
             <Layout>

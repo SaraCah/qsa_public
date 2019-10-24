@@ -32,7 +32,7 @@ const MandatePage: React.FC<any> = (route: any) => {
   if (notFoundRedirect) {
     return <Redirect to="/404" push={true} />;
   } else if (!currentMandate) {
-    return <Layout footer={false} />;
+    return <Layout skipFooter={true} />;
   } else {
     route.setPageTitle(`Mandate: ${currentMandate.get('title')}`);
 
