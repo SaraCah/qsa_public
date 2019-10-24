@@ -33,8 +33,8 @@ import {
 import { PasswordRecoveryPage } from './recordViews/PasswordRecovery';
 
 import { MyReadingRoomRequestsCartPage } from './cart/MyReadingRoomRequestsCartPage';
-import { MyDigitalCopyRequestsCartPage } from './cart/MyDigitalCopyRequestsCartPage';
-
+import { DigitalCopyCartSummaryPage } from './cart/DigitalCopyCartSummaryPage';
+import { DigitalCopyRequestQuotePage } from './cart/DigitalCopyRequestQuotePage';
 
 /* Establish error handling */
 class ErrorBuffer {
@@ -192,7 +192,8 @@ ReactDOM.render(
         />
         <Route exact path="/my-account" component={wrappedRoute(MyAccountPage, { pageTitle: 'My Account' })} />
         <Route exact path="/reading-room-requests-cart" component={wrappedRoute(MyReadingRoomRequestsCartPage, { pageTitle: 'Pending Reading Room Requests' })} />
-        <Route exact path="/digital-copies-cart" component={wrappedRoute(MyDigitalCopyRequestsCartPage, { pageTitle: 'Pending Digital Copy Requests' })} />
+        <Route exact path="/digital-copies-cart" component={wrappedRoute(DigitalCopyCartSummaryPage, { pageTitle: 'Pending Digital Copy Requests' })} />
+        <Route exact path="/digital-copies-cart/request-quote" component={wrappedRoute(DigitalCopyRequestQuotePage, { pageTitle: 'Request Quote for Digital Copies' })} />
         <Route exact path="/my-requests" component={wrappedRoute(MyRequestsPage, { pageTitle: 'My Requests' })} />
         <Route
           exact

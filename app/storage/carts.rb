@@ -98,13 +98,6 @@ class Carts < BaseStorage
         .filter(id: cart_item_dto.fetch('id'))
         .update(cart_item_options)
     end
-
-    cart_item_ids = cart_item_dtos.map{|dto| dto.fetch('id')}
-    db[:cart_item]
-      .filter(user_id: user_id)
-      .filter(request_type: request_type)
-      .filter(Sequel.~(id: cart_item_ids))
-      .delete
   end
 
   def self.add_item(user_id, request_type, item_id)
