@@ -67,7 +67,8 @@ class Carts < BaseStorage
 
     DB.open do |db|
       prices_by_uri = db[:digital_copy_pricing]
-                        .filter(:aspace_record_uri => request_to_linked_uris.values.flatten)
+                        .filter(:aspace_record_uri => request_to_linked_uris.values.flatten,
+                                :active => 1)
                         .select(:aspace_record_uri, :price_cents)
                         .map {|row| [row[:aspace_record_uri], row[:price_cents]]}
                         .to_h
