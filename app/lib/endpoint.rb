@@ -123,7 +123,7 @@ class Endpoint
         if session_id = env['HTTP_X_ARCHIVESSEARCH_SESSION']
           begin
             Ctx.get.session = Sessions.get_session(session_id)
-          rescue SessionNotFoundError
+          rescue Sessions::SessionNotFoundError
             # User's token not valid
           end
         end
