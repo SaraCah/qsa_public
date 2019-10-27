@@ -3,16 +3,19 @@ Sequel.migration do
     # clear all user carts
     self[:cart_item].delete
 
+    # drop_constraint(:user_id)
     alter_table(:cart_item) do
       drop_foreign_key(:user_id)
-
-      # drop the existing constraint
-      begin
+    end
+    begin
+      alter_table(:cart_item) do
         drop_constraint(:user_id)
-      rescue
-        # not there, all good
       end
+    rescue
+      # all good, it's gone
+    end
 
+    alter_table(:cart_item) do
       add_foreign_key(:user_id, :user)
 
       # add a uniq_hash column
