@@ -4,9 +4,20 @@ Sequel.migration do
     self[:cart_item].delete
 
     # drop_constraint(:user_id)
-    alter_table(:cart_item) do
-      drop_foreign_key(:user_id)
+    begin
+      alter_table(:cart_item) do
+        drop_foreign_key(:user_id)
+      end
+    rescue
     end
+
+    begin
+      alter_table(:cart_item) do
+        drop_foreign_key(:cart_item_ibfk_1)
+      end
+    rescue
+    end
+
     begin
       alter_table(:cart_item) do
         drop_constraint(:user_id)
@@ -16,7 +27,7 @@ Sequel.migration do
     end
 
     alter_table(:cart_item) do
-      add_foreign_key(:user_id, :user)
+      add_foreign_key([:user_id], :user)
 
       # add a uniq_hash column
       add_column(:uniq_hash, String, null: false, unique: true, size: 32)
