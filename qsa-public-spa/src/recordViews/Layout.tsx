@@ -46,13 +46,7 @@ const LeftNavigation: React.FC<any> = (props: any) => {
               {props.context.user.is_admin ? (
                 <>
                   <li>
-                    <a href="#">Request list</a>
-                  </li>
-                  <li>
                     <Link to="/admin/users">User management</Link>
-                  </li>
-                  <li>
-                    <a href="#">Admin ordering</a>
                   </li>
                 </>
               ) : (
