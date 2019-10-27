@@ -25,7 +25,9 @@ export const DigitalCopyCartSummaryPage: React.FC<any> = (route: any) => {
 
   if (!context.user) {
     if (context.sessionLoaded) {
-      return <div className="alert alert-warning">Please login to access your cart</div>;
+      return <Layout>
+        <div className="alert alert-warning">Please log in to access your cart</div>
+      </Layout>;
     } else {
       return <></>;
     }

@@ -54,7 +54,7 @@ export const MyReadingRoomRequestsCartPage: React.FC<any> = (route: any) => {
                     Reading room requests created! View them at <Link to="/my-requests">My requests</Link>.
                   </div>
                 )}
-                {!context.user && <div className="alert alert-warning">Please login to access your cart</div>}
+                {!context.user && <div className="alert alert-warning">Please log in to access your cart</div>}
                 {context.user && context.cart && context.cart.reading_room_requests.total_count === 0 && (
                   <div className="alert alert-info">Cart empty</div>
                 )}
