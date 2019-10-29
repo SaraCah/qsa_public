@@ -3,9 +3,7 @@ class UserFormDTO
 
   define_field(:id, Integer, required: false)
   define_field(:email, String, validator: proc {|s, user| UserFormDTO.validate_email(s, user)})
-  define_field(:password, String, required: false, validator: proc {|s, user|
-    user.new? && s.empty? ? "Password can't be blank" : nil
-  })
+  define_field(:password, String, required: false, validator: proc {|s, user| validate_password(s, user)})
   define_field(:confirm_password, String, required: false, validator: proc {|s, user| user.new? && s.empty? ? "Confirm Password can't be blank" : nil})
   define_field(:first_name, String)
   define_field(:last_name, String)
@@ -20,6 +18,20 @@ class UserFormDTO
   define_field(:lock_version, Integer, default: 0)
   define_field(:create_time, Integer, required: false)
   define_field(:modified_time, Integer, required: false)
+
+  def self.validate_password(password, user)
+    if user.new?
+      return "Password can't be blank" if password.empty?
+    end
+
+    return nil if password.empty?
+
+    unless Users.valid_password?(password)
+      return Users::WEAK_PASSWORD_MSG
+    end
+
+    nil
+  end
 
   def self.validate_email(email, user)
     if email.nil? || email.empty?

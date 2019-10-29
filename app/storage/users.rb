@@ -156,7 +156,21 @@ class Users < BaseStorage
     UserDTO.from_row(user)
   end
 
+# Contain both upper and lower case characters e.g. a-z, A-Z
+# Utilise numerals, spaces, and punctuation characters as well as letters e.g. 0-9, !@#$%^&()_+|~-=`{}[]:";'<>?,./
+# Contain at least twelve (12) characters
+  PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9\W]).{12,}$/
+  WEAK_PASSWORD_MSG = 'Password must be at least 12 characters in length, contain both upper and lower case letters, and at least one non-letter (numeral, space or punctuation)'
+
+  def self.valid_password?(password)
+    password =~ PASSWORD_REGEX
+  end
+
   def self.update_password(user_id, current_password, new_password, confirm_new_password)
+    unless valid_password?(new_password)
+      return [{code: WEAK_PASSWORD_MSG, field: 'password'}]
+    end
+
     if DBAuth.authenticate_for_id(user_id, current_password)
       if new_password == confirm_new_password
         DBAuth.set_user_password(user_id, new_password)

@@ -69,7 +69,9 @@ export const RegisterPage: React.FC<any> = (route: any) => {
   };
 
   const onSubmit = (e: any) => {
+    window.scrollTo(0,0);
     setErrors([]);
+
     if (user) {
       Http.get()
         .register(user)
@@ -143,6 +145,9 @@ export const RegisterPage: React.FC<any> = (route: any) => {
                   placeholder="Password"
                   onChange={e => setUser(Object.assign({}, user, { password: e.target.value }))}
                 />
+                <div className="form-text text-muted">
+                  <small>Must be at least 12 characters in length; Include both upper and lower case letters; Include at least one non-letter (numeral, space or punctuation)</small>
+                </div>
               </div>
               <div className="form-group">
                 <label htmlFor="confirm_password">Confirm Password</label>
@@ -600,6 +605,9 @@ const ChangePasswordForm: React.FC<{ context: any }> = ({ context }) => {
                 value={data.password || ''}
                 onChange={e => setData(Object.assign({ ...data }, { password: e.target.value }))}
               />
+              <div className="form-text text-muted">
+                <small>Must be at least 12 characters in length; Include both upper and lower case letters; Include at least one non-letter (numeral, space or punctuation)</small>
+              </div>
             </div>
 
             <div className="form-group">
@@ -735,6 +743,9 @@ const AdminUserDetailsForm: React.FC<any> = ({ userId }) => {
                   placeholder="Password"
                   onChange={e => setUserToEdit(Object.assign({ ...userToEdit }, { password: e.target.value }))}
                 />
+                <div className="form-text text-muted">
+                  <small>Must be at least 12 characters in length; Include both upper and lower case letters; Include at least one non-letter (numeral, space or punctuation)</small>
+                </div>
               </div>
               <div className="form-group">
                 <label htmlFor="confirm-password">Confirm Password</label>

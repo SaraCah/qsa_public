@@ -132,6 +132,9 @@ export const PasswordRecoveryPage: React.FC<any> = (route: any) => {
                     setPassword(passwordInput.value);
                   }}
                 />
+                <div className="form-text text-muted">
+                  <small>Must be at least 12 characters in length; Include both upper and lower case letters; Include at least one non-letter (numeral, space or punctuation)</small>
+                </div>
               </div>
               <div className="form-row col-md-12">
                 <p>
