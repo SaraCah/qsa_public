@@ -496,6 +496,7 @@ class QSAPublic < Sinatra::Base
   # FIXME remove this when emails are sendable
   # THIS ENDPOINT IS FOR DEBUGGING AND TESTING ONLY 
   Endpoint.get('/api/emails') do
+    headers('Cache-Control' => "no-cache")
     send_file(File.join(STATIC_DIR, 'emails.txt'))
   end
 
@@ -521,6 +522,7 @@ class QSAPublic < Sinatra::Base
 
   get '/*' do
     if request.path == '/'
+      headers('Cache-Control' => "no-cache")
       send_file(File.join(STATIC_DIR, 'index.html'))
     else
       requested_file = begin
@@ -538,6 +540,7 @@ class QSAPublic < Sinatra::Base
 
         send_file requested_file
       else
+        headers('Cache-Control' => "no-cache")
         send_file(File.join(STATIC_DIR, 'index.html'))
       end
     end
