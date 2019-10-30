@@ -207,13 +207,20 @@ class QSAPublic < Sinatra::Base
   Endpoint.post('/api/authenticate')
     .param(:email, String, "Email to authenticate")
     .param(:password, String, "Password") do
-    if DBAuth.authenticate(params[:email], params[:password])
+
+    limit = RateLimiter.apply_rate_limit(request.ip)
+    user_limit = RateLimiter.apply_rate_limit(params[:email].downcase)
+
+    if limit.rate_limited || user_limit.rate_limited
+      json_response(authenticated: false,
+                    delay_seconds: [limit.delay_seconds, user_limit.delay_seconds].max)
+    elsif DBAuth.authenticate(params[:email], params[:password])
       user = Users.get_for_email(params[:email])
 
       session_id = Sessions.create_session(user.fetch('id'))
       json_response(authenticated: true, session_id: session_id)
     else
-      json_response(authenticated: false)
+      json_response(authenticated: false, delay_seconds: 0)
     end
   end
 

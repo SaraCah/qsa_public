@@ -65,6 +65,8 @@ require 'storage/db_auth'
 require 'storage/carts'
 require 'storage/requests'
 
+require 'storage/rate_limiter'
+
 require 'endpoints'
 
 

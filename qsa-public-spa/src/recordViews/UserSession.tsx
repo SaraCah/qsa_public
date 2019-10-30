@@ -51,6 +51,7 @@ export const LoginPage: React.FC<any> = (route: any) => {
   const [password, setPassword] = useState('');
   const [showLoginFailed, setShowLoginFailed] = useState(false);
   const [showLoginSuccess, setShowLoginSuccess] = useState(false);
+  const [rateLimitDelay, setRateLimitDelay] = useState(0);
 
   const onSubmit = (e: any, appContext: any) => {
     setShowLoginFailed(false);
@@ -63,6 +64,7 @@ export const LoginPage: React.FC<any> = (route: any) => {
         } else {
           appContext.setUser(null);
           setShowLoginFailed(true);
+          setRateLimitDelay(login_response.delay_seconds);
         }
       });
   };
@@ -102,8 +104,12 @@ export const LoginPage: React.FC<any> = (route: any) => {
           >
             <div className="qg-call-out-box">
               {showLoginFailed && (
-                <div className="alert alert-warning" role="alert" style={{ marginBottom: 20 }}>
+              <div className="alert alert-warning" role="alert" style={{ marginBottom: 20 }}>
+                {rateLimitDelay > 0 ?
+                  <p>Please wait {rateLimitDelay} second(s) before trying again.</p>
+                  :
                   <p>Invalid email or password.</p>
+                }
                 </div>
               )}
               <div className="form-row">
