@@ -2,7 +2,11 @@ import React, { useState } from 'react';
 import { Redirect } from 'react-router';
 import { Http } from '../utils/http';
 import Layout from './Layout';
-import { iconForType, labelForType } from '../utils/typeResolver';
+import {
+  iconForType,
+  labelForAvailability,
+  labelForType
+} from '../utils/typeResolver';
 import { Note, RecordDisplay } from '../models/RecordDisplay';
 import { AccordionPanel, MaybeLink, NoteDisplay, RecordContext, Relationship } from './Helpers';
 import AppContext from '../context/AppContext';
@@ -13,12 +17,25 @@ const PhysicalRepresentation: React.FC<{
 }> = ({ representation, item }) => {
   representation = new RecordDisplay(representation);
 
+  const classForAvailability = (availability: string) => {
+    if (availability === 'available') {
+      return 'badge-success';
+    } else if (REQUESTABLE_AVAILABILITIES.indexOf(availability) >= 0) {
+      return 'badge-warning';
+    } else {
+      return 'badge-danger';
+    }
+  };
+
   return (
     <>
-      <div className="pull-right text-right">
-        <div style={{marginBottom: 10}}><AddToReadingRoomRequestCartButton itemId={representation.get('id')} /></div>
-        <AddToDigitalCopyRequestCartButton itemId={representation.get('id')} />
-      </div>
+      {
+        isRepresentationAvailableForRequest(representation) &&
+        <div className="pull-right text-right">
+          <div style={{marginBottom: 10}}><AddToReadingRoomRequestCartButton itemId={representation.get('id')} /></div>
+          <AddToDigitalCopyRequestCartButton itemId={representation.get('id')} />
+        </div>
+      }
       <dl>
         <dt>ID</dt>
         <dd>{representation.get('qsa_id_prefixed')}</dd>
@@ -26,6 +43,10 @@ const PhysicalRepresentation: React.FC<{
         <dd>{representation.get('title')}</dd>
         <dt>Format</dt>
         <dd>{representation.get('format')}</dd>
+        <dt>Availability</dt>
+        <dd>
+          <span className={`badge badge-pill ${classForAvailability(representation.get('availability'))}`}>{labelForAvailability(representation.get('availability'))}</span>
+        </dd>
         {representation.getMaybe('agency_assigned_id', (value: string) => (
           <>
             <dt>Agency ID</dt>
@@ -238,12 +259,25 @@ const RequestActions: React.FC<any> = ({ item }) => {
   )
 }
 
+const REQUESTABLE_AVAILABILITIES = ['available',
+                                    'unavailable_due_to_conservation',
+                                    'unavailable_due_to_date_range',
+                                    'unavailable_contact_qsa'];
+
+const isRepresentationAvailableForRequest = (representation: RecordDisplay) => {
+  return REQUESTABLE_AVAILABILITIES.indexOf(representation.get('availability')) >= 0;
+};
+
 const DigitalCopyRequestAction: React.FC<any> = ({ item }) => {
-  if (item.getArray('physical_representations').length === 0) {
+  const requestableRepresentations: any[] = item.getArray('physical_representations').filter((representation: any) => {
+    return isRepresentationAvailableForRequest(new RecordDisplay(representation));
+  });
+
+  if (requestableRepresentations.length === 0) {
     return <></>;
   }
 
-  if (item.getArray('physical_representations').length > 1) {
+  if (requestableRepresentations.length > 1) {
     const scrollToRepresentations = () => {
       const target = document.getElementById('physical_representations');
       if (target) {
@@ -287,17 +321,21 @@ const DigitalCopyRequestAction: React.FC<any> = ({ item }) => {
     );
   }
 
-  const itemIdToRequest = item.getArray('physical_representations')[0].id;
+  const itemIdToRequest = requestableRepresentations[0].id;
 
   return <AddToDigitalCopyRequestCartButton itemId={itemIdToRequest} />;
 };
 
 const ReadingRoomRequestAction: React.FC<any> = ({ item }) => {
-  if (item.getArray('physical_representations').length === 0) {
+  const requestableRepresentations: any[] = item.getArray('physical_representations').filter((representation: any) => {
+    return isRepresentationAvailableForRequest(new RecordDisplay(representation));
+  });
+
+  if (requestableRepresentations.length === 0) {
     return <></>;
   }
 
-  if (item.getArray('physical_representations').length > 1) {
+  if (requestableRepresentations.length > 1) {
     const scrollToRepresentations = () => {
       const target = document.getElementById('physical_representations');
       if (target) {
@@ -336,7 +374,7 @@ const ReadingRoomRequestAction: React.FC<any> = ({ item }) => {
     );
   }
 
-  const itemIdToRequest = item.getArray('physical_representations')[0].id;
+  const itemIdToRequest = requestableRepresentations[0].id;
 
   return <AddToReadingRoomRequestCartButton itemId={itemIdToRequest} />;
 };

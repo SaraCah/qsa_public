@@ -40,6 +40,21 @@ export const iconForType = (recordType: string): string => {
   return IconForType[recordType];
 };
 
+const LabelForAvailability: { [name: string]: string } = {
+    available: 'Available. There are no other restrictions current.',
+    unavailable_temporarily: 'Temporarily Unavailable. Contact QSA for more information.',
+    unavailable_due_to_conservation: 'This item must be assessed by a conservator to determine if it can be made available.',
+    unavailable_due_to_condition: 'This item is unavailable due to its condition. Where possible, a copy will be made available.',
+    unavailable_due_to_format:  'This item is unavailable due to its format. Where possible, a copy will be made available.',
+    unavailable_due_to_deaccession: 'This item is unavailable because it has been deaccessioned or destroyed.',
+    unavailable_due_to_date_range: 'As the date range of this item is uncertain, contact QSA to confirm availability.',
+    unavailable_contact_qsa: 'Availability needs to be determined by an archivist. Contact QSA for more information.',
+};
+
+export const labelForAvailability = (availability: string): string => {
+  return LabelForAvailability[availability];
+};
+
 export const uppercaseInitials = (str: string): string => {
   return str
     .split(' ')
