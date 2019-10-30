@@ -25,7 +25,7 @@ export const DigitalCopyCartSummaryPage: React.FC<any> = (route: any) => {
 
   if (!context.user) {
     if (context.sessionLoaded) {
-      return <Layout>
+      return <Layout noindex={true}>
         <div className="alert alert-warning">Please log in to access your cart</div>
       </Layout>;
     } else {
@@ -34,7 +34,7 @@ export const DigitalCopyCartSummaryPage: React.FC<any> = (route: any) => {
   }
 
   return (
-    <Layout>
+    <Layout noindex={true}>
       <div className="row">
         <div className="col-sm-12">
           <h1>

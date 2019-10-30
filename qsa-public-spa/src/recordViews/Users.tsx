@@ -94,7 +94,7 @@ export const RegisterPage: React.FC<any> = (route: any) => {
 
   if (showRegisterSuccess) {
     return (
-      <Layout>
+      <Layout noindex={true}>
         <div className="alert alert-success" role="alert">
           <h2>
             <i className="fa fa-check-circle" />
@@ -109,7 +109,7 @@ export const RegisterPage: React.FC<any> = (route: any) => {
   }
 
   return (
-    <Layout>
+    <Layout noindex={true}>
       <div className="row">
         <div className="col-sm-12">
           <h1>Register</h1>
@@ -355,9 +355,9 @@ const LoginRequired: React.FC<any> = (props: any) => {
   const context = props.context;
 
   if (!context.sessionLoaded) {
-    return <Layout skipFooter={true} />;
+    return <Layout noindex={true} skipFooter={true} />;
   } else if (context.user && ((props.adminOnly && context.user.is_admin) || !props.adminOnly)) {
-    return <Layout showNavForUser={true}>{props.children}</Layout>;
+    return <Layout noindex={true} showNavForUser={true}>{props.children}</Layout>;
   } else if (props.adminOnly) {
     return <Redirect to="/404" push={true} />;
   } else {

@@ -68,11 +68,11 @@ export const DigitalCopySetPricePage: React.FC<any> = (route: any) => {
   }
 
   if (typeof(digitalCopyPricing) === 'undefined') {
-    return <Layout skipFooter={true} />
+    return <Layout noindex={true} skipFooter={true} />
   }
 
   if (!digitalCopyPricing) {
-    return <Layout>
+    return <Layout noindex={true}>
       <div className="row">
         <div className="col-sm-12">
           <div className="alert alert-danger" role="alert">Unable to process payments at this time.  Please contact Queensland State Archives for assistance.</div>
@@ -82,7 +82,7 @@ export const DigitalCopySetPricePage: React.FC<any> = (route: any) => {
   }
 
   return (
-    <Layout>
+    <Layout noindex={true}>
       <div className="row">
         <div className="col-sm-12">
           {showError && <div className="alert alert-danger">{showError}</div>}

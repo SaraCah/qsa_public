@@ -47,7 +47,7 @@ export const PasswordRecoveryPage: React.FC<any> = (route: any) => {
   };
 
   return (
-    <Layout>
+    <Layout noindex={true}>
       {errors.length > 0 && (
         <div className="alert alert-warning" role="alert">
           <h2>

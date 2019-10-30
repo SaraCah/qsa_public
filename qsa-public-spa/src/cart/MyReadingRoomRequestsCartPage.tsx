@@ -39,9 +39,9 @@ export const MyReadingRoomRequestsCartPage: React.FC<any> = (route: any) => {
 
   return (
     <>
-      {!context.sessionLoaded && <Layout skipFooter={true} />}
+      {!context.sessionLoaded && <Layout noindex={true} skipFooter={true} />}
       {context.sessionLoaded && (
-        <Layout>
+        <Layout noindex={true}>
           <form onSubmit={e => handleSubmit(e, context)}>
             <div className="row">
               <div className="col-sm-12">

@@ -71,7 +71,7 @@ export const LoginPage: React.FC<any> = (route: any) => {
 
   if (showLoginSuccess) {
     return (
-      <Layout>
+      <Layout noindex={true}>
         <div className="row">
           <div className="col-sm-12">
             <div className="alert alert-success" role="alert">
@@ -90,7 +90,7 @@ export const LoginPage: React.FC<any> = (route: any) => {
   }
 
   return (
-    <Layout>
+    <Layout noindex={true}>
       <div className="row">
         <div className="col-sm-12">
           <h1>Login</h1>
@@ -186,7 +186,7 @@ export const LogoutPage: React.FC<any> = (route: any) => {
   logout(context)
 
   return (
-    <Layout>
+    <Layout noindex={true}>
       <div className="row">
         <div className="col-sm-12">
           {

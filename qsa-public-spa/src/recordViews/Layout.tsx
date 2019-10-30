@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { UserSession } from './UserSession';
 import AppContext from '../context/AppContext';
@@ -65,12 +65,15 @@ const LeftNavigation: React.FC<any> = (props: any) => {
 };
 
 const Layout: React.FC<any> = (props: any) => {
-  if (props.noindex) {
+  const [noIndexAdded, setNoIndexAdded] = useState(false);
+
+  if (props.noindex && !noIndexAdded) {
     const metaElt = document.createElement('meta');
     metaElt.name = 'robots';
     metaElt.content = 'noindex';
 
     document.head.appendChild(metaElt);
+    setNoIndexAdded(true);
   }
 
   return (

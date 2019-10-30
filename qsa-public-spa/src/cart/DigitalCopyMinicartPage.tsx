@@ -19,7 +19,7 @@ export const DigitalCopyMinicartPage: React.FC<any> = () => {
     }, []);
 
   return (
-      <Layout>
+      <Layout noindex={true}>
           <div id="minicart" className="aside">
               <div className="inner">
                   <div id="ssq-minicart" className="placeholder">

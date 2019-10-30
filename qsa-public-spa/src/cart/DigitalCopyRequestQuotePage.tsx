@@ -70,7 +70,7 @@ export const DigitalCopyRequestQuotePage: React.FC<any> = (route: any) => {
       setCartNeedsRefresh(false);
       setCart(Object.assign({}, context.cart, { refreshCart: context.refreshCart }));
     }
-    return <Layout skipFooter={true}></Layout>;
+    return <Layout noindex={true} skipFooter={true}></Layout>;
   }
 
   if (!context.user) {
@@ -78,7 +78,7 @@ export const DigitalCopyRequestQuotePage: React.FC<any> = (route: any) => {
   }
 
   return (
-    <Layout>
+    <Layout noindex={true}>
       <div className="row">
         <div className="col-sm-12">
           <article>
