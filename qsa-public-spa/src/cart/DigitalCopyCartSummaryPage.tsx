@@ -67,7 +67,7 @@ export const DigitalCopyCartSummaryPage: React.FC<any> = (route: any) => {
                       <tr key={cartItem.id}>
                         <td>
                           <span className="badge badge-info">
-                            {typeof(cartItem.price) === 'undefined' ? 'Requires Quote' : 'Set Price'}
+                            {cartItem.digital_copy_request_type === 'QUOTE_REQUIRED' ? 'Requires Quote' : 'Set Price'}
                           </span>
                         </td>
                         <td>{cartItem.record.display_string}</td>
@@ -76,7 +76,7 @@ export const DigitalCopyCartSummaryPage: React.FC<any> = (route: any) => {
                             {cartItem.record.controlling_record.qsa_id_prefixed}
                           </Link>
                         </td>
-                        <td style={{textAlign: 'right'}}>{typeof(cartItem.price) === 'undefined' ? 'TBC' : centsToString(cartItem.price)}</td>
+                        <td style={{textAlign: 'right'}}>{cartItem.digital_copy_request_type === 'SET_PRICE' ? centsToString(cartItem.price) : 'TBC' }</td>
                         <td style={{textAlign: 'right'}}>
                           <button
                             className="qg-btn btn-default btn-xs"

@@ -4,8 +4,20 @@ class Carts < BaseStorage
   REQUEST_TYPE_DIGITAL_COPY = "DIGITAL_COPY"
   VALID_REQUEST_TYPES = [REQUEST_TYPE_READING_ROOM, REQUEST_TYPE_DIGITAL_COPY]
 
+  DIGITAL_COPY_SET_PRICE = "SET_PRICE"
+  DIGITAL_COPY_QUOTE_REQUIRED = "QUOTE_REQUIRED"
+
+
   def self.build_cart_item_hash(user_id, item_id, request_type)
     Digest::MD5.hexdigest([user_id, item_id, request_type].inspect)
+  end
+
+  def self.set_price_request?(request)
+    if request[:record].fetch('availability') == 'unavailable_due_to_conservation'
+      return false
+    end
+
+    request[:price]
   end
 
   def self.get(user_id)
@@ -32,6 +44,9 @@ class Carts < BaseStorage
     digital_copy_requests = items.select{|item| item[:request_type] == REQUEST_TYPE_DIGITAL_COPY}
 
     add_pricing_to_requests(digital_copy_requests)
+    digital_copy_requests.each do |request|
+      request[:digital_copy_request_type] = set_price_request?(request) ? DIGITAL_COPY_SET_PRICE : DIGITAL_COPY_QUOTE_REQUIRED
+    end
 
     cart = {
       reading_room_requests: {
@@ -42,8 +57,8 @@ class Carts < BaseStorage
       },
       digital_copy_requests: {
         total_count: digital_copy_requests.count,
-        set_price_records: digital_copy_requests.select {|r| r[:price]},
-        quotable_records: digital_copy_requests.select {|r| !r[:price]},
+        set_price_records: digital_copy_requests.select {|r| r[:digital_copy_request_type] == DIGITAL_COPY_SET_PRICE},
+        quotable_records: digital_copy_requests.select {|r| r[:digital_copy_request_type] == DIGITAL_COPY_QUOTE_REQUIRED},
       },
     }
 
