@@ -9,7 +9,7 @@ class DBAuth < BaseStorage
   def self.authenticate(email, password)
     hash = db[:user]
              .join(:dbauth, Sequel[:dbauth][:user_id] => Sequel[:user][:id])
-             .filter(Sequel[:user][:email] => email)
+             .filter(Sequel[:user][:email] => Users.normalise_email(email))
              .filter(Sequel[:user][:inactive] => 0)
              .get(Sequel[:dbauth][:pwhash])
 

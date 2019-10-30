@@ -1,12 +1,16 @@
 class Users < BaseStorage
 
+  def self.normalise_email(email)
+    email.downcase.strip
+  end
+
   def self.create_from_dto(user_form_dto)
-    if db[:user][:email => user_form_dto.fetch('email')].nil?
+    if db[:user][:email => normalise_email(user_form_dto.fetch('email'))].nil?
 
       if user_form_dto.fetch('confirm_password') != user_form_dto.fetch('password')
         return [{code: 'CONFIRM_PASSWORD_MISMATCH', field: 'password'}]
       else
-        user_id = db[:user].insert(:email => user_form_dto.fetch('email'),
+        user_id = db[:user].insert(:email => normalise_email(user_form_dto.fetch('email')),
                                    :first_name => user_form_dto.fetch('first_name'),
                                    :last_name => user_form_dto.fetch('last_name'),
                                    :street_address => user_form_dto.fetch('street_address', nil),
@@ -31,13 +35,13 @@ class Users < BaseStorage
 
   def self.update_from_dto(user_form_dto)
 
-    user_for_email = db[:user][:email => user_form_dto.fetch('email')]
+    user_for_email = db[:user][:email => normalise_email(user_form_dto.fetch('email'))]
     if !user_for_email.nil? && user_for_email[:id] != user_form_dto.fetch('id')
       return [{code: "UNIQUE_CONSTRAINT", field: 'email'}]
     end
 
     data_for_update = {
-      email: user_form_dto.fetch('email'),
+      email: normalise_email(user_form_dto.fetch('email')),
       lock_version: user_form_dto.fetch('lock_version') + 1,
       first_name: user_form_dto.fetch('first_name'),
       last_name: user_form_dto.fetch('last_name'),
@@ -64,7 +68,7 @@ class Users < BaseStorage
 
 
   def self.admin_update_from_dto(user_form_dto)
-    user_for_email = db[:user][:email => user_form_dto.fetch('email')]
+    user_for_email = db[:user][:email => normalise_email(user_form_dto.fetch('email'))]
     if !user_for_email.nil? && user_for_email[:id] != user_form_dto.fetch('id')
       return [{code: "UNIQUE_CONSTRAINT", field: 'email'}]
     end
@@ -76,7 +80,7 @@ class Users < BaseStorage
     end
 
     data_for_update = {
-      email: user_form_dto.fetch('email'),
+      email: normalise_email(user_form_dto.fetch('email')),
       lock_version: user_form_dto.fetch('lock_version') + 1,
       first_name: user_form_dto.fetch('first_name'),
       last_name: user_form_dto.fetch('last_name'),
@@ -149,7 +153,7 @@ class Users < BaseStorage
   end
 
   def self.get_for_email(email)
-    user = db[:user][:email => email]
+    user = db[:user][:email => normalise_email(email)]
 
     return nil unless user
 

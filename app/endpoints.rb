@@ -209,7 +209,7 @@ class QSAPublic < Sinatra::Base
     .param(:password, String, "Password") do
 
     limit = RateLimiter.apply_rate_limit(request.ip)
-    user_limit = RateLimiter.apply_rate_limit(params[:email].downcase)
+    user_limit = RateLimiter.apply_rate_limit(Users.normalise_email(params[:email]))
 
     if limit.rate_limited || user_limit.rate_limited
       json_response(authenticated: false,
