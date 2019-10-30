@@ -197,7 +197,7 @@ export const LogoutPage: React.FC<any> = (route: any) => {
               </div> :
               <div className="alert alert-success" role="alert">
                 <h2><i className="fa fa-check-circle"/>Logout Success</h2>
-                <p>Return to <Link to="/">Archives Search</Link> or login again <Link to="/login">here</Link>.</p>
+                <p>Return to <Link to="/">Archives Search</Link> or log in again <Link to="/login">here</Link>.</p>
               </div>
           }
         </div>
