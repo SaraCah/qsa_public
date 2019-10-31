@@ -48,6 +48,9 @@ const LeftNavigation: React.FC<any> = (props: any) => {
                   <li>
                     <Link to="/admin/users">User management</Link>
                   </li>
+                  <li>
+                    <Link to="/admin/tags">Tag management</Link>
+                  </li>
                 </>
               ) : (
                 <>

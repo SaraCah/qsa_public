@@ -524,6 +524,43 @@ class QSAPublic < Sinatra::Base
     json_response({status: 'success'})
   end
 
+  Endpoint.get('/api/tags/flagged') do
+    if Ctx.user_logged_in?
+      logged_in_user = Users.get(Ctx.get.session.user_id)
+      if logged_in_user.fetch('is_admin')
+        json_response(Tags.all_flagged_tags)
+      else
+        [404]
+      end
+    else
+      [404]
+    end
+  end
+
+  Endpoint.post('/api/tags/moderate')
+    .param(:tag_id, Integer, "Tag Id")
+    .param(:action, String, "Action to perform") \
+  do
+    if Ctx.user_logged_in?
+      logged_in_user = Users.get(Ctx.get.session.user_id)
+      if logged_in_user.fetch('is_admin')
+        if params[:action] == 'unflag'
+          Tags.unflag(params[:tag_id])
+        elsif params[:action] == 'delete'
+          Tags.delete(params[:tag_id])
+        elsif params[:action] == 'ban'
+          Tags.ban(params[:tag_id])
+        end
+
+        json_response({status: 'success'})
+      else
+        [404]
+      end
+    else
+      [404]
+    end
+  end
+
   if !defined?(STATIC_DIR)
     STATIC_DIR = File.realpath(File.absolute_path(File.join(File.dirname(__FILE__), '..', 'static')))
   end

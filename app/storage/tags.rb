@@ -59,11 +59,51 @@ class Tags < BaseStorage
     end
   end
 
-  def self.report_tag(tag_id)
+  def self.flag(tag_id)
     db[:record_tag]
       .filter(id: tag_id)
       .update(flagged: 1,
+              modified_time: java.lang.System.currentTimeMillis,
+              date_flagged: java.lang.System.currentTimeMillis)
+  end
+
+  def self.all_flagged_tags
+    tags = db[:record_tag]
+             .filter(deleted: 0)
+             .filter(flagged: 1)
+             .order(Sequel.desc(:date_flagged))
+             .map{|row|
+               TagDTO.from_row(row)
+             }
+
+    records = Search.get_records_by_ids(tags.map{|tag| tag.fetch('record_id')})
+
+    tags.each do |tag|
+      tag['record'] = records.fetch(tag.fetch('record_id'))
+    end
+
+    tags
+  end
+
+  def self.unflag(tag_id)
+    db[:record_tag]
+      .filter(id: tag_id)
+      .update(flagged: 0,
+              date_flagged: nil,
               modified_time: java.lang.System.currentTimeMillis)
   end
-end
 
+  def self.delete(tag_id)
+    db[:record_tag]
+      .filter(id: tag_id)
+      .update(deleted: 1,
+              modified_time: java.lang.System.currentTimeMillis)
+  end
+
+  def self.ban(tag_id)
+    delete(tag_id)
+    # FIXME delete all tags that match?
+    # FIXME add to banned list
+  end
+
+end

@@ -25,7 +25,7 @@ import {
   MyAccountPage,
   MyContactDetailsPage,
   MyRequestsPage,
-  RegisterPage,
+  RegisterPage, TagManagementPage,
   UserManagementPage
 } from './recordViews/Users';
 import { PasswordRecoveryPage } from './recordViews/PasswordRecovery';
@@ -244,6 +244,13 @@ ReactDOM.render(
           component={wrappedRoute(LogoutPage, {
             pageTitle: 'Logged Out'
           })}
+        />
+        <Route
+            exact
+            path="/admin/tags"
+            component={wrappedRoute(TagManagementPage, {
+              pageTitle: 'Tag Management'
+            })}
         />
         <Route component={wrappedRoute(NotFound, { pageTitle: 'Page not found' })} />
       </Switch>

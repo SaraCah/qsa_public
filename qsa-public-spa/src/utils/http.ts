@@ -33,6 +33,8 @@ const submitOrderUrl = `${baseURL}/api/submit_order`;
 const getTagsUrl = `${baseURL}/api/tags`;
 const addTagUrl = `${baseURL}/api/tags`;
 const reportTagUrl = `${baseURL}/api/tags/report`;
+const getFlaggedTagsUrl = `${baseURL}/api/tags/flagged`;
+const moderateTagUrl = `${baseURL}/api/tags/moderate`;
 
 
 export class Http {
@@ -397,6 +399,28 @@ export class Http {
     config.headers['Content-Type'] = 'multipart/form-data';
 
     const response = await axios.post(reportTagUrl, bodyFormData, config).catch(error => {
+      console.log(error, error.status);
+      return error;
+    });
+
+    return response.data || [];
+  }
+
+  async getAllFlaggedTags(): Promise<any> {
+    const response = await axios.get(`${getFlaggedTagsUrl}`, this.getConfig());
+
+    return response.data || [];
+  }
+
+  async moderateTag(tagId: string, action: string): Promise<any> {
+    const bodyFormData = new FormData();
+    bodyFormData.set('tag_id', tagId);
+    bodyFormData.set('action', action);
+
+    const config = this.getConfig();
+    config.headers['Content-Type'] = 'multipart/form-data';
+
+    const response = await axios.post(moderateTagUrl, bodyFormData, config).catch(error => {
       console.log(error, error.status);
       return error;
     });

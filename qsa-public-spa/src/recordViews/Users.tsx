@@ -303,6 +303,17 @@ const AdminAccountSummary: React.FC = () => {
             </div>
           </div>
         </article>
+        <article className="qg-card col-12 col-sm-6 col-lg-4">
+          <div className="content">
+            <div className="details">
+              <h2>Tag management</h2>
+              <p>Moderate tags and manage the banned tag list</p>
+              <Link to="/admin/tags" className="btn btn-primary">
+                Tag management
+              </Link>
+            </div>
+          </div>
+        </article>
       </section>
     </>
   );
@@ -1245,5 +1256,90 @@ export const MyRequestsPage: React.FC<any> = (route: any) => {
         )
       }
     </LoginRequired>
+  );
+};
+
+const TagModeration: React.FC<any> = props => {
+  const [flaggedTags, setFlaggedTags]: [any, any] = useState([]);
+  const [refreshTags, setRefreshTags]: [any, any] = useState(0);
+
+  useEffect(() => {
+    Http.get().getAllFlaggedTags().then((json: any) => {
+      setFlaggedTags(json);
+    });
+  }, [refreshTags]);
+
+  const moderateTag = (tagId: string, action: string) => {
+    Http.get().moderateTag(tagId, 'unflag').then(() => {
+      setRefreshTags(refreshTags + 1);
+    });
+  };
+
+  const unflagTag = (tagId: string) => {
+    moderateTag(tagId, 'unflag');
+  };
+
+  const deleteTag = (tagId: string) => {
+    moderateTag(tagId, 'delete');
+  };
+
+  const banTag = (tagId: string) => {
+    moderateTag(tagId, 'ban');
+  };
+
+  return (
+    <>
+      <h1>Tag management</h1>
+      <table className="table table-bordered table-striped">
+        <thead>
+          <tr>
+            <th style={{width: '40%'}}>Tag</th>
+            <th style={{width: '20%'}}>Record</th>
+            <th style={{width: '20%'}}>Date Reported</th>
+            <th/>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            flaggedTags.length == 0 && <tr><td colSpan={4} className="table-info">No tags to moderate</td></tr>
+          }
+          {
+            flaggedTags.map((tag: any) => (
+              <tr key={tag.id}>
+                <td>{tag.tag}</td>
+                <td>
+                  <Link to={uriFor(tag.record.qsa_id_prefixed, tag.record.jsonmodel_type)}>
+                    {tag.record.qsa_id_prefixed}
+                  </Link>
+                </td>
+                <td>
+                  {new Date(tag.date_flagged).toLocaleString()}
+                </td>
+                <td>
+                  <button className="qg-btn btn-success btn-xs" onClick={(e) => unflagTag(tag.id)}>
+                    <i aria-hidden="true" className="fa fa-thumbs-up"/> Unflag
+                  </button><br/>
+                  <button className="qg-btn btn-warning btn-xs" onClick={(e) => deleteTag(tag.id)}>
+                    <i aria-hidden="true" className="fa fa-thumbs-down"/> Delete
+                  </button><br/>
+                  <button className="qg-btn btn-danger btn-xs" onClick={(e) => banTag(tag.id)}>
+                    <i aria-hidden="true" className="fa fa-thumbs-down"/> Delete and Ban
+                  </button>
+                </td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </>
+  );
+}
+
+export const TagManagementPage: React.FC<any> = (route: any) => {
+
+  return (
+      <LoginRequired adminOnly={true} context={route.context}>
+        <TagModeration />
+      </LoginRequired>
   );
 };

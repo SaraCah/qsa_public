@@ -18,7 +18,7 @@ export const Tagger: React.FC<any> = ({ recordId, context }) => {
     setCreateError(null);
     Http.get().addTag(tagToCreate, recordId).then((json: any) => {
       if (json.errors && json.errors.length > 0) {
-        if (json.errors[0]['code'] == 'VALIDATION_FAILED') {
+        if (json.errors[0]['code'] === 'VALIDATION_FAILED') {
           setCreateError(json.errors[0]['validation_code'])
         } else {
           setCreateError(errorMessageForCode(json.errors[0]['code']))
