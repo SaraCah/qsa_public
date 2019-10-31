@@ -5,6 +5,7 @@ import Layout from './Layout';
 import { iconForType, labelForType } from '../utils/typeResolver';
 import { Note, RecordDisplay } from '../models/RecordDisplay';
 import { AccordionPanel, MaybeLink, NoteDisplay, RecordContext, Relationship } from './Helpers';
+import {Tagger} from "./Tagger";
 
 const SeriesPage: React.FC<any> = (route: any) => {
   const [series, setCurrentSeries] = useState<any | null>(null);
@@ -131,8 +132,8 @@ const SeriesPage: React.FC<any> = (route: any) => {
                 <AccordionPanel
                   id={series.generateId()}
                   title="Notes - Preferred Citation"
-                  children={notes.map((note: Note) => (
-                    <NoteDisplay note={note} />
+                  children={notes.map((note: Note, idx: number) => (
+                    <NoteDisplay key={idx} note={note} />
                   ))}
                 />
               ))}
@@ -141,8 +142,8 @@ const SeriesPage: React.FC<any> = (route: any) => {
                 <AccordionPanel
                   id={series.generateId()}
                   title="Notes - Remarks"
-                  children={notes.map((note: Note) => (
-                    <NoteDisplay note={note} />
+                  children={notes.map((note: Note, idx: number) => (
+                    <NoteDisplay note={note} key={idx} />
                   ))}
                 />
               ))}
@@ -151,8 +152,8 @@ const SeriesPage: React.FC<any> = (route: any) => {
                 <AccordionPanel
                   id={series.generateId()}
                   title="Notes - Agency Control Number (aka Department Numbers)"
-                  children={notes.map((note: Note) => (
-                    <NoteDisplay note={note} />
+                  children={notes.map((note: Note, idx: number) => (
+                      <NoteDisplay note={note} key={idx} />
                   ))}
                 />
               ))}
@@ -161,8 +162,8 @@ const SeriesPage: React.FC<any> = (route: any) => {
                 <AccordionPanel
                   id={series.generateId()}
                   title="Notes - System of Arrangement"
-                  children={notes.map((note: Note) => (
-                    <NoteDisplay note={note} />
+                  children={notes.map((note: Note, idx: number) => (
+                      <NoteDisplay note={note} key={idx} />
                   ))}
                 />
               ))}
@@ -171,8 +172,8 @@ const SeriesPage: React.FC<any> = (route: any) => {
                 <AccordionPanel
                   id={series.generateId()}
                   title="External Resources - Finding Aid"
-                  children={docs.map((doc: any) => (
-                    <MaybeLink location={doc.location} label={doc.location} />
+                  children={docs.map((doc: any, idx: number) => (
+                    <MaybeLink location={doc.location} label={doc.location} key={idx} />
                   ))}
                 />
               ))}
@@ -235,6 +236,8 @@ const SeriesPage: React.FC<any> = (route: any) => {
                 })}
               </ul>
             </section>
+
+            <Tagger recordId={series.get('id')} context={route.context}/>
           </div>
         </div>
       </Layout>

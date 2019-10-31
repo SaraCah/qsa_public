@@ -30,6 +30,8 @@ const clearCartUrl = `${baseURL}/api/users/cart/clear`;
 const submitDigitalQuoteUrl = `${baseURL}/api/users/cart/create_digital_copy_quote_requests`;
 const digitalCopyPricingUrl = `${baseURL}/api/digital_copy_pricing`;
 const submitOrderUrl = `${baseURL}/api/submit_order`;
+const getTagsUrl = `${baseURL}/api/tags`;
+const addTagUrl = `${baseURL}/api/tags`;
 
 
 export class Http {
@@ -356,5 +358,33 @@ export class Http {
     config.headers['Content-Type'] = 'multipart/form-data';
 
     return await axios.post(submitOrderUrl, bodyFormData, config);
+  }
+
+  async getTags(recordId: string): Promise<any> {
+    const params = {
+      record_id: recordId
+    };
+
+    const response = await axios.get(`${getTagsUrl}`, Object.assign({}, this.getConfig(), { params }));
+
+    return response.data || [];
+  }
+
+  async addTag(tag: string, recordId: string): Promise<any> {
+    const bodyFormData = new FormData();
+    bodyFormData.set('tag', JSON.stringify({
+      tag: tag,
+      record_id: recordId,
+    }));
+
+    const config = this.getConfig();
+    config.headers['Content-Type'] = 'multipart/form-data';
+
+    const response = await axios.post(addTagUrl, bodyFormData, config).catch(error => {
+      console.log(error, error.status);
+      return error;
+    });
+
+    return response.data || [];
   }
 }

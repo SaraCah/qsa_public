@@ -8,11 +8,15 @@ class Tags < BaseStorage
     end
   end
 
-  def self.normalize(tag)
-    tag.gsub(/[^[:alnum:]]/, '').downcase
+  def self.normalize_for_display(tag)
+    tag.gsub(/[^ [:alnum:]]/, '').strip
   end
 
-  def self.blacklisted?(tag)
+  def self.normalize(tag)
+    normalize_for_display(tag).downcase
+  end
+
+  def self.banned?(tag)
     hash = Digest::SHA1.hexdigest(normalize(tag))
 
     db[:banned_tags]
@@ -34,13 +38,15 @@ class Tags < BaseStorage
   end
 
   def self.valid?(tag, record_id)
-    !blacklisted?(tag) && deleted?(tag, record_id)
+    !banned?(tag) && !deleted?(tag, record_id)
   end
 
   def self.create_from_dto(tag_dto)
+    return [] unless Search.exists?(tag_dto.fetch('record_id'))
+
     begin
       db[:record_tag]
-        .insert(tag: tag_dto.fetch('tag'),
+        .insert(tag: normalize_for_display(tag_dto.fetch('tag')),
                record_id: tag_dto.fetch('record_id'),
                create_time: java.lang.System.currentTimeMillis,
                modified_time: java.lang.System.currentTimeMillis,

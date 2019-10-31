@@ -25,7 +25,8 @@ const IconForType: { [name: string]: string } = {
 const ErrorForCode: { [name: string]: string } = {
   REQUIRED_VALUE_MISSING: "Can't be blank",
   CONFIRM_PASSWORD_MISMATCH: 'Must match Confirm Password',
-  INCORRECT_PASSWORD: 'Incorrect Password'
+  INCORRECT_PASSWORD: 'Incorrect Password',
+  UNIQUE_CONSTRAINT: 'Must be unique',
 };
 
 export const uriFor = (qsaIDPrefixed: string, recordType: string): string => {

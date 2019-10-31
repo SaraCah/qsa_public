@@ -505,8 +505,12 @@ class QSAPublic < Sinatra::Base
   Endpoint.post('/api/tags')
     .param(:tag, TagDTO, "Tag") \
   do
-    if (errors = Tags.create_from_dto(params[:tag])).empty?
-      json_response({status: 'success'})
+    if (errors = params[:tag].validate).empty?
+      if (errors = Tags.create_from_dto(params[:tag])).empty?
+        json_response({status: 'success'})
+      else
+        json_response(errors: errors)
+      end
     else
       json_response(errors: errors)
     end

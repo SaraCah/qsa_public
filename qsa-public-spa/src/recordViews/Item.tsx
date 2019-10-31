@@ -10,11 +10,13 @@ import {
 import { Note, RecordDisplay } from '../models/RecordDisplay';
 import { AccordionPanel, MaybeLink, NoteDisplay, RecordContext, Relationship } from './Helpers';
 import AppContext from '../context/AppContext';
+import {Tagger} from "./Tagger";
 
 const PhysicalRepresentation: React.FC<{
   representation: any;
   item: RecordDisplay;
-}> = ({ representation, item }) => {
+  context: any;
+}> = ({ representation, item, context }) => {
   representation = new RecordDisplay(representation);
 
   const classForAvailability = (availability: string) => {
@@ -62,6 +64,8 @@ const PhysicalRepresentation: React.FC<{
           </>
         )}
       </dl>
+
+      <Tagger recordId={representation.get('id')} context={context}/>
     </>
   );
 };
@@ -69,43 +73,47 @@ const PhysicalRepresentation: React.FC<{
 const DigitalRepresentation: React.FC<{
   representation: any;
   item: RecordDisplay;
-}> = ({ representation, item }) => {
+  context: any;
+}> = ({ representation, item, context }) => {
   representation = new RecordDisplay(representation);
 
   return (
-    <dl>
-      <dt>Download link</dt>
-      <dd>
-        FIXME{' '}
-        <a href="https://teaspoon-consulting.com/dropbox/c7513962474ea1c6ec6ac2b01cd273486df4f107.jpg" target="_blank" rel="noopener noreferrer">
-          Link to file
-        </a>
-      </dd>
-      <dt>ID</dt>
-      <dd>{representation.get('qsa_id_prefixed')}</dd>
-      <dt>Title</dt>
-      <dd>{representation.get('title')}</dd>
-      {representation.getMaybe('file_type', (value: string) => (
-        <>
-          <dt>Format</dt>
-          <dd>{value}</dd>
-        </>
-      ))}
-      {representation.getMaybe('agency_assigned_id', (value: string) => (
-        <>
-          <dt>Agency ID</dt>
-          <dd>{value}</dd>
-        </>
-      ))}
-      <dt>Previous System Identifier</dt>
-      <dd>FIXME MISSING FIELD</dd>
-      {representation.get('rap_applied').uri !== item.get('rap_applied').uri && (
-        <>
-          <dt>Access notifications</dt>
-          <dd>{representation.get('rap_applied').display_string}</dd>
-        </>
-      )}
-    </dl>
+    <>
+      <dl>
+        <dt>Download link</dt>
+        <dd>
+          FIXME{' '}
+          <a href="https://teaspoon-consulting.com/dropbox/c7513962474ea1c6ec6ac2b01cd273486df4f107.jpg" target="_blank" rel="noopener noreferrer">
+            Link to file
+          </a>
+        </dd>
+        <dt>ID</dt>
+        <dd>{representation.get('qsa_id_prefixed')}</dd>
+        <dt>Title</dt>
+        <dd>{representation.get('title')}</dd>
+        {representation.getMaybe('file_type', (value: string) => (
+          <>
+            <dt>Format</dt>
+            <dd>{value}</dd>
+          </>
+        ))}
+        {representation.getMaybe('agency_assigned_id', (value: string) => (
+          <>
+            <dt>Agency ID</dt>
+            <dd>{value}</dd>
+          </>
+        ))}
+        <dt>Previous System Identifier</dt>
+        <dd>FIXME MISSING FIELD</dd>
+        {representation.get('rap_applied').uri !== item.get('rap_applied').uri && (
+          <>
+            <dt>Access notifications</dt>
+            <dd>{representation.get('rap_applied').display_string}</dd>
+          </>
+        )}
+      </dl>
+      <Tagger recordId={representation.get('id')} context={context}/>
+    </>
   );
 };
 
@@ -569,7 +577,7 @@ const ItemPage: React.FC<any> = (route: any) => {
                     <ul className="list-group list-group-flush">
                       {item.getArray('physical_representations').map((representation: any) => (
                         <li key={representation.qsa_id} className="list-group-item">
-                          <PhysicalRepresentation representation={representation} item={item} />
+                          <PhysicalRepresentation representation={representation} item={item} context={route.context} />
                         </li>
                       ))}
                     </ul>
@@ -586,7 +594,7 @@ const ItemPage: React.FC<any> = (route: any) => {
                     <ul className="list-group list-group-flush">
                       {item.getArray('digital_representations').map((representation: any) => (
                         <li key={representation.qsa_id} className="list-group-item">
-                          <DigitalRepresentation representation={representation} item={item} />
+                          <DigitalRepresentation representation={representation} item={item} context={route.context} />
                         </li>
                       ))}
                     </ul>
@@ -611,6 +619,8 @@ const ItemPage: React.FC<any> = (route: any) => {
                 </ul>
               </section>
             )}
+
+            <Tagger recordId={item.get('id')} context={route.context}/>
           </div>
         </div>
       </Layout>
