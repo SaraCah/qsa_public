@@ -1,16 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import * as serviceWorker from './serviceWorker';
-import 'bootstrap/dist/js/bootstrap.bundle';
 import './index.scss';
 import { BrowserRouter, Switch, Route, RouteComponentProps } from 'react-router-dom';
 import AppContext from './context/AppContext';
 
 import axios from 'axios';
 
-import './scss/qg-main.scss';
-import 'bootstrap/dist/js/bootstrap';
-import 'popper.js';
+import './scss/qsa-public.scss';
 
 import HomePage from './recordViews/Home';
 import AgencyPage from './recordViews/Agency';
