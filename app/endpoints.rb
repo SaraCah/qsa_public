@@ -496,6 +496,22 @@ class QSAPublic < Sinatra::Base
     end
   end
 
+  Endpoint.get('/api/tags')
+    .param(:record_id, String, "Record SOLR ID") \
+  do
+     json_response(Tags.for_record(params[:record_id]))
+  end
+
+  Endpoint.post('/api/tags')
+    .param(:tag, TagDTO, "Tag") \
+  do
+    if (errors = Tags.create_from_dto(params[:tag])).empty?
+      json_response({status: 'success'})
+    else
+      json_response(errors: errors)
+    end
+  end
+
   if !defined?(STATIC_DIR)
     STATIC_DIR = File.realpath(File.absolute_path(File.join(File.dirname(__FILE__), '..', 'static')))
   end

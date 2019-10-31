@@ -29,6 +29,7 @@ require 'savon'
 require 'securerandom'
 require 'fileutils'
 require 'net/http'
+require 'digest/sha1'
 
 require 'util/utils'
 require 'common/bootstrap'
@@ -56,6 +57,7 @@ require 'models/user_dto'
 require 'models/paged_results'
 require 'models/cart_item_dto'
 require 'models/minicart'
+require 'models/tag_dto'
 
 require 'storage/stale_record_exception'
 require 'storage/base_storage'
@@ -64,6 +66,7 @@ require 'storage/sessions'
 require 'storage/db_auth'
 require 'storage/carts'
 require 'storage/requests'
+require 'storage/tags'
 
 require 'storage/rate_limiter'
 
