@@ -47,10 +47,11 @@ class Tags < BaseStorage
     begin
       db[:record_tag]
         .insert(tag: normalize_for_display(tag_dto.fetch('tag')),
-               record_id: tag_dto.fetch('record_id'),
-               create_time: java.lang.System.currentTimeMillis,
-               modified_time: java.lang.System.currentTimeMillis,
-               hash: hash_tag_and_record_id(tag_dto.fetch('tag'), tag_dto.fetch('record_id')))
+                record_id: tag_dto.fetch('record_id'),
+                record_type: tag_dto.fetch('record_id').split(/:/)[0],
+                create_time: java.lang.System.currentTimeMillis,
+                modified_time: java.lang.System.currentTimeMillis,
+                hash: hash_tag_and_record_id(tag_dto.fetch('tag'), tag_dto.fetch('record_id')))
 
       []
     rescue Sequel::UniqueConstraintViolation
@@ -65,3 +66,4 @@ class Tags < BaseStorage
               modified_time: java.lang.System.currentTimeMillis)
   end
 end
+
