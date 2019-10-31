@@ -36,7 +36,7 @@
 
   <field name="parent_solr_doc_uri" type="string" indexed="true" stored="true" multiValued="false" />
 
-  <field name="tags" type="string" indexed="true" stored="true" multiValued="true" />
+  <field name="tags" type="text_ws" indexed="true" stored="true" multiValued="true" />
   <copyField source="tags" dest="keywords" />
 
 

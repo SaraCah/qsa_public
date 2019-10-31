@@ -12,7 +12,8 @@ const AspaceAdvancedSearch: React.FC<{
     ['keywords', 'Keywords'],
     ['title', 'Title'],
     ['qsa_id_search', 'QSA ID'],
-    ['previous_system_ids', 'Previous System ID']
+    ['previous_system_ids', 'Previous System ID'],
+    ['tags', 'Tags']
   ];
   const recordTypes = [
     ['resource', 'Series'],
