@@ -1,3 +1,100 @@
 @import "scss-general/qg-variables";
 @import "scss-general/qg-font-variables";
-@import "overrides.scss";
+
+// Place all your overrides here
+#advancedSearchContainer {
+  form > div.row {
+    align-items: end;
+  }
+  .form-control {
+    height: calc(1.5em + 0.75rem + 2px);
+  }
+}
+
+.search-filters ul {
+  list-style: none;
+
+  li {
+    position: relative;
+  }
+
+  .facet-label {
+    display: inline-block;
+    width: calc(100% - 20px);
+  }
+
+  .facet-count {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+
+  .facet-remove-btn {
+    text-align: right;
+    padding: 2px 0 2px 12px;
+  }
+}
+
+.query-subclause {
+  padding-left: 1em;
+}
+
+.record-context {
+  clear: both;
+
+  ul {
+    list-style: none;
+  }
+  .current > a,
+  .current > span {
+    font-weight: bold;
+  }
+}
+
+#qg-primary-content .login-box {
+  position: absolute;
+  top: -45px;
+  right: 10px;
+}
+
+#qg-secondary-content .login-box {
+  margin: 5px 10px;
+}
+
+.qg-aside {
+  a:visited {
+    color: $qg-blue-dark !important;
+  }
+  a {
+    text-decoration: none !important;
+  }
+}
+
+.cart-summary {
+  margin-right: 10px;
+}
+
+.record-top-request-buttons .top-request-button {
+  display: inline-block;
+  margin-right: 1em;
+}
+
+.checkout-actions {
+  margin-bottom: 1em;
+}
+
+.checkout-actions .qg-btn {
+  margin-right: 0.5em;
+}
+
+.qg-accordion .collapsing-section input {
+  position: initial;
+  opacity: initial;
+  z-index: initial;
+
+}
+
+.record-tag {
+  margin: 5px 10px 5px 0;
+  display: inline-block;
+}

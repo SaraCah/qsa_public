@@ -32,6 +32,7 @@ const digitalCopyPricingUrl = `${baseURL}/api/digital_copy_pricing`;
 const submitOrderUrl = `${baseURL}/api/submit_order`;
 const getTagsUrl = `${baseURL}/api/tags`;
 const addTagUrl = `${baseURL}/api/tags`;
+const reportTagUrl = `${baseURL}/api/tags/report`;
 
 
 export class Http {
@@ -381,6 +382,21 @@ export class Http {
     config.headers['Content-Type'] = 'multipart/form-data';
 
     const response = await axios.post(addTagUrl, bodyFormData, config).catch(error => {
+      console.log(error, error.status);
+      return error;
+    });
+
+    return response.data || [];
+  }
+
+  async reportTag(tagId: string): Promise<any> {
+    const bodyFormData = new FormData();
+    bodyFormData.set('tag_id', tagId);
+
+    const config = this.getConfig();
+    config.headers['Content-Type'] = 'multipart/form-data';
+
+    const response = await axios.post(reportTagUrl, bodyFormData, config).catch(error => {
       console.log(error, error.status);
       return error;
     });

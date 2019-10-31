@@ -57,4 +57,11 @@ class Tags < BaseStorage
       return [{code: 'UNIQUE_CONSTRAINT', field: 'tag'}]
     end
   end
+
+  def self.report_tag(tag_id)
+    db[:record_tag]
+      .filter(id: tag_id)
+      .update(flagged: 1,
+              modified_time: java.lang.System.currentTimeMillis)
+  end
 end

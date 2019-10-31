@@ -516,6 +516,14 @@ class QSAPublic < Sinatra::Base
     end
   end
 
+  Endpoint.post('/api/tags/report')
+    .param(:tag_id, Integer, "Tag Id") \
+  do
+    Tags.report_tag(params[:tag_id])
+
+    json_response({status: 'success'})
+  end
+
   if !defined?(STATIC_DIR)
     STATIC_DIR = File.realpath(File.absolute_path(File.join(File.dirname(__FILE__), '..', 'static')))
   end
