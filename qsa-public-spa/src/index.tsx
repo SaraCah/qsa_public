@@ -21,6 +21,7 @@ import {LoginPage, LogoutPage} from './recordViews/UserSession';
 
 import AppContextProvider from './context/AppContextProvider';
 import {
+  BannedTagsManagementPage,
   ChangePasswordPage,
   MyAccountPage,
   MyContactDetailsPage,
@@ -250,6 +251,13 @@ ReactDOM.render(
             path="/admin/tags"
             component={wrappedRoute(TagManagementPage, {
               pageTitle: 'Tag Management'
+            })}
+        />
+        <Route
+            exact
+            path="/admin/banned-tags"
+            component={wrappedRoute(BannedTagsManagementPage, {
+              pageTitle: 'Banned Tag Management'
             })}
         />
         <Route component={wrappedRoute(NotFound, { pageTitle: 'Page not found' })} />

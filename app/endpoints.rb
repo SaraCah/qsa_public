@@ -537,6 +537,19 @@ class QSAPublic < Sinatra::Base
     end
   end
 
+  Endpoint.get('/api/tags/banned') do
+    if Ctx.user_logged_in?
+      logged_in_user = Users.get(Ctx.get.session.user_id)
+      if logged_in_user.fetch('is_admin')
+        json_response(Tags.all_banned_tags)
+      else
+        [404]
+      end
+    else
+      [404]
+    end
+  end
+
   Endpoint.post('/api/tags/moderate')
     .param(:tag_id, Integer, "Tag Id")
     .param(:action, String, "Action to perform") \
@@ -551,6 +564,40 @@ class QSAPublic < Sinatra::Base
         elsif params[:action] == 'ban'
           Tags.ban(params[:tag_id])
         end
+
+        json_response({status: 'success'})
+      else
+        [404]
+      end
+    else
+      [404]
+    end
+  end
+
+  Endpoint.post('/api/tags/add-to-banned')
+    .param(:tag, [String], "List of Tags") \
+  do
+    if Ctx.user_logged_in?
+      logged_in_user = Users.get(Ctx.get.session.user_id)
+      if logged_in_user.fetch('is_admin')
+        Tags.add_to_banned_list(params[:tag])
+
+        json_response({status: 'success'})
+      else
+        [404]
+      end
+    else
+      [404]
+    end
+  end
+
+  Endpoint.post('/api/tags/remove-from-banned')
+    .param(:tag, [String], "List of Tags") \
+  do
+    if Ctx.user_logged_in?
+      logged_in_user = Users.get(Ctx.get.session.user_id)
+      if logged_in_user.fetch('is_admin')
+        Tags.remove_from_banned_list(params[:tag])
 
         json_response({status: 'success'})
       else

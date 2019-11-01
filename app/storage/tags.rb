@@ -8,19 +8,13 @@ class Tags < BaseStorage
     end
   end
 
-  def self.normalize_for_display(tag)
-    tag.gsub(/[^ [:alnum:]]/, '').strip
-  end
-
   def self.normalize(tag)
-    normalize_for_display(tag).downcase
+    tag.gsub(/[^ [:alnum:]]/, '').strip.downcase
   end
 
   def self.banned?(tag)
-    hash = Digest::SHA1.hexdigest(normalize(tag))
-
     db[:banned_tags]
-      .filter(hash: hash)
+      .filter(tag: normalize(tag))
       .count > 0
   end
 
@@ -46,7 +40,7 @@ class Tags < BaseStorage
 
     begin
       db[:record_tag]
-        .insert(tag: normalize_for_display(tag_dto.fetch('tag')),
+        .insert(tag: normalize(tag_dto.fetch('tag')),
                 record_id: tag_dto.fetch('record_id'),
                 record_type: tag_dto.fetch('record_id').split(/:/)[0],
                 create_time: java.lang.System.currentTimeMillis,
@@ -100,10 +94,39 @@ class Tags < BaseStorage
               modified_time: java.lang.System.currentTimeMillis)
   end
 
-  def self.ban(tag_id)
-    delete(tag_id)
-    # FIXME delete all tags that match?
-    # FIXME add to banned list
+  def self.add_to_banned_list(tags)
+    Array(tags).each do |tag|
+      begin
+        db[:banned_tags].insert(tag: normalize(tag))
+      rescue Sequel::UniqueConstraintViolation
+        # got it already
+      end
+    end
+
+    # delete all record tags that match the now banned tags
+    db[:record_tag]
+      .filter(deleted: 0)
+      .filter(tag: tags.map{|tag| normalize(tag)})
+      .update(deleted: 1,
+              modified_time: java.lang.System.currentTimeMillis)
   end
 
+  def self.remove_from_banned_list(tags)
+    db[:banned_tags]
+      .filter(tag: tags.map{|tag| normalize(tag)})
+      .delete
+  end
+
+  def self.ban(tag_id)
+    tag = db[:record_tag][id: tag_id]
+    add_to_banned_list([tag[:tag]])
+  end
+
+  def self.all_banned_tags
+    db[:banned_tags]
+      .order(:tag)
+      .map{|row|
+        row[:tag]
+      }
+  end
 end

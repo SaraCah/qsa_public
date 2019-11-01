@@ -35,6 +35,9 @@ const addTagUrl = `${baseURL}/api/tags`;
 const reportTagUrl = `${baseURL}/api/tags/report`;
 const getFlaggedTagsUrl = `${baseURL}/api/tags/flagged`;
 const moderateTagUrl = `${baseURL}/api/tags/moderate`;
+const getBannedTagsUrl = `${baseURL}/api/tags/banned`;
+const addToBannedTagsUrl = `${baseURL}/api/tags/add-to-banned`;
+const removeFromBannedTagsUrl = `${baseURL}/api/tags/remove-from-banned`;
 
 
 export class Http {
@@ -421,6 +424,46 @@ export class Http {
     config.headers['Content-Type'] = 'multipart/form-data';
 
     const response = await axios.post(moderateTagUrl, bodyFormData, config).catch(error => {
+      console.log(error, error.status);
+      return error;
+    });
+
+    return response.data || [];
+  }
+
+  async getBannedTags(): Promise<any> {
+    const response = await axios.get(`${getBannedTagsUrl}`, this.getConfig());
+
+    return response.data || [];
+  }
+
+  async addToBannedTags(tags: string[]): Promise<any> {
+    const bodyFormData = new FormData();
+    tags.forEach((tag) => {
+      bodyFormData.append('tag[]', tag);
+    });
+
+    const config = this.getConfig();
+    config.headers['Content-Type'] = 'multipart/form-data';
+
+    const response = await axios.post(addToBannedTagsUrl, bodyFormData, config).catch(error => {
+      console.log(error, error.status);
+      return error;
+    });
+
+    return response.data || [];
+  }
+
+  async removeFromBannedTags(tags: string[]): Promise<any> {
+    const bodyFormData = new FormData();
+    tags.forEach((tag) => {
+      bodyFormData.append('tag[]', tag);
+    });
+
+    const config = this.getConfig();
+    config.headers['Content-Type'] = 'multipart/form-data';
+
+    const response = await axios.post(removeFromBannedTagsUrl, bodyFormData, config).catch(error => {
       console.log(error, error.status);
       return error;
     });

@@ -59,7 +59,7 @@ export const Tagger: React.FC<any> = ({ recordId, context }) => {
                       data-toggle="dropdown"
                       aria-haspopup="true"
                       aria-expanded="false">
-                <span className="caret"></span>
+                <span className="caret"/>
                 <span className="sr-only">Toggle Dropdown</span>
               </button>
               <ul className="dropdown-menu">

@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { UserForm } from '../models/User';
 import { errorMessageForCode, snakeToUppercaseInitials, uriFor } from '../utils/typeResolver';
 import { AxiosResponse } from 'axios';
+import {AccordionPanel, MaybeLink} from "./Helpers";
 
 const FormErrors: React.FC<{ errors: any }> = ({ errors }) => {
   const errorMessage = (error: any) => {
@@ -1270,7 +1271,7 @@ const TagModeration: React.FC<any> = props => {
   }, [refreshTags]);
 
   const moderateTag = (tagId: string, action: string) => {
-    Http.get().moderateTag(tagId, 'unflag').then(() => {
+    Http.get().moderateTag(tagId, action).then(() => {
       setRefreshTags(refreshTags + 1);
     });
   };
@@ -1290,6 +1291,13 @@ const TagModeration: React.FC<any> = props => {
   return (
     <>
       <h1>Tag management</h1>
+      <div className="alert alert-warning">
+        <p>By showing the list of banned tags, you may see some copy that is offensive and inappropriate. Are you sure you want to see this message list?</p>
+        <p><Link to="/admin/banned-tags">Manage banned tags</Link></p>
+      </div>
+
+      <br/>
+
       <table className="table table-bordered table-striped">
         <thead>
           <tr>
@@ -1340,6 +1348,77 @@ export const TagManagementPage: React.FC<any> = (route: any) => {
   return (
       <LoginRequired adminOnly={true} context={route.context}>
         <TagModeration />
+      </LoginRequired>
+  );
+};
+
+const BannedTags: React.FC<any> = props => {
+  const [tagsToBan, setTagsToBan]: [any, any] = useState('');
+  const [tagsToUnban, setTagsToUnban]: [any, any] = useState('');
+  const [bannedTags, setBannedTags]: [any, any] = useState([]);
+  const [refreshTags, setRefreshTags]: [any, any] = useState(0);
+
+  useEffect(() => {
+    Http.get().getBannedTags().then((json: any) => {
+      setBannedTags(json);
+    });
+  }, [refreshTags]);
+
+  const addToBannedTags = () => {
+    Http.get().addToBannedTags(tagsToBan.split('\n')).then(() => {
+      setTagsToBan('');
+      setRefreshTags(refreshTags + 1);
+    })
+  };
+
+  const removeFromBannedTags = () => {
+    Http.get().removeFromBannedTags(tagsToUnban.split('\n')).then(() => {
+      setTagsToUnban('');
+      setRefreshTags(refreshTags + 1);
+    })
+  };
+
+  return (
+    <>
+      <h1>Banned tags</h1>
+
+      <div className="row">
+        <div className="col-sm-6">
+          <form onSubmit={(e) => {e.preventDefault(); addToBannedTags()}}>
+            <textarea className="form-control" value={tagsToBan} onChange={(e) => setTagsToBan(e.target.value)} placeholder="One tag per line"/>
+            <button type="submit" className="qg-btn btn-primary btn-sm pull-right">Add to banned tags</button>
+          </form>
+        </div>
+        <div className="col-sm-6">
+          <form onSubmit={(e) => {e.preventDefault(); removeFromBannedTags()}}>
+            <textarea className="form-control" value={tagsToUnban} onChange={(e) => setTagsToUnban(e.target.value)} placeholder="One tag per line"/>
+            <button type="submit" className="qg-btn btn-danger btn-sm pull-right">Remove from banned tags</button>
+          </form>
+        </div>
+      </div>
+
+      <br/>
+
+      <section className="qg-accordion qg-dark-accordion" aria-label="Accordion Label">
+        <div className="alert alert-warning">By showing the list of banned tags, you may see some copy that is offensive and inappropriate.</div>
+        <AccordionPanel
+            id="banned_tags"
+            title="List of banned tags"
+            children={<div className="banned-tags-listing">
+              {
+                bannedTags.map((tag: any) => (<div key={tag}>{tag}</div>))
+              }
+            </div>}
+        />
+      </section>
+    </>
+  );
+}
+
+export const BannedTagsManagementPage: React.FC<any> = (route: any) => {
+  return (
+      <LoginRequired adminOnly={true} context={route.context}>
+        <BannedTags />
       </LoginRequired>
   );
 };
