@@ -516,10 +516,10 @@ class QSAPublic < Sinatra::Base
     end
   end
 
-  Endpoint.post('/api/tags/report')
+  Endpoint.post('/api/tags/flag')
     .param(:tag_id, Integer, "Tag Id") \
   do
-    Tags.report_tag(params[:tag_id])
+    Tags.flag(params[:tag_id])
 
     json_response({status: 'success'})
   end

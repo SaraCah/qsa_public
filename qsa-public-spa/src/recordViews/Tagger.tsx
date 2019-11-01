@@ -30,8 +30,8 @@ export const Tagger: React.FC<any> = ({ recordId, context }) => {
     })
   };
 
-  const reportTag = (tagId: string) => {
-    Http.get().reportTag(tagId).then(() => {
+  const flagTag = (tagId: string) => {
+    Http.get().flagTag(tagId).then(() => {
       setNeedsRefresh(needsRefresh + 1);
     });
   };
@@ -65,10 +65,10 @@ export const Tagger: React.FC<any> = ({ recordId, context }) => {
               <ul className="dropdown-menu">
                 <li>
                   {
-                    tag.flagged && <span className="text-danger" style={{padding: '0 10px'}}><i aria-hidden="true" className="fa fa-exclamation-circle" /> Reported</span>
+                    tag.flagged && <span className="text-danger" style={{padding: '0 10px'}}><i aria-hidden="true" className="fa fa-exclamation-circle" /> Flagged</span>
                   }
                   {
-                    !tag.flagged && <a href="#" onClick={(e) => {e.preventDefault(); reportTag(tag.id)}} className="text-danger" style={{textDecoration: 'none', whiteSpace: 'nowrap', padding: '0 10px'}}><i aria-hidden="true" className="fa fa-exclamation-circle" /> Report to Moderator</a>
+                    !tag.flagged && <a href="#" onClick={(e) => {e.preventDefault(); flagTag(tag.id)}} className="text-danger" style={{textDecoration: 'none', whiteSpace: 'nowrap', padding: '0 10px'}}><i aria-hidden="true" className="fa fa-exclamation-circle" /> Flag with Moderator</a>
                   }
                 </li>
               </ul>
