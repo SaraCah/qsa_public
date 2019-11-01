@@ -1,13 +1,12 @@
 import React, { useEffect, useState, useRef, SyntheticEvent } from 'react';
 import { Http } from '../utils/http';
 import { Redirect } from 'react-router';
-import AppContext from '../context/AppContext';
 import Layout from './Layout';
 import { Link } from 'react-router-dom';
 import { UserForm } from '../models/User';
 import { errorMessageForCode, snakeToUppercaseInitials, uriFor } from '../utils/typeResolver';
 import { AxiosResponse } from 'axios';
-import {AccordionPanel, MaybeLink} from "./Helpers";
+import { AccordionPanel } from "./Helpers";
 
 const FormErrors: React.FC<{ errors: any }> = ({ errors }) => {
   const errorMessage = (error: any) => {
@@ -1051,28 +1050,30 @@ const UserManagementListing: React.FC<any> = (props: any) => {
             <div className="text-center">
               <ul className="pagination">
                 <li className={'page-item prev ' + (results.current_page === 0 ? 'disabled' : '')}>
-                  <a
+                  <button
                     className="page-link"
-                    href="#"
+                    style={{float: 'left'}}
                     onClick={e => {
                       e.preventDefault();
+                      window.scrollTo(0,0);
                       setPage(results.current_page - 1);
                     }}
                   >
                     <span aria-hidden="true">«</span> Previous
-                  </a>
+                  </button>
                 </li>
                 <li className={'page-item next ' + (results.current_page >= results.max_page ? 'disabled' : '')}>
-                  <a
+                  <button
                     className="page-link"
-                    href="#"
+                    style={{float: 'left'}}
                     onClick={e => {
                       e.preventDefault();
+                      window.scrollTo(0,0);
                       setPage(results.current_page + 1);
                     }}
                   >
                     Next <span aria-hidden="true">»</span>
-                  </a>
+                  </button>
                 </li>
               </ul>
             </div>
@@ -1309,7 +1310,7 @@ const TagModeration: React.FC<any> = props => {
         </thead>
         <tbody>
           {
-            flaggedTags.length == 0 && <tr><td colSpan={4} className="table-info">No tags to moderate</td></tr>
+            flaggedTags.length === 0 && <tr><td colSpan={4} className="table-info">No tags to moderate</td></tr>
           }
           {
             flaggedTags.map((tag: any) => (

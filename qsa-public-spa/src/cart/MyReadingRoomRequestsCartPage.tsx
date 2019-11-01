@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-import AppContext from '../context/AppContext';
 import { Link } from 'react-router-dom';
 import { uriFor } from '../utils/typeResolver';
 import Layout from '../recordViews/Layout';
@@ -174,7 +173,7 @@ export const MyReadingRoomRequestsCartPage: React.FC<any> = (route: any) => {
                               <hr />
                               <h3>Requested items:</h3>
                               {context.cart.reading_room_requests.closed_records[agency_uri].map((cartItem: any) => (
-                                <div key={cartItem.id} role="list-item" style={{ marginBottom: 40 }}>
+                                <div key={cartItem.id} role="listitem" style={{ marginBottom: 40 }}>
                                   <div className="pull-right">
                                     <span className="badge pull-right">Closed record</span>
                                   </div>

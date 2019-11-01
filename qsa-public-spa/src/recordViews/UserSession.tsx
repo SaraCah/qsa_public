@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Layout from './Layout';
 import { Http } from '../utils/http';
-
-import AppContext from '../context/AppContext';
 import { CartSummary } from '../cart/CartSummary';
 
 export const UserSession: React.FC<any> = (props: any) => {

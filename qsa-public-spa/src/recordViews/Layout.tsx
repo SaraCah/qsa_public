@@ -161,7 +161,6 @@ const Layout: React.FC<any> = (props: any) => {
                     placeholder="Search website"
                     tabIndex={0}
                     aria-required="true"
-                    aria-expanded="false"
                   />
                   <span className="input-group-btn">
                     <button type="submit" id="feature-search-submit" className="btn btn-primary" title="Search site">

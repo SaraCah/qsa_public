@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react';
-import AppContext from '../context/AppContext';
 import { Link } from 'react-router-dom';
 import { Redirect } from 'react-router';
 import { uriFor } from '../utils/typeResolver';
@@ -17,7 +16,6 @@ export const DigitalCopySetPricePage: React.FC<any> = (route: any) => {
 
   const [showError, setShowError]: [string?, any?] = useState(undefined);
   const [showMinicart, setShowMinicart] = useState(false);
-  const [minicartLoaded, setMinicartLoaded] = useState(false);
   const [minicartId] = useState((window as any).SSQ.cart.id);
   const [submitDisabled, setSubmitDisabled] = useState(false);
 
@@ -32,7 +30,7 @@ export const DigitalCopySetPricePage: React.FC<any> = (route: any) => {
         }
       );
     }
-  }, []);
+  }, [digitalCopyPricing]);
 
   const calculateTotal = (cart: any) => {
     let total_in_cents = 0;

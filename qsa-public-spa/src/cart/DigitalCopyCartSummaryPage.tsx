@@ -1,12 +1,9 @@
 import React from 'react';
-import AppContext from '../context/AppContext';
-import { RouteComponentProps } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { uriFor } from '../utils/typeResolver';
 import Layout from '../recordViews/Layout';
 import { Http } from '../utils/http';
 import { centsToString } from '../utils/currency';
-import { AccordionPanel } from '../recordViews/Helpers';
 
 
 export const DigitalCopyCartSummaryPage: React.FC<any> = (route: any) => {

@@ -12,7 +12,7 @@ export const Tagger: React.FC<any> = ({ recordId, context }) => {
     Http.get().getTags(recordId).then((json: any) => {
       setTags(json);
     });
-  }, [needsRefresh]);
+  }, [needsRefresh, recordId]);
 
   const addTag = () => {
     setCreateError(null);
@@ -68,7 +68,7 @@ export const Tagger: React.FC<any> = ({ recordId, context }) => {
                     tag.flagged && <span className="text-danger" style={{padding: '0 10px'}}><i aria-hidden="true" className="fa fa-exclamation-circle" /> Flagged</span>
                   }
                   {
-                    !tag.flagged && <a href="#" onClick={(e) => {e.preventDefault(); flagTag(tag.id)}} className="text-danger" style={{textDecoration: 'none', whiteSpace: 'nowrap', padding: '0 10px'}}><i aria-hidden="true" className="fa fa-exclamation-circle" /> Flag with Moderator</a>
+                    !tag.flagged && <button onClick={(e) => {e.preventDefault(); flagTag(tag.id)}} className="qg-btn btn-link text-danger" style={{textDecoration: 'none', whiteSpace: 'nowrap', padding: '0 10px'}}><i aria-hidden="true" className="fa fa-exclamation-circle" /> Flag with Moderator</button>
                   }
                 </li>
               </ul>
