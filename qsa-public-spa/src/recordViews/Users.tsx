@@ -1302,7 +1302,7 @@ const TagModeration: React.FC<any> = props => {
         <thead>
           <tr>
             <th style={{width: '40%'}}>Tag</th>
-            <th style={{width: '20%'}}>Record</th>
+            <th style={{width: '10%'}}>Record</th>
             <th style={{width: '20%'}}>Date Reported</th>
             <th/>
           </tr>
@@ -1326,12 +1326,12 @@ const TagModeration: React.FC<any> = props => {
                 <td>
                   <button className="qg-btn btn-success btn-xs" onClick={(e) => unflagTag(tag.id)}>
                     <i aria-hidden="true" className="fa fa-thumbs-up"/> Unflag
-                  </button><br/>
+                  </button>&nbsp;
                   <button className="qg-btn btn-warning btn-xs" onClick={(e) => deleteTag(tag.id)}>
-                    <i aria-hidden="true" className="fa fa-thumbs-down"/> Delete
-                  </button><br/>
+                    <i aria-hidden="true" className="fa fa-thumbs-down"/> Remove
+                  </button>&nbsp;
                   <button className="qg-btn btn-danger btn-xs" onClick={(e) => banTag(tag.id)}>
-                    <i aria-hidden="true" className="fa fa-thumbs-down"/> Delete and Ban
+                    <i aria-hidden="true" className="fa fa-ban"/> Remove and Ban
                   </button>
                 </td>
               </tr>
