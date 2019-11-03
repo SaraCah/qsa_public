@@ -4,17 +4,38 @@ import { Link } from 'react-router-dom';
 import {errorMessageForCode} from "../utils/typeResolver";
 import { AdvancedSearchQuery } from '../models/AdvancedSearch';
 
+let previewTimer: any|undefined = undefined;
+
 export const Tagger: React.FC<any> = ({ recordId, context }) => {
   const [tags, setTags] = useState([]);
-  const [tagToCreate, setTagToCreate] = useState('');
+  const [tagToCreate, _setTagToCreate] = useState('');
   const [createError, setCreateError]: [any, any] = useState(null);
   const [needsRefresh, setNeedsRefresh] = useState(0);
+  const [tagPreview, setTagPreview] = useState('');
 
   useEffect(() => {
     Http.get().getTags(recordId).then((json: any) => {
       setTags(json);
     });
   }, [needsRefresh, recordId]);
+
+  const setTagToCreate = (tag: string) => {
+    if (!tag) {
+      setTagPreview('');
+    }
+
+    clearTimeout(previewTimer);
+
+    previewTimer = setTimeout(() => {
+      Http.get().previewTag(tag).then((json: any) => {
+        if (tagToCreate) {
+          setTagPreview(json.tag_preview);
+        }
+      });
+    }, 150);
+
+    _setTagToCreate(tag);
+  }
 
   const addTag = () => {
     setCreateError(null);
@@ -49,7 +70,10 @@ export const Tagger: React.FC<any> = ({ recordId, context }) => {
         <input className="form-control form-control-sm" type="text" value={tagToCreate} onChange={(e) => setTagToCreate(e.target.value)} size={30} maxLength={60} />
         <button className="qg-btn btn-primary btn-sm" type="submit">Add Tag</button>
       </form>
-
+      {
+        tagPreview &&
+          <div className="text-muted mt-1">Preview: <span className="badge badge-info"><i aria-hidden="true" className="fa fa-tag" />&nbsp;{tagPreview}</span></div>
+      }
       <div>
         {tags.map((tag: any) => (
           <span key={tag.id} className="record-tag">

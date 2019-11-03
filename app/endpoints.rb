@@ -502,6 +502,12 @@ class QSAPublic < Sinatra::Base
      json_response(Tags.for_record(params[:record_id]))
   end
 
+  Endpoint.get('/api/tags/preview')
+    .param(:tag, String, "Tag text to preview") \
+  do
+    json_response(tag_preview: Tags.normalize(params[:tag]))
+  end
+
   Endpoint.post('/api/tags')
     .param(:tag, TagDTO, "Tag") \
   do

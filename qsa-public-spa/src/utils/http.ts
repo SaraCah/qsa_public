@@ -38,7 +38,7 @@ const moderateTagUrl = `${baseURL}/api/tags/moderate`;
 const getBannedTagsUrl = `${baseURL}/api/tags/banned`;
 const addToBannedTagsUrl = `${baseURL}/api/tags/add-to-banned`;
 const removeFromBannedTagsUrl = `${baseURL}/api/tags/remove-from-banned`;
-
+const getPreviewTagUrl = `${baseURL}/api/tags/preview`;
 
 export class Http {
   static config: AxiosRequestConfig = {
@@ -470,4 +470,15 @@ export class Http {
 
     return response.data || [];
   }
+
+  async previewTag(tag: string): Promise<any> {
+    const params = {
+      tag: tag
+    };
+
+    const response = await axios.get(`${getPreviewTagUrl}`, Object.assign({}, this.getConfig(), { params }));
+
+    return response.data || [];
+  }
+
 }
