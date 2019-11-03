@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from "react";
 import {Http} from "../utils/http";
+import { Link } from 'react-router-dom';
 import {errorMessageForCode} from "../utils/typeResolver";
+import { AdvancedSearchQuery } from '../models/AdvancedSearch';
 
 export const Tagger: React.FC<any> = ({ recordId, context }) => {
   const [tags, setTags] = useState([]);
@@ -52,9 +54,15 @@ export const Tagger: React.FC<any> = ({ recordId, context }) => {
         {tags.map((tag: any) => (
           <span key={tag.id} className="record-tag">
             <div className="btn-group">
-              <button type="button" className="qg-btn btn-info btn-xs" onClick={(e) => alert('TODO show all items that have this tag')}>
+              <Link
+                className="qg-btn tag-btn btn-info btn-xs"
+                to={{
+                  pathname: '/search',
+                  search: AdvancedSearchQuery.emptyQuery().addStickyFilter('tags', tag.tag, tag.tag).toQueryString(),
+                }}
+              >
                 <i aria-hidden="true" className="fa fa-tag" />&nbsp;{tag.tag}
-              </button>
+              </Link>
               <button type="button" className="qg-btn btn-info btn-xs dropdown-toggle"
                       data-toggle="dropdown"
                       aria-haspopup="true"

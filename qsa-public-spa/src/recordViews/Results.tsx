@@ -13,7 +13,8 @@ const FACET_LABELS: { [name: string]: string } = {
   parent_id: 'Parent Record',
   resource_id: 'Series',
   creating_agency_id: 'Creating Agency',
-  responsible_agency_id: 'Responsible Agency'
+  responsible_agency_id: 'Responsible Agency',
+  tags: 'Tags',
 };
 
 const ResultsPage: React.FC<any> = (route: any) => {
