@@ -13,7 +13,6 @@ export const PasswordRecoveryPage: React.FC<any> = (route: any) => {
   const [showPasswordChangeSuccess, setShowPasswordChangeSuccess]: [boolean, Function] = useState(false);
   const [password, setPassword]: [string, Function] = useState('');
   const token = route.match.params.token;
-  console.log(route);
 
   const onSubmitTokenRequest = (): void => {
     if (!emailIsValid) {
