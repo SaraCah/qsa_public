@@ -3,6 +3,7 @@ import { Http } from '../utils/http';
 import Layout from './Layout';
 import { Link } from 'react-router-dom';
 import { PasswordRecoveryResponse } from '../models/HttpResponse';
+import {errorMessageForCode} from "../utils/typeResolver";
 
 export const PasswordRecoveryPage: React.FC<any> = (route: any) => {
   const [email, setEmail]: [string, Function] = useState('');
@@ -25,7 +26,7 @@ export const PasswordRecoveryPage: React.FC<any> = (route: any) => {
         if (!response.errors) {
           setShowEmailSuccess(true);
         } else {
-          setErrors([{ validationCode: 'Something went wrong. Please try again' }]);
+          setErrors([{ message: 'Something went wrong. Please try again' }]);
         }
       });
   };
@@ -35,6 +36,8 @@ export const PasswordRecoveryPage: React.FC<any> = (route: any) => {
       setErrors([{ message: 'Password was invalid' }]);
       return;
     }
+
+    setErrors([]);
     Http.get()
       .recoverPassword(token, password)
       .then((response: PasswordRecoveryResponse) => {
@@ -54,9 +57,8 @@ export const PasswordRecoveryPage: React.FC<any> = (route: any) => {
             <i className="fa fa-exclamation-triangle" />
             Error requesting password recovery:
           </h2>
-          {errors.map((error: string, idx: number) => (
-            // eslint-disable-next-line react/no-array-index-key
-            <span key={idx}>{error}</span>
+          {errors.map((error: any, idx: number) => (
+            <div key={idx}>{ error.message }</div>
           ))}
         </div>
       )}
@@ -66,6 +68,9 @@ export const PasswordRecoveryPage: React.FC<any> = (route: any) => {
             <i className="fa fa-check-circle" />
             If your email was entered correctly, an email will be sent with a link to reset your password.
           </h2>
+          <p>
+            Please proceed to <Link to="/login">login</Link>.
+          </p>
         </div>
       )}
       {showPasswordChangeSuccess && (
@@ -79,74 +84,77 @@ export const PasswordRecoveryPage: React.FC<any> = (route: any) => {
           </p>
         </div>
       )}
-      <div className="row">
-        <div className="col-sm-12">
-          <h1>Password Recovery</h1>
-          {!token && (
-            <form
-              onSubmit={(e: SyntheticEvent): void => {
-                e.stopPropagation();
-                e.preventDefault();
-                onSubmitTokenRequest();
-              }}
-            >
-              <div className="form-group">
-                <label htmlFor="email">Email</label>
-                <input
-                  type="email"
-                  className="form-control"
-                  id="email"
-                  placeholder="Email Address"
-                  onChange={(e: SyntheticEvent): void => {
-                    const emailInput = e.target as HTMLInputElement;
-                    setEmailIsValid(emailInput.validity.valid);
-                    setEmail(emailInput.value);
-                  }}
-                />
-              </div>
-              <div className="form-row col-md-12">
-                <p>
-                  <button type="submit" className="qg-btn btn-primary">
-                    Submit
-                  </button>
-                </p>
-              </div>
-            </form>
-          )}
-          {!!token && (
-            <form
-              onSubmit={(e: SyntheticEvent): void => {
-                e.stopPropagation();
-                e.preventDefault();
-                onSubmitPasswordChangeRequest();
-              }}
-            >
-              <div className="form-group">
-                <label htmlFor="email">New Password</label>
-                <input
-                  type="password"
-                  className="form-control"
-                  id="password"
-                  onChange={(e: SyntheticEvent): void => {
-                    const passwordInput = e.target as HTMLInputElement;
-                    setPassword(passwordInput.value);
-                  }}
-                />
-                <div className="form-text text-muted">
-                  <small>Must be at least 12 characters in length; Include both upper and lower case letters; Include at least one non-letter (numeral, space or punctuation)</small>
-                </div>
-              </div>
-              <div className="form-row col-md-12">
-                <p>
-                  <button type="submit" className="qg-btn btn-primary">
-                    Submit
-                  </button>
-                </p>
-              </div>
-            </form>
-          )}
+      {
+        !showEmailSuccess && !showPasswordChangeSuccess &&
+        <div className="row">
+          <div className="col-sm-12">
+            <h1>Password Recovery</h1>
+            {!token && (
+                <form
+                    onSubmit={(e: SyntheticEvent): void => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      onSubmitTokenRequest();
+                    }}
+                >
+                  <div className="form-group">
+                    <label htmlFor="email">Email</label>
+                    <input
+                        type="email"
+                        className="form-control"
+                        id="email"
+                        placeholder="Email Address"
+                        onChange={(e: SyntheticEvent): void => {
+                          const emailInput = e.target as HTMLInputElement;
+                          setEmailIsValid(emailInput.validity.valid);
+                          setEmail(emailInput.value);
+                        }}
+                    />
+                  </div>
+                  <div className="form-row col-md-12">
+                    <p>
+                      <button type="submit" className="qg-btn btn-primary">
+                        Submit
+                      </button>
+                    </p>
+                  </div>
+                </form>
+            )}
+            {!!token && (
+                <form
+                    onSubmit={(e: SyntheticEvent): void => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      onSubmitPasswordChangeRequest();
+                    }}
+                >
+                  <div className="form-group">
+                    <label htmlFor="email">New Password</label>
+                    <input
+                        type="password"
+                        className="form-control"
+                        id="password"
+                        onChange={(e: SyntheticEvent): void => {
+                          const passwordInput = e.target as HTMLInputElement;
+                          setPassword(passwordInput.value);
+                        }}
+                    />
+                    <div className="form-text text-muted">
+                      <small>Must be at least 12 characters in length; Include both upper and lower case letters; Include at least one non-letter (numeral, space or punctuation)</small>
+                    </div>
+                  </div>
+                  <div className="form-row col-md-12">
+                    <p>
+                      <button type="submit" className="qg-btn btn-primary">
+                        Submit
+                      </button>
+                    </p>
+                  </div>
+                </form>
+            )}
+          </div>
         </div>
-      </div>
+      }
     </Layout>
   );
 };

@@ -185,6 +185,7 @@ class QSAPublic < Sinatra::Base
       if (errors = Users.create_from_dto(params[:user])).empty?
         user = Users.get_for_email(params[:user].fetch(:email))
         session = Sessions.create_session(user.fetch('id'))
+        DeferredTasks.add_welcome_notification_tasks(user)
 
         json_response(status: 'created',
                       session: session)
@@ -393,9 +394,12 @@ class QSAPublic < Sinatra::Base
 
     if email_match
       result = DBAuth.set_recovery_token(email_match.fetch('id'))
+
       if result != 1
         $LOG.warn("Unable to update record. Response: #{result}")
       end
+
+      DeferredTasks.add_password_reset_notification_task(email_match)
     end
     [200]
   end

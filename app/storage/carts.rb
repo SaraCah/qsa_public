@@ -169,15 +169,7 @@ class Carts < BaseStorage
       .filter(id: cart.fetch(:digital_copy_requests).fetch(:quotable_records, []).map{|cart_item| cart_item[:id]})
       .delete
 
-    # create a task to email the archivist
-    db[:deferred_task]
-      .insert(type: 'quote_request',
-              blob: {
-                quote_request_id: quote_request_id,
-              }.to_json,
-              status: DeferredTaskRunner::PENDING_STATUS,
-              retries_remaining: 10,
-              create_time: java.lang.System.currentTimeMillis)
+    DeferredTasks.add_digital_copy_quote_request_task(quote_request_id, user)
   end
 
   def self.handle_open_records(user_id, date_required)
@@ -257,6 +249,8 @@ class Carts < BaseStorage
             modified_time: now.to_i * 1000,
             system_mtime: now,
             )
+
+        DeferredTasks.add_closed_record_request_task(agency_request_id, user)
 
         remove_item(user_id, item.fetch(:id))
       end
