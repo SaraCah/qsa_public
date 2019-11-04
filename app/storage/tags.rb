@@ -12,9 +12,13 @@ class Tags < BaseStorage
     tag.gsub(/[^ [:alnum:]]/, '').strip.downcase
   end
 
+  def self.tag_words(tag)
+    normalize(tag).split(/[^[:alnum:]]/).reject(&:empty?)
+  end
+
   def self.banned?(tag)
     db[:banned_tags]
-      .filter(tag: normalize(tag))
+      .filter(tag: tag_words(tag))
       .count > 0
   end
 
@@ -103,10 +107,9 @@ class Tags < BaseStorage
       end
     end
 
-    # delete all record tags that match the now banned tags
-    db[:record_tag]
+    # delete all record tags that match the now-banned tags
+    matching_record_tags_dataset(tags)
       .filter(deleted: 0)
-      .filter(tag: tags.map{|tag| normalize(tag)})
       .update(deleted: 1,
               modified_time: java.lang.System.currentTimeMillis)
   end
@@ -115,6 +118,34 @@ class Tags < BaseStorage
     db[:banned_tags]
       .filter(tag: tags.map{|tag| normalize(tag)})
       .delete
+
+    # Undelete instances of these tags from records too
+    matching_record_tags_dataset(tags)
+      .filter(deleted: 1)
+      .update(deleted: 0,
+              modified_time: java.lang.System.currentTimeMillis)
+  end
+
+  # Return a sequel dataset over db[:record_tag] where the tag in question is a
+  # subword match from `tags`.
+  def self.matching_record_tags_dataset(tags)
+    ids = []
+
+    # Big ol' WHERE clauses
+    tags.map {|tag| normalize(tag)}
+      .each_slice(32)
+      .each do |subset|
+
+      query = db[:record_tag].filter(1 => 0)
+
+      subset.each do |banned_tag|
+        query = query.or { Sequel.function(:instr, :tag, banned_tag) > 0 }
+      end
+
+      ids.concat(query.select(:id).map {|row| row[:id]})
+    end
+
+    db[:record_tag].filter(:id => ids.uniq)
   end
 
   def self.ban(tag_id)
