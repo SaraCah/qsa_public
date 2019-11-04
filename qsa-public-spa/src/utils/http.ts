@@ -39,6 +39,9 @@ const getBannedTagsUrl = `${baseURL}/api/tags/banned`;
 const addToBannedTagsUrl = `${baseURL}/api/tags/add-to-banned`;
 const removeFromBannedTagsUrl = `${baseURL}/api/tags/remove-from-banned`;
 const getPreviewTagUrl = `${baseURL}/api/tags/preview`;
+const verifyCaptchaUrl = `${baseURL}/api/verify-captcha`;
+const isCaptchaVerifiedUrl = `${baseURL}/api/captcha-verified`;
+
 
 export class Http {
   static config: AxiosRequestConfig = {
@@ -476,9 +479,29 @@ export class Http {
       tag: tag
     };
 
-    const response = await axios.get(`${getPreviewTagUrl}`, Object.assign({}, this.getConfig(), { params }));
+    const response = await axios.get(`${getPreviewTagUrl}`, Object.assign({}, this.getConfig(), {params}));
 
     return response.data || [];
   }
 
+  async verifyCaptcha(token: string): Promise<any> {
+    const bodyFormData = new FormData();
+    bodyFormData.append('captcha_token', token);
+
+    const config = this.getConfig();
+    config.headers['Content-Type'] = 'multipart/form-data';
+
+    const response = await axios.post(verifyCaptchaUrl, bodyFormData, config).catch(error => {
+      console.log(error, error.status);
+      return error;
+    });
+
+    return response.data || [];
+  }
+
+  async isCaptchaVerified(): Promise<any> {
+    const response = await axios.get(`${isCaptchaVerifiedUrl}`, this.getConfig());
+
+    return response.data || [];
+  }
 }

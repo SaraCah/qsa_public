@@ -44,12 +44,16 @@ const AppContextProvider: React.FC<any> = (props: any) => {
           user: null,
           sessionId: existingSession,
           masterSessionId: masterSession,
+          captchaVerified: null,
 
           /* Update the currently logged in user */
           setUser: (user: any) => {
             setAppContext((oldState: any) => Object.assign({}, oldState, { user: user }));
           },
 
+          setCaptchaVerified: (verified: boolean) => {
+            setAppContext((oldState: any) => Object.assign({}, oldState, { captchaVerified: verified }));
+          },
 
           setMasterSessionId: (sessionId: string) => {
             SessionCookie.setCookie(MASTER_SESSION_COOKIE_NAME, sessionId);
@@ -103,6 +107,7 @@ const AppContextProvider: React.FC<any> = (props: any) => {
                 user: null,
                 cart: null,
                 masterSessionId: null,
+                captchaVerified: null,
               });
             });
           }
@@ -128,6 +133,7 @@ const AppContextProvider: React.FC<any> = (props: any) => {
           (response: any) => {
             appContext.setUser(response.data);
             appContext.setSessionLoaded(true);
+            appContext.setCaptchaVerified(true);
             appContext.refreshCart();
           },
           () => {
@@ -136,6 +142,9 @@ const AppContextProvider: React.FC<any> = (props: any) => {
         );
     } else {
       appContext.clearSession();
+      Http.get().isCaptchaVerified().then((json: any) => {
+        appContext.setCaptchaVerified(json.status === 'verified');
+      })
     }
   },
   // Adding appContext to the deps array here (as suggested by jslint) creates a loop.

@@ -51,8 +51,8 @@ const ResultsPage: React.FC<any> = (route: any) => {
     return <Layout skipFooter={true} />;
   } else {
     const stickyFilters = advancedSearchQuery.filters().filter((f: Filter) => f.isSticky);
-    const limitedTo = stickyFilters.map((f: Filter) => (
-      <p>
+    const limitedTo = stickyFilters.map((f: Filter, idx: number) => (
+      <p key={idx}>
         <small>
           Limited to {FACET_LABELS[f.field]}: {f.label}
         </small>

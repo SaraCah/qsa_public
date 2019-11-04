@@ -511,9 +511,19 @@ class QSAPublic < Sinatra::Base
   Endpoint.post('/api/tags')
     .param(:tag, TagDTO, "Tag") \
   do
-    if (errors = params[:tag].validate).empty?
-      if (errors = Tags.create_from_dto(params[:tag])).empty?
-        json_response({status: 'success'})
+    errors = []
+
+    if !Ctx.captcha_verified?
+      errors = [{code: 'RECAPTCHA_ERROR', field: 'Captcha is required'}]
+    end
+
+    if errors.empty?
+      if (errors = params[:tag].validate).empty?
+        if (errors = Tags.create_from_dto(params[:tag])).empty?
+          json_response({status: 'success'})
+        else
+          json_response(errors: errors)
+        end
       else
         json_response(errors: errors)
       end
@@ -525,9 +535,18 @@ class QSAPublic < Sinatra::Base
   Endpoint.post('/api/tags/flag')
     .param(:tag_id, Integer, "Tag Id") \
   do
-    Tags.flag(params[:tag_id])
+    errors = []
 
-    json_response({status: 'success'})
+    if !Ctx.captcha_verified?
+      errors = [{code: 'RECAPTCHA_ERROR', field: 'Captcha is required'}]
+    end
+
+    if errors.empty?
+      Tags.flag(params[:tag_id])
+      json_response({status: 'success'})
+    else
+      json_response(errors: errors)
+    end
   end
 
   Endpoint.get('/api/tags/flagged') do
@@ -612,6 +631,21 @@ class QSAPublic < Sinatra::Base
     else
       [404]
     end
+  end
+
+  Endpoint.post('/api/verify-captcha')
+    .param(:captcha_token, String, "Captcha token") \
+  do
+    if (errors = Recaptcha.verify_token(params[:captcha_token])).empty?
+      Ctx.set_captcha_verified!
+      json_response({status: 'success'})
+    else
+      json_response(errors: errors)
+    end
+  end
+
+  Endpoint.get('/api/captcha-verified') do
+    json_response({status: Ctx.captcha_verified? ? 'verified' : 'unverified'})
   end
 
   if !defined?(STATIC_DIR)

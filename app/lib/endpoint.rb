@@ -118,7 +118,7 @@ class Endpoint
       # So, use instance_eval to evaluate the block in the right context.
       app_instance = self
 
-      Ctx.open do
+      Ctx.open({}, session) do
 
         if session_id = env['HTTP_X_ARCHIVESSEARCH_SESSION']
           begin

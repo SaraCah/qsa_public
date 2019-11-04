@@ -44,6 +44,7 @@ require 'lib/solr_indexer'
 require 'lib/advanced_search_query'
 require 'lib/search'
 require 'lib/date_parse'
+require 'lib/recaptcha'
 
 require 'lib/deferred_task_runner'
 require 'lib/quote_request_task'
@@ -84,6 +85,10 @@ class QSAPublic < Sinatra::Base
     FileUtils.mkdir_p(File.join(File.dirname(__FILE__), '..', 'static'))
   end
 
+  use Rack::Session::Cookie, :key => 'qsa_public.session',
+      :path => '/',
+      :secret => AppConfig[:session_secret]
+
   configure do
     # Write our frontend config
 
@@ -93,7 +98,13 @@ class QSAPublic < Sinatra::Base
       File.join(File.dirname(__FILE__), '..', 'static', 'AppConfig.js')
     end
 
-    exported_properties = [:minicart_base_url, :minicart_css_url, :minicart_contents_url, :minicart_script_url].map {|prop| [prop.to_s, AppConfig[prop]]}.to_h
+    exported_properties = [:minicart_base_url,
+                           :minicart_css_url,
+                           :minicart_contents_url,
+                           :minicart_script_url,
+                           :recaptcha_url,
+                           :recaptcha_params,
+                           :recaptcha_site_key].map {|prop| [prop.to_s, AppConfig[prop]]}.to_h
 
     File.open(target, 'w') do |fh|
       fh.write("// AUTO-GENERATED: Do not edit!\n")
