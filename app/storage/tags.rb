@@ -119,9 +119,20 @@ class Tags < BaseStorage
       .filter(tag: tags.map{|tag| normalize(tag)})
       .delete
 
-    # Undelete instances of these tags from records too
+    # Undelete instances of these tags from records too (but only if they're not
+    # blocked by some OTHER banned tag)
+    unbanned = []
+
     matching_record_tags_dataset(tags)
       .filter(deleted: 1)
+      .select(:tag, :id)
+      .each do |candidate|
+      if !banned?(candidate[:tag])
+        unbanned << candidate[:id]
+      end
+    end
+
+    db[:record_tag].filter(:id => unbanned)
       .update(deleted: 0,
               modified_time: java.lang.System.currentTimeMillis)
   end
