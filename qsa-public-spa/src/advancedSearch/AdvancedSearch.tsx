@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Redirect } from 'react-router';
 import { AdvancedSearchQuery } from '../models/AdvancedSearch';
+import { Link } from 'react-router-dom';
 
 const AspaceAdvancedSearch: React.FC<{
   advancedSearchQuery: AdvancedSearchQuery;
@@ -196,8 +197,11 @@ const AspaceAdvancedSearch: React.FC<{
               </label>
             </div>
           </div>
-          <div>
-            <button className="qg-btn btn-primary">Submit</button>
+          <div className="row">
+            <button className="qg-btn btn-primary col-sm-2">Submit</button>
+            <Link to="/" className="qg-btn btn-default search-reset-btn col-sm-2">Reset</Link>
+          </div>
+          <div className="row">
             <small>{props.limitedTo && props.limitedTo}</small>
           </div>
         </form>
