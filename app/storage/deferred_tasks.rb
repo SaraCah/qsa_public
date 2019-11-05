@@ -92,15 +92,14 @@ class DeferredTasks < BaseStorage
     add_task('agency_request_confirmation', task_blob)
   end
 
-  def self.add_password_reset_notification_task(user_dto)
+  def self.add_password_reset_notification_task(user_dto, host_service_url)
     auth = db[:dbauth][user_id: user_dto.fetch(:id)]
     token = auth[:recovery_token]
     expiry = auth[:recovery_token_expiry]
 
     task_blob = {
       user: user_dto,
-      token: token,
-      expiry: expiry,
+      reset_url: "#{host_service_url}/recover-password/#{token}",
     }.to_json
 
     add_task('password_reset', task_blob)

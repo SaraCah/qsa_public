@@ -399,7 +399,7 @@ class QSAPublic < Sinatra::Base
         $LOG.warn("Unable to update record. Response: #{result}")
       end
 
-      DeferredTasks.add_password_reset_notification_task(email_match)
+      DeferredTasks.add_password_reset_notification_task(email_match, host_service_url(env))
     end
     [200]
   end
@@ -408,7 +408,11 @@ class QSAPublic < Sinatra::Base
       .param(:token, String, "Recovery token")
       .param(:password, String, "New password") do
 
-    result = DBAuth.update_password_from_token(params[:token], params[:password])
+    if Users.valid_password?(params[:password])
+      result = DBAuth.update_password_from_token(params[:token], params[:password])
+    else
+      result = {errors: [{message: Users::WEAK_PASSWORD_MSG}]}
+    end
 
     json_response(result)
   end
@@ -476,11 +480,7 @@ class QSAPublic < Sinatra::Base
 
       $LOG.info("Submitting order for user #{Ctx.get.session.user_id}")
 
-      scheme = env['X_FORWARDED_PROTO'] || env['rack.url_scheme'] || 'http'
-      host = env['HTTP_HOST']
-      our_url = "#{scheme}://#{host}"
-
-      minicart = Minicart.new(params[:minicartId], our_url)
+      minicart = Minicart.new(params[:minicartId], host_service_url(env))
 
       minicart.add_cart(cart)
       minicart.add_registered_post if params[:registeredPost] == 'true'
@@ -707,5 +707,13 @@ class QSAPublic < Sinatra::Base
         send_file(File.join(STATIC_DIR, 'index.html'))
       end
     end
+  end
+
+  private
+
+  def host_service_url(rack_env)
+    scheme = rack_env['X_FORWARDED_PROTO'] || rack_env['rack.url_scheme'] || 'http'
+    host = rack_env['HTTP_HOST']
+    "#{scheme}://#{host}"
   end
 end
