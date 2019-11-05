@@ -45,6 +45,7 @@ require 'lib/advanced_search_query'
 require 'lib/search'
 require 'lib/date_parse'
 require 'lib/recaptcha'
+require 'lib/rack/qsa_public_logger'
 
 require 'lib/templates'
 require 'views/templates'
@@ -144,6 +145,11 @@ class QSAPublic < Sinatra::Base
   configure do
     $LOG.info("Starting application in #{QSAPublic.environment} mode")
   end
+
+  configure do
+    use Rack::QSAPublicLogger, $LOG
+  end
+
 
   configure do
     Sequel.database_timezone = :utc
