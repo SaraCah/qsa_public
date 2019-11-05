@@ -11,6 +11,7 @@ import './scss/qsa-public.scss';
 
 import HomePage from './recordViews/Home';
 import AgencyPage from './recordViews/Agency';
+import GenericErrorPage from './recordViews/GenericErrorPage';
 import NotFound from './recordViews/NotFound';
 import ResultsPage from './recordViews/Results';
 import SeriesPage from './recordViews/Series';
@@ -260,6 +261,12 @@ ReactDOM.render(
               pageTitle: 'Banned Tag Management'
             })}
         />
+        <Route
+          exact
+          path="/error"
+          component={wrappedRoute(GenericErrorPage, { pageTitle: 'System error' })}
+        />
+
         <Route component={wrappedRoute(NotFound, { pageTitle: 'Page not found' })} />
       </Switch>
     </BrowserRouter>

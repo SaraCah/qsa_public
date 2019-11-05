@@ -88,12 +88,24 @@ export class Http {
     return Http.instance;
   }
 
+  handleError(error: any, message?: string): any {
+    let errorMessage = message;
+
+    if (!errorMessage) {
+      errorMessage = error.message;
+    }
+
+    window.location.href = "/error?msg=" + encodeURIComponent(errorMessage || '');
+
+    return error;
+  }
+
   async fetchResults<T>(advancedSearchQuery: AdvancedSearchQuery, page = 0): Promise<T[]> {
     const query = advancedSearchQuery.toJSON();
     const response = await axios.post(`${searchUrl}?query=${query}&page=${page}`, this.getConfig()).catch(error => {
-      console.log(error, error.status);
-      return error;
+      return this.handleError(error, "Failed to fetch search results");
     });
+
     return response.data || [];
   }
 
@@ -101,8 +113,7 @@ export class Http {
     const response = await axios
       .get(`${fetchUrl}?qsa_id=${qsaId}&type=${recordType}`, this.getConfig())
       .catch(error => {
-        console.log(error, error.status);
-        return error;
+        return this.handleError(error, `Failure fetching record with ID ${qsaId}`);
       });
 
     return response.data;
@@ -112,8 +123,7 @@ export class Http {
     const response = await axios
       .get(`${contextUrl}?qsa_id=${qsaId}&type=${recordType}`, this.getConfig())
       .catch(error => {
-        console.log(error, error.status);
-        return error;
+        return this.handleError(error, `Failure fetching context with ID ${qsaId}`);
       });
 
     return response.data;
@@ -129,8 +139,7 @@ export class Http {
         headers: { 'Content-Type': 'multipart/form-data' }
       })
       .catch(error => {
-        console.log(error, error.status);
-        return error;
+        return this.handleError(error, "Login failed");
       });
 
     return response.data || [];
@@ -138,15 +147,17 @@ export class Http {
 
   async logout(): Promise<any> {
     const response = await axios.post(logoutUrl, this.getConfig()).catch(error => {
-      console.log(error, error.status);
-      return error;
+      return this.handleError(error, "Logout failed");
     });
 
     return response.data || [];
   }
 
   async getCurrentUser(): Promise<AxiosResponse> {
-    return await axios.get(`${loggedInUserUrl}`, this.getConfig());
+    return await axios.get(`${loggedInUserUrl}`, this.getConfig())
+      .catch(error => {
+        return this.handleError(error, "Could not determine current user");
+      });
   }
 
   async register(user: UserForm): Promise<any> {
@@ -158,8 +169,7 @@ export class Http {
         headers: { 'Content-Type': 'multipart/form-data' }
       })
       .catch(error => {
-        console.log(error, error.status);
-        return error;
+        return this.handleError(error, "Failed to register new user");
       });
 
     return response.data || [];
@@ -173,8 +183,7 @@ export class Http {
     config.headers['Content-Type'] = 'multipart/form-data';
 
     const response = await axios.post(updateContactDetailsUrl, bodyFormData, config).catch(error => {
-      console.log(error, error.status);
-      return error;
+      return this.handleError(error, "Failed to update user");
     });
 
     return response.data || [];
@@ -190,8 +199,7 @@ export class Http {
     config.headers['Content-Type'] = 'multipart/form-data';
 
     const response = await axios.post(updatePasswordUrl, bodyFormData, config).catch(error => {
-      console.log(error, error.status);
-      return error;
+      return this.handleError(error, "Failed to update password");
     });
 
     return response.data || [];
@@ -202,31 +210,48 @@ export class Http {
       version: undefined
     });
 
-    const response = await axios.get(`${usersUrl}`, Object.assign({}, this.getConfig(), { params }));
+    const response = await axios.get(`${usersUrl}`, Object.assign({}, this.getConfig(), { params }))
+      .catch(error => {
+        return this.handleError(error, "Failed to list users");
+      });
 
     return response.data || [];
   }
 
   async getUser(userId: number): Promise<any> {
     const params = { user_id: userId };
-    const response = await axios.get(`${userUrl}`, Object.assign({}, this.getConfig(), { params }));
+    const response = await axios.get(`${userUrl}`, Object.assign({}, this.getConfig(), { params }))
+      .catch(error => {
+        return this.handleError(error, "Failed to get user");
+      });
+
     return response.data || [];
   }
 
   async generateRecoveryToken(email: string): Promise<PasswordRecoveryResponse> {
     const params = { email };
-    const response = await axios.get(`${recoveryTokenUrl}`, Object.assign({}, this.getConfig(), { params }));
+    const response = await axios.get(`${recoveryTokenUrl}`, Object.assign({}, this.getConfig(), { params }))
+      .catch(error => {
+        return this.handleError(error, "Failed to get recovery token URL");
+      });
     return response.data;
   }
 
   async recoverPassword(token: string, password: string): Promise<PasswordRecoveryResponse> {
     const params = { token, password };
-    const response = await axios.get(`${recoveryTokenPasswordUrl}`, Object.assign({}, this.getConfig(), { params }));
+    const response = await axios.get(`${recoveryTokenPasswordUrl}`, Object.assign({}, this.getConfig(), { params }))
+      .catch(error => {
+        return this.handleError(error, "Failed to set recovered password");
+      });
+
     return response.data;
   }
 
   async getCart(): Promise<any> {
-    const response = await axios.get(`${cartUrl}`, this.getConfig());
+    const response = await axios.get(`${cartUrl}`, this.getConfig())
+      .catch(error => {
+        return this.handleError(error, "Failed to fetch cart");
+      });
 
     return response.data || [];
   }
@@ -239,10 +264,10 @@ export class Http {
     const config = this.getConfig();
     config.headers['Content-Type'] = 'multipart/form-data';
 
-    const response = await axios.post(addToCartUrl, bodyFormData, config).catch(error => {
-      console.log(error, error.status);
-      return error;
-    });
+    const response = await axios.post(addToCartUrl, bodyFormData, config)
+      .catch(error => {
+        return this.handleError(error, "Failed to add item to cart");
+      });
 
     return response.data || [];
   }
@@ -258,8 +283,7 @@ export class Http {
     config.headers['Content-Type'] = 'multipart/form-data';
 
     const response = await axios.post(updateCartItemsUrl, bodyFormData, config).catch(error => {
-      console.log(error, error.status);
-      return error;
+      return this.handleError(error, "Failed to update cart items");
     });
 
     return response.data || [];
@@ -273,8 +297,7 @@ export class Http {
     config.headers['Content-Type'] = 'multipart/form-data';
 
     const response = await axios.post(removeFromCartUrl, bodyFormData, config).catch(error => {
-      console.log(error, error.status);
-      return error;
+      return this.handleError(error, "Failed to remove item from cart");
     });
 
     return response.data || [];
@@ -294,15 +317,16 @@ export class Http {
     config.headers['Content-Type'] = 'multipart/form-data';
 
     const response = await axios.post(submitReadingRoomRequestsUrl, bodyFormData, config).catch(error => {
-      console.log(error, error.status);
-      return error;
+      return this.handleError(error, "Failed to submit reading room request");
     });
 
     return response.data || [];
   }
 
   async getRequests(): Promise<any> {
-    const response = await axios.get(`${userRequestsUrl}`, this.getConfig());
+    const response = await axios.get(`${userRequestsUrl}`, this.getConfig()).catch(error => {
+      return this.handleError(error, "Failed to get user requests");
+    });
 
     return response.data || [];
   }
@@ -314,8 +338,7 @@ export class Http {
     bodyFormData.set('request_type', requestType);
 
     const response = await axios.post(clearCartUrl, bodyFormData, config).catch(error => {
-      console.log(error, error.status);
-      return error;
+      return this.handleError(error, "Failed to clear cart");
     });
 
     return response.data || [];
@@ -328,8 +351,7 @@ export class Http {
     config.headers['Content-Type'] = 'multipart/form-data';
 
     const response = await axios.post(submitDigitalQuoteUrl, bodyFormData, config).catch(error => {
-      console.log(error, error.status);
-      return error;
+      return this.handleError(error, "Failed to submit digital quote request");
     });
 
     return response.data || [];
@@ -343,15 +365,16 @@ export class Http {
     config.headers['Content-Type'] = 'multipart/form-data';
 
     const response = await axios.post(becomeUserUrl, bodyFormData, config).catch(error => {
-      console.log(error, error.status);
-      return error;
+      return this.handleError(error, "Failed to become user");
     });
 
     return response.data || [];
   }
 
   async getDigitalCopyPricing(): Promise<any> {
-    const response = await axios.get(`${digitalCopyPricingUrl}`, this.getConfig());
+    const response = await axios.get(`${digitalCopyPricingUrl}`, this.getConfig()).catch(error => {
+      return this.handleError(error, "Failed to get digital copy pricing");
+    });
 
     return response.data || {};
   }
@@ -366,7 +389,9 @@ export class Http {
     const config = this.getConfig();
     config.headers['Content-Type'] = 'multipart/form-data';
 
-    return await axios.post(submitOrderUrl, bodyFormData, config);
+    return await axios.post(submitOrderUrl, bodyFormData, config).catch(error => {
+      return this.handleError(error, "Failed to submit order");
+    });
   }
 
   async getTags(recordId: string): Promise<any> {
@@ -374,7 +399,10 @@ export class Http {
       record_id: recordId
     };
 
-    const response = await axios.get(`${getTagsUrl}`, Object.assign({}, this.getConfig(), { params }));
+    const response = await axios.get(`${getTagsUrl}`, Object.assign({}, this.getConfig(), { params }))
+      .catch(error => {
+        return this.handleError(error, "Failed to get tags");
+      });
 
     return response.data || [];
   }
@@ -390,8 +418,7 @@ export class Http {
     config.headers['Content-Type'] = 'multipart/form-data';
 
     const response = await axios.post(addTagUrl, bodyFormData, config).catch(error => {
-      console.log(error, error.status);
-      return error;
+      return this.handleError(error, "Failed to add tag");
     });
 
     return response.data || [];
@@ -405,15 +432,16 @@ export class Http {
     config.headers['Content-Type'] = 'multipart/form-data';
 
     const response = await axios.post(flagTagUrl, bodyFormData, config).catch(error => {
-      console.log(error, error.status);
-      return error;
+      return this.handleError(error, "Failed to flag tag");
     });
 
     return response.data || [];
   }
 
   async getAllFlaggedTags(): Promise<any> {
-    const response = await axios.get(`${getFlaggedTagsUrl}`, this.getConfig());
+    const response = await axios.get(`${getFlaggedTagsUrl}`, this.getConfig()).catch(error => {
+      return this.handleError(error, "Failed to list all flag tags");
+    });
 
     return response.data || [];
   }
@@ -427,15 +455,17 @@ export class Http {
     config.headers['Content-Type'] = 'multipart/form-data';
 
     const response = await axios.post(moderateTagUrl, bodyFormData, config).catch(error => {
-      console.log(error, error.status);
-      return error;
+      return this.handleError(error, "Failed to moderate tag");
     });
 
     return response.data || [];
   }
 
   async getBannedTags(): Promise<any> {
-    const response = await axios.get(`${getBannedTagsUrl}`, this.getConfig());
+    const response = await axios.get(`${getBannedTagsUrl}`, this.getConfig())
+      .catch(error => {
+        return this.handleError(error, "Failed to get banned tags");
+      });
 
     return response.data || [];
   }
@@ -449,10 +479,10 @@ export class Http {
     const config = this.getConfig();
     config.headers['Content-Type'] = 'multipart/form-data';
 
-    const response = await axios.post(addToBannedTagsUrl, bodyFormData, config).catch(error => {
-      console.log(error, error.status);
-      return error;
-    });
+    const response = await axios.post(addToBannedTagsUrl, bodyFormData, config)
+      .catch(error => {
+        return this.handleError(error, "Failed to add to banned tag");
+      });
 
     return response.data || [];
   }
@@ -467,8 +497,7 @@ export class Http {
     config.headers['Content-Type'] = 'multipart/form-data';
 
     const response = await axios.post(removeFromBannedTagsUrl, bodyFormData, config).catch(error => {
-      console.log(error, error.status);
-      return error;
+      return this.handleError(error, "Failed to remove banned tags");
     });
 
     return response.data || [];
@@ -479,7 +508,11 @@ export class Http {
       tag: tag
     };
 
-    const response = await axios.get(`${getPreviewTagUrl}`, Object.assign({}, this.getConfig(), {params}));
+    const response = await axios.get(`${getPreviewTagUrl}`, Object.assign({}, this.getConfig(), {params}))
+      .catch(error => {
+        // Non-fatal!
+        return {data: []};
+      });
 
     return response.data || [];
   }
@@ -492,15 +525,16 @@ export class Http {
     config.headers['Content-Type'] = 'multipart/form-data';
 
     const response = await axios.post(verifyCaptchaUrl, bodyFormData, config).catch(error => {
-      console.log(error, error.status);
-      return error;
+      return this.handleError(error, "Failed to verify CAPTCHA");
     });
 
     return response.data || [];
   }
 
   async isCaptchaVerified(): Promise<any> {
-    const response = await axios.get(`${isCaptchaVerifiedUrl}`, this.getConfig());
+    const response = await axios.get(`${isCaptchaVerifiedUrl}`, this.getConfig()).catch(error => {
+      return this.handleError(error, "Failed to check CAPTCHA verification status");
+    });
 
     return response.data || [];
   }
