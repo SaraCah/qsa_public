@@ -123,7 +123,7 @@ export class Http {
     const response = await axios
       .get(`${contextUrl}?qsa_id=${qsaId}&type=${recordType}`, this.getConfig())
       .catch(error => {
-        return this.handleError(error, `Failure fetching context with ID ${qsaId}`);
+        return {data: false}
       });
 
     return response.data;
@@ -154,10 +154,7 @@ export class Http {
   }
 
   async getCurrentUser(): Promise<AxiosResponse> {
-    return await axios.get(`${loggedInUserUrl}`, this.getConfig())
-      .catch(error => {
-        return this.handleError(error, "Could not determine current user");
-      });
+    return await axios.get(`${loggedInUserUrl}`, this.getConfig());
   }
 
   async register(user: UserForm): Promise<any> {
