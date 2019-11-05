@@ -28,6 +28,7 @@ export const MyReadingRoomRequestsCartPage: React.FC<any> = (route: any) => {
     Http.get()
       .submitReadingRoomRequests(requiredDate, agencyFields)
       .then(() => {
+        window.scrollTo(0,0);
         context.refreshCart();
         setShowReadingRoomSuccess(true);
       })

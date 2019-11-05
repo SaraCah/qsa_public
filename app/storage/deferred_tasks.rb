@@ -59,7 +59,7 @@ class DeferredTasks < BaseStorage
     end
   end
 
-  ClosedRecord = Struct.new(:item_id, :item_type, :item_qsa_id, :item_display_string) do
+  ClosedRecord = Struct.new(:item_id, :item_type, :item_qsa_id, :item_display_string, :controlling_record, :series, :dates, :rap_applied, :rap_expiration) do
     def to_json(*args)
       to_h.to_json
     end
@@ -70,16 +70,30 @@ class DeferredTasks < BaseStorage
     agency_request_items = db[:agency_request_item].filter(agency_request_id: agency_request_id)
 
     item_ids = agency_request_items.map{|row| row[:item_id]}
-    records = Search.get_records_by_ids(item_ids + [agency_request[:agency_id]])
+    records = Search.resolve_refs!(Search.get_records_by_ids(item_ids + [agency_request[:agency_id]]))
 
     agency = records.fetch(agency_request[:agency_id])
 
     requested_items = agency_request_items.map do |row|
       record = records.fetch(row[:item_id])
+      controlling_record = record.fetch('controlling_record').fetch('_resolved')
+
       ClosedRecord.new(row[:item_id],
                        record.fetch('jsonmodel_type'),
                        record.fetch('qsa_id_prefixed'),
-                       record.fetch('display_string'))
+                       record.fetch('display_string'),
+                       {
+                        qsa_id: controlling_record.fetch('qsa_id_prefixed'),
+                        display_string: controlling_record.fetch('display_string'),
+                       },
+                       {
+                         qsa_id: controlling_record.fetch('resource').fetch('qsa_id_prefixed'),
+                         display_string: controlling_record.fetch('resource').fetch('display_string'),
+                       },
+                       [controlling_record.dig('dates', 0, 'begin'), controlling_record.dig('dates', 0, 'end')].compact.join(' - '),
+                       record['rap_applied'],
+                       record['rap_expiration'])
+
     end
 
     task_blob = ClosedRecordRequest.new(user,
