@@ -656,13 +656,6 @@ class QSAPublic < Sinatra::Base
     STATIC_DIR = File.realpath(File.absolute_path(File.join(File.dirname(__FILE__), '..', 'static')))
   end
 
-  # FIXME remove this when emails are sendable
-  # THIS ENDPOINT IS FOR DEBUGGING AND TESTING ONLY 
-  Endpoint.get('/api/emails') do
-    headers('Cache-Control' => "no-cache")
-    send_file(File.join(STATIC_DIR, 'emails.txt'))
-  end
-
   if QSAPublic.development?
     # Delete any matching route from a previous reload
     new_uri = compile('/*')
