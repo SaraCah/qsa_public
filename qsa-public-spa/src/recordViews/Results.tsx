@@ -371,6 +371,14 @@ const SearchResults: React.FC<{
   );
   const pageLower = Math.min(pageUpper, props.searchResults.current_page * props.searchResults.page_size + 1);
 
+  if (props.searchResults.results.length === 0) {
+    return <section className="qg-results">
+      <h2>No results found</h2>
+
+      <p>Your search did not match any results.</p>
+    </section>;
+  }
+
   return (
     <section className="qg-results">
       <h2>Your search results</h2>
@@ -386,7 +394,6 @@ const SearchResults: React.FC<{
       </div>
 
       <ul className="list-group">
-        {props.searchResults.results.length === 0 && <li>No Results</li>}
         {props.searchResults.results.length > 0 &&
           props.searchResults.results.map((result: any) => {
             return <SearchResult searchResult={result} key={result.id} />;
