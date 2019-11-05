@@ -181,20 +181,18 @@ class QSAPublic < Sinatra::Base
   Endpoint.post('/api/users')
     .param(:user, UserFormDTO, "User to create", :body => true) do
 
-    if (errors = params[:user].validate).empty?
-      if (errors = Users.create_from_dto(params[:user])).empty?
-        user = Users.get_for_email(params[:user].fetch(:email))
-        session = Sessions.create_session(user.fetch('id'))
-        DeferredTasks.add_welcome_notification_tasks(user)
+    errors = params[:user].validate
+    next json_response(errors: errors) unless errors.empty?
 
-        json_response(status: 'created',
-                      session: session)
-      else
-        json_response(errors: errors)
-      end
-    else
-      json_response(errors: errors)
-    end
+    errors = Users.create_from_dto(params[:user])
+    next json_response(errors: errors) unless errors.empty?
+
+    user = Users.get_for_email(params[:user].fetch(:email))
+    session = Sessions.create_session(user.fetch('id'))
+    DeferredTasks.add_welcome_notification_tasks(user)
+
+    json_response(status: 'created',
+                  session: session)
   end
 
   Endpoint.post('/api/logout') do
@@ -235,37 +233,39 @@ class QSAPublic < Sinatra::Base
 
   Endpoint.post('/api/users/update')
     .param(:user, UserFormDTO, "User") do
-    if Ctx.user_logged_in?
-      existing_user = Users.get(params[:user].fetch('id'))
-      logged_in_user = Users.get(Ctx.get.session.user_id)
 
-      can_edit = existing_user && (logged_in_user.fetch('is_admin') || existing_user.fetch('id') == logged_in_user.fetch('id')) 
-
-      if can_edit
-        if (errors = params[:user].validate).empty?
-          if logged_in_user.fetch('is_admin')
-            if (errors = Users.admin_update_from_dto(params[:user])).empty?
-              json_response(status: 'updated')
-            else
-              json_response(errors: errors)
-            end
-          else
-            if (errors = Users.update_from_dto(params[:user])).empty?
-              json_response(status: 'updated')
-            else
-              json_response(errors: errors)
-            end
-          end
-        else
-          json_response(errors: errors) unless errors.empty?
-        end
-      else
-        Ctx.log_bad_access("attempted to update user #{params[:user].fetch('id')}")
-        [404]
-      end
-    else
+    unless Ctx.user_logged_in?
       Ctx.log_bad_access("anonymous access attempted to update user #{params[:user].fetch('id')}")
-      [404]
+      next [404]
+    end
+
+    existing_user = Users.get(params[:user].fetch('id'))
+    logged_in_user = Users.get(Ctx.get.session.user_id)
+
+    can_edit = existing_user && (logged_in_user.fetch('is_admin') ||
+                                 existing_user.fetch('id') == logged_in_user.fetch('id'))
+
+    unless can_edit
+      Ctx.log_bad_access("attempted to update user #{params[:user].fetch('id')}")
+      next [404]
+    end
+
+    errors = params[:user].validate
+
+    unless errors.empty?
+      next json_response(errors: errors) unless errors.empty?
+    end
+
+    errors = if logged_in_user.fetch('is_admin')
+               Users.admin_update_from_dto(params[:user])
+             else
+               Users.update_from_dto(params[:user])
+             end
+
+    if errors.empty?
+      json_response(status: 'updated')
+    else
+      json_response(errors: errors)
     end
   end
 
@@ -273,16 +273,18 @@ class QSAPublic < Sinatra::Base
     .param(:current_password, String, "Current password")
     .param(:password, String, "New Password")
     .param(:confirm_password, String, "Confirm new password") do
-    if Ctx.user_logged_in?
-      logged_in_user = Users.get(Ctx.get.session.user_id)
 
-      if (errors = Users.update_password(logged_in_user.fetch('id'), params[:current_password], params[:password], params[:confirm_password])).empty?
-        json_response(status: 'updated')
-      else
-        json_response(errors: errors)
-      end
+    next [404] unless Ctx.user_logged_in?
+
+    logged_in_user = Users.get(Ctx.get.session.user_id)
+
+    if (errors = Users.update_password(logged_in_user.fetch('id'),
+                                       params[:current_password],
+                                       params[:password],
+                                       params[:confirm_password])).empty?
+      json_response(status: 'updated')
     else
-      [404]
+      json_response(errors: errors)
     end
   end
 
@@ -291,13 +293,12 @@ class QSAPublic < Sinatra::Base
     .param(:start_date, String, "Filter after start date", optional: true)
     .param(:end_date, String, "Filter before start date", optional: true)
     .param(:page, Integer , "Page to return", optional: true) do
-    if Ctx.user_logged_in?
-      logged_in_user = Users.get(Ctx.get.session.user_id)
-      if logged_in_user.fetch('is_admin')
-        json_response(Users.page(params[:page] || 0, params[:q], DateParse.date_parse_down(params[:start_date]), DateParse.date_parse_up(params[:end_date])))
-      else
-        [404]
-      end
+
+    next [404] unless Ctx.user_logged_in?
+    logged_in_user = Users.get(Ctx.get.session.user_id)
+
+    if logged_in_user.fetch('is_admin')
+      json_response(Users.page(params[:page] || 0, params[:q], DateParse.date_parse_down(params[:start_date]), DateParse.date_parse_up(params[:end_date])))
     else
       [404]
     end
@@ -305,13 +306,12 @@ class QSAPublic < Sinatra::Base
 
   Endpoint.get('/api/admin/user')
     .param(:user_id, Integer, "User id") do
-    if Ctx.user_logged_in?
-      logged_in_user = Users.get(Ctx.get.session.user_id)
-      if logged_in_user.fetch('is_admin')
-        json_response(Users.get(params[:user_id]))
-      else
-        [404]
-      end
+
+    next [404] unless Ctx.user_logged_in?
+    logged_in_user = Users.get(Ctx.get.session.user_id)
+
+    if logged_in_user.fetch('is_admin')
+      json_response(Users.get(params[:user_id]))
     else
       [404]
     end
@@ -328,64 +328,59 @@ class QSAPublic < Sinatra::Base
   Endpoint.post('/api/users/cart/add_item')
     .param(:request_type, String, "Type of request")
     .param(:item_id, String, "SOLR document ID for the record") do
-    if Ctx.user_logged_in?
-      if Search.exists?(params[:item_id])
-        Carts.add_item(Ctx.get.session.user_id, params[:request_type], params[:item_id])
-        json_response({status: 'added'})
-      else
-        [404, "Record does not exist"]
-      end
+
+    next [404] unless Ctx.user_logged_in?
+
+    if Search.exists?(params[:item_id])
+      Carts.add_item(Ctx.get.session.user_id, params[:request_type], params[:item_id])
+      json_response({status: 'added'})
     else
-      [404]
+      [404, "Record does not exist"]
     end
   end
 
   Endpoint.post('/api/users/cart/remove_item')
     .param(:id, String, "Cart item ID") do
-    if Ctx.user_logged_in?
-      Carts.remove_item(Ctx.get.session.user_id, params[:id])
-      json_response({status: 'removed'})
-    else
-      [404]
-    end
+
+    next [404] unless Ctx.user_logged_in?
+
+    Carts.remove_item(Ctx.get.session.user_id, params[:id])
+    json_response({status: 'removed'})
   end
 
   Endpoint.post('/api/users/cart/create_reading_room_requests')
     .param(:date_required, String, "Date of pick up from reading room", optional: true)
     .param(:agency_fields, String, "JSON Blob of agency fields", optional: true) do
-    if Ctx.user_logged_in?
-      date_required = nil
-      if params[:date_required]
-        begin
-          date_required = Date.parse(params[:date_required])
-        rescue
-        end
+
+    next [404] unless Ctx.user_logged_in?
+
+    date_required = nil
+    if params[:date_required]
+      begin
+        date_required = Date.parse(params[:date_required])
+      rescue
       end
-
-      agency_fields = {}
-      if params[:agency_fields]
-        agency_fields = JSON.parse(params[:agency_fields])
-      end
-
-      Carts.handle_open_records(Ctx.get.session.user_id, date_required)
-      Carts.handle_closed_records(Ctx.get.session.user_id, agency_fields)
-
-      Carts.clear(Ctx.get.session.user_id, Carts::REQUEST_TYPE_READING_ROOM)
-
-      json_response({status: 'success'})
-    else
-      [404]
     end
+
+    agency_fields = {}
+    if params[:agency_fields]
+      agency_fields = JSON.parse(params[:agency_fields])
+    end
+
+    Carts.handle_open_records(Ctx.get.session.user_id, date_required)
+    Carts.handle_closed_records(Ctx.get.session.user_id, agency_fields)
+
+    Carts.clear(Ctx.get.session.user_id, Carts::REQUEST_TYPE_READING_ROOM)
+
+    json_response({status: 'success'})
   end
 
   Endpoint.post('/api/users/cart/create_digital_copy_quote_requests') do
-    if Ctx.user_logged_in?
-      Carts.handle_digital_copy_quote_records(Ctx.get.session.user_id)
+    next [404] unless Ctx.user_logged_in?
 
-      json_response({status: 'success'})
-    else
-      [404]
-    end
+    Carts.handle_digital_copy_quote_records(Ctx.get.session.user_id)
+
+    json_response({status: 'success'})
   end
 
   Endpoint.get('/api/generate_token')
@@ -418,51 +413,44 @@ class QSAPublic < Sinatra::Base
   end
 
   Endpoint.get('/api/users/requests') do
-    if Ctx.user_logged_in?
-      json_response(Requests.all(Ctx.get.session.user_id))
-    else
-      [404]
-    end
+    next [404] unless Ctx.user_logged_in?
+
+    json_response(Requests.all(Ctx.get.session.user_id))
   end
 
   Endpoint.post('/api/users/cart/clear')
     .param(:request_type, String, "Request Type") do
-    if Ctx.user_logged_in?
-      Carts.clear(Ctx.get.session.user_id, params[:request_type])
-      json_response({status: 'success'})
-    else
-      [404]
-    end
+
+    next [404] unless Ctx.user_logged_in?
+
+    Carts.clear(Ctx.get.session.user_id, params[:request_type])
+    json_response({status: 'success'})
   end
 
   Endpoint.post('/api/users/cart/update_items')
     .param(:request_type, String, "Request Type")
     .param(:cart_items, [CartItemDTO], "Cart Items (those missing will be removed)", optional: true) do
-    if Ctx.user_logged_in?
-      Carts.update_items(Ctx.get.session.user_id, params[:request_type], Array(params[:cart_items]))
-      json_response({status: 'success'})
-    else
-      [404]
-    end
+
+    next [404] unless Ctx.user_logged_in?
+
+    Carts.update_items(Ctx.get.session.user_id, params[:request_type], Array(params[:cart_items]))
+    json_response({status: 'success'})
   end
 
   Endpoint.post('/api/admin/become_user')
     .param(:user_id, Integer, "User ID") do
-    if Ctx.user_logged_in?
-      logged_in_user = Users.get(Ctx.get.session.user_id)
-      if logged_in_user.fetch('is_admin')
-        user_to_become = Users.get(params[:user_id])
-        if user_to_become
-          session_id = Sessions.create_session(user_to_become.fetch('id'))
-          json_response(session_id: session_id)
-        else
-          raise 'user does not exist'
-        end
-      else
-        [404]
-      end
+
+    next [404] unless Ctx.user_logged_in?
+    logged_in_user = Users.get(Ctx.get.session.user_id)
+
+    next [404] unless logged_in_user.fetch('is_admin')
+
+    user_to_become = Users.get(params[:user_id])
+    if user_to_become
+      session_id = Sessions.create_session(user_to_become.fetch('id'))
+      json_response(session_id: session_id)
     else
-      [404]
+      raise 'user does not exist'
     end
   end
 
@@ -475,35 +463,33 @@ class QSAPublic < Sinatra::Base
     .param(:registeredPost, String, "Registered post?") \
     .param(:minicartId, String, "Minicart ID") \
   do
-    if Ctx.user_logged_in?
-      cart = Carts.get(Ctx.get.session.user_id)
+    next [404] unless Ctx.user_logged_in?
 
-      $LOG.info("Submitting order for user #{Ctx.get.session.user_id}")
+    cart = Carts.get(Ctx.get.session.user_id)
 
-      minicart = Minicart.new(params[:minicartId], host_service_url(env))
+    $LOG.info("Submitting order for user #{Ctx.get.session.user_id}")
 
-      minicart.add_cart(cart)
-      minicart.add_registered_post if params[:registeredPost] == 'true'
-      minicart.set_delivery_method(params[:deliveryMethod])
+    minicart = Minicart.new(params[:minicartId], host_service_url(env))
 
-      minicart.submit!
+    minicart.add_cart(cart)
+    minicart.add_registered_post if params[:registeredPost] == 'true'
+    minicart.set_delivery_method(params[:deliveryMethod])
 
-      cart.fetch(:digital_copy_requests).fetch(:set_price_records).each do |item|
-        Carts.remove_item(Ctx.get.session.user_id, item.fetch(:id))
-      end
+    minicart.submit!
 
-      $LOG.info("Order succeeded for user #{Ctx.get.session.user_id}")
-
-      [200]
-    else
-      [404]
+    cart.fetch(:digital_copy_requests).fetch(:set_price_records).each do |item|
+      Carts.remove_item(Ctx.get.session.user_id, item.fetch(:id))
     end
+
+    $LOG.info("Order succeeded for user #{Ctx.get.session.user_id}")
+
+    [200]
   end
 
   Endpoint.get('/api/tags')
     .param(:record_id, String, "Record SOLR ID") \
   do
-     json_response(Tags.for_record(params[:record_id]))
+    json_response(Tags.for_record(params[:record_id]))
   end
 
   Endpoint.get('/api/tags/preview')
@@ -515,22 +501,15 @@ class QSAPublic < Sinatra::Base
   Endpoint.post('/api/tags')
     .param(:tag, TagDTO, "Tag") \
   do
-    errors = []
-
-    if !Ctx.captcha_verified?
-      errors = [{code: 'RECAPTCHA_ERROR', field: 'Captcha is required'}]
+    unless Ctx.captcha_verified?
+      next json_response(errors: [{code: 'RECAPTCHA_ERROR', field: 'Captcha is required'}])
     end
 
-    if errors.empty?
-      if (errors = params[:tag].validate).empty?
-        if (errors = Tags.create_from_dto(params[:tag])).empty?
-          json_response({status: 'success'})
-        else
-          json_response(errors: errors)
-        end
-      else
-        json_response(errors: errors)
-      end
+    errors = params[:tag].validate
+    json_response(errors: errors) unless errors.empty?
+
+    if (errors = Tags.create_from_dto(params[:tag])).empty?
+      json_response({status: 'success'})
     else
       json_response(errors: errors)
     end
@@ -539,41 +518,32 @@ class QSAPublic < Sinatra::Base
   Endpoint.post('/api/tags/flag')
     .param(:tag_id, Integer, "Tag Id") \
   do
-    errors = []
-
-    if !Ctx.captcha_verified?
-      errors = [{code: 'RECAPTCHA_ERROR', field: 'Captcha is required'}]
+    unless Ctx.captcha_verified?
+      next json_response(errors: [{code: 'RECAPTCHA_ERROR', field: 'Captcha is required'}])
     end
 
-    if errors.empty?
-      Tags.flag(params[:tag_id])
-      json_response({status: 'success'})
-    else
-      json_response(errors: errors)
-    end
+    Tags.flag(params[:tag_id])
+    json_response({status: 'success'})
   end
 
   Endpoint.get('/api/tags/flagged') do
-    if Ctx.user_logged_in?
-      logged_in_user = Users.get(Ctx.get.session.user_id)
-      if logged_in_user.fetch('is_admin')
-        json_response(Tags.all_flagged_tags)
-      else
-        [404]
-      end
+    next [404] unless Ctx.user_logged_in?
+
+    logged_in_user = Users.get(Ctx.get.session.user_id)
+
+    if logged_in_user.fetch('is_admin')
+      json_response(Tags.all_flagged_tags)
     else
       [404]
     end
   end
 
   Endpoint.get('/api/tags/banned') do
-    if Ctx.user_logged_in?
-      logged_in_user = Users.get(Ctx.get.session.user_id)
-      if logged_in_user.fetch('is_admin')
-        json_response(Tags.all_banned_tags)
-      else
-        [404]
-      end
+    next [404] unless Ctx.user_logged_in?
+
+    logged_in_user = Users.get(Ctx.get.session.user_id)
+    if logged_in_user.fetch('is_admin')
+      json_response(Tags.all_banned_tags)
     else
       [404]
     end
@@ -583,58 +553,44 @@ class QSAPublic < Sinatra::Base
     .param(:tag_id, Integer, "Tag Id")
     .param(:action, String, "Action to perform") \
   do
-    if Ctx.user_logged_in?
-      logged_in_user = Users.get(Ctx.get.session.user_id)
-      if logged_in_user.fetch('is_admin')
-        if params[:action] == 'unflag'
-          Tags.unflag(params[:tag_id])
-        elsif params[:action] == 'delete'
-          Tags.delete(params[:tag_id])
-        elsif params[:action] == 'ban'
-          Tags.ban(params[:tag_id])
-        end
+    next [404] unless Ctx.user_logged_in?
 
-        json_response({status: 'success'})
-      else
-        [404]
-      end
-    else
-      [404]
+    logged_in_user = Users.get(Ctx.get.session.user_id)
+    next [404] unless logged_in_user.fetch('is_admin')
+
+    if params[:action] == 'unflag'
+      Tags.unflag(params[:tag_id])
+    elsif params[:action] == 'delete'
+      Tags.delete(params[:tag_id])
+    elsif params[:action] == 'ban'
+      Tags.ban(params[:tag_id])
     end
+
+    json_response({status: 'success'})
   end
 
   Endpoint.post('/api/tags/add-to-banned')
     .param(:tag, [String], "List of Tags") \
   do
-    if Ctx.user_logged_in?
-      logged_in_user = Users.get(Ctx.get.session.user_id)
-      if logged_in_user.fetch('is_admin')
-        Tags.add_to_banned_list(params[:tag])
+    next [404] unless Ctx.user_logged_in?
 
-        json_response({status: 'success'})
-      else
-        [404]
-      end
-    else
-      [404]
-    end
+    logged_in_user = Users.get(Ctx.get.session.user_id)
+    next [404] unless logged_in_user.fetch('is_admin')
+
+    Tags.add_to_banned_list(params[:tag])
+    json_response({status: 'success'})
   end
 
   Endpoint.post('/api/tags/remove-from-banned')
     .param(:tag, [String], "List of Tags") \
   do
-    if Ctx.user_logged_in?
-      logged_in_user = Users.get(Ctx.get.session.user_id)
-      if logged_in_user.fetch('is_admin')
-        Tags.remove_from_banned_list(params[:tag])
+    next [404] unless Ctx.user_logged_in?
 
-        json_response({status: 'success'})
-      else
-        [404]
-      end
-    else
-      [404]
-    end
+    logged_in_user = Users.get(Ctx.get.session.user_id)
+    next [404] unless logged_in_user.fetch('is_admin')
+
+    Tags.remove_from_banned_list(params[:tag])
+    json_response({status: 'success'})
   end
 
   Endpoint.post('/api/verify-captcha')
