@@ -54,6 +54,18 @@ class S3Storage
     end
   end
 
+  def exists?(key)
+    result = false
+    uri = uri_for_key(key)
+
+    Net::HTTP.start(uri.host, uri.port, :use_ssl => uri.scheme == 'https') do |http|
+        response = http.head(uri.path)
+        result = response.code == '200'
+    end
+
+    result
+  end
+
   class S3StoreFailed < StandardError; end
   class S3GetFailed < StandardError; end
 

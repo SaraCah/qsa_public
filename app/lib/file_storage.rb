@@ -26,15 +26,16 @@ class FileStorage
   end
 
   def get_stream(key, &block)
-    if File.exists?((file = File.join(@basedir, key)))
-      File.open(file, "rb") do |fh|
-        fh.each(4096) do |chunk|
-          block.call(chunk)
-        end
+    file = File.join(@basedir, key)
+    File.open(file, "rb") do |fh|
+      fh.each(4096) do |chunk|
+        block.call(chunk)
       end
-    else
-      raise "File not found: #{file}"
     end
+  end
+
+  def exists?(key)
+    File.exists?(File.join(@basedir, key))
   end
 
 end

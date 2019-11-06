@@ -617,6 +617,7 @@ class QSAPublic < Sinatra::Base
     next [404] if record.fetch('jsonmodel_type') != 'digital_representation'
     next [404] if record.fetch('representation_file', nil).nil?
     next [404] if record.fetch('representation_file').fetch('key', nil).nil?
+    next [404] unless ByteStorage.get.exists?(record.fetch('representation_file').fetch('key'))
 
     mime_type_match = MIME::Types[record.fetch('representation_file').fetch('mime_type')]
     extension = mime_type_match.nil? ? 'unknown' : mime_type_match.first.preferred_extension
