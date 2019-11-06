@@ -51,7 +51,6 @@ require 'lib/rack/qsa_public_logger'
 require 'lib/byte_storage'
 require 'lib/file_storage'
 require 'lib/s3_authenticated_storage'
-require 'lib/s3_storage'
 
 require 'lib/templates'
 require 'views/templates'
