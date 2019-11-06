@@ -1,8 +1,0 @@
-Researcher
-Name: <%= user.fetch('first_name') %> <%= user.fetch('last_name') %>
-Email: <%= user.fetch('email') %>
-
-Digital Items Requested<% request_items.each do |request_item| %>
-  * <%= request_item.to_s %><% end %>
-
-Request at: <%= Time.at(create_time / 1000) %>

@@ -11,4 +11,3 @@
 
 Templates.define(:layout, [:title, :template, :template_args], "views/layout.erb.html")
 Templates.define(:home, [], "views/home.html.erb")
-Templates.define(:quote_request_email, [:user, :request_items, :create_time], "views/emails/quote_request.txt.erb")
