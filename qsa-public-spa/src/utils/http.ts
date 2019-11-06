@@ -234,8 +234,13 @@ export class Http {
     return response.data;
   }
 
-  async recoverPassword(token: string, password: string): Promise<PasswordRecoveryResponse> {
-    const params = { token, password };
+  async recoverPassword(token: string, password: string, confirmPassword: string): Promise<PasswordRecoveryResponse> {
+    const params = {
+      token: token,
+      password: password,
+      confirm_password: confirmPassword
+    };
+
     const response = await axios.get(`${recoveryTokenPasswordUrl}`, Object.assign({}, this.getConfig(), { params }))
       .catch(error => {
         return this.handleError(error, "Failed to set recovered password");

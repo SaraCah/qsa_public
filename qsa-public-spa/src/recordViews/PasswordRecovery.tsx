@@ -12,6 +12,7 @@ export const PasswordRecoveryPage: React.FC<any> = (route: any) => {
   const [showEmailSuccess, setShowEmailSuccess]: [boolean, Function] = useState(false);
   const [showPasswordChangeSuccess, setShowPasswordChangeSuccess]: [boolean, Function] = useState(false);
   const [password, setPassword]: [string, Function] = useState('');
+  const [confirmPassword, setConfirmPassword]: [string, Function] = useState('');
   const token = route.match.params.token;
 
   const onSubmitTokenRequest = (): void => {
@@ -38,7 +39,7 @@ export const PasswordRecoveryPage: React.FC<any> = (route: any) => {
 
     setErrors([]);
     Http.get()
-      .recoverPassword(token, password)
+      .recoverPassword(token, password, confirmPassword)
       .then((response: PasswordRecoveryResponse) => {
         if (!response.errors) {
           setShowPasswordChangeSuccess(true);
@@ -128,7 +129,7 @@ export const PasswordRecoveryPage: React.FC<any> = (route: any) => {
                     }}
                 >
                   <div className="form-group">
-                    <label htmlFor="email">New Password</label>
+                    <label htmlFor="password">New Password</label>
                     <input
                         type="password"
                         className="form-control"
@@ -141,6 +142,28 @@ export const PasswordRecoveryPage: React.FC<any> = (route: any) => {
                     <div className="form-text text-muted">
                       <small>Must be at least 12 characters in length; Include both upper and lower case letters; Include at least one non-letter (numeral, space or punctuation)</small>
                     </div>
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="confirm_password">Confirm Password</label>
+                    <input
+                        type="password"
+                        className="form-control"
+                        id="confirm_password"
+                        onChange={(e: SyntheticEvent): void => {
+                          const passwordInput = e.target as HTMLInputElement;
+                          setConfirmPassword(passwordInput.value);
+                        }}
+                    />
+                    {password && confirmPassword && password  !== confirmPassword && (
+                        <small id="passwordHelpInline" className="text-danger">
+                          Password mismatch
+                        </small>
+                    )}
+                    {password && confirmPassword && password  === confirmPassword && (
+                        <small id="passwordHelpInline" className="text-success">
+                          Passwords match!
+                        </small>
+                    )}
                   </div>
                   <div className="form-row col-md-12">
                     <p>

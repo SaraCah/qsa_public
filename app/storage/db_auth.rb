@@ -49,19 +49,23 @@ class DBAuth < BaseStorage
     result
   end
 
-  def self.update_password_from_token(token, password)
+  def self.update_password_from_token(token, password, confirm_password)
+    if password != confirm_password
+      return {errors: [{message: 'Password must match Confirm Password'}]}
+    end
+
     dbauth_match = db[:user]
       .join(:dbauth, Sequel[:dbauth][:user_id] => Sequel[:user][:id])
       .filter(Sequel[:dbauth][:recovery_token] => token).first
 
     if dbauth_match.nil? || token.nil?
-      result = {:errors => ['Invalid token']}
+      result = {:errors => [{message: 'Invalid token'}]}
     else
       recovery_token_expiry = dbauth_match[:recovery_token_expiry]
       # days difference
       time_diff = DateTime.now - DateTime.strptime(recovery_token_expiry)
       if time_diff > 1
-        result = {:errors => ['This token has expired']}
+        result = {:errors => [{message: 'This token has expired'}]}
       else
         result = {:status => 'updated'} if set_user_password(dbauth_match[:user_id], password)
       end

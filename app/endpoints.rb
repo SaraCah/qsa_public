@@ -401,10 +401,11 @@ class QSAPublic < Sinatra::Base
 
   Endpoint.get('/api/token_update_password')
       .param(:token, String, "Recovery token")
-      .param(:password, String, "New password") do
+      .param(:password, String, "New password")
+      .param(:confirm_password, String, "Confirm password") do
 
     if Users.valid_password?(params[:password])
-      result = DBAuth.update_password_from_token(params[:token], params[:password])
+      result = DBAuth.update_password_from_token(params[:token], params[:password], params[:confirm_password])
     else
       result = {errors: [{message: Users::WEAK_PASSWORD_MSG}]}
     end
