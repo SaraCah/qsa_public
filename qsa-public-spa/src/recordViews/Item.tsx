@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Redirect } from 'react-router';
-import { Http } from '../utils/http';
+import {baseURL, Http} from '../utils/http';
 import Layout from './Layout';
 import {
   iconForType,
@@ -80,13 +80,17 @@ const DigitalRepresentation: React.FC<{
   return (
     <>
       <dl>
-        <dt>Download link</dt>
-        <dd>
-          FIXME{' '}
-          <a href="https://teaspoon-consulting.com/dropbox/c7513962474ea1c6ec6ac2b01cd273486df4f107.jpg" target="_blank" rel="noopener noreferrer">
+        {
+          representation.get('representation_file') &&
+          <>
+            <dt>Download link</dt>
+            <dd>
+            <a href={baseURL + '/api/download_file/' + representation.get('qsa_id_prefixed')} target="_blank" rel="noopener noreferrer">
             Link to file
-          </a>
-        </dd>
+            </a>
+            </dd>
+          </>
+        }
         <dt>ID</dt>
         <dd>{representation.get('qsa_id_prefixed')}</dd>
         <dt>Title</dt>

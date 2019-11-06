@@ -4,7 +4,7 @@ import { UserForm } from '../models/User';
 import { PasswordRecoveryResponse } from '../models/HttpResponse';
 
 // This will only be set in development mode.  Production runs everything on the same domain.
-const baseURL = process.env.REACT_APP_QSA_PUBLIC_URL || '';
+export const baseURL = process.env.REACT_APP_QSA_PUBLIC_URL || '';
 
 const searchUrl = `${baseURL}/api/advanced_search`;
 const fetchUrl = `${baseURL}/api/fetch`;

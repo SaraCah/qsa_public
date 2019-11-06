@@ -608,6 +608,29 @@ class QSAPublic < Sinatra::Base
     json_response({status: Ctx.captcha_verified? ? 'verified' : 'unverified'})
   end
 
+  Endpoint.get('/api/download_file/:qsa_id')
+    .param(:qsa_id, String, 'QSA Id') do
+    record = Search.get_record_by_qsa_id(params[:qsa_id])
+
+    next [404] if record.nil?
+    next [404] if record.fetch('jsonmodel_type') != 'digital_representation'
+    next [404] if record.fetch('representation_file', nil).nil?
+    next [404] if record.fetch('representation_file').fetch('key', nil).nil?
+
+    mime_type_match = MIME::Types[record.fetch('representation_file').fetch('mime_type')]
+    extension = mime_type_match.nil? ? 'unknown' : mime_type_match.first.preferred_extension
+
+    [
+      200,
+      {
+        'Content-Type' => record.fetch('representation_file').fetch('mime_type'),
+        'Last-Modified' => Time.now.ctime,
+        'Content-Disposition' => "attachment; filename=#{params[:qsa_id]}.#{extension}"
+      },
+      ByteStorage.get.to_enum(:get_stream, record.fetch('representation_file').fetch('key'))
+    ]
+  end
+
   if !defined?(STATIC_DIR)
     STATIC_DIR = File.realpath(File.absolute_path(File.join(File.dirname(__FILE__), '..', 'static')))
   end

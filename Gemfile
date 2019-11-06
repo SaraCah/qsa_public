@@ -10,4 +10,5 @@ gem "sequel", "5.19.0"
 gem "bcrypt", "3.1.12"
 gem "jdbc-mysql", "5.1.47"
 gem "savon", "2.12.0"
-
+gem "aws-sdk-s3"
+gem "mime-types"
