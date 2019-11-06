@@ -59,20 +59,15 @@ class S3AuthenticatedStorage
   end
 
   def exists?(key)
-    result = false
-
     begin
-      response = client.head_object({
-                                      :bucket => @bucket,
-                                      :key => key
-                                    })
-
-      result = response.code == '200'
+     client.head_object({
+                         :bucket => @bucket,
+                         :key => key
+                       })
+      true
     rescue
-      raise S3GetFailed.new($!)
+      false
     end
-
-    result
   end
 
   class S3StoreFailed < StandardError; end
