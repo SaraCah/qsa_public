@@ -38,6 +38,8 @@ import { DigitalCopyRequestQuotePage } from './cart/DigitalCopyRequestQuotePage'
 import { DigitalCopySetPricePage } from "./cart/DigitalCopySetPricePage";
 import { DigitalCopyMinicartPage } from "./cart/DigitalCopyMinicartPage";
 
+import ErrorPage from "./context/ErrorPage";
+
 
 /* Establish error handling */
 class ErrorBuffer {
@@ -162,22 +164,24 @@ function wrappedRoute(component: any, opts: { alwaysRender?: boolean; pageTitle?
     }
 
     routeKey++;
-    return (<AppContext.Consumer>
-      {
-        (context: any) => {
-          return React.createElement(
-            component,
-            Object.assign({},
-                          props,
-                          {
-                            routeKey,
-                            setPageTitle,
-                            context,
-                          },
-                          opts.alwaysRender ? { key: routeKey } : {}));
+    return (<ErrorPage>
+      <AppContext.Consumer>
+        {
+          (context: any) => {
+            return React.createElement(
+              component,
+              Object.assign({},
+                            props,
+                            {
+                              routeKey,
+                              setPageTitle,
+                              context,
+                            },
+                            opts.alwaysRender ? { key: routeKey } : {}));
+          }
         }
-      }
-    </AppContext.Consumer>);
+      </AppContext.Consumer>
+    </ErrorPage>);
   };
 }
 

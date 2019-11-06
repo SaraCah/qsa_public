@@ -95,7 +95,7 @@ export class Http {
       errorMessage = error.message;
     }
 
-    window.location.href = "/error?msg=" + encodeURIComponent(errorMessage || '');
+    (window as any).handleFatalError && (window as any).handleFatalError(errorMessage || '', error);
 
     return error;
   }
