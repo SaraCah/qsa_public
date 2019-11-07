@@ -291,6 +291,9 @@ class OAIProvider
       else
         [listing, nil]
       end
+    else
+      # Deletes are finished
+      [listing, nil]
     end
   end
 
