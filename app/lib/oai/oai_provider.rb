@@ -1,5 +1,6 @@
 require 'nokogiri'
 require 'base64'
+require 'date'
 require_relative 'oai_helpers'
 
 
@@ -38,6 +39,18 @@ class OAIProvider
 
   def self.handle_request(params)
     request = OAIRequest.new(params)
+
+    unless request.valid?
+      if request.good_resumption_token
+        return error_response(request.params,
+                              'badArgument',
+                              'from/until/resumptionToken values not valid')
+      else
+        return error_response(request.params,
+                              'badResumptionToken',
+                              'resumptionToken not valid')
+      end
+    end
 
     if params[:metadataPrefix] && params[:metadataPrefix] != 'oai_dc'
       return error_response(params,
@@ -103,6 +116,12 @@ class OAIProvider
                             'The request includes illegal arguments, is missing required arguments, includes a repeated argument, or values for arguments have an illegal syntax.')
     end
 
+    unless request.wants_dc?
+      return error_response(request.params,
+                            'badArgument',
+                            'metadataPrefix argument was missing.  Must be "oai_dc".')
+    end
+
     uri = identifier_to_uri(request.identifier)
 
     response = Search.solr_handle_search(
@@ -161,6 +180,13 @@ class OAIProvider
   end
 
   def self.handle_list_records(request)
+    unless request.wants_dc?
+      return error_response(request.params,
+                            'badArgument',
+                            'metadataPrefix argument was missing.  Must be "oai_dc".')
+    end
+
+
     records, next_resumption_token = build_request_listing(request, :list_records)
 
     if records.empty?
@@ -320,7 +346,7 @@ class OAIProvider
     RECORDS_STATE = 'records'
     DELETES_STATE = 'deletes'
 
-    attr_reader :verb, :from, :until, :offset, :params, :identifier
+    attr_reader :verb, :from, :until, :offset, :params, :identifier, :good_resumption_token
     attr_accessor :state
 
     def initialize(params)
@@ -331,13 +357,23 @@ class OAIProvider
 
       @state = RECORDS_STATE
 
+      @metadata_prefix = params.fetch(:metadataPrefix, nil)
       @from = params.fetch(:from, nil)
       @until = params.fetch(:until, nil)
       @offset = 0
 
-      load_resumption_token(params.fetch(:resumptionToken, nil))
+      @good_resumption_token = true
+
+      begin
+        load_resumption_token(params.fetch(:resumptionToken, nil))
+      rescue
+        @good_resumption_token = false
+      end
     end
 
+    def wants_dc?
+      @metadata_prefix == 'oai_dc'
+    end
 
     def build_solr_date_range_filter
       "last_modified_time:[%s TO %s]" % [time_parse(@from) || '*', time_parse(@until) || '*']
@@ -365,6 +401,7 @@ class OAIProvider
           'until' => @until,
           'offset' => @offset + increment,
           'state' => @state,
+          'metadataPrefix' => @metadata_prefix,
         }.to_json
       )
     end
@@ -377,8 +414,22 @@ class OAIProvider
           'until' => @until,
           'offset' => 0,
           'state' => DELETES_STATE,
+          'metadataPrefix' => @metadata_prefix,
         }.to_json
       )
+    end
+
+    def valid?
+      return false if !@good_resumption_token
+
+      [@from, @until].each do |val|
+        next if val.nil?
+        DateTime.iso8601(val)
+      end
+
+      true
+    rescue
+      false
     end
 
     private
@@ -402,6 +453,7 @@ class OAIProvider
       @until = values.fetch('until', @until)
       @offset = values.fetch('offset', 0)
       @state = values.fetch('state', RECORDS_STATE)
+      @metadata_prefix = values.fetch('metadataPrefix', nil)
     end
   end
 end
