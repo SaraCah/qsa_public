@@ -14,13 +14,29 @@ class OAIProvider
 
     case request.verb
         when "Identify"
+          response = Search.solr_handle_search(
+            'q' => '*:*',
+            'fq' => [
+              "primary_type:(#{OAI_RECORD_TYPES.map {|s| Search.solr_escape(s) }.join(' ')})"
+            ],
+            'sort' => 'last_modified_time asc',
+            'rows' => 1,
+            'start' => 0,
+            'fl' => 'last_modified_time'
+          )
+
+          earliest_timestamp = response
+                                 .fetch('response')
+                                 .fetch('docs')
+                                 .fetch(0, {'last_modified_time' => Time.at(0).utc.iso8601})['last_modified_time']
+
           [
             200,
             {"Content-Type" => "text/xml"},
             Templates.emit(:oai_identify_response,
                            :now => Time.now.utc.iso8601,
                            :params => params,
-                           :earliest_date_timestamp => (Time.now - (86400 * 365)).utc.iso8601)
+                           :earliest_date_timestamp => earliest_timestamp)
           ]
         when "ListIdentifiers"
           response = Search.solr_handle_search(
