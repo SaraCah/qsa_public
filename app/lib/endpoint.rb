@@ -22,6 +22,13 @@ class Endpoint
     block ? e.finish(&block) : e
   end
 
+  def self.get_or_post(uri, opts = {}, &block)
+    e = new(:get_or_post, uri, opts)
+    register(e)
+    block ? e.finish(&block) : e
+  end
+
+
   ParamDef ||= Struct.new(:type, :description, :options)
 
   def needs_session?
@@ -85,12 +92,16 @@ class Endpoint
     opts = @opts
     endpoint = self
 
+    methods = (@method == :get_or_post) ? [:get, :post] : [@method]
+
     # Delete any matching route from a previous reload
     if QSAPublic.development?
       QSAPublic.instance_eval do
         new_uri = compile(endpoint.uri)
 
-        method_routes = @routes.fetch(endpoint.method.to_s.upcase, [])
+        method_routes = methods.map {|method|
+          @routes.fetch(method.to_s.upcase, [])
+        }.flatten(1)
 
         route_to_replace = method_routes.find do |route_def|
           uri = route_def[0]
@@ -104,35 +115,37 @@ class Endpoint
       end
     end
 
-    QSAPublic.send(@method, @uri) do
-      in_time = Time.now
-      endpoint.check_params(params)
+    methods.each do |method|
+      QSAPublic.send(method, @uri) do
+        in_time = Time.now
+        endpoint.check_params(params)
 
-      # Within Sinatra's handle block, self is bound to the application instance
-      # (which is what we want).
-      #
-      # However, the block passed in was created in the context of the
-      # application class (not in the instance), which won't give us access to
-      # things like ERB helper methods.
-      #
-      # So, use instance_eval to evaluate the block in the right context.
-      app_instance = self
+        # Within Sinatra's handle block, self is bound to the application instance
+        # (which is what we want).
+        #
+        # However, the block passed in was created in the context of the
+        # application class (not in the instance), which won't give us access to
+        # things like ERB helper methods.
+        #
+        # So, use instance_eval to evaluate the block in the right context.
+        app_instance = self
 
-      Ctx.open({}, session) do
+        Ctx.open({}, session) do
 
-        if session_id = env['HTTP_X_ARCHIVESSEARCH_SESSION']
-          begin
-            Ctx.get.session = Sessions.get_session(session_id)
-          rescue Sessions::SessionNotFoundError
-            # User's token not valid
+          if session_id = env['HTTP_X_ARCHIVESSEARCH_SESSION']
+            begin
+              Ctx.get.session = Sessions.get_session(session_id)
+            rescue Sessions::SessionNotFoundError
+              # User's token not valid
+            end
           end
-        end
 
-        if endpoint.needs_session? && Ctx.get.session.nil?
-          raise Sessions::SessionNotFoundError.new("A session is required to access this endpoint")
-        end
+          if endpoint.needs_session? && Ctx.get.session.nil?
+            raise Sessions::SessionNotFoundError.new("A session is required to access this endpoint")
+          end
 
-        app_instance.instance_eval(&block)
+          app_instance.instance_eval(&block)
+        end
       end
     end
   end

@@ -10,6 +10,7 @@ Templates.define(:oai_get_record_response, [:params, :now, :identifier, :record,
 Templates.define(:oai_list_records_response, [:params, :now, :records, :next_resumption_token?], "lib/oai/templates/list_records.xml.erb")
 
 Templates.define(:oai_record_dc, [:identifier, :record, :last_modified_time], "lib/oai/templates/record_dc.xml.erb")
+Templates.define(:oai_error, [:params, :now, :code, :message], "lib/oai/templates/oai_error.xml.erb")
 
 
 OAI_RECORD_TYPES = ['resource', 'archival_object']
@@ -23,8 +24,30 @@ OAI_RECORD_TYPE_URI_PATTERNS = {
 OAI_REQUESTS_PER_PAGE = 100
 
 class OAIProvider
+  def self.error_response(params, code, message)
+    [
+      200,
+      {"Content-Type" => "text/xml"},
+      pprint_xml(Templates.emit(:oai_error,
+                                :now => Time.now.utc.iso8601,
+                                :params => params,
+                                :code => code,
+                                :message => message))
+    ]
+  end
+
   def self.handle_request(params)
     request = OAIRequest.new(params)
+
+    if params[:metadataPrefix] && params[:metadataPrefix] != 'oai_dc'
+      return error_response(params,
+                            'cannotDisseminateFormat',
+                            'The metadata format identified by the value given for the metadataPrefix argument is not supported by the item or by the repository.')
+    end
+
+    if params[:set]
+      return error_response(params, 'noSetHierarchy', 'The repository does not support sets.')
+    end
 
     case request.verb
     when "Identify"
@@ -37,9 +60,10 @@ class OAIProvider
       self.handle_get_record(request)
     when "ListRecords"
       self.handle_list_records(request)
+    when "ListSets"
+      error_response(params, 'noSetHierarchy','This repository does not support sets')
     else
-      # FIXME: emit special code
-      raise "Unrecognised OAI verb: #{params[:verb]}"
+      error_response(params, 'badVerb', 'Value of the verb argument is not a legal OAI-PMH verb, the verb argument is missing, or the verb argument is repeated.')
     end
   end
 
@@ -72,10 +96,11 @@ class OAIProvider
   end
 
 
-  # FIXME: Needs to return IdDoesNotExist if required
   def self.handle_get_record(request)
     unless request.identifier
-      raise "Bad request" # FIXME
+      return error_response(request.params,
+                            'badArgument',
+                            'The request includes illegal arguments, is missing required arguments, includes a repeated argument, or values for arguments have an illegal syntax.')
     end
 
     uri = identifier_to_uri(request.identifier)
@@ -109,7 +134,7 @@ class OAIProvider
                                  ))
       ]
     else
-      raise "FIXME"
+      error_response(request.params, 'idDoesNotExist', 'The value of the identifier argument is unknown or illegal in this repository.')
     end
 
   end
@@ -136,17 +161,13 @@ class OAIProvider
   end
 
   def self.handle_list_records(request)
-    records = if request.state == 'records'
-                    list_records(request)
-                  elsif request.state == 'deletes'
-                    list_delete_identifiers(request)
-                  end
+    records, next_resumption_token = build_request_listing(request, :list_records)
 
-    next_resumption_token = if records.length > OAI_REQUESTS_PER_PAGE
-                              request.next_resumption_token(OAI_REQUESTS_PER_PAGE)
-                            elsif request.state == 'records'
-                              request.resumption_token_for_deletes
-                            end
+    if records.empty?
+      return error_response(request.params,
+                            'noRecordsMatch',
+                            'The combination of the values of the from, until, set and metadataPrefix arguments results in an empty list.')
+    end
 
     [
       200,
@@ -204,18 +225,57 @@ class OAIProvider
     end
   end
 
-  def self.handle_list_identifiers(request)
-    identifiers = if request.state == 'records'
-                    list_record_identifiers(request)
-                  elsif request.state == 'deletes'
-                    list_delete_identifiers(request)
-                  end
+  def self.actually_has_deletes?(request, delete_token)
+    next_request = OAIRequest.new({
+                                    :verb => request.verb,
+                                    :resumptionToken => delete_token
+                                  })
 
-    next_resumption_token = if identifiers.length > OAI_REQUESTS_PER_PAGE
-                              request.next_resumption_token(OAI_REQUESTS_PER_PAGE)
-                            elsif request.state == 'records'
-                              request.resumption_token_for_deletes
-                            end
+    !list_delete_identifiers(request).empty?
+  end
+
+  def self.build_request_listing(request, list_method)
+    listing = []
+
+    if request.state == 'records'
+      listing = self.send(list_method, request)
+      if listing.empty?
+        request.state = 'deletes'
+      end
+    end
+
+    if request.state == 'deletes'
+      listing = list_delete_identifiers(request)
+    end
+
+    if listing.empty?
+      return [[], nil]
+    end
+
+    if listing.length > OAI_REQUESTS_PER_PAGE
+      return [
+        listing,
+        request.next_resumption_token(OAI_REQUESTS_PER_PAGE)
+      ]
+    elsif request.state == 'records'
+      next_token = request.resumption_token_for_deletes
+
+      if actually_has_deletes?(request, next_token)
+        [listing, next_token]
+      else
+        [listing, nil]
+      end
+    end
+  end
+
+  def self.handle_list_identifiers(request)
+    identifiers, next_resumption_token = build_request_listing(request, :list_record_identifiers)
+
+    if identifiers.empty?
+      return error_response(request.params,
+                            'noRecordsMatch',
+                            'The combination of the values of the from, until, set and metadataPrefix arguments results in an empty list.')
+    end
 
     [
       200,
@@ -260,7 +320,8 @@ class OAIProvider
     RECORDS_STATE = 'records'
     DELETES_STATE = 'deletes'
 
-    attr_reader :verb, :from, :until, :offset, :params, :state, :identifier
+    attr_reader :verb, :from, :until, :offset, :params, :identifier
+    attr_accessor :state
 
     def initialize(params)
       @verb = params.fetch(:verb)

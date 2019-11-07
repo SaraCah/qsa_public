@@ -633,7 +633,7 @@ class QSAPublic < Sinatra::Base
     ]
   end
 
-  Endpoint.get('/oai')
+  Endpoint.get_or_post('/oai')
     .param(:verb, String, "The OAI verb (Identify, ListRecords, GetRecord, etc.)")
     .param(:metadataPrefix,
            String,
