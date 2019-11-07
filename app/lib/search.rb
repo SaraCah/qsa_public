@@ -529,7 +529,7 @@ class Search
                                        'start': start_index,
                                        'sort': sort,
                                        'facet': true,
-                                       'facet.field': ['mandate_id', 'function_id', 'responsible_agency_id', 'creating_agency_id', 'tags'],
+                                       'facet.field': ['mandate_id', 'function_id', 'responsible_agency_id', 'creating_agency_id', 'tags_string'],
                                        'facet.mincount': 1,
                                        fq: filters)
 

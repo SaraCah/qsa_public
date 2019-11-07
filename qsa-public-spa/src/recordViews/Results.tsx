@@ -14,7 +14,7 @@ const FACET_LABELS: { [name: string]: string } = {
   resource_id: 'Series',
   creating_agency_id: 'Creating Agency',
   responsible_agency_id: 'Responsible Agency',
-  tags: 'Tags',
+  tags_string: 'Tags',
 };
 
 const ResultsPage: React.FC<any> = (route: any) => {
