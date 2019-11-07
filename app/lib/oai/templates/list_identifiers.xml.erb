@@ -13,7 +13,7 @@
     </request>
     <ListIdentifiers>
         <% identifiers.each do |identifier| %>
-            <header>
+            <header<%== (identifier['deleted'] ? ' status="deleted"' : '') %>>
                 <identifier><%= OAIHelpers.format_identifier(identifier['uri']) %></identifier>
                 <datestamp><%= identifier['last_modified_time'] %></datestamp>
             </header>
