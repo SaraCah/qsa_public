@@ -13,69 +13,76 @@ class OAIProvider
     request = OAIRequest.new(params)
 
     case request.verb
-        when "Identify"
-          response = Search.solr_handle_search(
-            'q' => '*:*',
-            'fq' => [
-              "primary_type:(#{OAI_RECORD_TYPES.map {|s| Search.solr_escape(s) }.join(' ')})"
-            ],
-            'sort' => 'last_modified_time asc',
-            'rows' => 1,
-            'start' => 0,
-            'fl' => 'last_modified_time'
-          )
-
-          earliest_timestamp = response
-                                 .fetch('response')
-                                 .fetch('docs')
-                                 .fetch(0, {'last_modified_time' => Time.at(0).utc.iso8601})['last_modified_time']
-
-          [
-            200,
-            {"Content-Type" => "text/xml"},
-            Templates.emit(:oai_identify_response,
-                           :now => Time.now.utc.iso8601,
-                           :params => params,
-                           :earliest_date_timestamp => earliest_timestamp)
-          ]
-        when "ListIdentifiers"
-          response = Search.solr_handle_search(
-            'q' => '*:*',
-            'fq' => [
-              request.build_solr_date_range_filter,
-              "primary_type:(#{OAI_RECORD_TYPES.map {|s| Search.solr_escape(s) }.join(' ')})"
-            ],
-            'sort' => 'last_modified_time asc, uri asc',
-            'rows' => OAI_REQUESTS_PER_PAGE + 1,
-            'start' => request.offset,
-            'fl' => 'uri,last_modified_time'
-          )
-
-          identifiers = response.fetch('response').fetch('docs')
-
-          [
-            200,
-            {"Content-Type" => "text/xml"},
-            Templates.emit(:oai_list_identifiers_response,
-                           :now => Time.now.utc.iso8601,
-                           :params => params,
-                           :identifiers => identifiers.take(OAI_REQUESTS_PER_PAGE),
-                           :next_resumption_token => identifiers.length > OAI_REQUESTS_PER_PAGE ?
-                                                       request.next_resumption_token(OAI_REQUESTS_PER_PAGE) :
-                                                       nil
-                          )
-          ]
-
-
-        else
-          # FIXME: emit special code
-          raise "Unrecognised OAI verb: #{params[:verb]}"
+    when "Identify"
+      self.handle_identify(request)
+    when "ListIdentifiers"
+      self.handle_list_identifiers(request)
+    else
+      # FIXME: emit special code
+      raise "Unrecognised OAI verb: #{params[:verb]}"
     end
+  end
+
+  def self.handle_identify(request)
+    response = Search.solr_handle_search(
+      'q' => '*:*',
+      'fq' => [
+        "primary_type:(#{OAI_RECORD_TYPES.map {|s| Search.solr_escape(s) }.join(' ')})"
+      ],
+      'sort' => 'last_modified_time asc',
+      'rows' => 1,
+      'start' => 0,
+      'fl' => 'last_modified_time'
+    )
+
+    earliest_timestamp = response
+                           .fetch('response')
+                           .fetch('docs')
+                           .fetch(0, {'last_modified_time' => Time.at(0).utc.iso8601})['last_modified_time']
+
+    [
+      200,
+      {"Content-Type" => "text/xml"},
+      Templates.emit(:oai_identify_response,
+                     :now => Time.now.utc.iso8601,
+                     :params => request.params,
+                     :earliest_date_timestamp => earliest_timestamp)
+    ]
+  end
+
+  def self.handle_list_identifiers(request)
+    response = Search.solr_handle_search(
+      'q' => '*:*',
+      'fq' => [
+        request.build_solr_date_range_filter,
+        "primary_type:(#{OAI_RECORD_TYPES.map {|s| Search.solr_escape(s) }.join(' ')})"
+      ],
+      'sort' => 'last_modified_time asc, uri asc',
+      'rows' => OAI_REQUESTS_PER_PAGE + 1,
+      'start' => request.offset,
+      'fl' => 'uri,last_modified_time'
+    )
+
+    identifiers = response.fetch('response').fetch('docs')
+
+    next_resumption_token = if identifiers.length > OAI_REQUESTS_PER_PAGE
+                              request.next_resumption_token(OAI_REQUESTS_PER_PAGE)
+                            end
+
+    [
+      200,
+      {"Content-Type" => "text/xml"},
+      Templates.emit(:oai_list_identifiers_response,
+                     :now => Time.now.utc.iso8601,
+                     :params => request.params,
+                     :identifiers => identifiers.take(OAI_REQUESTS_PER_PAGE),
+                     :next_resumption_token => next_resumption_token)
+    ]
   end
 
 
   class OAIRequest
-    attr_reader :verb, :from, :until, :offset
+    attr_reader :verb, :from, :until, :offset, :params
 
     def initialize(params)
       @verb = params.fetch(:verb)
