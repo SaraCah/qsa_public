@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/
+                http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+    <responseDate><%= now %></responseDate>
+    <request
+        <% params.each do |k, v| %>
+        <%= k %>="<%= v %>"
+        <% end %>
+    >
+        <%= AppConfig[:oai_repository_url] %>
+    </request>
+    <ListIdentifiers>
+        <% identifiers.each do |identifier| %>
+            <header>
+                <identifier><%= OAIHelpers.format_identifier(identifier['uri']) %></identifier>
+                <datestamp><%= identifier['last_modified_time'] %></datestamp>
+            </header>
+        <% end %>
+        <% if next_resumption_token %>
+            <resumptionToken><%= next_resumption_token %></resumptionToken>
+        <% end %>
+    </ListIdentifiers>
+</OAI-PMH>

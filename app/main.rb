@@ -55,6 +55,8 @@ require 'lib/s3_authenticated_storage'
 require 'lib/templates'
 require 'views/templates'
 
+require 'lib/oai/oai_provider'
+
 require 'models/dto'
 require 'models/user_form_dto'
 require 'models/user_dto'

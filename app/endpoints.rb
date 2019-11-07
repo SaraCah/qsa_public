@@ -633,6 +633,21 @@ class QSAPublic < Sinatra::Base
     ]
   end
 
+  Endpoint.get('/oai')
+    .param(:verb, String, "The OAI verb (Identify, ListRecords, GetRecord, etc.)")
+    .param(:metadataPrefix,
+           String,
+           "One of the supported metadata types.  See verb=ListMetadataFormats for a list.",
+           :optional => true)
+    .param(:from, String, "Start date (yyyy-mm-dd, yyyy-mm-ddThh:mm:ssZ)", :optional => true)
+    .param(:until, String, "End date (yyyy-mm-dd, yyyy-mm-ddThh:mm:ssZ)", :optional => true)
+    .param(:resumptionToken, String, "The OAI resumption token", :optional => true)
+    .param(:set, String, "Requested OAI set (see ?verb=Identify for available sets)", :optional => true)
+    .param(:identifier, String, "The requested record identifier (for ?verb=GetRecord)", :optional => true) \
+  do
+    OAIProvider.handle_request(params)
+  end
+
   if !defined?(STATIC_DIR)
     STATIC_DIR = File.realpath(File.absolute_path(File.join(File.dirname(__FILE__), '..', 'static')))
   end

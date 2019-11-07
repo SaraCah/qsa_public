@@ -20,6 +20,8 @@
   <field name="start_date" type="pdate" stored="true" multiValued="false" />
   <field name="end_date" type="pdate" stored="true" multiValued="false" />
 
+  <field name="last_modified_time" type="pdate" stored="true" multiValued="false" />
+
   <field name="has_digital_representations" type="boolean" indexed="true" stored="true" multiValued="false"/>
   <field name="has_physical_representations" type="boolean" indexed="true" stored="true" multiValued="false"/>
 

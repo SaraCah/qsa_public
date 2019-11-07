@@ -16,6 +16,15 @@ AppConfig[:dbauth_seconds_per_login] = 10
 # But you can try 10 in quick succession before we start limiting
 AppConfig[:dbauth_max_login_burst] = 10
 
+AppConfig[:oai_repository_url] = 'http://dishevelled.net:3333/oai'
+AppConfig[:oai_repository_name] = 'Queensland State Archives'
+AppConfig[:oai_contact_email] = 'mark@dishevelled.net'
+AppConfig[:oai_repository_identifier] = 'archives.qld.gov.au'
+AppConfig[:oai_sample_identifier] = proc {
+  ['oai', AppConfig[:oai_repository_identifier], '/repositories/2/resources/1'].join(':')
+}
+
+
 begin
   load File.join(File.dirname(__FILE__), "/config.local.rb")
 rescue LoadError
