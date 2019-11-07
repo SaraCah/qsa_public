@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/
+                http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+    <responseDate><%= now %></responseDate>
+    <request
+        <% params.each do |k, v| %>
+        <%= k %>="<%= v %>"
+        <% end %>
+    >
+        <%= AppConfig[:oai_repository_url] %>
+    </request>
+    <ListRecords>
+        <% records.each do |record| %>
+            <% if record['deleted'] %>
+                <record>
+                    <header status="deleted">
+                        <identifier><%= OAIHelpers.format_identifier(record['uri']) %></identifier>
+                        <datestamp><%= record['last_modified_time'] %></datestamp>
+                    </header>
+                </record>
+            <% else %>
+                <%== Templates.emit(:oai_record_dc,
+                                    :identifier => OAIHelpers.format_identifier(record['record']['uri']),
+                                    :record => record['record'],
+                                    :last_modified_time => record['last_modified_time']) %>
+            <% end %>
+        <% end %>
+
+        <% if next_resumption_token %>
+            <resumptionToken><%= next_resumption_token %></resumptionToken>
+        <% end %>
+    </ListRecords>
+</OAI-PMH>

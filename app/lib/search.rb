@@ -38,11 +38,15 @@ class Search
       solr_url += '/'
     end
 
-    query_params = {'qt' => 'json'}.merge(query_params)
-    query_params = {'rows' => AppConfig[:page_size]}.merge(query_params)
+    solr_params = {'qt' => 'json',
+                  'rows' => AppConfig[:page_size]}
+
+    query_params.each do |param, value|
+      solr_params[param.to_s] = value
+    end
 
     search_uri = URI.join(solr_url, 'select')
-    search_uri.query = URI.encode_www_form(query_params)
+    search_uri.query = URI.encode_www_form(solr_params)
 
     request = Net::HTTP::Get.new(search_uri)
 

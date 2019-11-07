@@ -44,7 +44,7 @@
             rights_info = []
 
             if controller
-            rights_info << "Record controlled by %s" % [creator['_resolved']['display_string']]
+                rights_info << "Record controlled by %s" % [controller['_resolved']['display_string']]
             end
 
             if record['rap_access_status']

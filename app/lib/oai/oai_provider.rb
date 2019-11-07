@@ -6,7 +6,8 @@ require_relative 'oai_helpers'
 Templates.define(:oai_identify_response, [:params, :now, :earliest_date_timestamp], "lib/oai/templates/identify.xml.erb")
 Templates.define(:oai_list_identifiers_response, [:params, :now, :identifiers, :next_resumption_token?], "lib/oai/templates/list_identifiers.xml.erb")
 Templates.define(:oai_list_metadata_formats_response, [:params, :now], "lib/oai/templates/list_metadata_formats.xml.erb")
-Templates.define(:oai_get_record_response, [:params, :now, :identifier, :record, :last_modified_time], "lib/oai/templates/get_record_response.xml.erb")
+Templates.define(:oai_get_record_response, [:params, :now, :identifier, :record, :last_modified_time], "lib/oai/templates/get_record.xml.erb")
+Templates.define(:oai_list_records_response, [:params, :now, :records, :next_resumption_token?], "lib/oai/templates/list_records.xml.erb")
 
 Templates.define(:oai_record_dc, [:identifier, :record, :last_modified_time], "lib/oai/templates/record_dc.xml.erb")
 
@@ -34,6 +35,8 @@ class OAIProvider
       self.handle_list_metadata_formats(request)
     when "GetRecord"
       self.handle_get_record(request)
+    when "ListRecords"
+      self.handle_list_records(request)
     else
       # FIXME: emit special code
       raise "Unrecognised OAI verb: #{params[:verb]}"
@@ -110,6 +113,53 @@ class OAIProvider
     end
 
   end
+
+  def self.list_records(request)
+    response = Search.solr_handle_search(
+      'q' => '*:*',
+      'fq' => [
+        request.build_solr_date_range_filter,
+        "primary_type:(#{OAI_RECORD_TYPES.map {|s| Search.solr_escape(s) }.join(' ')})"
+      ],
+      'sort' => 'last_modified_time asc, uri asc',
+      'rows' => OAI_REQUESTS_PER_PAGE + 1,
+      'start' => request.offset,
+      'fl' => 'uri, last_modified_time, json'
+    )
+
+    docs = response.fetch('response').fetch('docs').map {|doc|
+      doc['record'] = JSON.parse(doc['json'])
+      doc
+    }
+
+    Search.resolve_refs!(docs)
+  end
+
+  def self.handle_list_records(request)
+    records = if request.state == 'records'
+                    list_records(request)
+                  elsif request.state == 'deletes'
+                    list_delete_identifiers(request)
+                  end
+
+    next_resumption_token = if records.length > OAI_REQUESTS_PER_PAGE
+                              request.next_resumption_token(OAI_REQUESTS_PER_PAGE)
+                            elsif request.state == 'records'
+                              request.resumption_token_for_deletes
+                            end
+
+    [
+      200,
+      {"Content-Type" => "text/xml"},
+      pprint_xml(Templates.emit(:oai_list_records_response,
+                                :now => Time.now.utc.iso8601,
+                                :params => request.params,
+                                :records => records,
+                                :next_resumption_token => next_resumption_token,
+                               ))
+    ]
+  end
+
 
   def self.list_record_identifiers(request)
     response = Search.solr_handle_search(
