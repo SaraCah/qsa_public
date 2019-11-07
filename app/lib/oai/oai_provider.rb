@@ -4,6 +4,8 @@ require_relative 'oai_helpers'
 
 Templates.define(:oai_identify_response, [:params, :now, :earliest_date_timestamp], "lib/oai/templates/identify.xml.erb")
 Templates.define(:oai_list_identifiers_response, [:params, :now, :identifiers, :next_resumption_token?], "lib/oai/templates/list_identifiers.xml.erb")
+Templates.define(:oai_list_metadata_formats_response, [:params, :now], "lib/oai/templates/list_metadata_formats.xml.erb")
+
 
 OAI_RECORD_TYPES = ['resource', 'archival_object']
 
@@ -24,6 +26,8 @@ class OAIProvider
       self.handle_identify(request)
     when "ListIdentifiers"
       self.handle_list_identifiers(request)
+    when "ListMetadataFormats"
+      self.handle_list_metadata_formats(request)
     else
       # FIXME: emit special code
       raise "Unrecognised OAI verb: #{params[:verb]}"
@@ -126,6 +130,16 @@ class OAIProvider
                      :params => request.params,
                      :identifiers => identifiers.take(OAI_REQUESTS_PER_PAGE),
                      :next_resumption_token => next_resumption_token)
+    ]
+  end
+
+  def self.handle_list_metadata_formats(request)
+    [
+      200,
+      {"Content-Type" => "text/xml"},
+      Templates.emit(:oai_list_metadata_formats_response,
+                     :now => Time.now.utc.iso8601,
+                     :params => request.params)
     ]
   end
 
