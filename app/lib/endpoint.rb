@@ -118,7 +118,12 @@ class Endpoint
     methods.each do |method|
       QSAPublic.send(method, @uri) do
         in_time = Time.now
-        endpoint.check_params(params)
+        begin
+          endpoint.check_params(params)
+        rescue
+          $LOG.error($!.to_s)
+          return [400, {}, $!.to_s]
+        end
 
         # Within Sinatra's handle block, self is bound to the application instance
         # (which is what we want).
