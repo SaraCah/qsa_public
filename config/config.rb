@@ -17,6 +17,7 @@ AppConfig[:dbauth_seconds_per_login] = 10
 AppConfig[:dbauth_max_login_burst] = 10
 
 AppConfig[:oai_repository_url] = 'http://dishevelled.net:3333/oai'
+AppConfig[:qsa_public_base_url] = 'http://localhost:3009'
 AppConfig[:oai_repository_name] = 'Queensland State Archives'
 AppConfig[:oai_contact_email] = 'mark@dishevelled.net'
 AppConfig[:oai_repository_identifier] = 'archives.qld.gov.au'

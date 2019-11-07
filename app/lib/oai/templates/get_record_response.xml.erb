@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+    <responseDate><%= now %></responseDate>
+    <request
+        <% params.each do |k, v| %>
+        <%= k %>="<%= v %>"
+        <% end %>
+    >
+        <%= AppConfig[:oai_repository_url] %>
+    </request>
+    <GetRecord>
+        <%== Templates.emit(:oai_record_dc,
+                            :identifier => identifier,
+                            :record => record,
+                            :last_modified_time => last_modified_time) %>
+    </GetRecord>
+</OAI-PMH>

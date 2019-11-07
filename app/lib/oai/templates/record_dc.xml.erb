@@ -1,0 +1,70 @@
+<record>
+    <header>
+        <identifier><%= identifier %></identifier>
+        <datestamp><%= last_modified_time %></datestamp>
+    </header>
+    <metadata>
+        <oai_dc:dc
+            xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+            xmlns:dc="http://purl.org/dc/elements/1.1/"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+
+            <dc:publisher><%= AppConfig[:oai_repository_name] %></dc:publisher>
+            <dc:identifier><%= record.fetch('qsa_id_prefixed') %></dc:identifier>
+
+            <dc:identifier linktype="restricted">
+                <% if record.fetch('jsonmodel_type') == 'resource' %>
+                    <%= URI.join(AppConfig[:qsa_public_base_url], 'series', record.fetch('qsa_id_prefixed')) %>
+                <% else %>
+                    <%= URI.join(AppConfig[:qsa_public_base_url], 'items', record.fetch('qsa_id_prefixed')) %>
+                <% end %>
+            </dc:identifier>
+
+            <dc:title><%= record.fetch('display_string') %></dc:title>
+
+            <% creator = record.fetch('creating_agency', nil) %>
+            <% if creator %>
+                <dc:creator><%= creator['_resolved']['display_string'] %></dc:creator>
+            <% end %>
+
+            <% dates = record.fetch('dates', []) %>
+            <% unless dates.empty? %>
+                <dc:date><%= [dates[0]['begin'], dates[0]['end']].compact.join(' - ') %></dc:date>
+            <% end %>
+
+            <dc:type><%= record.fetch('jsonmodel_type') == 'resource' ? 'Series' : 'Item' %></dc:type>
+
+            <% unless record.fetch('description', '').to_s.empty? %>
+                <dc:description><%= record.fetch('description', '') %></dc:description>
+            <% end %>
+
+            <%
+            controller = record.fetch('responsible_agency', nil)
+            rights_info = []
+
+            if controller
+            rights_info << "Record controlled by %s" % [creator['_resolved']['display_string']]
+            end
+
+            if record['rap_access_status']
+                rights_info << record['rap_access_status']
+            end
+            %>
+
+            <% if record.fetch('jsonmodel_type') == 'archival_object' %>
+                <dc:relation>Part of series <%= "%s (%s)" % [
+                                            record.fetch('resource').fetch('_resolved').fetch('display_string'),
+                                            record.fetch('resource').fetch('_resolved').fetch('qsa_id_prefixed')
+                                            ]
+                                            %></dc:relation>
+            <% end %>
+
+            <% unless rights_info.empty? %>
+                <dc:rights>
+                    <%= rights_info.join('; ') %>
+                </dc:rights>
+            <% end %>
+        </oai_dc:dc>
+    </metadata>
+</record>

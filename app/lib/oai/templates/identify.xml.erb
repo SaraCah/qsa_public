@@ -4,7 +4,13 @@
          xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/
                 http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
     <responseDate><%= now %></responseDate>
-    <request verb="Identify"><%= AppConfig[:oai_repository_url] %></request>
+    <request
+        <% params.each do |k, v| %>
+        <%= k %>="<%= v %>"
+        <% end %>
+    >
+        <%= AppConfig[:oai_repository_url] %>
+    </request>
     <Identify>
         <repositoryName><%= AppConfig[:oai_repository_name] %></repositoryName>
         <baseURL><%= AppConfig[:oai_repository_url] %></baseURL>
