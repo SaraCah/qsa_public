@@ -279,47 +279,51 @@ const SearchFacets: React.FC<{
           <section className="available-filters" key={field}>
             <h4>{FACET_LABELS[field]}</h4>
             <ul>
-              {facets.map((facet: any, idx: number) => {
-                if (idx > 4 && !isExpanded(facet.facet_field)) {
-                  if (idx === 5) {
-                    return (<li key={facet.facet_field + '_more'}>
-                      <button className="qg-btn btn-link btn-xs"
-                              onClick={(e) => expand(facet.facet_field)}>
-                        <i aria-hidden="true" className="fa fa-plus"/>&nbsp;
-                        Show {facets.length - idx} more...
-                      </button>
-                    </li>);
+              {
+                facets
+                  .filter((facet: any, idx: number) => {
+                    return isExpanded(facet.facet_field) ? true : idx < 5;
+                  })
+                  .map((facet: any) => {
+                    if (props.advancedSearchQuery.hasFilter(facet.facet_field, facet.facet_value)) {
+                      return (
+                          <li key={facet.facet_field + '_' + facet.facet_label}>
+                            <div className="facet-label">{facet.facet_label}</div>
+                            <div className="facet-count">{facet.facet_count}</div>
+                          </li>
+                      );
+                    } else {
+                      return (
+                          <li key={facet.facet_field + '_' + facet.facet_label}>
+                            <div className="facet-label">
+                              <Link
+                                  to={{
+                                    pathname: '/search',
+                                    search: props.advancedSearchQuery
+                                        .addFilter(facet.facet_field, facet.facet_value, facet.facet_label)
+                                        .toQueryString()
+                                  }}
+                              >
+                                {facet.facet_label}
+                              </Link>
+                            </div>
+                            <div className="facet-count">{facet.facet_count}</div>
+                          </li>
+                      );
+                    }
                   }
-                } else {
-                  if (props.advancedSearchQuery.hasFilter(facet.facet_field, facet.facet_value)) {
-                    return (
-                      <li key={facet.facet_field + '_' + facet.facet_label}>
-                        <div className="facet-label">{facet.facet_label}</div>
-                        <div className="facet-count">{facet.facet_count}</div>
-                      </li>
-                    );
-                  } else {
-                    return (
-                      <li key={facet.facet_field + '_' + facet.facet_label}>
-                        <div className="facet-label">
-                          <Link
-                            to={{
-                              pathname: '/search',
-                              search: props.advancedSearchQuery
-                                  .addFilter(facet.facet_field, facet.facet_value, facet.facet_label)
-                                  .toQueryString()
-                            }}
-                          >
-                            {facet.facet_label}
-                          </Link>
-                        </div>
-                        <div className="facet-count">{facet.facet_count}</div>
-                      </li>
-                    );
-                  }
-                }
-                return <></>;
-              })}
+                )
+              }
+              {
+                !isExpanded(field) && facets.length > 5 &&
+                <li key={field + '_more'}>
+                  <button className="qg-btn btn-link btn-xs"
+                          onClick={(e) => expand(field)}>
+                    <i aria-hidden="true" className="fa fa-plus"/>&nbsp;
+                    Show {facets.length - 5} more...
+                  </button>
+                </li>
+              }
             </ul>
           </section>
         );
