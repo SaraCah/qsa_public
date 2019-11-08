@@ -88,7 +88,7 @@ export const DigitalCopyRequestQuotePage: React.FC<any> = (route: any) => {
                 Digital Copy Quotes
               </h2>
               <p>
-                Complete this form to request copies of materials which are held by us. Depending on what you request, a fee may apply. We'll get in touch to let you know how much the fee is.
+                Complete this form to request copies of records which are held by QSA. We will respond with a quote and details on how to pay within 20 working days.
               </p>
               <p>
                 Please be as detailed as possible when providing us info about the records you need.
@@ -127,8 +127,6 @@ export const DigitalCopyRequestQuotePage: React.FC<any> = (route: any) => {
                                 onChange={(e) => updateCartItem(context, cartItem.id, 'digital_copy_type', e.target.value)}>
                           <option disabled value=""> -- Please Select a Copy Type -- </option>
                           <option value="digital copy">Digital Copy</option>
-                          <option value="photocopy">Photocopy</option>
-                          <option value="photo">Photo</option>
                         </select>
                       </dd>
                       {
@@ -178,46 +176,6 @@ export const DigitalCopyRequestQuotePage: React.FC<any> = (route: any) => {
                                 <option disabled value=""> -- Please select a resolution --</option>
                                 <option value="300dpi">300dpi</option>
                                 <option value="other">Other (please detail in the notes field below)</option>
-                              </select>
-                            </dd>
-                          </>
-                      }
-                      {
-                        cartItem.options.digital_copy_type === 'photocopy' &&
-                          <>
-                            <dt className="col-xs-6">
-                              <label htmlFor={`item_${cartItem.id}_digital_copy_mode`}>
-                                Preferred Mode
-                              </label>
-                            </dt>
-                            <dd className="col-xs-6">
-                              <select id={`item_${cartItem.id}_digital_copy_mode`}
-                                      className="form-control"
-                                      value={cartItem.options.digital_copy_mode}
-                                      onChange={(e) => updateCartItem(context, cartItem.id, 'digital_copy_mode', e.target.value)}>
-                                <option disabled value=""> -- Please select a resolution --</option>
-                                <option value="colour">Colour</option>
-                                <option value="grayscale">Grayscale</option>
-                              </select>
-                            </dd>
-                          </>
-                      }
-                      {
-                        cartItem.options.digital_copy_type === 'photo' &&
-                          <>
-                            <dt className="col-xs-6">
-                              <label htmlFor={`item_${cartItem.id}_digital_copy_size`}>
-                                Preferred Size
-                              </label>
-                            </dt>
-                            <dd className="col-xs-6">
-                              <select id={`item_${cartItem.id}_digital_copy_size`}
-                                      className="form-control"
-                                      value={cartItem.options.digital_copy_size}
-                                      onChange={(e) => updateCartItem(context, cartItem.id, 'digital_copy_size', e.target.value)}>
-                                <option disabled value=""> -- Please select a size --</option>
-                                <option value="5x7">5x7</option>
-                                <option value="8x10">8x10</option>
                               </select>
                             </dd>
                           </>

@@ -119,12 +119,24 @@ class Carts < BaseStorage
   def self.add_item(user_id, request_type, item_id)
     raise "Request type not supported: #{request_type}" unless VALID_REQUEST_TYPES.include?(request_type)
 
+    values = {
+      user_id: user_id,
+      request_type: request_type,
+      item_id: item_id,
+      uniq_hash: build_cart_item_hash(user_id, item_id, request_type)
+    }
+
+    # apply defaults for digital copies
+    if request_type == REQUEST_TYPE_DIGITAL_COPY
+      values['digital_copy_type'] = 'digital copy'
+      values['digital_copy_delivery'] = 'email'
+      values['digital_copy_format'] = 'pdf'
+      values['digital_copy_resolution'] = '300dpi'
+    end
+
     begin
       db[:cart_item]
-        .insert(user_id: user_id,
-                request_type: request_type,
-                item_id: item_id,
-                uniq_hash: build_cart_item_hash(user_id, item_id, request_type))
+        .insert(values)
     rescue Sequel::UniqueConstraintViolation
       # ok it's already in there
     end

@@ -95,6 +95,7 @@ export const DigitalCopySetPricePage: React.FC<any> = (route: any) => {
               <p>
                 These copy charges are based on the average size of files within a series (a group of related records), not on the number of pages within individual records. The relevant charge is then applied to all items within the series.
               </p>
+              <p>You will receive is for a standard resolution (300dpi) digital copy in pdf format. For other options, please contact QSA for a quote.</p>
             </div>
             {
               context.cart && context.cart.digital_copy_requests.set_price_records.map((cartItem: any) => (
