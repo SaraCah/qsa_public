@@ -282,7 +282,7 @@ const SearchFacets: React.FC<{
               {facets.map((facet: any, idx: number) => {
                 if (idx > 4 && !isExpanded(facet.facet_field)) {
                   if (idx === 5) {
-                    return (<li key={facet.facet_field + '_' + 'more'}>
+                    return (<li key={facet.facet_field + '_more'}>
                       <button className="qg-btn btn-link btn-xs"
                               onClick={(e) => expand(facet.facet_field)}>
                         <i aria-hidden="true" className="fa fa-plus"/>&nbsp;
@@ -318,6 +318,7 @@ const SearchFacets: React.FC<{
                     );
                   }
                 }
+                return <></>;
               })}
             </ul>
           </section>

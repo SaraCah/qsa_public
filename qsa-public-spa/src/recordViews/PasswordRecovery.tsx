@@ -3,7 +3,6 @@ import { Http } from '../utils/http';
 import Layout from './Layout';
 import { Link } from 'react-router-dom';
 import { PasswordRecoveryResponse } from '../models/HttpResponse';
-import {errorMessageForCode} from "../utils/typeResolver";
 
 export const PasswordRecoveryPage: React.FC<any> = (route: any) => {
   const [email, setEmail]: [string, Function] = useState('');
