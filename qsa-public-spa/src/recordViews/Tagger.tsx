@@ -25,7 +25,9 @@ const ReCaptcha: React.FC<any> = ({ context }) => {
         document.body.removeChild(script);
       }
     }
-  }, [recaptchaRequired]);
+  },
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  [recaptchaRequired]);
 
   const renderRecaptchaWidgets = () => {
     window.recaptchaRenderCallbacks.forEach((callback: any) => {

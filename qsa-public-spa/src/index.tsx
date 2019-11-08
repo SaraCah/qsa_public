@@ -126,6 +126,7 @@ Object.keys(browserConsole).forEach(function(key) {
   };
 });
 
+// eslint-disable-next-line no-native-reassign
 console = appConsole;
 
 /* Grab errors that hit the top-level */

@@ -94,7 +94,6 @@ export const AccordionPanel: React.FC<{
         type="checkbox"
         name="tabs"
         aria-controls={`${id}-content`}
-        aria-expanded="false"
       />
       <h3 className="acc-heading">
         <label htmlFor={id}>
