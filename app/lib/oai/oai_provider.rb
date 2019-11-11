@@ -22,7 +22,7 @@ OAI_RECORD_TYPE_URI_PATTERNS = {
 }
 
 
-OAI_REQUESTS_PER_PAGE = 100
+OAI_RECORDS_PER_PAGE = 100
 
 class OAIProvider
   def self.error_response(params, code, message)
@@ -166,7 +166,7 @@ class OAIProvider
         "primary_type:(#{OAI_RECORD_TYPES.map {|s| Search.solr_escape(s) }.join(' ')})"
       ],
       'sort' => 'last_modified_time asc, uri asc',
-      'rows' => OAI_REQUESTS_PER_PAGE + 1,
+      'rows' => OAI_RECORDS_PER_PAGE + 1,
       'start' => request.offset,
       'fl' => 'uri, last_modified_time, json'
     )
@@ -216,7 +216,7 @@ class OAIProvider
         "primary_type:(#{OAI_RECORD_TYPES.map {|s| Search.solr_escape(s) }.join(' ')})"
       ],
       'sort' => 'last_modified_time asc, uri asc',
-      'rows' => OAI_REQUESTS_PER_PAGE + 1,
+      'rows' => OAI_RECORDS_PER_PAGE + 1,
       'start' => request.offset,
       'fl' => 'uri,last_modified_time'
     )
@@ -237,7 +237,7 @@ class OAIProvider
       end
 
       query = query.order(Sequel.asc(:system_mtime))
-                .limit(OAI_REQUESTS_PER_PAGE + 1,
+                .limit(OAI_RECORDS_PER_PAGE + 1,
                        request.offset)
                 .select(:record_uri, :system_mtime)
 
@@ -278,10 +278,10 @@ class OAIProvider
       return [[], nil]
     end
 
-    if listing.length > OAI_REQUESTS_PER_PAGE
+    if listing.length > OAI_RECORDS_PER_PAGE
       return [
         listing,
-        request.next_resumption_token(OAI_REQUESTS_PER_PAGE)
+        request.next_resumption_token(OAI_RECORDS_PER_PAGE)
       ]
     elsif request.state == 'records'
       next_token = request.resumption_token_for_deletes
@@ -312,7 +312,7 @@ class OAIProvider
       pprint_xml(Templates.emit(:oai_list_identifiers_response,
                                 :now => Time.now.utc.iso8601,
                                 :params => request.params,
-                                :identifiers => identifiers.take(OAI_REQUESTS_PER_PAGE),
+                                :identifiers => identifiers.take(OAI_RECORDS_PER_PAGE),
                                 :next_resumption_token => next_resumption_token))
     ]
   end
