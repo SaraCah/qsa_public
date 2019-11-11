@@ -15,9 +15,9 @@
 
             <dc:identifier linktype="restricted">
                 <% if record.fetch('jsonmodel_type') == 'resource' %>
-                    <%= URI.join(AppConfig[:qsa_public_base_url], 'series', record.fetch('qsa_id_prefixed')) %>
+                    <%= URI.join(AppConfig[:qsa_public_base_url], 'series/', record.fetch('qsa_id_prefixed')) %>
                 <% else %>
-                    <%= URI.join(AppConfig[:qsa_public_base_url], 'items', record.fetch('qsa_id_prefixed')) %>
+                    <%= URI.join(AppConfig[:qsa_public_base_url], 'items/', record.fetch('qsa_id_prefixed')) %>
                 <% end %>
             </dc:identifier>
 
