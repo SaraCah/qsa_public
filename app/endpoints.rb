@@ -507,7 +507,7 @@ class QSAPublic < Sinatra::Base
     end
 
     errors = params[:tag].validate
-    json_response(errors: errors) unless errors.empty?
+    next json_response(errors: errors) unless errors.empty?
 
     if (errors = Tags.create_from_dto(params[:tag])).empty?
       json_response({status: 'success'})
