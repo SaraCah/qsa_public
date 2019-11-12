@@ -459,6 +459,13 @@ class QSAPublic < Sinatra::Base
     json_response(Carts.get_pricing)
   end
 
+  Endpoint.post('/api/minicart-notify/:notify_key')
+    .param(:notify_key, String, "Notify key") do
+    Carts.minicart_notify(params[:notify_key])
+
+    [200]
+  end
+
   Endpoint.post('/api/submit_order')
     .param(:deliveryMethod, String, "Delivery method")
     .param(:registeredPost, String, "Registered post?") \
@@ -470,17 +477,17 @@ class QSAPublic < Sinatra::Base
 
     $LOG.info("Submitting order for user #{Ctx.get.session.user_id}")
 
-    minicart = Minicart.new(params[:minicartId], host_service_url(env))
+    notify_key = SecureRandom.hex
+
+    minicart = Minicart.new(params[:minicartId], host_service_url(env), notify_key)
 
     minicart.add_cart(cart)
     minicart.add_registered_post if params[:registeredPost] == 'true'
     minicart.set_delivery_method(params[:deliveryMethod])
 
-    minicart.submit!
+    order_id = minicart.submit!
 
-    cart.fetch(:digital_copy_requests).fetch(:set_price_records).each do |item|
-      Carts.remove_item(Ctx.get.session.user_id, item.fetch(:id))
-    end
+    Carts.store_set_price_request(Ctx.get.session.user_id, cart, notify_key, order_id)
 
     $LOG.info("Order succeeded for user #{Ctx.get.session.user_id}")
 

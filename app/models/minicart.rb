@@ -2,10 +2,11 @@ class Minicart
 
   LineItem = Struct.new(:label, :reference, :price)
 
-  def initialize(minicart_id, base_url)
+  def initialize(minicart_id, base_url, notify_key)
     @cart_id = minicart_id
     @pricing = Carts.get_pricing
     @base_url = base_url
+    @notify_key = notify_key
 
     @line_items = []
   end
@@ -54,11 +55,7 @@ class Minicart
   end
 
   def submit!
-    client = Savon.client(wsdl: AppConfig[:minicart_wsdl],
-                          wsse_auth: [AppConfig[:minicart_user], AppConfig[:minicart_password], :digest],
-                          endpoint: URI.parse(AppConfig[:minicart_endpoint]),
-                          log_level: :debug,
-                          log: true)
+    client = self.class.client_for(AppConfig[:minicart_cart_wsdl])
 
     10.times do |_retry|
       order_number = mint_order_number!
@@ -75,6 +72,7 @@ class Minicart
                                      "@id" => AppConfig[:minicart_user],
                                      "@name" => AppConfig[:minicart_service_name],
                                      "@prev" => "#{@base_url}/digital-copies-cart/minicart",
+                                     "@notify" => "#{@base_url}/api/minicart-notify/#{@notify_key}",
                                    },
                                    "orderline" => @line_items.each_with_index.map {|line_item, idx|
                                      {
@@ -87,7 +85,17 @@ class Minicart
                                          "@disbursementId" => AppConfig[:minicart_disbursement_id],
                                        }
                                      }
-                                   }.reverse
+                                   }.reverse,
+                                   "deliveryAddressRequest" => [
+                                     { "@type" => "EMAIL" },
+                                     { "@type" => "POST" },
+                                   ],
+                                   "customerDetailsRequest" => [
+                                     { "@type" => "CUSTOMER", "@required" => "true" },
+                                     { "@type" => "PHONE", "@required" => "true" },
+                                     { "@type" => "EMAIL", "@required" => "true" },
+                                     { "@type" => "POST", "@required" => "true" },
+                                   ],
                                  }
                                })
 
@@ -95,7 +103,7 @@ class Minicart
           raise "Minicart add failed: #{response.inspect}"
         end
 
-        return
+        return response.body[:cart_add_response][:generated_order_id]
       rescue Savon::SOAPFault => e
         fault = e.to_hash
 
@@ -111,4 +119,33 @@ class Minicart
     raise "Failure adding items to minicart"
   end
 
+  OrderSummary = Struct.new(:paid, :order_details)
+
+  def self.retrieve_order_summary(generated_order_id)
+    client = client_for(AppConfig[:minicart_order_wsdl])
+
+    response = client.call(:order_status,
+                           message: {
+                             "generatedOrderId" => generated_order_id,
+                             })
+
+    if response.body[:order_status_response][:status] != 'PAID'
+      return OrderSummary.new(false)
+    end
+
+    response = client.call(:order_query,
+                           message: {
+                             "generatedOrderId" => generated_order_id,
+                           })
+
+    OrderSummary.new(true, response.body[:order_query_response])
+  end
+
+  def self.client_for(wsdl)
+    Savon.client(wsdl: wsdl,
+                 wsse_auth: [AppConfig[:minicart_user], AppConfig[:minicart_password], :digest],
+                 endpoint: URI.parse(AppConfig[:minicart_endpoint]),
+                 log_level: :debug,
+                 log: true)
+  end
 end

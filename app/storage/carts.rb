@@ -277,4 +277,44 @@ class Carts < BaseStorage
     }.to_h
   end
 
+  def self.store_set_price_request(user_id, cart, notify_key, order_id)
+    now = Time.now
+
+    request_id = db[:set_price_request]
+                   .insert(
+                     user_id: user_id,
+                     status: 'pending',
+                     notify_key: notify_key,
+                     generated_order_id: order_id,
+                     create_time: now.to_i * 1000,
+                     modified_time: now.to_i * 1000,
+                   )
+
+    cart.fetch(:digital_copy_requests).fetch(:set_price_records).each do |item|
+      Carts.remove_item(Ctx.get.session.user_id, item.fetch(:id))
+    end
+  end
+
+  def self.minicart_notify(notify_key)
+    now = Time.now
+    request = db[:set_price_request][notify_key: notify_key]
+
+    raise "Request for notify key not found: #{notify_key}" if request.nil?
+
+    summary = Minicart.retrieve_order_summary(request[:generated_order_id])
+
+    if summary.paid
+      hits = db[:set_price_request]
+              .filter(notify_key: notify_key)
+              .filter(status: 'pending')
+              .update(
+                status: "paid",
+                modified_time: now.to_i * 1000,
+              )
+
+      if hits > 0
+        DeferredTasks.add_set_price_request_notification_task(summary.order_details)
+      end
+    end
+  end
 end
