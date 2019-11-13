@@ -26,6 +26,9 @@ AppConfig[:oai_sample_identifier] = proc {
 }
 
 
+# FIXME: Disable this in production
+AppConfig[:enable_debug_cart_endpoint] = true
+
 begin
   load File.join(File.dirname(__FILE__), "/config.local.rb")
 rescue LoadError

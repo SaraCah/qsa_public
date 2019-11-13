@@ -314,9 +314,25 @@ class Carts < BaseStorage
               )
 
       if hits > 0
-
-        DeferredTasks.add_set_price_request_notification_task(request[:generated_order_id], summary.order_details, user)
+        DeferredTasks.add_set_price_request_notification_task(request[:generated_order_id],
+                                                              summary.order_details,
+                                                              user)
+        return true
       end
     end
+
+    false
+  end
+
+  def self.minicart_notify_all
+    count = 0
+
+    db[:set_price_request].filter(status: 'pending').each do |row|
+      if self.minicart_notify(row[:notify_key])
+        count += 1
+      end
+    end
+
+    count
   end
 end

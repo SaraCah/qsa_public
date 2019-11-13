@@ -459,6 +459,15 @@ class QSAPublic < Sinatra::Base
     json_response(Carts.get_pricing)
   end
 
+  Endpoint.get('/api/minicart-notify-all') do
+    if AppConfig.has_key?(:enable_debug_cart_endpoint) && AppConfig[:enable_debug_cart_endpoint]
+      count = Carts.minicart_notify_all
+      [200, {}, "Processed %d orders" % [count]]
+    else
+      [404]
+    end
+  end
+
   Endpoint.post('/api/minicart-notify/:notify_key')
     .param(:notify_key, String, "Notify key") do
     Carts.minicart_notify(params[:notify_key])
