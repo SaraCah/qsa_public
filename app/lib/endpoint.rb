@@ -99,18 +99,22 @@ class Endpoint
       QSAPublic.instance_eval do
         new_uri = compile(endpoint.uri)
 
+        # NOTE: These arrays will be mutated, so we can't copy them here.
         method_routes = methods.map {|method|
           @routes.fetch(method.to_s.upcase, [])
-        }.flatten(1)
+        }
 
-        route_to_replace = method_routes.find do |route_def|
+        routes_to_replace = method_routes.flatten(1).select do |route_def|
           uri = route_def[0]
-
           uri.safe_string == new_uri.safe_string
         end
 
-        if route_to_replace
-          method_routes.delete(route_to_replace)
+        # Destructively modify the internal Sinatra array to knock out the
+        # previous version of this route.
+        method_routes.each do |routes|
+          routes_to_replace.each do |victim|
+            routes.delete(victim)
+          end
         end
       end
     end
