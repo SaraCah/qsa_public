@@ -301,6 +301,7 @@ class Carts < BaseStorage
 
     raise "Request for notify key not found: #{notify_key}" if request.nil?
 
+    user = Users.get(request[:user_id])
     summary = Minicart.retrieve_order_summary(request[:generated_order_id])
 
     if summary.paid
@@ -313,7 +314,8 @@ class Carts < BaseStorage
               )
 
       if hits > 0
-        DeferredTasks.add_set_price_request_notification_task(summary.order_details)
+
+        DeferredTasks.add_set_price_request_notification_task(request[:generated_order_id], summary.order_details, user)
       end
     end
   end

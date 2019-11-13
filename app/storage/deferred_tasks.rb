@@ -127,7 +127,12 @@ class DeferredTasks < BaseStorage
     add_task('welcome', task_blob)
   end
 
-  def self.add_set_price_request_notification_task(order_summary)
-    add_task('set_price_request', order_summary.to_json)
+  def self.add_set_price_request_notification_task(generated_order_id, order_summary, user)
+    add_task('set_price_request',
+             {
+               generated_order_id: generated_order_id,
+               order_summary: order_summary,
+               user: user,
+             }.to_json)
   end
 end
