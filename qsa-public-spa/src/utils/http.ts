@@ -41,7 +41,11 @@ const removeFromBannedTagsUrl = `${baseURL}/api/tags/remove-from-banned`;
 const getPreviewTagUrl = `${baseURL}/api/tags/preview`;
 const verifyCaptchaUrl = `${baseURL}/api/verify-captcha`;
 const isCaptchaVerifiedUrl = `${baseURL}/api/captcha-verified`;
-
+const listPagesUrl = `${baseURL}/api/admin/pages`;
+const getPageContentUrl = `${baseURL}/api/admin/page`;
+const savePageUrl = `${baseURL}/api/admin/pages`;
+const deletePageUrl = `${baseURL}/api/admin/pages/delete`;
+const restorePageUrl = `${baseURL}/api/admin/pages/restore`;
 
 export class Http {
   static config: AxiosRequestConfig = {
@@ -540,4 +544,60 @@ export class Http {
 
     return response.data || [];
   }
+
+  async listPages(): Promise<any> {
+    const response = await axios.get(`${listPagesUrl}`, this.getConfig()).catch(error => {
+      return this.handleError(error, "Failed to list pages");
+    });
+
+    return response.data || [];
+  }
+
+  async getPageContent(slug: string): Promise<any> {
+    const response = await axios.get(`${getPageContentUrl}`,
+                                     Object.assign({},
+                                                   this.getConfig(),
+                                                   {params: {slug}}));
+    return response.data || '';
+  }
+
+  async savePage(slug: string, content: string): Promise<any> {
+    const bodyFormData = new FormData();
+    bodyFormData.append('slug', slug);
+    bodyFormData.append('content', content);
+
+    const config = this.getConfig();
+    config.headers['Content-Type'] = 'multipart/form-data';
+
+    return await axios.post(savePageUrl, bodyFormData, config)
+  }
+
+  async deletePage(slug: string): Promise<any> {
+    const bodyFormData = new FormData();
+    bodyFormData.append('slug', slug);
+
+    const config = this.getConfig();
+    config.headers['Content-Type'] = 'multipart/form-data';
+
+    const response = await axios.post(deletePageUrl, bodyFormData, config).catch(error => {
+      return this.handleError(error, "Failed to delete page");
+    });
+
+    return response.data || [];
+  }
+
+  async restorePage(slug: string): Promise<any> {
+    const bodyFormData = new FormData();
+    bodyFormData.append('slug', slug);
+
+    const config = this.getConfig();
+    config.headers['Content-Type'] = 'multipart/form-data';
+
+    const response = await axios.post(restorePageUrl, bodyFormData, config).catch(error => {
+      return this.handleError(error, "Failed to restore page");
+    });
+
+    return response.data || [];
+  }
+
 }

@@ -74,6 +74,7 @@ require 'storage/carts'
 require 'storage/requests'
 require 'storage/tags'
 require 'storage/deferred_tasks'
+require 'storage/pages'
 
 require 'storage/rate_limiter'
 

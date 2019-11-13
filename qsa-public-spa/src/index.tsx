@@ -19,6 +19,7 @@ import FunctionPage from './recordViews/Function';
 import MandatePage from './recordViews/Mandate';
 import ItemPage from './recordViews/Item';
 import {LoginPage, LogoutPage} from './recordViews/UserSession';
+import PageViewPage from './recordViews/PageViewPage';
 
 import AppContextProvider from './context/AppContextProvider';
 import {
@@ -28,7 +29,8 @@ import {
   MyContactDetailsPage,
   MyRequestsPage,
   RegisterPage, TagManagementPage,
-  UserManagementPage
+  UserManagementPage,
+  PageManagementPage,
 } from './recordViews/Users';
 import { PasswordRecoveryPage } from './recordViews/PasswordRecovery';
 
@@ -264,6 +266,27 @@ ReactDOM.render(
             path="/admin/banned-tags"
             component={wrappedRoute(BannedTagsManagementPage, {
               pageTitle: 'Banned Tag Management'
+            })}
+        />
+        <Route
+            exact
+            path="/admin/pages"
+            component={wrappedRoute(PageManagementPage, {
+              pageTitle: 'Page Management'
+            })}
+        />
+        <Route
+            exact
+            path="/admin/pages/:slug"
+            component={wrappedRoute(PageManagementPage, {
+              pageTitle: 'Edit Page'
+            })}
+        />
+        <Route
+            exact
+            path="/pages/:slug"
+            component={wrappedRoute(PageViewPage, {
+              pageTitle: 'View Page'
             })}
         />
         <Route

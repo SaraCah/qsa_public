@@ -317,6 +317,75 @@ class QSAPublic < Sinatra::Base
     end
   end
 
+  Endpoint.get('/api/admin/pages') do
+    next [404] unless Ctx.user_logged_in?
+    logged_in_user = Users.get(Ctx.get.session.user_id)
+
+    if logged_in_user.fetch('is_admin')
+      json_response(Pages.list)
+    else
+      [404]
+    end
+  end
+
+  Endpoint.get('/api/admin/page')
+    .param(:slug, String, "Slug to fetch") \
+  do
+    begin
+      [200, {}, Pages.get_content(params[:slug])]
+    rescue Pages::NotFound
+      [404]
+    end
+  end
+
+  Endpoint.post('/api/admin/pages/delete')
+    .param(:slug, String, "Page slug") \
+  do
+    next [404] unless Ctx.user_logged_in?
+    logged_in_user = Users.get(Ctx.get.session.user_id)
+
+    if logged_in_user.fetch('is_admin')
+      Pages.delete(params[:slug])
+      json_response(Pages.list)
+    else
+      [404]
+    end
+  end
+
+  Endpoint.post('/api/admin/pages/restore')
+    .param(:slug, String, "Page slug") \
+  do
+    next [404] unless Ctx.user_logged_in?
+    logged_in_user = Users.get(Ctx.get.session.user_id)
+
+    if logged_in_user.fetch('is_admin')
+      Pages.restore(params[:slug])
+      json_response(Pages.list)
+    else
+      [404]
+    end
+  end
+
+
+
+  Endpoint.post('/api/admin/pages')
+    .param(:slug, String, "Page slug")
+    .param(:content, String, "Glorious HTML content") \
+  do
+    next [404] unless Ctx.user_logged_in?
+    logged_in_user = Users.get(Ctx.get.session.user_id)
+
+    if logged_in_user.fetch('is_admin')
+      Pages.create_version(params[:slug],
+                           params[:content],
+                           logged_in_user.display_string,
+                          )
+      json_response('status' => 'success')
+    else
+      [404]
+    end
+  end
+
   Endpoint.get('/api/users/cart') do
     if Ctx.user_logged_in?
       json_response(Carts.get(Ctx.get.session.user_id))

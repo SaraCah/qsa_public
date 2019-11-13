@@ -7,6 +7,9 @@ import { UserForm } from '../models/User';
 import { errorMessageForCode, snakeToUppercaseInitials, uriFor } from '../utils/typeResolver';
 import { AxiosResponse } from 'axios';
 import { AccordionPanel } from "./Helpers";
+import { RichText } from './RichText';
+
+import { PageSnippet } from './PageViewPage';
 
 const FormErrors: React.FC<{ errors: any }> = ({ errors }) => {
   const errorMessage = (error: any) => {
@@ -30,7 +33,7 @@ const FormErrors: React.FC<{ errors: any }> = ({ errors }) => {
     <div className="alert alert-warning" role="alert">
       <h2>
         <i className="fa fa-exclamation-triangle" />
-        Errors registering user:
+        An error has occurred:
       </h2>
       <ol>
         {errors.map((error: any, idx: number) => (
@@ -59,6 +62,7 @@ export const RegisterPage: React.FC<any> = (route: any) => {
   const [user, setUser]: [UserForm | undefined, any] = useState();
   const [errors, setErrors]: [any, any] = useState([]);
   const [showRegisterSuccess, setShowRegisterSuccess]: [boolean, any] = useState(false);
+  const [termsAccepted, setTermsAccepted]: [any, any] = useState(false);
 
   const emptyUser = () => {
     return {
@@ -107,6 +111,10 @@ export const RegisterPage: React.FC<any> = (route: any) => {
       </Layout>
     );
   }
+
+  const updateTOCAccept = (e: any) => {
+    setTermsAccepted(e.target.checked);
+  };
 
   return (
     <Layout noindex={true}>
@@ -178,7 +186,13 @@ export const RegisterPage: React.FC<any> = (route: any) => {
             </div>
 
             <h3>Your contact details</h3>
+
             <div className="qg-call-out-box">
+              <blockquote>
+                <PageSnippet slug="proof-of-identity-statement" />
+              </blockquote>
+              <br />
+
               <div className="form-group">
                 <label htmlFor="first_name">First Name</label>
                 <input
@@ -251,9 +265,18 @@ export const RegisterPage: React.FC<any> = (route: any) => {
               </div>
             </div>
 
+            <div className="qg-call-out-box">
+              <PageSnippet slug="terms-and-conditions" />
+              <br />
+              <label><input type="checkbox" value={termsAccepted} onChange={updateTOCAccept}></input>
+                <strong>I accept the terms and conditions</strong>
+              </label>
+            </div>
+
+
             <div className="form-row col-md-12">
               <p>
-                <button type="submit" className="qg-btn btn-primary">
+                <button type="submit" className="qg-btn btn-primary" disabled={!termsAccepted}>
                   Register
                 </button>
               </p>
@@ -314,6 +337,17 @@ const AdminAccountSummary: React.FC = () => {
             </div>
           </div>
         </article>
+        <article className="qg-card col-12 col-sm-6 col-lg-4">
+          <div className="content">
+            <div className="details">
+              <h2>Page management</h2>
+              <p>Create and manage static pages</p>
+              <Link to="/admin/pages" className="btn btn-primary">
+                Page management
+              </Link>
+            </div>
+          </div>
+        </article>
       </section>
     </>
   );
@@ -362,7 +396,7 @@ const UserAccountSummary: React.FC = () => {
   );
 };
 
-const LoginRequired: React.FC<any> = (props: any) => {
+export const LoginRequired: React.FC<any> = (props: any) => {
   const context = props.context;
 
   if (!context.sessionLoaded) {
@@ -1421,5 +1455,166 @@ export const BannedTagsManagementPage: React.FC<any> = (route: any) => {
       <LoginRequired adminOnly={true} context={route.context}>
         <BannedTags />
       </LoginRequired>
+  );
+};
+
+export const PageList: React.FC<any> = () => {
+  const [pageList, setPageList]: [any, any] = useState(null);
+
+  useEffect(() => {
+    Http.get().listPages().then((json: any) => {
+      setPageList(json);
+    });
+  }, []);
+
+  const deletePage = (slug: string) => {
+    Http.get().deletePage(slug).then((json: any) => {
+      setPageList(json);
+    });
+  };
+
+  const restorePage = (slug: string) => {
+    Http.get().restorePage(slug).then((json: any) => {
+      setPageList(json);
+    });
+  };
+
+
+  if (!pageList) {
+    return <></>;
+  }
+
+  if (pageList.length === 0) {
+    return <p>No pages defined yet</p>;
+  }
+
+  return (
+    <>
+      <table className="table table-bordered table-striped">
+        <thead>
+          <tr>
+            <th>Page name</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            pageList.map((page: any) => (
+              <tr key={page.slug}>
+                <td style={{width: '90%'}}><Link target="_blank" to={`/pages/${page.slug}`}>{page.slug}</Link></td>
+                <td style={{width: '10%'}}>
+                  {!page.deleted &&
+                    <Link to={`/admin/pages/${page.slug}`} className="qg-btn btn-xs btn-secondary">Edit</Link>}&nbsp;
+                  {(() => {
+                    if (page.locked) {
+                      return <span className="badge badge-primary">locked</span>;
+                    } else if (page.deleted) {
+                      return <button onClick={() => { restorePage(page.slug) }} className="qg-btn btn-xs btn-secondary">Restore</button>;
+                    } else {
+                      return <button onClick={() => { deletePage(page.slug) }} className="qg-btn btn-xs btn-secondary">Delete</button>;
+                    }
+                  })()}
+                </td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </>
+  );
+}
+
+export const PageEdit: React.FC<any> = (props: any) => {
+  const [slug, setSlug]: [any, any] = useState(props.slug || '');
+  const [content, setContent]: [any, any] = useState(props.slug ? undefined : '');
+
+  const [completed, setCompleted]: [any, any] = useState(false);
+  const [errors, setErrors]: [any, any] = useState([]);
+
+  useEffect(() => {
+    if (props.slug) {
+      Http.get().getPageContent(props.slug).then((content: string) => {
+        setContent(content);
+      });
+    }
+  }, [props.slug]);
+
+  const updateSluggo = (e: any) => {
+    setSlug(e.target.value.replace(/[^a-zA-Z0-9]+/g, '-'));
+  };
+
+  const savePage = (e: any) => {
+    e.preventDefault();
+
+    Http.get()
+        .savePage(slug, content)
+        .then((response: any) => {
+          if (response.data.status === 'success') {
+            setCompleted(true);
+          } else if (response.data.errors) {
+            setErrors(response.data.errors);
+          }
+        })
+        .catch(() => {
+          setErrors([{
+            SERVER_ERROR: {message: "Unknown error while saving.  Please copy your changes somewhere safe and reload!"}
+          }]);
+        });
+
+    return false;
+  };
+
+  if (completed) {
+    return <Redirect to="/admin/pages" push={true} />
+  }
+
+  return (<form onSubmit={savePage}>
+    {errors && errors.length > 0 && <FormErrors errors={errors} />}
+
+    <div>
+      <label htmlFor="slug">Page slug</label>
+    </div>
+    <div>
+      {props.slug ?
+        <>
+          <span className="text-muted">{props.slug}</span>
+        </> :
+        <input type="text" id="slug" name="slug" onChange={updateSluggo} value={slug} required></input>
+      }
+    </div>
+    <br />
+
+    {typeof(content) === 'string' &&
+      <RichText value={content} onChange={setContent} />
+    }
+
+    <br />
+    <button className="qg-btn btn-primary">Save</button>
+
+  </form>);
+}
+
+export const PageManagementPage: React.FC<any> = (route: any) => {
+  return (
+    <LoginRequired adminOnly={true} context={route.context}>
+      {
+        (() => {
+          if (route.match.params.slug && route.match.params.slug !== 'new') {
+            return <PageEdit slug={route.match.params.slug} />;
+          } else if (route.match.params.slug && route.match.params.slug === 'new') {
+            return <PageEdit />;
+          } else {
+            return <>
+              <h1>Pages</h1>
+              <p>Use pages to define publicly visible rich text content.</p>
+
+              <PageList />
+
+              <Link to="/admin/pages/new" className="qg-btn btn-primary">Add Page</Link>
+            </>
+          }
+        })()
+      }
+    </LoginRequired>
   );
 };

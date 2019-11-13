@@ -32,4 +32,15 @@ class UserDTO
         create_time: row[:create_time],
         modified_time: row[:modified_time])
   end
+
+  def display_string
+    if self.fetch(:email) == 'admin'
+      'Admin user'
+    else
+      name = [self.fetch(:first_name), self.fetch(:last_name)].compact.join(' ')
+      email = self.fetch(:email)
+
+      "%s <%s>" % [name, email]
+    end
+  end
 end
