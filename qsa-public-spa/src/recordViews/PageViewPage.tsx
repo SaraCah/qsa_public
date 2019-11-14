@@ -5,6 +5,7 @@ import Layout from './Layout';
 
 export const PageSnippet: React.FC<any> = (props: any) => {
   const [content, setContent] = useState('');
+  const [followLink, setFollowLink] = useState('');
 
   useEffect(() => {
     if (props.slug) {
@@ -24,6 +25,23 @@ export const PageSnippet: React.FC<any> = (props: any) => {
   }, [props]);
 
   useEffect(() => {
+    document.querySelectorAll('.qsa-snippet-text a').forEach((link: Element) => {
+      const a = link as HTMLAnchorElement;
+
+      if (!a.getAttribute('data-rr-link')) {
+        const href = a.getAttribute('href') || '';
+
+        if (href.startsWith("/pages") &&
+          a.target !== '_blank') {
+          a.addEventListener('click', (e) => {
+            e.preventDefault();
+            setFollowLink(href);
+          });
+        }
+        a.setAttribute('data-rr-link', 'true');
+      }
+    });
+
     const maxIterations = 1000;
 
     for (let i = 0; i < maxIterations; i++) {
@@ -60,7 +78,11 @@ export const PageSnippet: React.FC<any> = (props: any) => {
     }
   });
 
-  return <div className="qsa-snippet-text" dangerouslySetInnerHTML={{__html: (props.content || content)}} />
+  if (followLink) {
+    return <Redirect to={followLink} push={true} />;
+  } else {
+    return <div className="qsa-snippet-text" dangerouslySetInnerHTML={{__html: (props.content || content)}} />
+  }
 }
 
 const PageViewPage: React.FC<any> = (route: any) => {
