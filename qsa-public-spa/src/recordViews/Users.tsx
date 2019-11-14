@@ -1550,7 +1550,7 @@ export const PageEdit: React.FC<any> = (props: any) => {
     Http.get()
         .savePage(slug, content, !props.slug)
         .then((response: any) => {
-          ClientState.lastSnippetRefresh = '' + Math.random();
+          ClientState.refreshNonce();
           if (response.data.status === 'success') {
             setCompleted(true);
           } else if (response.data.errors) {

@@ -11,7 +11,11 @@ export const PageSnippet: React.FC<any> = (props: any) => {
 
   useEffect(() => {
     if (props.slug) {
-      Http.get().getPageContent(props.slug, props.forceLoad ? Math.random() : ClientState.lastSnippetRefresh)
+      if (props.forceLoad) {
+        ClientState.refreshNonce();
+      }
+
+      Http.get().getPageContent(props.slug, ClientState.nonce)
           .then((content: string) => {
             setContent(content);
             if (props.successCallback) {
