@@ -2,6 +2,8 @@ require 'pp'
 
 class QSAPublic < Sinatra::Base
 
+  PAGE_CONTENT_CACHE_SECONDS = AppConfig[:page_content_cache_seconds]
+
   Endpoint.post('/api/error_report') do
     error_report = JSON.parse(request.body.read)
 
@@ -332,7 +334,11 @@ class QSAPublic < Sinatra::Base
     .param(:slug, String, "Slug to fetch") \
   do
     begin
-      [200, {}, Pages.get_content(params[:slug])]
+      [200, {
+         'Cache-Control' => "max-age=#{PAGE_CONTENT_CACHE_SECONDS}, public",
+         'Expires' => (Time.now + PAGE_CONTENT_CACHE_SECONDS).utc.rfc2822
+       },
+       Pages.get_content(params[:slug])]
     rescue Pages::NotFound
       [404]
     end

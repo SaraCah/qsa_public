@@ -29,6 +29,11 @@ AppConfig[:oai_sample_identifier] = proc {
 # FIXME: Disable this in production
 AppConfig[:enable_debug_cart_endpoint] = true
 
+# FIXME: Set this to something like 300 in production.  This controls how long
+# user browsers are allowed to cache static page content.  For testing we'd like
+# them to NOT cache.
+AppConfig[:page_content_cache_seconds] = 0
+
 begin
   load File.join(File.dirname(__FILE__), "/config.local.rb")
 rescue LoadError
