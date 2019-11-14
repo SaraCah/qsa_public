@@ -127,3 +127,22 @@
 .qsa-snippet-text code {
   display: none;
 }
+
+/* Get the editor display spacing looking *roughly* like the live view.  */
+.ql-editor p,
+.ql-editor ol,
+.ql-editor ul,
+.ql-editor pre,
+.ql-editor blockquote,
+.ql-editor h1,
+.ql-editor h2,
+.ql-editor h3,
+.ql-editor h4,
+.ql-editor h5,
+.ql-editor h6 {
+  margin: 0;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  padding: 0;
+  counter-reset: list-1 list-2 list-3 list-4 list-5 list-6 list-7 list-8 list-9;
+}

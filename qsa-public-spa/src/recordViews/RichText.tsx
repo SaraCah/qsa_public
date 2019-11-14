@@ -33,6 +33,9 @@ export const RichText: React.FC<any> = (props: any) => {
                                     {
                                       theme: 'snow',
                                       modules : {
+                                        clipboard: {
+                                          matchVisual: false
+                                        },
                                         toolbar: {
                                           container: [
                                             [{ 'header': [1, 2, 3, false] }],
