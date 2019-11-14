@@ -1540,14 +1540,14 @@ export const PageEdit: React.FC<any> = (props: any) => {
   }, [props.slug]);
 
   const updateSluggo = (e: any) => {
-    setSlug(e.target.value.replace(/[^a-zA-Z0-9]+/g, '-'));
+    setSlug(e.target.value.replace(/[^a-zA-Z0-9]+/g, '-').toLowerCase());
   };
 
   const savePage = (e: any) => {
     e.preventDefault();
 
     Http.get()
-        .savePage(slug, content)
+        .savePage(slug, content, !props.slug)
         .then((response: any) => {
           if (response.data.status === 'success') {
             setCompleted(true);

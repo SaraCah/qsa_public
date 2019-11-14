@@ -370,12 +370,18 @@ class QSAPublic < Sinatra::Base
 
   Endpoint.post('/api/admin/pages')
     .param(:slug, String, "Page slug")
+    .param(:newpage, String, "'true' if we're creating a page; 'false' if we're updating")
     .param(:content, String, "Glorious HTML content") \
   do
     next [404] unless Ctx.user_logged_in?
     logged_in_user = Users.get(Ctx.get.session.user_id)
 
     if logged_in_user.fetch('is_admin')
+      if params[:newpage] == 'true' && Pages.slug_used?(params[:slug])
+        next json_response('status' => 'slug_in_use',
+                           'errors' => [{code: "SLUG_IN_USE"}])
+      end
+
       Pages.create_version(params[:slug],
                            params[:content],
                            logged_in_user.display_string,

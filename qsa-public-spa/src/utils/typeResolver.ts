@@ -27,6 +27,7 @@ const ErrorForCode: { [name: string]: string } = {
   CONFIRM_PASSWORD_MISMATCH: 'Must match Confirm Password',
   INCORRECT_PASSWORD: 'Incorrect Password',
   UNIQUE_CONSTRAINT: 'Must be unique',
+  SLUG_IN_USE: 'Slug already in use',
 };
 
 export const uriFor = (qsaIDPrefixed: string, recordType: string): string => {

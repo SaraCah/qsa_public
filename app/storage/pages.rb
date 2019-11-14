@@ -60,4 +60,8 @@ class Pages < BaseStorage
     end
   end
 
+  def self.slug_used?(slug)
+    db[:page].filter(:slug => slug, deleted: 0).count > 0
+  end
+
 end

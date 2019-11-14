@@ -561,10 +561,11 @@ export class Http {
     return response.data || '';
   }
 
-  async savePage(slug: string, content: string): Promise<any> {
+  async savePage(slug: string, content: string, newPage: boolean): Promise<any> {
     const bodyFormData = new FormData();
     bodyFormData.append('slug', slug);
     bodyFormData.append('content', content);
+    bodyFormData.append('newpage', newPage ? 'true' : 'false');
 
     const config = this.getConfig();
     config.headers['Content-Type'] = 'multipart/form-data';
