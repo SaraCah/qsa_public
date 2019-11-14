@@ -31,7 +31,9 @@ export const RichText: React.FC<any> = (props: any) => {
     quillInstance.on('text-change', function () {
       onChange(quillInstance.root.innerHTML || '');
     });
-  }, [eltId, onChange, props.value]);
+  },
+  // eslint-disable-next-line react-hooks/exhaustive-deps 
+  []);
 
   return <div>
     <div id={eltId}></div>
