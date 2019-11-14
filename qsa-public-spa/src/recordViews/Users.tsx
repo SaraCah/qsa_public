@@ -1507,7 +1507,7 @@ export const PageList: React.FC<any> = () => {
                     <Link to={`/admin/pages/${page.slug}`} className="qg-btn btn-xs btn-secondary">Edit</Link>}&nbsp;
                   {(() => {
                     if (page.locked) {
-                      return <span className="badge badge-primary">locked</span>;
+                      return <span className="badge badge-primary" title="Used by the system and can't be removed">locked</span>;
                     } else if (page.deleted) {
                       return <button onClick={() => { restorePage(page.slug) }} className="qg-btn btn-xs btn-secondary">Restore</button>;
                     } else {
@@ -1589,7 +1589,8 @@ export const PageEdit: React.FC<any> = (props: any) => {
     }
 
     <br />
-    <button className="qg-btn btn-primary">Save</button>
+    <button className="qg-btn btn-primary">Save</button>&nbsp;
+    <Link to="/admin/pages" className="qg-btn btn-secondary">Cancel</Link>
 
   </form>);
 }
