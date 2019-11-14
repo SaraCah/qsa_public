@@ -24,7 +24,9 @@ export const PageSnippet: React.FC<any> = (props: any) => {
             }
           });
     }
-  }, [props.slug]);
+  },
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  [props.slug]);
 
   useEffect(() => {
     document.querySelectorAll('.qsa-snippet-text a').forEach((link: Element) => {
