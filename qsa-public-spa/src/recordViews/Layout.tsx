@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { UserSession } from './UserSession';
 import AppContext from '../context/AppContext';
+import {PageSnippet} from './PageViewPage';
 
 const LeftNavigation: React.FC<any> = (props: any) => {
   return (
     <nav id="qg-side-nav" aria-label="side navigation" role="navigation">
+      <PageSnippet slug="sidebar-top" />
       <h2>
         <Link to={'/'}>Archives Search</Link>
       </h2>
@@ -66,6 +68,7 @@ const LeftNavigation: React.FC<any> = (props: any) => {
           )}
         </>
       )}
+      <PageSnippet slug="sidebar-bottom" />
     </nav>
   );
 };

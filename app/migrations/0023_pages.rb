@@ -88,7 +88,23 @@ Sequel.migration do
         content: (
           "<p>To search, enter a word, phrase or Previous System location number in the box below. Further information can be found in the ArchivesSearch Help Guide.</p>"
         ),
-      }
+      },
+      {
+        slug: "sidebar-top",
+        locked: 1,
+        deleted: 0,
+        create_time: java.lang.System.currentTimeMillis,
+        created_by: 'Admin user',
+        content: ""
+      },
+      {
+        slug: "sidebar-bottom",
+        locked: 1,
+        deleted: 0,
+        create_time: java.lang.System.currentTimeMillis,
+        created_by: 'Admin user',
+        content: ""
+      },
     ])
   end
 end
