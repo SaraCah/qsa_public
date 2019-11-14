@@ -553,11 +553,17 @@ export class Http {
     return response.data || [];
   }
 
-  async getPageContent(slug: string): Promise<any> {
+  async getPageContent(slug: string, nonce: string): Promise<any> {
+    let params: any = { slug };
+
+    if (nonce) {
+      params.nonce = nonce;
+    }
+
     const response = await axios.get(`${getPageContentUrl}`,
                                      Object.assign({},
                                                    this.getConfig(),
-                                                   {params: {slug}}));
+                                                   { params }));
     return response.data || '';
   }
 

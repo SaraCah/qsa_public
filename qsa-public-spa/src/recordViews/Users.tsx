@@ -10,6 +10,7 @@ import { AccordionPanel } from "./Helpers";
 import { RichText } from './RichText';
 
 import { PageSnippet } from './PageViewPage';
+import { ClientState } from '../context/AppContext';
 
 const FormErrors: React.FC<{ errors: any }> = ({ errors }) => {
   const errorMessage = (error: any) => {
@@ -1533,7 +1534,7 @@ export const PageEdit: React.FC<any> = (props: any) => {
 
   useEffect(() => {
     if (props.slug) {
-      Http.get().getPageContent(props.slug).then((content: string) => {
+      Http.get().getPageContent(props.slug, '' + Math.random()).then((content: string) => {
         setContent(content);
       });
     }
@@ -1549,6 +1550,7 @@ export const PageEdit: React.FC<any> = (props: any) => {
     Http.get()
         .savePage(slug, content, !props.slug)
         .then((response: any) => {
+          ClientState.lastSnippetRefresh = '' + Math.random();
           if (response.data.status === 'success') {
             setCompleted(true);
           } else if (response.data.errors) {

@@ -331,7 +331,8 @@ class QSAPublic < Sinatra::Base
   end
 
   Endpoint.get('/api/admin/page')
-    .param(:slug, String, "Slug to fetch") \
+    .param(:slug, String, "Slug to fetch")
+    .param(:nonce, String, "Ignored.  Used by client to avoid caching when required", optional: true) \
   do
     begin
       [200, {

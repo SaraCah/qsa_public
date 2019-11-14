@@ -3,13 +3,15 @@ import { Http } from '../utils/http';
 import { Redirect } from 'react-router';
 import Layout from './Layout';
 
+import { ClientState } from '../context/AppContext';
+
 export const PageSnippet: React.FC<any> = (props: any) => {
   const [content, setContent] = useState('');
   const [followLink, setFollowLink] = useState('');
 
   useEffect(() => {
     if (props.slug) {
-      Http.get().getPageContent(props.slug)
+      Http.get().getPageContent(props.slug, props.forceLoad ? Math.random() : ClientState.lastSnippetRefresh)
           .then((content: string) => {
             setContent(content);
             if (props.successCallback) {
@@ -105,6 +107,7 @@ const PageViewPage: React.FC<any> = (route: any) => {
     <Layout>
       <div className="page-content">
         <PageSnippet
+          forceLoad={true}
           slug={route.match.params.slug}
           successCallback={() => setLoaded(true)}
           notFoundCallback={() => setNotFound(true)}
