@@ -24,7 +24,7 @@ export const PageSnippet: React.FC<any> = (props: any) => {
             }
           });
     }
-  }, [props]);
+  }, [props.slug]);
 
   useEffect(() => {
     document.querySelectorAll('.qsa-snippet-text a').forEach((link: Element) => {
