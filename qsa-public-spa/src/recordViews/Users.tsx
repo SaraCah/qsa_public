@@ -1502,8 +1502,8 @@ export const PageList: React.FC<any> = () => {
           {
             pageList.map((page: any) => (
               <tr key={page.slug}>
-                <td style={{width: '85%'}}><Link target="_blank" to={`/pages/${page.slug}`}>{page.slug}</Link></td>
-                <td style={{width: '15%'}} className="page-table-actions">
+                <td style={{width: '75%'}}><Link target="_blank" to={`/pages/${page.slug}`}>{page.slug}</Link></td>
+                <td style={{width: '25%'}} className="page-table-actions">
                   {!page.deleted && <Link to={`/admin/pages/${page.slug}`} className="qg-btn btn-xs btn-secondary">Edit</Link>}
                   {page.hidden && <span className="badge badge-primary" title="This page is not visible to the public">hidden</span>}
                   {(() => {
