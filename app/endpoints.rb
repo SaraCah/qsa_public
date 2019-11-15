@@ -334,12 +334,14 @@ class QSAPublic < Sinatra::Base
     .param(:slug, String, "Slug to fetch")
     .param(:nonce, String, "Ignored.  Used by client to avoid caching when required", optional: true) \
   do
+    logged_in_user = Ctx.user_logged_in? && Users.get(Ctx.get.session.user_id)
+
     begin
       [200, {
          'Cache-Control' => "max-age=#{PAGE_CONTENT_CACHE_SECONDS}, public",
          'Expires' => (Time.now + PAGE_CONTENT_CACHE_SECONDS).utc.rfc2822
        },
-       Pages.get_content(params[:slug])]
+       Pages.get_content(params[:slug], allow_hidden: (logged_in_user && logged_in_user.fetch('is_admin')))]
     rescue Pages::NotFound
       [404]
     end
