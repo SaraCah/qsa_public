@@ -152,7 +152,7 @@ const AppContextProvider: React.FC<any> = (props: any) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps 
   [appContext.initialised, appContext.sessionId]);
 
-  if (appContext.initialised) {
+  if (appContext.initialised && appContext.sessionLoaded) {
     return <AppContext.Provider value={appContext}>{props.children}</AppContext.Provider>;
   } else {
     return <></>;
