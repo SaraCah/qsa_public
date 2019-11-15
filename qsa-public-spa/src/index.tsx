@@ -9,6 +9,8 @@ import axios from 'axios';
 
 import './scss/qsa-public.scss';
 
+import '../node_modules/quill/dist/quill.snow.css';
+
 import HomePage from './recordViews/Home';
 import AgencyPage from './recordViews/Agency';
 import GenericErrorPage from './recordViews/GenericErrorPage';
