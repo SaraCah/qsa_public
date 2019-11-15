@@ -86,7 +86,7 @@ Sequel.migration do
         create_time: java.lang.System.currentTimeMillis,
         created_by: 'Admin user',
         content: (
-          "<p>To search, enter a word, phrase or Previous System location number in the box below. Further information can be found in the ArchivesSearch Help Guide.</p>"
+          "<p>To search, enter a word, phrase or Previous System location number in the box below. Further information can be found in the <a href=\"/pages/search-help\" rel=\"noopener noreferrer\" target=\"_blank\">ArchivesSearch Help Guide</a>.</p>"
         ),
       },
       {
