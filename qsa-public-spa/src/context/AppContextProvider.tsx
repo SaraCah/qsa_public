@@ -27,103 +27,88 @@ const SESSION_COOKIE_NAME = 'archives_search_session';
 const MASTER_SESSION_COOKIE_NAME = 'archives_search_master_session';
 
 const AppContextProvider: React.FC<any> = (props: any) => {
-  const [appContext, setAppContext]: [any, any] = useState({});
+  const existingSession = SessionCookie.loadSessionFromCookie(SESSION_COOKIE_NAME);
+  const masterSession = SessionCookie.loadSessionFromCookie(MASTER_SESSION_COOKIE_NAME);
 
-  /* Configure our initial state */
-  useEffect(() => {
-    const existingSession = SessionCookie.loadSessionFromCookie(SESSION_COOKIE_NAME);
-    const masterSession = SessionCookie.loadSessionFromCookie(MASTER_SESSION_COOKIE_NAME);
+  const [appContext, setAppContext]: [any, any] = useState({
+    sessionLoaded: !existingSession,
+    cart: null,
+    user: null,
+    sessionId: existingSession,
+    masterSessionId: masterSession,
+    captchaVerified: null,
 
-    setAppContext(
-      Object.assign(
-        {},
-        {
-          initialised: true,
-          sessionLoaded: !existingSession,
-          cart: null,
+    /* Update the currently logged in user */
+    setUser: (user: any) => {
+      setAppContext((oldState: any) => Object.assign({}, oldState, { user: user }));
+    },
+
+    setCaptchaVerified: (verified: boolean) => {
+      setAppContext((oldState: any) => Object.assign({}, oldState, { captchaVerified: verified }));
+    },
+
+    setMasterSessionId: (sessionId: string) => {
+      SessionCookie.setCookie(MASTER_SESSION_COOKIE_NAME, sessionId);
+      setAppContext((oldState: any) => Object.assign({}, oldState, { masterSessionId: sessionId }));
+    },
+
+    /* Record the current user session token */
+    setSessionId: (sessionId: string) => {
+      SessionCookie.setCookie(SESSION_COOKIE_NAME, sessionId);
+
+      Http.login(sessionId);
+
+      setAppContext((oldState: any) => {
+        return Object.assign({}, oldState, { sessionId: sessionId });
+      });
+    },
+
+    /* Mark the session loading process as complete or not */
+    setSessionLoaded: (value: boolean) => {
+      setAppContext((oldState: any) => {
+        return Object.assign({}, oldState, { sessionLoaded: value });
+      });
+    },
+
+    refreshCart: (): Promise<any> => {
+      return new Promise((resolve, reject) => {
+        Http.get()
+            .getCart()
+            .then(
+              (data: any) => {
+                setAppContext((oldState: any) => Object.assign({}, oldState, { cart: data }));
+                resolve();
+              },
+              () => {
+                reject();
+              }
+            )
+      });
+    },
+
+    /* Log out the current user */
+    clearSession: (showLogout?: boolean) => {
+      Http.logout();
+      SessionCookie.clearSessionCookie(SESSION_COOKIE_NAME);
+      SessionCookie.clearSessionCookie(MASTER_SESSION_COOKIE_NAME);
+
+      setAppContext((oldState: any) => {
+        return Object.assign({}, oldState, {
+          sessionId: null,
+          sessionLoaded: true,
           user: null,
-          sessionId: existingSession,
-          masterSessionId: masterSession,
+          cart: null,
+          masterSessionId: null,
           captchaVerified: null,
+        });
+      });
+    }
+  });
 
-          /* Update the currently logged in user */
-          setUser: (user: any) => {
-            setAppContext((oldState: any) => Object.assign({}, oldState, { user: user }));
-          },
-
-          setCaptchaVerified: (verified: boolean) => {
-            setAppContext((oldState: any) => Object.assign({}, oldState, { captchaVerified: verified }));
-          },
-
-          setMasterSessionId: (sessionId: string) => {
-            SessionCookie.setCookie(MASTER_SESSION_COOKIE_NAME, sessionId);
-            setAppContext((oldState: any) => Object.assign({}, oldState, { masterSessionId: sessionId }));
-          },
-
-          /* Record the current user session token */
-          setSessionId: (sessionId: string) => {
-            SessionCookie.setCookie(SESSION_COOKIE_NAME, sessionId);
-
-            Http.login(sessionId);
-
-            setAppContext((oldState: any) => {
-              return Object.assign({}, oldState, { sessionId: sessionId });
-            });
-          },
-
-          /* Mark the session loading process as complete or not */
-          setSessionLoaded: (value: boolean) => {
-            setAppContext((oldState: any) => {
-              return Object.assign({}, oldState, { sessionLoaded: value });
-            });
-          },
-
-          refreshCart: (): Promise<any> => {
-            return new Promise((resolve, reject) => {
-              Http.get()
-                  .getCart()
-                  .then(
-                    (data: any) => {
-                      setAppContext((oldState: any) => Object.assign({}, oldState, { cart: data }));
-                      resolve();
-                    },
-                    () => {
-                      reject();
-                    }
-                  )
-              });
-          },
-
-          /* Log out the current user */
-          clearSession: (showLogout?: boolean) => {
-            Http.logout();
-            SessionCookie.clearSessionCookie(SESSION_COOKIE_NAME);
-            SessionCookie.clearSessionCookie(MASTER_SESSION_COOKIE_NAME);
-
-            setAppContext((oldState: any) => {
-              return Object.assign({}, oldState, {
-                sessionId: null,
-                sessionLoaded: true,
-                user: null,
-                cart: null,
-                masterSessionId: null,
-                captchaVerified: null,
-              });
-            });
-          }
-        }
-      )
-    );
-  }, []);
 
   /* If a child component sets a new session ID, fetch the current user */
 
   useEffect(() => {
-    if (!appContext.initialised) {
-      /* Wait for our initial state to turn up. */
-      return;
-    }
-
     if (appContext.sessionId) {
       Http.login(appContext.sessionId);
 
@@ -150,9 +135,9 @@ const AppContextProvider: React.FC<any> = (props: any) => {
   // Adding appContext to the deps array here (as suggested by jslint) creates a loop.
   //
   // eslint-disable-next-line react-hooks/exhaustive-deps 
-  [appContext.initialised, appContext.sessionId]);
+  [appContext.sessionId]);
 
-  if (appContext.initialised && appContext.sessionLoaded) {
+  if (appContext.sessionLoaded) {
     return <AppContext.Provider value={appContext}>{props.children}</AppContext.Provider>;
   } else {
     return <></>;
