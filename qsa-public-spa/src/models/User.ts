@@ -1,8 +1,8 @@
 export interface UserForm {
-  id: number;
-  email: string;
-  password: string;
-  confirm_password: string;
+  id?: number;
+  email?: string;
+  password?: string;
+  confirm_password?: string;
   first_name?: string;
   last_name?: string;
   street_address?: string;
@@ -10,5 +10,5 @@ export interface UserForm {
   state?: string;
   post_code?: string;
   phone?: string;
-  lock_version: number;
+  lock_version?: number;
 }

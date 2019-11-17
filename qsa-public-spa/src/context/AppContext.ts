@@ -1,9 +1,10 @@
 import React from 'react';
+import { UserForm } from '../models/User';
 
 export interface IAppContext {
   sessionLoaded: boolean;
   cart: any;
-  user: any;
+  user: UserForm | null;
   sessionId: string | null;
   masterSessionId: string | null;
   captchaVerified: boolean | null,
