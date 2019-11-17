@@ -21,6 +21,7 @@
   .facet-label {
     display: inline-block;
     width: calc(100% - 20px);
+    word-break: break-word;
   }
 
   .facet-count {
