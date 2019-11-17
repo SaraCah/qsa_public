@@ -118,9 +118,10 @@ export class RecordDisplay {
     }
   }
 
-  getExternalDocuments(title: string, callback: any): any {
+  getExternalDocuments(possible_titles: string[], callback: any): any {
+    const title_filter: string[] = possible_titles.map((s: string) => s.trim().toLowerCase());
     const docs = this.getArray('external_documents').filter((doc: any) => {
-      return doc.title.trim().toLowerCase() === title.trim().toLowerCase();
+      return title_filter.indexOf(doc.title.trim().toLowerCase()) >= 0;
     });
 
     if (docs.length > 0) {

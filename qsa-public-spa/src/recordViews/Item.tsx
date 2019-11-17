@@ -172,7 +172,7 @@ const AddToDigitalCopyRequestCartButton: React.FC<any> = ({ itemId }) => {
                 </button>
               </>
             );
-          } else {              
+          } else {
             return (
               <button className="qg-btn btn-secondary" onClick={() => requestItem(itemId, 'DIGITAL_COPY', context)}>
                 <i className="fa fa-copy" aria-hidden="true"/>&nbsp;
@@ -256,7 +256,7 @@ const AddToReadingRoomRequestCartButton: React.FC<any> = ({ itemId }) => {
               <i className="fa fa-institution" aria-hidden="true"/>&nbsp;
               Request to view in Reading Room
             </button>
-          )) 
+          ))
         }
       </>)}
     </AppContext.Consumer>
@@ -529,28 +529,16 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
                     </div>
                   </li>
                 ))}
-                {item.getExternalDocuments('Finding Aid', (docs: any) => (
+                {item.getExternalDocuments(['Finding Aid', 'Publication'], (docs: any) => (
                   <li className="list-group-item list-group-item-action">
                     <div className="d-flex w-100 justify-content-between">
-                      <h4 className="mb-1">Finding Aid</h4>
+                      <h4 className="mb-1">Helpful Resources</h4>
                     </div>
-                    <p className="mb-1">
+                    <div className="mb-1">
                       {docs.map((doc: any, idx: number) => (
-                        <MaybeLink key={idx} location={doc.location} label={doc.location} />
+                        <p><MaybeLink key={idx} location={doc.location} label={doc.location} /></p>
                       ))}
-                    </p>
-                  </li>
-                ))}
-                {item.getExternalDocuments('Publication', (docs: any) => (
-                  <li className="list-group-item list-group-item-action">
-                    <div className="d-flex w-100 justify-content-between">
-                      <h4 className="mb-1">Publications</h4>
                     </div>
-                    <p className="mb-1">
-                      {docs.map((doc: any, idx: number) => (
-                        <MaybeLink key={idx} location={doc.location} label={doc.location} />
-                      ))}
-                    </p>
                   </li>
                 ))}
                 {item.getMaybe('rap_applied', (rap: any) => {
@@ -559,7 +547,9 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
                       <div className="d-flex w-100 justify-content-between">
                         <h4 className="mb-1">Access notifications</h4>
                       </div>
-                      <p className="mb-1">{rap.display_string}</p>
+                      <div className="mb-1">
+                        <p>{rap.display_string}</p>
+                      </div>
                     </li>
                   );
                 })}
