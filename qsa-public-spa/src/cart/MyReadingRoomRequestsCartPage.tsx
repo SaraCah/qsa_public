@@ -88,8 +88,8 @@ export const MyReadingRoomRequestsCartPage: React.FC<PageRoute> = (route: PageRo
                                 onChange={e => setRequiredDate(e.target.value)}
                                 required
                               />
-                              {requiredDate && new Date(requiredDate) <= new Date() && (
-                                <small className="text-danger">Date required must be in the future</small>
+                              {requiredDate && new Date(requiredDate).setHours(0,0,0,0) <= new Date().setHours(0,0,0,0) && (
+                                <small className="text-danger">Date provided is in the past</small>
                               )}
                             </div>
                           </div>
