@@ -11,11 +11,12 @@ import { Note, RecordDisplay } from '../models/RecordDisplay';
 import { AccordionPanel, MaybeLink, NoteDisplay, RecordContext, Relationship } from './Helpers';
 import AppContext from '../context/AppContext';
 import {Tagger} from "./Tagger";
+import { IAppContext } from '../context/AppContext';
 
 const PhysicalRepresentation: React.FC<{
   representation: any;
   item: RecordDisplay;
-  context: any;
+  context: IAppContext;
 }> = ({ representation, item, context }) => {
   representation = new RecordDisplay(representation);
 
@@ -73,7 +74,7 @@ const PhysicalRepresentation: React.FC<{
 const DigitalRepresentation: React.FC<{
   representation: any;
   item: RecordDisplay;
-  context: any;
+  context: IAppContext;
 }> = ({ representation, item, context }) => {
   representation = new RecordDisplay(representation);
 
@@ -122,7 +123,7 @@ const DigitalRepresentation: React.FC<{
 };
 
 const AddToDigitalCopyRequestCartButton: React.FC<any> = ({ itemId }) => {
-  const requestItem = (item_id: string, request_type: string, context: any) => {
+  const requestItem = (item_id: string, request_type: string, context: IAppContext) => {
     Http.get()
         .addToCart(item_id, request_type)
         .then((json: any) => {
@@ -147,7 +148,7 @@ const AddToDigitalCopyRequestCartButton: React.FC<any> = ({ itemId }) => {
 
   return (
       <AppContext.Consumer>
-        {(context: any): React.ReactElement => {
+        {(context: IAppContext): React.ReactElement => {
           if (!context.user) {
             return (
               <div className={"request-button-no-login"}>
@@ -184,7 +185,7 @@ const AddToDigitalCopyRequestCartButton: React.FC<any> = ({ itemId }) => {
 };
 
 const AddToReadingRoomRequestCartButton: React.FC<any> = ({ itemId }) => {
-  const requestItem = (item_id: string, request_type: string, context: any) => {
+  const requestItem = (item_id: string, request_type: string, context: IAppContext) => {
     Http.get()
       .addToCart(item_id, request_type)
       .then((json: any) => {
@@ -225,7 +226,7 @@ const AddToReadingRoomRequestCartButton: React.FC<any> = ({ itemId }) => {
 
   return (
     <AppContext.Consumer>
-      {(context: any): React.ReactElement => (
+      {(context: IAppContext): React.ReactElement => (
         <>
         {
           !context.user &&
@@ -303,7 +304,7 @@ const DigitalCopyRequestAction: React.FC<any> = ({ item }) => {
 
     return (
       <AppContext.Consumer>
-        {(context: any): React.ReactElement => {
+        {(context: IAppContext): React.ReactElement => {
           if (context.user) {
             return (
               <button className="qg-btn btn-secondary"
@@ -361,7 +362,7 @@ const ReadingRoomRequestAction: React.FC<any> = ({ item }) => {
 
     return (
       <AppContext.Consumer>
-        {(context: any): React.ReactElement => (
+        {(context: IAppContext): React.ReactElement => (
           context.user ?
             <button className="qg-btn btn-primary"
                     onClick={() => scrollToRepresentations()}>

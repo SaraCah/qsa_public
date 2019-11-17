@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { UserSession } from './UserSession';
 import AppContext from '../context/AppContext';
 import {PageSnippet} from './PageViewPage';
+import { IAppContext } from '../context/AppContext';
 
 const LeftNavigation: React.FC<any> = (props: any) => {
   return (
@@ -87,7 +88,7 @@ const Layout: React.FC<any> = (props: any) => {
 
   return (
     <AppContext.Consumer>
-      {(context: any) => (
+      {(context: IAppContext) => (
         <div className="App">
           <section id="qg-access" role="navigation" aria-labelledby="landmark-label">
             <h2 id="landmark-label">Skip links and keyboard navigation</h2>

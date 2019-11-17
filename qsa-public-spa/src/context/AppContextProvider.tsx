@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Http } from '../utils/http';
-import AppContext from './AppContext';
+import AppContext, {IAppContext} from './AppContext';
 
 class SessionCookie {
   static loadSessionFromCookie(cookieName: string): string | null {
@@ -40,16 +40,16 @@ const AppContextProvider: React.FC<any> = (props: any) => {
 
     /* Update the currently logged in user */
     setUser: (user: any) => {
-      setAppContext((oldState: any) => Object.assign({}, oldState, { user: user }));
+      setAppContext((oldState: IAppContext) => Object.assign({}, oldState, { user: user }));
     },
 
     setCaptchaVerified: (verified: boolean) => {
-      setAppContext((oldState: any) => Object.assign({}, oldState, { captchaVerified: verified }));
+      setAppContext((oldState: IAppContext) => Object.assign({}, oldState, { captchaVerified: verified }));
     },
 
     setMasterSessionId: (sessionId: string) => {
       SessionCookie.setCookie(MASTER_SESSION_COOKIE_NAME, sessionId);
-      setAppContext((oldState: any) => Object.assign({}, oldState, { masterSessionId: sessionId }));
+      setAppContext((oldState: IAppContext) => Object.assign({}, oldState, { masterSessionId: sessionId }));
     },
 
     /* Record the current user session token */
@@ -58,14 +58,14 @@ const AppContextProvider: React.FC<any> = (props: any) => {
 
       Http.login(sessionId);
 
-      setAppContext((oldState: any) => {
+      setAppContext((oldState: IAppContext) => {
         return Object.assign({}, oldState, { sessionId: sessionId });
       });
     },
 
     /* Mark the session loading process as complete or not */
     setSessionLoaded: (value: boolean) => {
-      setAppContext((oldState: any) => {
+      setAppContext((oldState: IAppContext) => {
         return Object.assign({}, oldState, { sessionLoaded: value });
       });
     },
@@ -76,7 +76,7 @@ const AppContextProvider: React.FC<any> = (props: any) => {
             .getCart()
             .then(
               (data: any) => {
-                setAppContext((oldState: any) => Object.assign({}, oldState, { cart: data }));
+                setAppContext((oldState: IAppContext) => Object.assign({}, oldState, { cart: data }));
                 resolve();
               },
               () => {
@@ -92,7 +92,7 @@ const AppContextProvider: React.FC<any> = (props: any) => {
       SessionCookie.clearSessionCookie(SESSION_COOKIE_NAME);
       SessionCookie.clearSessionCookie(MASTER_SESSION_COOKIE_NAME);
 
-      setAppContext((oldState: any) => {
+      setAppContext((oldState: IAppContext) => {
         return Object.assign({}, oldState, {
           sessionId: null,
           sessionLoaded: true,

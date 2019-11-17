@@ -4,6 +4,8 @@ import Layout from './Layout';
 import { Http } from '../utils/http';
 import { CartSummary } from '../cart/CartSummary';
 
+import { IAppContext } from '../context/AppContext';
+
 export const UserSession: React.FC<any> = (props: any) => {
   const context = props.context;
 
@@ -167,7 +169,7 @@ export const LogoutPage: React.FC<any> = (route: any) => {
 
   const [logoutTriggered, setLogoutTriggered] = useState(false);
 
-  const logout = (context: any) => {
+  const logout = (context: IAppContext) => {
     if (!logoutTriggered) {
       setLogoutTriggered(true);
       Http.get().logout();

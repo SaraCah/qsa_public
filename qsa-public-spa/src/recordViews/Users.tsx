@@ -11,6 +11,7 @@ import { RichText } from './RichText';
 
 import { PageSnippet } from './PageViewPage';
 import { ClientState } from '../context/AppContext';
+import { IAppContext } from '../context/AppContext';
 
 const FormErrors: React.FC<{ errors: any }> = ({ errors }) => {
   const errorMessage = (error: any) => {
@@ -420,7 +421,7 @@ export const MyAccountPage: React.FC<any> = (route: any) => {
   );
 };
 
-const UserDetailsForm: React.FC<{ context: any }> = ({ context }) => {
+const UserDetailsForm: React.FC<{ context: IAppContext }> = ({ context }) => {
   const [user, setUser]: [UserForm, any] = useState({ ...context.user });
   const [errors, setErrors]: [any, any] = useState([]);
   const [showUpdateSuccess, setShowUpdateSuccess]: [boolean, any] = useState(false);
@@ -589,7 +590,7 @@ export const MyContactDetailsPage: React.FC<any> = (route: any) => {
   );
 };
 
-const ChangePasswordForm: React.FC<{ context: any }> = ({ context }) => {
+const ChangePasswordForm: React.FC<{ context: IAppContext }> = ({ context }) => {
   const [data, setData]: [any, any] = useState({});
   const [errors, setErrors]: [any, any] = useState([]);
   const [showUpdateSuccess, setShowUpdateSuccess]: [boolean, any] = useState(false);
@@ -959,7 +960,7 @@ const UserManagementListing: React.FC<any> = (props: any) => {
     setFilter(Object.assign({ ...filter }, { version: filter.version + 1 }));
   };
 
-  const becomeUser = (user: any, context: any) => {
+  const becomeUser = (user: any, context: IAppContext) => {
     Http.get()
         .becomeUser(user.id)
         .then((json: any) => {

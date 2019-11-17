@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import * as serviceWorker from './serviceWorker';
 import './index.scss';
 import { BrowserRouter, Switch, Route, RouteComponentProps } from 'react-router-dom';
-import AppContext from './context/AppContext';
+import AppContext, {IAppContext} from './context/AppContext';
 
 import axios from 'axios';
 
@@ -43,7 +43,6 @@ import { DigitalCopySetPricePage } from "./cart/DigitalCopySetPricePage";
 import { DigitalCopyMinicartPage } from "./cart/DigitalCopyMinicartPage";
 
 import ErrorPage from "./context/ErrorPage";
-
 
 /* Establish error handling */
 class ErrorBuffer {
@@ -172,7 +171,7 @@ function wrappedRoute(component: any, opts: { alwaysRender?: boolean; pageTitle?
     return (<ErrorPage>
       <AppContext.Consumer>
         {
-          (context: any) => {
+          (context: IAppContext) => {
             return React.createElement(
               component,
               Object.assign({},

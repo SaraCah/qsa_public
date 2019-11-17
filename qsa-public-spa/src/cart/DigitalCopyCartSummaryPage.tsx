@@ -4,10 +4,10 @@ import { uriFor } from '../utils/typeResolver';
 import Layout from '../recordViews/Layout';
 import { Http } from '../utils/http';
 import { centsToString } from '../utils/currency';
-
+import { IAppContext } from '../context/AppContext';
 
 export const DigitalCopyCartSummaryPage: React.FC<any> = (route: any) => {
-  const removeItem = (id: number, context: any): void => {
+  const removeItem = (id: number, context: IAppContext): void => {
     Http.get()
       .removeFromCart(id)
       .then(() => {

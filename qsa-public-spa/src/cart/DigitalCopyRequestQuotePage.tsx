@@ -4,7 +4,7 @@ import { Redirect } from 'react-router';
 import { uriFor } from '../utils/typeResolver';
 import Layout from '../recordViews/Layout';
 import { Http } from '../utils/http';
-
+import { IAppContext } from '../context/AppContext';
 
 export const DigitalCopyRequestQuotePage: React.FC<any> = (route: any) => {
   const context = route.context;
@@ -14,7 +14,7 @@ export const DigitalCopyRequestQuotePage: React.FC<any> = (route: any) => {
   const [dirtyCart, setDirtyCart]: [any, any] = useState(false);
   const [cartNeedsRefresh, setCartNeedsRefresh]: [any, any] = useState(true);
 
-  const updateCartItem = (context: any, cartItemId: number, field: string, value: string) => {
+  const updateCartItem = (context: IAppContext, cartItemId: number, field: string, value: string) => {
     const options: any = {};
     options[field] = value;
 

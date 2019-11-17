@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { uriFor } from '../utils/typeResolver';
 import Layout from '../recordViews/Layout';
 import { Http } from '../utils/http';
+import { IAppContext } from '../context/AppContext';
 
 export const MyReadingRoomRequestsCartPage: React.FC<any> = (route: any) => {
   const context = route.context;
@@ -11,7 +12,7 @@ export const MyReadingRoomRequestsCartPage: React.FC<any> = (route: any) => {
   const [showReadingRoomSuccess, setShowReadingRoomSuccess] = useState(false);
   const [agencyFields, setAgencyFields]: [any, any] = useState({});
 
-  const removeItem = (id: number, context: any): void => {
+  const removeItem = (id: number, context: IAppContext): void => {
     Http.get()
       .removeFromCart(id)
       .then(() => {
@@ -22,7 +23,7 @@ export const MyReadingRoomRequestsCartPage: React.FC<any> = (route: any) => {
       });
   };
 
-  const handleSubmit = (event: any, context: any): void => {
+  const handleSubmit = (event: any, context: IAppContext): void => {
     event.preventDefault();
     setShowReadingRoomSuccess(false);
     Http.get()
