@@ -529,7 +529,7 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
                     </div>
                   </li>
                 ))}
-                {item.getExternalDocuments(['Finding Aid', 'Publication'], (docs: any) => (
+                {item.getExternalDocuments(['Helpful Resources'], (docs: any) => (
                   <li className="list-group-item list-group-item-action">
                     <div className="d-flex w-100 justify-content-between">
                       <h4 className="mb-1">Helpful Resources</h4>

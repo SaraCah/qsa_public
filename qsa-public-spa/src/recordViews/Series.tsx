@@ -170,10 +170,10 @@ const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
                 />
               ))}
 
-              {series.getExternalDocuments(['Finding Aid', 'Publication'], (docs: any) => (
+              {series.getExternalDocuments(['Helpful Resources'], (docs: any) => (
                 <AccordionPanel
                   id={series.generateId()}
-                  title="External Resources - Helpful Resources"
+                  title="Helpful Resources"
                   children={docs.map((doc: any, idx: number) => (
                     <div><MaybeLink location={doc.location} label={doc.location} key={idx} /></div>
                   ))}

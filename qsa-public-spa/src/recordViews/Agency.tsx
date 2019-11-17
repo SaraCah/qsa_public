@@ -176,8 +176,8 @@ const AgencyPage: React.FC<PageRoute> = (route: PageRoute) => {
                 </AccordionPanel>
               ))}
 
-              {agency.getExternalDocuments(['Finding Aid', 'Publication'], (docs: any) => (
-                <AccordionPanel id={agency.generateId()} title="External Resources - Helpful Resources">
+              {agency.getExternalDocuments(['Helpful Resources'], (docs: any) => (
+                <AccordionPanel id={agency.generateId()} title="Helpful Resources">
                   {docs.map((doc: any) => (
                       <div><MaybeLink location={doc.location} label={doc.location} /></div>
                   ))}
