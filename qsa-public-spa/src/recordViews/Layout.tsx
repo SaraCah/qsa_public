@@ -8,7 +8,7 @@ import { IAppContext } from '../context/AppContext';
 const LeftNavigation: React.FC<any> = (props: any) => {
   return (
     <nav id="qg-side-nav" aria-label="side navigation" role="navigation">
-      <PageSnippet slug="sidebar-top" />
+      {!props.errorPage && <PageSnippet slug="sidebar-top" />}
       <h2>
         <Link to={'/'}>Archives Search</Link>
       </h2>
@@ -69,7 +69,7 @@ const LeftNavigation: React.FC<any> = (props: any) => {
           )}
         </>
       )}
-      <PageSnippet slug="sidebar-bottom" />
+      {!props.errorPage && <PageSnippet slug="sidebar-bottom" />}
     </nav>
   );
 };
@@ -233,11 +233,11 @@ const Layout: React.FC<any> = (props: any) => {
             <div id="qg-content">
               <div id={props.aside ? 'qg-three-col' : 'qg-two-col-nav'} className="row">
                 <div id="qg-primary-content" role="main">
-                  {!props.aside && <UserSession context={context} />}
+                  {!props.aside && !props.errorPage && <UserSession context={context} />}
                   {props.children}
                 </div>
 
-                {props.aside && (
+                {props.aside && !props.errorPage && (
                   <aside id="qg-secondary-content">
                     <UserSession context={context} />
 
@@ -246,7 +246,7 @@ const Layout: React.FC<any> = (props: any) => {
                 )}
 
                 <div id="qg-section-nav">
-                  <LeftNavigation context={context} showNavForUser={props.showNavForUser} />
+                  <LeftNavigation errorPage={props.errorPage} context={context} showNavForUser={props.showNavForUser} />
                 </div>
               </div>
             </div>

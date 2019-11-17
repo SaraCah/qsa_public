@@ -99,6 +99,10 @@ export class Http {
       errorMessage = error.message;
     }
 
+    if (error.isAxiosError && error.message === 'Network Error') {
+      errorMessage = "Could not contact server"
+    }
+
     (window as any).handleFatalError && (window as any).handleFatalError(errorMessage || '', error);
 
     return error;

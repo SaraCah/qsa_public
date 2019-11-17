@@ -31,7 +31,6 @@ export default class ErrorPage extends React.Component {
 
 
   static getDerivedStateFromError(error: any) {
-    /* Skip handling errors automatically */
     return {
       hasError: true,
       errorMessage: error.message,
@@ -45,8 +44,7 @@ export default class ErrorPage extends React.Component {
 
   render() {
     if (this.state.hasError) {
-      // You can render any custom fallback UI
-      return <Layout noindex={true}>
+      return <Layout noindex={true} errorPage={true}>
         <h1>System error</h1>
 
         <p>Your request could not be completed at this time.  The error reported was:</p>
