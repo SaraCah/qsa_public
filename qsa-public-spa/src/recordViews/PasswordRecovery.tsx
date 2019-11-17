@@ -3,8 +3,10 @@ import { Http } from '../utils/http';
 import Layout from './Layout';
 import { Link } from 'react-router-dom';
 import { PasswordRecoveryResponse } from '../models/HttpResponse';
+import { PageRoute } from '../models/PageRoute';
 
-export const PasswordRecoveryPage: React.FC<any> = (route: any) => {
+
+export const PasswordRecoveryPage: React.FC<PageRoute> = (route: PageRoute) => {
   const [email, setEmail]: [string, Function] = useState('');
   const [emailIsValid, setEmailIsValid]: [boolean, Function] = useState(false);
   const [errors, setErrors]: [string[], Function] = useState([]);

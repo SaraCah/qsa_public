@@ -6,6 +6,8 @@ import { AdvancedSearchQuery, Filter } from '../models/AdvancedSearch';
 import { Http } from '../utils/http';
 import { iconForType, labelForType, uriFor } from '../utils/typeResolver';
 import queryString from 'query-string';
+import { PageRoute } from '../models/PageRoute';
+
 
 const FACET_LABELS: { [name: string]: string } = {
   mandate_id: 'Mandates',
@@ -17,7 +19,7 @@ const FACET_LABELS: { [name: string]: string } = {
   tags_string: 'Tags',
 };
 
-const ResultsPage: React.FC<any> = (route: any) => {
+const ResultsPage: React.FC<PageRoute> = (route: PageRoute) => {
   const [searchResults, setSearchResults] = useState<any | null>(null);
   const [advancedSearchQuery] = useState<AdvancedSearchQuery>(
     AdvancedSearchQuery.fromQueryString(route.location.search)

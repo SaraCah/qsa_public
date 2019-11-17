@@ -5,8 +5,9 @@ import { uriFor } from '../utils/typeResolver';
 import Layout from '../recordViews/Layout';
 import { Http } from '../utils/http';
 import {centsToString} from "../utils/currency";
+import { PageRoute } from '../models/PageRoute';
 
-export const DigitalCopySetPricePage: React.FC<any> = (route: any) => {
+export const DigitalCopySetPricePage: React.FC<PageRoute> = (route: PageRoute) => {
   const context = route.context;
 
   const [deliveryMethod, setDeliveryMethod] = useState('digital');

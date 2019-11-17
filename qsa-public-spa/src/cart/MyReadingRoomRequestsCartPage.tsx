@@ -4,8 +4,10 @@ import { uriFor } from '../utils/typeResolver';
 import Layout from '../recordViews/Layout';
 import { Http } from '../utils/http';
 import { IAppContext } from '../context/AppContext';
+import { PageRoute } from '../models/PageRoute';
 
-export const MyReadingRoomRequestsCartPage: React.FC<any> = (route: any) => {
+
+export const MyReadingRoomRequestsCartPage: React.FC<PageRoute> = (route: PageRoute) => {
   const context = route.context;
 
   const [requiredDate, setRequiredDate] = useState('');

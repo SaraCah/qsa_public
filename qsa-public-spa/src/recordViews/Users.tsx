@@ -12,6 +12,8 @@ import { RichText } from './RichText';
 import { PageSnippet } from './PageViewPage';
 import { ClientState } from '../context/AppContext';
 import { IAppContext } from '../context/AppContext';
+import { PageRoute } from '../models/PageRoute';
+
 
 const FormErrors: React.FC<{ errors: any }> = ({ errors }) => {
   const errorMessage = (error: any) => {
@@ -60,7 +62,7 @@ const scrollToRef = (ref?: React.RefObject<HTMLDivElement>): void => {
   }
 };
 
-export const RegisterPage: React.FC<any> = (route: any) => {
+export const RegisterPage: React.FC<PageRoute> = (route: PageRoute) => {
   const [user, setUser]: [UserForm | undefined, any] = useState();
   const [errors, setErrors]: [any, any] = useState([]);
   const [showRegisterSuccess, setShowRegisterSuccess]: [boolean, any] = useState(false);
@@ -412,7 +414,7 @@ export const LoginRequired: React.FC<any> = (props: any) => {
   }
 };
 
-export const MyAccountPage: React.FC<any> = (route: any) => {
+export const MyAccountPage: React.FC<PageRoute> = (route: PageRoute) => {
   const context = route.context;
   return (
     <LoginRequired context={context}>
@@ -582,7 +584,7 @@ const UserDetailsForm: React.FC<{ context: IAppContext }> = ({ context }) => {
   );
 };
 
-export const MyContactDetailsPage: React.FC<any> = (route: any) => {
+export const MyContactDetailsPage: React.FC<PageRoute> = (route: PageRoute) => {
   return (
     <LoginRequired context={route.context}>
       <UserDetailsForm context={route.context} />
@@ -692,7 +694,7 @@ const ChangePasswordForm: React.FC<{ context: IAppContext }> = ({ context }) => 
   );
 };
 
-export const ChangePasswordPage: React.FC<any> = (route: any) => {
+export const ChangePasswordPage: React.FC<PageRoute> = (route: PageRoute) => {
   return (
     <LoginRequired context={route.context}>
       <ChangePasswordForm context={route.context} />
@@ -1120,7 +1122,7 @@ const UserManagementListing: React.FC<any> = (props: any) => {
   );
 };
 
-export const UserManagementPage: React.FC<any> = (route: any) => {
+export const UserManagementPage: React.FC<PageRoute> = (route: PageRoute) => {
   const userId: string | null = route.match.params.user_id;
 
   return (
@@ -1282,7 +1284,7 @@ const RequestsSummary: React.FC<any> = props => {
   );
 };
 
-export const MyRequestsPage: React.FC<any> = (route: any) => {
+export const MyRequestsPage: React.FC<PageRoute> = (route: PageRoute) => {
   const [selectedRequest, setSelectedRequest] = useState(null);
   return (
     <LoginRequired context={route.context}>
@@ -1380,7 +1382,7 @@ const TagModeration: React.FC<any> = props => {
   );
 }
 
-export const TagManagementPage: React.FC<any> = (route: any) => {
+export const TagManagementPage: React.FC<PageRoute> = (route: PageRoute) => {
 
   return (
       <LoginRequired adminOnly={true} context={route.context}>
@@ -1452,7 +1454,7 @@ const BannedTags: React.FC<any> = props => {
   );
 }
 
-export const BannedTagsManagementPage: React.FC<any> = (route: any) => {
+export const BannedTagsManagementPage: React.FC<PageRoute> = (route: PageRoute) => {
   return (
       <LoginRequired adminOnly={true} context={route.context}>
         <BannedTags />
@@ -1598,7 +1600,7 @@ export const PageEdit: React.FC<any> = (props: any) => {
   </form>);
 }
 
-export const PageManagementPage: React.FC<any> = (route: any) => {
+export const PageManagementPage: React.FC<PageRoute> = (route: PageRoute) => {
   return (
     <LoginRequired adminOnly={true} context={route.context}>
       {

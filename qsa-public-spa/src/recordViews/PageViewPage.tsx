@@ -4,6 +4,8 @@ import { Redirect } from 'react-router';
 import Layout from './Layout';
 
 import { ClientState } from '../context/AppContext';
+import { PageRoute } from '../models/PageRoute';
+
 
 export const PageSnippet: React.FC<any> = (props: any) => {
   const [content, setContent] = useState('');
@@ -93,7 +95,7 @@ export const PageSnippet: React.FC<any> = (props: any) => {
   }
 }
 
-const PageViewPage: React.FC<any> = (route: any) => {
+const PageViewPage: React.FC<PageRoute> = (route: PageRoute) => {
   const [notFound, setNotFound] = useState(false);
   const [loaded, setLoaded] = useState(false);
 

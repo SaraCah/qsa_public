@@ -5,7 +5,7 @@ import queryString from 'query-string';
 import Layout from './Layout';
 
 const GenericErrorPage: React.FC<RouteComponentProps<any>> = (route: RouteComponentProps<any>) => {
-  const props = queryString.parse(route.location.search)  
+  const props = queryString.parse(route.location.search)
 
   console.error("GENERIC ERROR: " + props.msg);
 

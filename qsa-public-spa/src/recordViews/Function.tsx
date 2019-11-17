@@ -7,8 +7,10 @@ import { RecordDisplay } from '../models/RecordDisplay';
 import { iconForType, labelForType } from '../utils/typeResolver';
 import { Relationship } from './Helpers';
 import { AdvancedSearchQuery } from '../models/AdvancedSearch';
+import { PageRoute } from '../models/PageRoute';
 
-const FunctionPage: React.FC<any> = (route: any) => {
+
+const FunctionPage: React.FC<PageRoute> = (route: PageRoute) => {
   const [currentFunction, setCurrentFunction] = useState<any | null>(null);
   const [notFoundRedirect, setNotFoundRedirect] = useState(false);
   const qsaId: string = route.match.params.qsaId;

@@ -12,6 +12,8 @@ import { AccordionPanel, MaybeLink, NoteDisplay, RecordContext, Relationship } f
 import AppContext from '../context/AppContext';
 import {Tagger} from "./Tagger";
 import { IAppContext } from '../context/AppContext';
+import { PageRoute } from '../models/PageRoute';
+
 
 const PhysicalRepresentation: React.FC<{
   representation: any;
@@ -392,7 +394,7 @@ const ReadingRoomRequestAction: React.FC<any> = ({ item }) => {
   return <AddToReadingRoomRequestCartButton itemId={itemIdToRequest} />;
 };
 
-const ItemPage: React.FC<any> = (route: any) => {
+const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
   const [item, setCurrentItem] = useState<any | null>(null);
   const [notFoundRedirect, setNotFoundRedirect] = useState(false);
   const qsaId: string = route.match.params.qsaId;

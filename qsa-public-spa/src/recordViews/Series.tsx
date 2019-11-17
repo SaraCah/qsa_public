@@ -6,8 +6,10 @@ import { iconForType, labelForType } from '../utils/typeResolver';
 import { Note, RecordDisplay } from '../models/RecordDisplay';
 import { AccordionPanel, MaybeLink, NoteDisplay, RecordContext, Relationship } from './Helpers';
 import {Tagger} from "./Tagger";
+import { PageRoute } from '../models/PageRoute';
 
-const SeriesPage: React.FC<any> = (route: any) => {
+
+const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
   const [series, setCurrentSeries] = useState<any | null>(null);
   const [notFoundRedirect, setNotFoundRedirect] = useState(false);
   const qsaId: string = route.match.params.qsaId;

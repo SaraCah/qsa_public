@@ -5,6 +5,8 @@ import { Http } from '../utils/http';
 import { CartSummary } from '../cart/CartSummary';
 
 import { IAppContext } from '../context/AppContext';
+import { PageRoute } from '../models/PageRoute';
+
 
 export const UserSession: React.FC<any> = (props: any) => {
   const context = props.context;
@@ -44,7 +46,7 @@ export const UserSession: React.FC<any> = (props: any) => {
 };
 
 
-export const LoginPage: React.FC<any> = (route: any) => {
+export const LoginPage: React.FC<PageRoute> = (route: PageRoute) => {
   const context = route.context;
 
   const [email, setEmail] = useState('');
@@ -164,7 +166,7 @@ export const LoginPage: React.FC<any> = (route: any) => {
   );
 };
 
-export const LogoutPage: React.FC<any> = (route: any) => {
+export const LogoutPage: React.FC<PageRoute> = (route: PageRoute) => {
   const context = route.context;
 
   const [logoutTriggered, setLogoutTriggered] = useState(false);

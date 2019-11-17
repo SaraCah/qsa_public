@@ -7,8 +7,10 @@ import { Note, RecordDisplay } from '../models/RecordDisplay';
 import { iconForType, labelForType } from '../utils/typeResolver';
 import { AccordionPanel, MaybeLink, NoteDisplay, Relationship } from './Helpers';
 import { AdvancedSearchQuery } from '../models/AdvancedSearch';
+import { PageRoute } from '../models/PageRoute';
 
-const AgencyPage: React.FC<any> = (route: any) => {
+
+const AgencyPage: React.FC<PageRoute> = (route: PageRoute) => {
   const [agency, setCurrentAgency] = useState<any | null>(null);
   const [notFoundRedirect, setNotFoundRedirect] = useState(false);
   const qsaId: string = route.match.params.qsaId;

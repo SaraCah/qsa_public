@@ -5,8 +5,9 @@ import Layout from '../recordViews/Layout';
 import { Http } from '../utils/http';
 import { centsToString } from '../utils/currency';
 import { IAppContext } from '../context/AppContext';
+import { PageRoute } from '../models/PageRoute';
 
-export const DigitalCopyCartSummaryPage: React.FC<any> = (route: any) => {
+export const DigitalCopyCartSummaryPage: React.FC<PageRoute> = (route: PageRoute) => {
   const removeItem = (id: number, context: IAppContext): void => {
     Http.get()
       .removeFromCart(id)

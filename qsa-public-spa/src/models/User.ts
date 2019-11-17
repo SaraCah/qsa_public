@@ -3,6 +3,7 @@ export interface UserForm {
   email?: string;
   password?: string;
   confirm_password?: string;
+  is_admin?: boolean;
   first_name?: string;
   last_name?: string;
   street_address?: string;
