@@ -74,7 +74,7 @@ export const RegisterPage: React.FC<any> = (route: any) => {
     };
   };
 
-  const onSubmit = (e: any) => {
+  const onSubmit = () => {
     window.scrollTo(0,0);
     setErrors([]);
 
@@ -114,7 +114,7 @@ export const RegisterPage: React.FC<any> = (route: any) => {
     );
   }
 
-  const updateTOCAccept = (e: any) => {
+  const updateTOCAccept = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTermsAccepted(e.target.checked);
   };
 
@@ -128,7 +128,7 @@ export const RegisterPage: React.FC<any> = (route: any) => {
             method="GET"
             onSubmit={e => {
               e.preventDefault();
-              onSubmit(e);
+              onSubmit();
             }}
           >
             {errors && errors.length > 0 && <FormErrors errors={errors} />}
@@ -595,7 +595,7 @@ const ChangePasswordForm: React.FC<{ context: IAppContext }> = ({ context }) => 
   const [errors, setErrors]: [any, any] = useState([]);
   const [showUpdateSuccess, setShowUpdateSuccess]: [boolean, any] = useState(false);
 
-  const onSubmit = (e: any) => {
+  const onSubmit = () => {
     setErrors([]);
     setShowUpdateSuccess(false);
 
@@ -626,7 +626,7 @@ const ChangePasswordForm: React.FC<{ context: IAppContext }> = ({ context }) => 
           method="GET"
           onSubmit={e => {
             e.preventDefault();
-            onSubmit(e);
+            onSubmit();
           }}
         >
           {errors && errors.length > 0 && <FormErrors errors={errors} />}
@@ -1541,11 +1541,11 @@ export const PageEdit: React.FC<any> = (props: any) => {
     }
   }, [props.slug]);
 
-  const updateSluggo = (e: any) => {
+  const updateSluggo = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSlug(e.target.value.replace(/[^a-zA-Z0-9]+/g, '-').toLowerCase());
   };
 
-  const savePage = (e: any) => {
+  const savePage = (e: React.FormEvent) => {
     e.preventDefault();
 
     Http.get()

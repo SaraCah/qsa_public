@@ -63,7 +63,7 @@ export const RichText: React.FC<any> = (props: any) => {
   []);
 
   return <div>
-    <button className="btn-xs" onClick={(e: any) => { e.preventDefault(); setEditMode(!editMode) }}>Toggle Preview</button>
+    <button className="btn-xs" onClick={(e: React.MouseEvent) => { e.preventDefault(); setEditMode(!editMode) }}>Toggle Preview</button>
     <div style={{display: editMode ? 'block' : 'none'}} id={eltId}></div>
     <div style={{display: editMode ? 'none' : 'block', border: "solid 1px #ccc", padding: '1em'}}>
       <PageSnippet content={html} />

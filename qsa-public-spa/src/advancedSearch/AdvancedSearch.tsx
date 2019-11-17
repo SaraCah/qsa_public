@@ -23,7 +23,7 @@ const AspaceAdvancedSearch: React.FC<{
     ['mandate', 'Mandate'],
     ['function', 'Function']
   ];
-  const onSubmit = (e: any): void => {
+  const onSubmit = (): void => {
     // Any filters are cleared when a new search fires
     redirectForSearch('/search?' + advancedSearchQuery.clearFilters().toQueryString());
   };
@@ -37,7 +37,7 @@ const AspaceAdvancedSearch: React.FC<{
           method="GET"
           onSubmit={(e): void => {
             e.preventDefault();
-            onSubmit(e);
+            onSubmit();
           }}
         >
           <button style={{ display: 'none' }} aria-hidden="true" />

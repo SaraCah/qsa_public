@@ -16,6 +16,8 @@ export interface IAppContext {
   clearSession: (showLogout?: boolean) => void;
 }
 
+// Initialise with a never-used default value here to keep the type checker
+// happy.  In real life, the AppContextProvider will provide the value.
 const AppContext: React.Context<IAppContext> = React.createContext(
   {
     sessionLoaded: false,

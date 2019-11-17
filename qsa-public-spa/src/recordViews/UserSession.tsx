@@ -53,7 +53,7 @@ export const LoginPage: React.FC<any> = (route: any) => {
   const [showLoginSuccess, setShowLoginSuccess] = useState(false);
   const [rateLimitDelay, setRateLimitDelay] = useState(0);
 
-  const onSubmit = (e: any, appContext: any) => {
+  const onSubmit = (appContext: any) => {
     setShowLoginFailed(false);
     Http.get()
       .login(email, password)
@@ -98,7 +98,7 @@ export const LoginPage: React.FC<any> = (route: any) => {
             method="GET"
             onSubmit={e => {
               e.preventDefault();
-              onSubmit(e, context);
+              onSubmit(context);
             }}
             className="form-inline"
           >

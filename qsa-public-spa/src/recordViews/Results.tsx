@@ -215,7 +215,7 @@ const CompactSearchSummary: React.FC<{
     <div className="qg-call-out-box">
       {clauses}
       <div>
-        <button onClick={(e: any) => props.modifySearch()} className="qg-btn btn-primary btn-xs">
+        <button onClick={() => props.modifySearch()} className="qg-btn btn-primary btn-xs">
           Modify search
         </button>
       </div>
