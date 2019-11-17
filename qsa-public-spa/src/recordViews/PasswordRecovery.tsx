@@ -7,13 +7,13 @@ import { PageRoute } from '../models/PageRoute';
 
 
 export const PasswordRecoveryPage: React.FC<PageRoute> = (route: PageRoute) => {
-  const [email, setEmail]: [string, Function] = useState('');
-  const [emailIsValid, setEmailIsValid]: [boolean, Function] = useState(false);
+  const [email, setEmail] = useState('');
+  const [emailIsValid, setEmailIsValid] = useState(false);
   const [errors, setErrors]: [string[], Function] = useState([]);
-  const [showEmailSuccess, setShowEmailSuccess]: [boolean, Function] = useState(false);
-  const [showPasswordChangeSuccess, setShowPasswordChangeSuccess]: [boolean, Function] = useState(false);
-  const [password, setPassword]: [string, Function] = useState('');
-  const [confirmPassword, setConfirmPassword]: [string, Function] = useState('');
+  const [showEmailSuccess, setShowEmailSuccess] = useState(false);
+  const [showPasswordChangeSuccess, setShowPasswordChangeSuccess] = useState(false);
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const token = route.match.params.token;
 
   const onSubmitTokenRequest = (): void => {

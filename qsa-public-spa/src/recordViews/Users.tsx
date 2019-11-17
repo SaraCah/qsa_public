@@ -1392,10 +1392,10 @@ export const TagManagementPage: React.FC<PageRoute> = (route: PageRoute) => {
 };
 
 const BannedTags: React.FC<any> = props => {
-  const [tagsToBan, setTagsToBan]: [any, any] = useState('');
-  const [tagsToUnban, setTagsToUnban]: [any, any] = useState('');
+  const [tagsToBan, setTagsToBan] = useState('');
+  const [tagsToUnban, setTagsToUnban] = useState('');
   const [bannedTags, setBannedTags]: [any, any] = useState([]);
-  const [refreshTags, setRefreshTags]: [any, any] = useState(0);
+  const [refreshTags, setRefreshTags] = useState(0);
 
   useEffect(() => {
     Http.get().getBannedTags().then((json: any) => {
@@ -1532,7 +1532,7 @@ export const PageEdit: React.FC<any> = (props: any) => {
   const [slug, setSlug]: [any, any] = useState(props.slug || '');
   const [content, setContent]: [any, any] = useState(props.slug ? undefined : '');
 
-  const [completed, setCompleted]: [any, any] = useState(false);
+  const [completed, setCompleted] = useState(false);
   const [errors, setErrors]: [any, any] = useState([]);
 
   useEffect(() => {

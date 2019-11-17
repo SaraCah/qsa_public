@@ -12,9 +12,9 @@ export const DigitalCopyRequestQuotePage: React.FC<PageRoute> = (route: PageRout
   const context = route.context;
 
   const [cart, setCart]: [any, any] = useState(null);
-  const [completed, setCompleted]: [any, any] = useState(false);
-  const [dirtyCart, setDirtyCart]: [any, any] = useState(false);
-  const [cartNeedsRefresh, setCartNeedsRefresh]: [any, any] = useState(true);
+  const [completed, setCompleted] = useState(false);
+  const [dirtyCart, setDirtyCart] = useState(false);
+  const [cartNeedsRefresh, setCartNeedsRefresh] = useState(true);
 
   const updateCartItem = (context: IAppContext, cartItemId: number, field: string, value: string) => {
     const options: any = {};
