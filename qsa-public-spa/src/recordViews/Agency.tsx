@@ -107,6 +107,19 @@ const AgencyPage: React.FC<PageRoute> = (route: PageRoute) => {
             <section className="qg-accordion qg-dark-accordion" aria-label="Accordion Label">
               <h2 id="accordion">Detailed information</h2>
 
+              <ul className="list-group list-group-flush">
+                {agency.getMaybe('agency_category', () => {
+                  return (
+                      <li className="list-group-item list-group-item-action">
+                        <div className="d-flex w-100 justify-content-between">
+                          <h4 className="mb-1">Category</h4>
+                        </div>
+                        <p className="mb-1">{agency.get('agency_category_label') || agency.get('agency_category')}</p>
+                      </li>
+                  );
+                })}
+              </ul>
+
               {agency.getNotes('description', null, (notes: Note[]) => (
                 <AccordionPanel id={agency.generateId()} title="Notes - Description">
                   {notes.map((note: Note, noteIndex: number) => (
