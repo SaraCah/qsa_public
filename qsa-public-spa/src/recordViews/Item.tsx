@@ -399,7 +399,6 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
   const [notFoundRedirect, setNotFoundRedirect] = useState(false);
   const qsaId: string = route.match.params.qsaId;
 
-  /* FIXME: probably want a definition file of types to QSA prefixes here */
   if (!item) {
     Http.get()
       .fetchByQSAID(qsaId, 'archival_object')
@@ -487,24 +486,44 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
                     </li>
                   );
                 })}
-                {item.getMaybe('repository_processing_note', (value: any) => {
-                  return (
+                {
+                  item.getArray('previous_system_ids').length > 0 &&
                     <li className="list-group-item list-group-item-action">
                       <div className="d-flex w-100 justify-content-between">
                         <h4 className="mb-1">Previous system identifiers</h4>
                       </div>
-                      <p className="mb-1">{value}</p>
+                      <p className="mb-1">{item.getArray('previous_system_ids').join('; ')}</p>
                     </li>
-                  );
-                })}
+                }
                 {
+                  item.getArray('subjects').length > 0 &&
                   <li className="list-group-item list-group-item-action">
                     <div className="d-flex w-100 justify-content-between">
-                      <h4 className="mb-1">Copyright Status</h4>
+                      <h4 className="mb-1">Subjects</h4>
                     </div>
-                    <p className="mb-1">FIXME MISSING FIELD</p>
+                    <p className="mb-1">{item.getArray('subjects').join('; ')}</p>
                   </li>
                 }
+                {item.getMaybe('sensitivity_label', (value: any) => {
+                  return (
+                      <li className="list-group-item list-group-item-action">
+                        <div className="d-flex w-100 justify-content-between">
+                          <h4 className="mb-1">Sensitivity Label</h4>
+                        </div>
+                        <p className="mb-1">{value}</p>
+                      </li>
+                  );
+                })}
+                {item.getMaybe('copyright_status', (value: any) => {
+                  return (
+                      <li className="list-group-item list-group-item-action">
+                        <div className="d-flex w-100 justify-content-between">
+                          <h4 className="mb-1">Copyright Status</h4>
+                        </div>
+                        <p className="mb-1">{value}</p>
+                      </li>
+                  );
+                })}
                 {item.getNotes('prefercite', null, (notes: Note[]) => (
                   <li className="list-group-item list-group-item-action">
                     <div className="d-flex w-100 justify-content-between">
@@ -520,7 +539,7 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
                 {item.getNotes('odd', 'Remarks', (notes: Note[]) => (
                   <li className="list-group-item list-group-item-action">
                     <div className="d-flex w-100 justify-content-between">
-                      <h4 className="mb-1">Preferred citations</h4>
+                      <h4 className="mb-1">Remarks</h4>
                     </div>
                     <div className="mb-1">
                       {notes.map((note: Note, idx: number) => (
@@ -528,6 +547,18 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
                       ))}
                     </div>
                   </li>
+                ))}
+                {item.getNotes('remarks', null, (notes: Note[]) => (
+                    <li className="list-group-item list-group-item-action">
+                      <div className="d-flex w-100 justify-content-between">
+                        <h4 className="mb-1">Remarks</h4>
+                      </div>
+                      <div className="mb-1">
+                        {notes.map((note: Note, idx: number) => (
+                            <NoteDisplay key={idx} note={note} />
+                        ))}
+                      </div>
+                    </li>
                 ))}
                 {item.getExternalDocuments(['Helpful Resources'], (docs: any) => (
                   <li className="list-group-item list-group-item-action">

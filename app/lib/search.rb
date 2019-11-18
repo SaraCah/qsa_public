@@ -423,6 +423,7 @@ class Search
     query = "qsa_id_prefixed:#{solr_escape(opts[:qsa_id].upcase)}" if opts[:qsa_id]
     query = "uri:#{solr_escape(opts[:uri])}" if opts[:uri]
     query = "id:#{solr_escape(opts[:id])}" if opts[:id]
+    query += " AND primary_type:#{solr_escape(opts[:type])}" if opts[:type]
 
     solr_handle_search(q: query)
       .fetch('response')

@@ -60,7 +60,8 @@ class QSAPublic < Sinatra::Base
       if params[:qsa_id] || params[:uri] || params[:id]
         if record = Search.get(qsa_id: params[:qsa_id],
                                uri: params[:uri],
-                               id: params[:id])
+                               id: params[:id],
+                               type: params[:type])
           Search.resolve_refs!(record)
           Search.filter_representations!(record)
           response = json_response(record)
