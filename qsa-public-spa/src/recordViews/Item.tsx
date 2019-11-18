@@ -65,12 +65,6 @@ const PhysicalRepresentation: React.FC<{
             <dd>{representation.getArray('previous_system_ids').join('; ')}</dd>
           </>
         }
-        {representation.get('rap_applied').uri !== item.get('rap_applied').uri && (
-          <>
-            <dt>Access notifications</dt>
-            <dd>{representation.get('rap_applied').display_string}</dd>
-          </>
-        )}
         {representation.getMaybe('intended_use', (value: string) => (
             <>
               <dt>Intended use</dt>
@@ -95,6 +89,21 @@ const PhysicalRepresentation: React.FC<{
               <dd>{value}</dd>
             </>
         ))}
+        {representation.get('rap_applied').uri !== item.get('rap_applied').uri && (
+            <>
+              <dt>Access notifications</dt>
+              <dd>{representation.get('rap_applied').display_string}</dd>
+              <dd>
+                {!representation.get('rap_expiration').expires && "No expiry"}
+                {representation.get('rap_expiration').expires &&
+                <>
+                  {representation.get('rap_expiration').expired ? "Expired: " : "Expires: "}
+                  {representation.get('rap_expiration').expiry_date}
+                </>
+                }
+              </dd>
+            </>
+        )}
       </dl>
 
       <Tagger recordId={representation.get('id')} context={context}/>
@@ -146,12 +155,6 @@ const DigitalRepresentation: React.FC<{
             <dd>{representation.getArray('previous_system_ids').join('; ')}</dd>
           </>
         }
-        {representation.get('rap_applied').uri !== item.get('rap_applied').uri && (
-          <>
-            <dt>Access notifications</dt>
-            <dd>{representation.get('rap_applied').display_string}</dd>
-          </>
-        )}
         {representation.getMaybe('intended_use', (value: string) => (
             <>
               <dt>Intended use</dt>
@@ -176,6 +179,21 @@ const DigitalRepresentation: React.FC<{
               <dd>{value}</dd>
             </>
         ))}
+        {representation.get('rap_applied').uri !== item.get('rap_applied').uri && (
+            <>
+              <dt>Access notifications</dt>
+              <dd>{representation.get('rap_applied').display_string}</dd>
+              <dd>
+                {!representation.get('rap_expiration').expires && "No expiry"}
+                {representation.get('rap_expiration').expires &&
+                  <>
+                    {representation.get('rap_expiration').expired ? "Expired: " : "Expires: "}
+                    {representation.get('rap_expiration').expiry_date}
+                  </>
+                }
+              </dd>
+            </>
+        )}
       </dl>
       <Tagger recordId={representation.get('id')} context={context}/>
     </>
@@ -638,6 +656,13 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
                       </div>
                       <div className="mb-1">
                         <p>{rap.display_string}</p>
+                        {!item.get('rap_expiration').expires && <p>No expiry</p>}
+                        {item.get('rap_expiration').expires &&
+                        <p>
+                          {item.get('rap_expiration').expired ? "Expired: " : "Expires: "}
+                          {item.get('rap_expiration').expiry_date}
+                        </p>
+                        }
                       </div>
                     </li>
                   );
