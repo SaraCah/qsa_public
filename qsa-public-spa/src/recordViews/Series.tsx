@@ -98,7 +98,6 @@ const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
 
               <ul className="list-group list-group-flush">
                 {[
-                  ['disposal_class', 'Disposal class'],
                   ['sensitivity_label', 'Sensitivity label'],
                   ['copyright_status', 'Copyright status'],
                   ['information_sources', 'Information sources'],
