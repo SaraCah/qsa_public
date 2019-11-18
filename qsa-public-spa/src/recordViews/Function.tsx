@@ -95,6 +95,16 @@ const FunctionPage: React.FC<PageRoute> = (route: PageRoute) => {
               <h3 className="sr-only">Function descriptive metadata</h3>
 
               <ul className="list-group list-group-flush">
+                {currentFunction.getMaybe('source', (value: any) => {
+                  return (
+                      <li className="list-group-item list-group-item-action">
+                        <div className="d-flex w-100 justify-content-between">
+                          <h4 className="mb-1">Source</h4>
+                        </div>
+                        <p className="mb-1">{value}</p>
+                      </li>
+                  );
+                })}
                 {currentFunction.getArray('non_preferred_names').length > 0 &&
                   <li className="list-group-item list-group-item-action">
                     <div className="d-flex w-100 justify-content-between">
