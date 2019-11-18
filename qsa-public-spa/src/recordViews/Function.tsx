@@ -91,6 +91,21 @@ const FunctionPage: React.FC<PageRoute> = (route: PageRoute) => {
               {currentFunction.getFirst('date', (date: any) => {
                 return date.date_notes && <p className="footer small">Date notes: {date.date_notes}</p>;
               })}
+
+              <h3 className="sr-only">Function descriptive metadata</h3>
+
+              <ul className="list-group list-group-flush">
+                {currentFunction.getArray('non_preferred_names').length > 0 &&
+                  <li className="list-group-item list-group-item-action">
+                    <div className="d-flex w-100 justify-content-between">
+                      <h4 className="mb-1">Non Preferred Names</h4>
+                    </div>
+                    <div className="mb-1">
+                      {currentFunction.getArray('non_preferred_names').join('; ')}
+                    </div>
+                  </li>
+                }
+              </ul>
             </section>
 
             <section>
