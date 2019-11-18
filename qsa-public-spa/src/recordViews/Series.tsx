@@ -7,6 +7,7 @@ import { Note, RecordDisplay } from '../models/RecordDisplay';
 import { AccordionPanel, MaybeLink, NoteDisplay, RecordContext, Relationship } from './Helpers';
 import {Tagger} from "./Tagger";
 import { PageRoute } from '../models/PageRoute';
+import {preserveNewLines} from "../utils/rendering";
 
 
 const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
@@ -59,7 +60,13 @@ const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
             <section className="core-information">
               <h2 className="sr-only">Basic information</h2>
 
-              <p className="lead">{series.get('abstract')}</p>
+              <div className="lead">
+                {
+                  ['abstract', 'description'].map((field: any) => (
+                    <p key={field}>{series.get(field)}</p>
+                  ))
+                }
+              </div>
 
               <ul className="list-group list-group-horizontal-md">
                 <li className="list-group-item">

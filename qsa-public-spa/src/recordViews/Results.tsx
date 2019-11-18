@@ -7,6 +7,7 @@ import { Http } from '../utils/http';
 import { iconForType, labelForType, uriFor } from '../utils/typeResolver';
 import queryString from 'query-string';
 import { PageRoute } from '../models/PageRoute';
+import {preserveNewLines} from "../utils/rendering";
 
 
 const FACET_LABELS: { [name: string]: string } = {
@@ -372,7 +373,7 @@ const SearchResult: React.FC<{ searchResult: any }> = props => {
           {props.searchResult.qsa_id_prefixed}
         </span>
       </div>
-      {props.searchResult.description && <p>{props.searchResult.description}</p>}
+      {props.searchResult.description && <p dangerouslySetInnerHTML={{__html: preserveNewLines(props.searchResult.description)}} />}
       {props.searchResult.dates_display_string && (
         <div>
           <small>Dates: {props.searchResult.dates_display_string}</small>
