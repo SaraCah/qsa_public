@@ -42,12 +42,12 @@ const AgencyPage: React.FC<PageRoute> = (route: PageRoute) => {
       'responsible_agency_id',
       agency.get('id'),
       agency.get('display_string')
-    );
+    ).setType('resource', true);
     const createdRecordsQuery = AdvancedSearchQuery.emptyQuery().addStickyFilter(
       'creating_agency_id',
       agency.get('id'),
       agency.get('display_string')
-    );
+    ).setType('resource', true);
 
     return (
       <Layout>
