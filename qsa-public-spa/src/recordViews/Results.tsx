@@ -30,20 +30,6 @@ const ResultsPage: React.FC<PageRoute> = (route: PageRoute) => {
 
   const currentPage = Number(queryString.parse(route.location.search).page || 0);
 
-  const hasFacets = (searchResults: any) => {
-    if (!searchResults.facets) {
-      return false;
-    }
-
-    for (const facetField of Object.keys(searchResults.facets)) {
-      if (searchResults.facets[facetField].length > 0) {
-        return true;
-      }
-    }
-
-    return false;
-  };
-
   if (!searchResults) {
     Http.get()
       .fetchResults(advancedSearchQuery, currentPage)
@@ -66,11 +52,7 @@ const ResultsPage: React.FC<PageRoute> = (route: PageRoute) => {
     return (
       <Layout
         skipFooter={!searchResults}
-        aside={
-          hasFacets(searchResults) && (
-            <SearchFacets facets={searchResults.facets} advancedSearchQuery={advancedSearchQuery} />
-          )
-        }
+        aside={searchResults.results.length > 0 && <SearchFacets facets={searchResults.facets} advancedSearchQuery={advancedSearchQuery} />}
       >
         <h1>Archives Search</h1>
 
@@ -240,6 +222,16 @@ const SearchFacets: React.FC<{
     setExpandedFields(newExpandedFields);
   };
 
+  const hasFacets = (): boolean => {
+    for (const facets of Object.values(props.facets)) {
+      if ((facets as any[]).length > 0) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   const isExpanded = (field: string) => {
     return expandedFields.indexOf(field) >= 0;
   };
@@ -250,93 +242,96 @@ const SearchFacets: React.FC<{
 
   return (
     <section className="search-filters">
-      <h2>Results facets</h2>
-      {props.advancedSearchQuery.filters().length > 0 && (
-        <section className="active-filters">
-          <h4>Active filters</h4>
-          <ul>
-            {props.advancedSearchQuery.filters().map((filter: Filter) => {
-              return (
-                <li key={filter.field}>
-                  <div className="facet-label">
-                    {FACET_LABELS[filter.field]}: {filter.label}&nbsp;
-                  </div>
-                  <div className="facet-count">
-                    <Link
-                      className="qg-btn btn-link facet-remove-btn"
-                      to={{
-                        pathname: '/search',
-                        search: props.advancedSearchQuery.removeFilter(filter).toQueryString()
-                      }}
-                    >
-                      <i className="fa fa-minus-circle" title="Remove this filter" />
-                    </Link>
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-        </section>
-      )}
-      {Object.keys(props.facets).map((field: string) => {
-        const facets = props.facets[field];
-        if (facets.length === 0) {
-          return <React.Fragment key={field}></React.Fragment>
-        }
+      {hasFacets() &&
+        <>
+          <h2>Results facets</h2>
+          {props.advancedSearchQuery.filters().length > 0 && (
+            <section className="active-filters">
+              <h4>Active filters</h4>
+              <ul>
+                {props.advancedSearchQuery.filters().map((filter: Filter) => {
+                  return (
+                    <li key={filter.field}>
+                      <div className="facet-label">
+                        {FACET_LABELS[filter.field]}: {filter.label}&nbsp;
+                      </div>
+                      <div className="facet-count">
+                        <Link
+                          className="qg-btn btn-link facet-remove-btn"
+                          to={{
+                            pathname: '/search',
+                            search: props.advancedSearchQuery.removeFilter(filter).toQueryString()
+                          }}
+                        >
+                          <i className="fa fa-minus-circle" title="Remove this filter" />
+                        </Link>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
+          )}
+          {Object.keys(props.facets).map((field: string) => {
+            const facets = props.facets[field];
+            if (facets.length === 0) {
+              return <React.Fragment key={field}></React.Fragment>
+            }
 
-        return (
-          <section className="available-filters" key={field}>
-            <h4>{FACET_LABELS[field]}</h4>
-            <ul>
-              {
-                facets
-                  .filter((facet: any, idx: number) => {
-                    return isExpanded(facet.facet_field) ? true : idx < 5;
-                  })
-                  .map((facet: any) => {
-                    if (props.advancedSearchQuery.hasFilter(facet.facet_field, facet.facet_value)) {
-                      return (
-                          <li key={facet.facet_field + '_' + facet.facet_label}>
-                            <div className="facet-label">{facet.facet_label}</div>
-                            <div className="facet-count">{facet.facet_count}</div>
-                          </li>
-                      );
-                    } else {
-                      return (
-                          <li key={facet.facet_field + '_' + facet.facet_label}>
-                            <div className="facet-label">
-                              <Link
+            return (
+              <section className="available-filters" key={field}>
+                <h4>{FACET_LABELS[field]}</h4>
+                <ul>
+                  {
+                    facets
+                      .filter((facet: any, idx: number) => {
+                        return isExpanded(facet.facet_field) ? true : idx < 5;
+                      })
+                      .map((facet: any) => {
+                        if (props.advancedSearchQuery.hasFilter(facet.facet_field, facet.facet_value)) {
+                          return (
+                            <li key={facet.facet_field + '_' + facet.facet_label}>
+                              <div className="facet-label">{facet.facet_label}</div>
+                              <div className="facet-count">{facet.facet_count}</div>
+                            </li>
+                          );
+                        } else {
+                          return (
+                            <li key={facet.facet_field + '_' + facet.facet_label}>
+                              <div className="facet-label">
+                                <Link
                                   to={{
                                     pathname: '/search',
                                     search: props.advancedSearchQuery
-                                        .addFilter(facet.facet_field, facet.facet_value, facet.facet_label)
-                                        .toQueryString()
+                                                 .addFilter(facet.facet_field, facet.facet_value, facet.facet_label)
+                                                 .toQueryString()
                                   }}
-                              >
-                                {facet.facet_label}
-                              </Link>
-                            </div>
-                            <div className="facet-count">{facet.facet_count}</div>
-                          </li>
-                      );
-                    }
+                                >
+                                  {facet.facet_label}
+                                </Link>
+                              </div>
+                              <div className="facet-count">{facet.facet_count}</div>
+                            </li>
+                          );
+                        }
+                      }
+                      )
                   }
-                )
-              }
-              {
-                !isExpanded(field) && facets.length > 5 &&
-                <li key={field + '_more'}>
-                  <button className="qg-btn btn-link btn-xs"
-                          onClick={(e) => expand(field)}>
-                    <i aria-hidden="true" className="fa fa-plus"/>&nbsp;
+                  {
+                    !isExpanded(field) && facets.length > 5 &&
+                      <li key={field + '_more'}>
+                        <button className="qg-btn btn-link btn-xs"
+                                onClick={(e) => expand(field)}>
+                          <i aria-hidden="true" className="fa fa-plus"/>&nbsp;
                     Show {facets.length - 5} more...
-                  </button>
-                </li>
-              }
-            </ul>
-          </section>
-        );
-      })}
+                        </button>
+                      </li>
+                  }
+                </ul>
+              </section>
+            );
+          })}
+        </>}
 
       <h2>Limit by date</h2>
       <DateRangePicker
