@@ -9,6 +9,7 @@ const HomePage: React.FC<RouteComponentProps<any>> = (route: RouteComponentProps
   return (
     <Layout>
       <h1>Archives Search</h1>
+
       <PageSnippet slug="welcome" />
       <div className="qg-call-out-box">
         <AspaceAdvancedSearch advancedSearchQuery={AdvancedSearchQuery.emptyQuery()} />

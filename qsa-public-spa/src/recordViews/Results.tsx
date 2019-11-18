@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import Layout from './Layout';
 import AspaceAdvancedSearch from '../advancedSearch/AdvancedSearch';
 import { AdvancedSearchQuery, Filter } from '../models/AdvancedSearch';
@@ -8,6 +8,7 @@ import { iconForType, labelForType, uriFor } from '../utils/typeResolver';
 import queryString from 'query-string';
 import { PageRoute } from '../models/PageRoute';
 import {preserveNewLines} from "../utils/rendering";
+import { DateRangePicker } from './DateRangePicker';
 
 
 const FACET_LABELS: { [name: string]: string } = {
@@ -231,6 +232,7 @@ const SearchFacets: React.FC<{
   advancedSearchQuery: AdvancedSearchQuery;
 }> = props => {
   const [expandedFields, setExpandedFields]: [any, any] = useState([]);
+  const [fireNewSearch, setFireNewSearch]: [any, any] = useState(null);
 
   const expand = (field: string) => {
     const newExpandedFields = expandedFields.slice(0);
@@ -241,6 +243,10 @@ const SearchFacets: React.FC<{
   const isExpanded = (field: string) => {
     return expandedFields.indexOf(field) >= 0;
   };
+
+  if (fireNewSearch) {
+    return <Redirect to={'/search?' + fireNewSearch.toQueryString()} />;
+  }
 
   return (
     <section className="search-filters">
@@ -331,6 +337,20 @@ const SearchFacets: React.FC<{
           </section>
         );
       })}
+
+      <h2>Limit by date</h2>
+      <DateRangePicker
+        minYear={1800}
+        maxYear={new Date().getFullYear()}
+        minSelected={props.advancedSearchQuery.getFromDate()}
+        maxSelected={props.advancedSearchQuery.getToDate()}
+        onRangeUpdated={(min: number, max: number) => {
+          setFireNewSearch(props.advancedSearchQuery
+                                .setFromDate('' + min)
+                                .setToDate('' + max));
+        }}
+      />
+
     </section>
   );
 };
