@@ -58,14 +58,43 @@ const PhysicalRepresentation: React.FC<{
             <dd>{value}</dd>
           </>
         ))}
-        <dt>Previous System Identifier</dt>
-        <dd>FIXME MISSING FIELD</dd>
+        {
+          representation.getArray('previous_system_ids').length > 0 &&
+          <>
+            <dt>Previous system identifier</dt>
+            <dd>{representation.getArray('previous_system_ids').join('; ')}</dd>
+          </>
+        }
         {representation.get('rap_applied').uri !== item.get('rap_applied').uri && (
           <>
             <dt>Access notifications</dt>
             <dd>{representation.get('rap_applied').display_string}</dd>
           </>
         )}
+        {representation.getMaybe('intended_use', (value: string) => (
+            <>
+              <dt>Intended use</dt>
+              <dd>{value}</dd>
+            </>
+        ))}
+        {representation.getMaybe('preferred_citation', (value: string) => (
+            <>
+              <dt>Preferred citation</dt>
+              <dd>{value}</dd>
+            </>
+        ))}
+        {representation.getMaybe('remarks', (value: string) => (
+            <>
+              <dt>Remarks</dt>
+              <dd>{value}</dd>
+            </>
+        ))}
+        {representation.getMaybe('processing_handling_notes', (value: string) => (
+            <>
+              <dt>Processing/handling notes</dt>
+              <dd>{value}</dd>
+            </>
+        ))}
       </dl>
 
       <Tagger recordId={representation.get('id')} context={context}/>
@@ -110,14 +139,43 @@ const DigitalRepresentation: React.FC<{
             <dd>{value}</dd>
           </>
         ))}
-        <dt>Previous System Identifier</dt>
-        <dd>FIXME MISSING FIELD</dd>
+        {
+          representation.getArray('previous_system_ids').length > 0 &&
+          <>
+            <dt>Previous system identifier</dt>
+            <dd>{representation.getArray('previous_system_ids').join('; ')}</dd>
+          </>
+        }
         {representation.get('rap_applied').uri !== item.get('rap_applied').uri && (
           <>
             <dt>Access notifications</dt>
             <dd>{representation.get('rap_applied').display_string}</dd>
           </>
         )}
+        {representation.getMaybe('intended_use', (value: string) => (
+            <>
+              <dt>Intended use</dt>
+              <dd>{value}</dd>
+            </>
+        ))}
+        {representation.getMaybe('preferred_citation', (value: string) => (
+            <>
+              <dt>Preferred citation</dt>
+              <dd>{value}</dd>
+            </>
+        ))}
+        {representation.getMaybe('remarks', (value: string) => (
+            <>
+              <dt>Remarks</dt>
+              <dd>{value}</dd>
+            </>
+        ))}
+        {representation.getMaybe('processing_handling_notes', (value: string) => (
+            <>
+              <dt>Processing/handling notes</dt>
+              <dd>{value}</dd>
+            </>
+        ))}
       </dl>
       <Tagger recordId={representation.get('id')} context={context}/>
     </>
@@ -642,6 +700,17 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
                       <li key={idx} className="list-group-item">
                         {<Relationship relationship={rlshp} />}
                       </li>
+                    );
+                  })}
+                </ul>
+
+                {item.getArray('item_relationships').length > 0 && <h3>Related items</h3>}
+                <ul className="list-group list-group-flush">
+                  {item.getArray('item_relationships').map((rlshp: any, idx: number) => {
+                    return (
+                        <li key={idx} className="list-group-item">
+                          {<Relationship relationship={rlshp} />}
+                        </li>
                     );
                   })}
                 </ul>
