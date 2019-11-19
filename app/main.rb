@@ -75,6 +75,7 @@ require 'storage/requests'
 require 'storage/tags'
 require 'storage/deferred_tasks'
 require 'storage/pages'
+require 'storage/saved_searches'
 
 require 'storage/rate_limiter'
 

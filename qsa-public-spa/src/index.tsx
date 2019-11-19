@@ -32,7 +32,7 @@ import {
   MyRequestsPage,
   RegisterPage, TagManagementPage,
   UserManagementPage,
-  PageManagementPage,
+  PageManagementPage, MySearchesPage,
 } from './recordViews/Users';
 import { PasswordRecoveryPage } from './recordViews/PasswordRecovery';
 
@@ -281,6 +281,13 @@ ReactDOM.render(
             path="/admin/pages/:slug"
             component={wrappedRoute(PageManagementPage, {
               pageTitle: 'Edit Page'
+            })}
+        />
+        <Route
+            exact
+            path="/my-searches"
+            component={wrappedRoute(MySearchesPage, {
+              pageTitle: 'My Searches'
             })}
         />
         <Route

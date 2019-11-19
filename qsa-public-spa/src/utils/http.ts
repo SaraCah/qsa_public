@@ -46,6 +46,10 @@ const getPageContentUrl = `${baseURL}/api/admin/page`;
 const savePageUrl = `${baseURL}/api/admin/pages`;
 const deletePageUrl = `${baseURL}/api/admin/pages/delete`;
 const restorePageUrl = `${baseURL}/api/admin/pages/restore`;
+const savedSearchesAllUrl = `${baseURL}/api/saved_searches`;
+const savedSearchesCreateUrl = `${baseURL}/api/saved_searches`;
+const savedSearchesDeleteUrl = `${baseURL}/api/saved_searches/delete`;
+const savedSearchesUpdateUrl = `${baseURL}/api/saved_searches/update`;
 
 export class Http {
   static config: AxiosRequestConfig = {
@@ -611,4 +615,55 @@ export class Http {
     return response.data || [];
   }
 
+  async getSavedSearches(): Promise<any> {
+    const response = await axios.get(`${savedSearchesAllUrl}`, this.getConfig())
+        .catch(error => {
+          return this.handleError(error, "Failed to get saved searches");
+        });
+
+    return response.data || [];
+  }
+
+  async createSavedSearch(query_string: string): Promise<any> {
+    const bodyFormData = new FormData();
+    bodyFormData.append('query_string', query_string);
+
+    const config = this.getConfig();
+    config.headers['Content-Type'] = 'multipart/form-data';
+
+    const response = await axios.post(savedSearchesCreateUrl, bodyFormData, config).catch(error => {
+      return this.handleError(error, "Failed to created saved search");
+    });
+
+    return response.data || [];
+  }
+
+  async deleteSavedSearch(id: string): Promise<any> {
+    const bodyFormData = new FormData();
+    bodyFormData.append('id', id);
+
+    const config = this.getConfig();
+    config.headers['Content-Type'] = 'multipart/form-data';
+
+    const response = await axios.post(savedSearchesDeleteUrl, bodyFormData, config).catch(error => {
+      return this.handleError(error, "Failed to delete saved search");
+    });
+
+    return response.data || [];
+  }
+
+  async updateSavedSearch(id: string, note: string): Promise<any> {
+    const bodyFormData = new FormData();
+    bodyFormData.append('id', id);
+    bodyFormData.append('note', note);
+
+    const config = this.getConfig();
+    config.headers['Content-Type'] = 'multipart/form-data';
+
+    const response = await axios.post(savedSearchesUpdateUrl, bodyFormData, config).catch(error => {
+      return this.handleError(error, "Failed to update saved search");
+    });
+
+    return response.data || [];
+  }
 }

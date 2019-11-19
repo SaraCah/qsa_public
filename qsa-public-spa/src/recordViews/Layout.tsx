@@ -61,10 +61,13 @@ const LeftNavigation: React.FC<any> = (props: any) => {
               ) : (
                 <>
                   <li>
-                    <Link to="/my-requests">My Requests</Link>
+                    <Link to="/my-requests">My requests</Link>
                   </li>
                 </>
               )}
+              <li>
+                <Link to="/my-searches">My searches</Link>
+              </li>
             </ul>
           )}
         </>

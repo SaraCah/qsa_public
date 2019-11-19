@@ -750,6 +750,36 @@ class QSAPublic < Sinatra::Base
     OAIProvider.handle_request(params)
   end
 
+  Endpoint.post('/api/saved_searches')
+    .param(:query_string, String, "Search param string") \
+  do
+    next [404] unless Ctx.user_logged_in?
+    SavedSearches.create(Ctx.get.session.user_id, params[:query_string])
+    json_response(success: true)
+  end
+
+  Endpoint.post('/api/saved_searches/delete')
+    .param(:id, String, "Search id") \
+  do
+    next [404] unless Ctx.user_logged_in?
+    SavedSearches.delete(params[:id], Ctx.get.session.user_id)
+    json_response(success: true)
+  end
+
+  Endpoint.post('/api/saved_searches/update')
+    .param(:id, String, "Search id")
+    .param(:note, String, "Note") \
+  do
+    next [404] unless Ctx.user_logged_in?
+    SavedSearches.update_note(params[:id], Ctx.get.session.user_id, params[:note])
+    json_response(success: true)
+  end
+
+  Endpoint.get('/api/saved_searches') do
+    next [404] unless Ctx.user_logged_in?
+    json_response(SavedSearches.all(Ctx.get.session.user_id))
+  end
+
   if !defined?(STATIC_DIR)
     STATIC_DIR = File.realpath(File.absolute_path(File.join(File.dirname(__FILE__), '..', 'static')))
   end

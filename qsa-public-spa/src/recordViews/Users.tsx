@@ -13,6 +13,8 @@ import { PageSnippet } from './PageViewPage';
 import { ClientState } from '../context/AppContext';
 import { IAppContext } from '../context/AppContext';
 import { PageRoute } from '../models/PageRoute';
+import {AdvancedSearchQuery} from "../models/AdvancedSearch";
+import {CompactSearchSummary} from "./Results";
 
 
 const FormErrors: React.FC<{ errors: any }> = ({ errors }) => {
@@ -352,6 +354,17 @@ const AdminAccountSummary: React.FC = () => {
             </div>
           </div>
         </article>
+        <article className="qg-card col-12 col-sm-6 col-lg-4">
+          <div className="content">
+            <div className="details">
+              <h2>My searches</h2>
+              <p>Manage your saved searches</p>
+              <Link to="/my-searches" className="btn btn-primary">
+                My searches
+              </Link>
+            </div>
+          </div>
+        </article>
       </section>
     </>
   );
@@ -391,6 +404,17 @@ const UserAccountSummary: React.FC = () => {
               <p>Review all of your request slips</p>
               <Link to="/my-requests" className="btn btn-primary">
                 My requests
+              </Link>
+            </div>
+          </div>
+        </article>
+        <article className="qg-card col-12 col-sm-6 col-lg-4">
+          <div className="content">
+            <div className="details">
+              <h2>My searches</h2>
+              <p>Manage your saved searches</p>
+              <Link to="/my-searches" className="btn btn-primary">
+                My searches
               </Link>
             </div>
           </div>
@@ -1622,5 +1646,108 @@ export const PageManagementPage: React.FC<PageRoute> = (route: PageRoute) => {
         })()
       }
     </LoginRequired>
+  );
+};
+
+export const SavedSearches: React.FC<any> = (props: any) => {
+  const [results, setResults]: [any, any] = useState([]);
+  const [forceRefresh, setForceRefresh] = useState(0);
+  const [unsaved, setUnsaved]: [string[], any] = useState([]);
+
+  useEffect(() => {
+    Http.get()
+        .getSavedSearches()
+        .then((data: any) => {
+          setResults(data);
+        });
+  }, [forceRefresh]);
+
+  const deleteSavedSearch = (id: string) => {
+    Http.get()
+        .deleteSavedSearch(id)
+        .then(() => {
+          setForceRefresh(forceRefresh + 1);
+        });
+  };
+
+  const setNoteChange = (id: string, note: string) => {
+    setResults(results.map((result: any) => {
+      if (result.id === id) {
+        result.note = note;
+        if (unsaved.indexOf(id) < 0) {
+          setUnsaved(unsaved.concat([id]));
+        }
+      }
+
+      return result;
+    }));
+  };
+
+  const updateNote = (id: string, note: string) => {
+    Http.get()
+        .updateSavedSearch(id, note)
+        .then(() => {
+          setUnsaved(unsaved.filter((anId :string) => {
+            return anId !== id;
+          }));
+          setForceRefresh(forceRefresh+1);
+        });
+  };
+
+  return (
+      <>
+        <h1>My searches</h1>
+        <table className="table table-striped">
+          <thead>
+          <tr>
+            <th scope="col">Search Summary</th>
+            <th scope="col">Notes</th>
+            <th scope="col">Date Saved</th>
+            <th scope="col" />
+          </tr>
+          </thead>
+          <tbody>
+          {results.map((savedSearch: any) => (
+              <tr key={savedSearch.id}>
+                <td>
+                  <CompactSearchSummary
+                      advancedSearchQuery={AdvancedSearchQuery.fromQueryString(savedSearch.query_string)}
+                      limitedTo={[]}
+                      modifySearch={() => {}}
+                      summaryOnly={true}
+                  />
+                </td>
+                <td>
+                  <textarea className="form-control" onChange={(e) => setNoteChange(savedSearch.id, e.target.value)} value={savedSearch.note}/>
+                  {
+                    unsaved.indexOf(savedSearch.id) >= 0 &&
+                    <button className="qg-btn btn-primary btn-xs" onClick={() => updateNote(savedSearch.id, savedSearch.note)}>
+                      Update Note
+                    </button>
+                  }
+                </td>
+                <td>{new Date(savedSearch.create_time).toLocaleString()}</td>
+                <td>
+                  <Link
+                      to={'/search?' + savedSearch.query_string}
+                      className="qg-btn btn-secondary btn-xs"
+                  >
+                    View Results
+                  </Link>
+                  <div><button onClick={(e) => deleteSavedSearch(savedSearch.id)} className="qg-btn btn-danger btn-xs">Delete</button></div>
+                </td>
+              </tr>
+          ))}
+          </tbody>
+        </table>
+      </>
+  );
+};
+
+export const MySearchesPage: React.FC<PageRoute> = (route: PageRoute) => {
+  return (
+      <LoginRequired context={route.context}>
+        <SavedSearches context={route.context} />
+      </LoginRequired>
   );
 };

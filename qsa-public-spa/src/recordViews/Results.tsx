@@ -82,10 +82,11 @@ const ResultsPage: React.FC<PageRoute> = (route: PageRoute) => {
   }
 };
 
-const CompactSearchSummary: React.FC<{
+export const CompactSearchSummary: React.FC<{
   advancedSearchQuery: AdvancedSearchQuery;
   limitedTo: JSX.Element[];
   modifySearch: () => void;
+  summaryOnly?: boolean;
 }> = props => {
   const buildAccessLabel = () => {
     const [openOnly, hasDigitalObjects] = [
@@ -196,6 +197,12 @@ const CompactSearchSummary: React.FC<{
     );
   } else {
     clauses = clauses.map((clause, idx) => (<span key={idx}>{clause}</span>));
+  }
+
+  if (props.summaryOnly) {
+    return <>
+      {clauses}
+    </>
   }
 
   return (
@@ -421,6 +428,7 @@ const SearchResults: React.FC<{
 
   if (props.searchResults.results.length === 0) {
     return <section className="qg-results">
+      <SaveYourSearch query={props.advancedSearchQuery} />
       <h2>No results found</h2>
 
       <p>Your search did not match any results.</p>
@@ -429,6 +437,7 @@ const SearchResults: React.FC<{
 
   return (
     <section className="qg-results">
+      <SaveYourSearch query={props.advancedSearchQuery} />
       <h2>Your search results</h2>
 
       <div className="row">
@@ -480,5 +489,24 @@ const SearchResults: React.FC<{
     </section>
   );
 };
+
+const SaveYourSearch: React.FC<any> = props => {
+  const [saved, setSaved] = useState(false);
+
+  const saveSearch = () => {
+    Http.get()
+        .createSavedSearch(props.query.toQueryString())
+        .then(() => {
+          setSaved(true);
+        });
+  };
+
+  return(
+    <div className="pull-right">
+      {saved && <div className="text-success">Search saved to <Link to="/my-searches">My searches</Link>!</div>}
+      {!saved && <button onClick={() => saveSearch()} className="qg-btn btn-secondary btn-xs">Save Search</button>}
+    </div>
+  )
+}
 
 export default ResultsPage;
