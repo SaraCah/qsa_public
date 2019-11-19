@@ -108,7 +108,6 @@ export const DigitalCopySetPricePage: React.FC<PageRoute> = (route: PageRoute) =
                           {cartItem.record.qsa_id_prefixed}: {cartItem.record.display_string}
                         </Link>
                       </h2>
-                      <span className="badge">Open record</span>
                     </div>
                     <dl className="row">
                       <dt className="col-xs-6">Item type</dt>
