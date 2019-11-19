@@ -114,16 +114,14 @@ const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
                     );
                   });
                 })}
-                {series.getMaybe('rap_attached', (rap: any) => {
-                  return (
-                    <li className="list-group-item list-group-item-action">
-                      <div className="d-flex w-100 justify-content-between">
-                        <h4 className="mb-1">Access notifications</h4>
-                      </div>
-                      <p className="mb-1">{rap.display_string}</p>
-                    </li>
-                  );
-                })}
+
+                <li className="list-group-item list-group-item-action">
+                  <div className="d-flex w-100 justify-content-between">
+                    <h4 className="mb-1">Access notification summary</h4>
+                  </div>
+                  <div className="text-success">{(series.get('access_status_summary')['Open Access'] || 0)} Open Items</div>
+                  <div className="text-danger">{(series.get('access_status_summary')['Restricted Access'] || 0)} Closed Items</div>
+                </li>
               </ul>
             </section>
 

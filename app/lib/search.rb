@@ -290,6 +290,38 @@ class Search
   end
 
 
+  # Series get an access notification table.  Add that as needed.
+  def self.add_access_summary!(record)
+    return unless record['jsonmodel_type'] == 'resource'
+
+    solr_response = solr_handle_search('q': "resource_id:#{solr_escape(record['id'])}",
+                                       'fq': 'primary_type:archival_object',
+                                       'rows': 0,
+                                       'facet': true,
+                                       'facet.field': ['access_status'],
+                                       'facet.mincount': 1)
+
+    facets = solr_response.fetch('facet_counts').fetch('facet_fields', {}).fetch('access_status', [])
+
+    facets.each_slice(2) do |field, count|
+      record['access_status_summary'] ||= {}
+      record['access_status_summary'][field] = count
+    end
+
+    # If the number of descendants (published or otherwise) under the series is
+    # greater than the number we've indexed, they're closed and/or unpublished.
+    # Add them to the restricted count.
+    additional_closed = record['descendant_count'] - record['access_status_summary'].values.reduce(0) {|t, n| t + n}
+
+    if additional_closed > 0
+      record['access_status_summary']['Restricted Access'] ||= 0
+      record['access_status_summary']['Restricted Access'] += additional_closed
+    end
+
+    record
+  end
+
+
   # Return the `count` siblings on either side of `record`
   #
   # E.g. count = 4 will return up to 9 records: 4 jokers to the left; 4 jokers

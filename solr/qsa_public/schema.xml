@@ -40,6 +40,7 @@
 
   <field name="tags" type="text_ws" indexed="true" stored="true" multiValued="true" />
   <field name="tags_string" type="string" indexed="true" stored="true" multiValued="true" />
+
   <copyField source="tags" dest="keywords" />
   <copyField source="tags" dest="tags_string" />
 
@@ -70,6 +71,9 @@
   <field name="resource_id" type="string" indexed="true" stored="true" multiValued="false" />
   <field name="parent_id" type="string" indexed="true" stored="true" multiValued="false" />
   <field name="position" type="pint" indexed="true" stored="true" multiValued="false" />
+
+  <!-- Access status -->
+  <field name="access_status" type="string" indexed="true" stored="true" multiValued="false" />
 
   <uniqueKey>id</uniqueKey>
 

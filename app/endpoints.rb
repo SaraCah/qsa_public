@@ -64,6 +64,7 @@ class QSAPublic < Sinatra::Base
                                type: params[:type])
           Search.resolve_refs!(record)
           Search.filter_representations!(record)
+          Search.add_access_summary!(record)
           response = json_response(record)
         end
       end
