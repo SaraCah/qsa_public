@@ -70,11 +70,9 @@ export const Relationship: React.FC<{ relationship: any }> = ({ relationship }) 
     <>
       <i className={iconForType(relationship._resolved.jsonmodel_type)} aria-hidden="true" />
       &nbsp;
-      <Link to={uriFor(relationship._resolved.qsa_id_prefixed, relationship._resolved.jsonmodel_type)}>
+      {labelForRelator(relationship.relator)}&nbsp;<Link to={uriFor(relationship._resolved.qsa_id_prefixed, relationship._resolved.jsonmodel_type)}>
         {relationship._resolved.display_string}
       </Link>
-      <br />
-      Relator: {labelForRelator(relationship.relator)}
       <br />
       {relationship.start_date}&nbsp;-&nbsp;{relationship.end_date}
     </>
