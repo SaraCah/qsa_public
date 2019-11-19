@@ -117,10 +117,13 @@ const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
 
                 <li className="list-group-item list-group-item-action">
                   <div className="d-flex w-100 justify-content-between">
-                    <h4 className="mb-1">Access notification summary</h4>
+                    <h4 className="mb-1">Access notification summary <a href="/pages/restricted-access" rel="noopener noreferrer" target="_blank"><i className="fa fa-question-circle" title="Information about restricted access" /></a></h4>
                   </div>
                   <div className="text-success">{(series.get('access_status_summary')['Open Access'] || 0)} Open Items</div>
-                  <div className="text-danger">{(series.get('access_status_summary')['Restricted Access'] || 0)} Closed Items</div>
+                  <div>
+                    <span className="text-danger">{(series.get('access_status_summary')['Restricted Access'] || 0)} Closed Items</span>&nbsp;
+                    <a href="/pages/how-do-i-order-restricted-records" rel="noopener noreferrer" target="_blank"><i className="fa fa-question-circle" title="How to order restricted records" /></a>
+                  </div>
                 </li>
               </ul>
             </section>
