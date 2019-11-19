@@ -92,17 +92,23 @@ const PhysicalRepresentation: React.FC<{
         ))}
         {representation.get('rap_applied').uri !== item.get('rap_applied').uri && (
             <>
-              <dt>Access notifications</dt>
-              <dd>{representation.get('rap_applied').display_string}</dd>
-              <dd>
-                {!representation.get('rap_expiration').expires && "No expiry"}
-                {representation.get('rap_expiration').expires &&
-                <>
-                  {representation.get('rap_expiration').expired ? "Expired: " : "Expires: "}
-                  {representation.get('rap_expiration').expiry_date}
-                </>
-                }
-              </dd>
+              <dt>Access status</dt>
+              {
+                representation.get('rap_access_status') === 'Open Access' ?
+                  <dd className="text-success">Open</dd> :
+                  <>
+                    <dd className="text-danger">Closed</dd>
+                    <dd>
+                      {!representation.get('rap_expiration').expires && "No expiry"}
+                      {representation.get('rap_expiration').expires &&
+                        <>
+                          {representation.get('rap_expiration').expired ? "Expired: " : "Expires: "}
+                          {representation.get('rap_expiration').expiry_date}
+                        </>
+                      }
+                    </dd>
+                  </>
+              }
             </>
         )}
       </dl>
@@ -182,17 +188,23 @@ const DigitalRepresentation: React.FC<{
         ))}
         {representation.get('rap_applied').uri !== item.get('rap_applied').uri && (
             <>
-              <dt>Access notifications</dt>
-              <dd>{representation.get('rap_applied').display_string}</dd>
-              <dd>
-                {!representation.get('rap_expiration').expires && "No expiry"}
-                {representation.get('rap_expiration').expires &&
+              <dt>Access status</dt>
+              {
+                representation.get('rap_access_status') === 'Open Access' ?
+                  <dd className="text-success">Open</dd> :
                   <>
-                    {representation.get('rap_expiration').expired ? "Expired: " : "Expires: "}
-                    {representation.get('rap_expiration').expiry_date}
+                    <dd className="text-danger">Closed</dd>
+                    <dd>
+                      {!representation.get('rap_expiration').expires && "No expiry"}
+                      {representation.get('rap_expiration').expires &&
+                        <>
+                          {representation.get('rap_expiration').expired ? "Expired: " : "Expires: "}
+                          {representation.get('rap_expiration').expiry_date}
+                        </>
+                      }
+                    </dd>
                   </>
-                }
-              </dd>
+              }
             </>
         )}
       </dl>
@@ -653,16 +665,24 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
                   return (
                     <li className="list-group-item list-group-item-action">
                       <div className="d-flex w-100 justify-content-between">
-                        <h4 className="mb-1">Access notifications</h4>
+                        <h4 className="mb-1">Access status</h4>
                       </div>
                       <div className="mb-1">
-                        <p>{rap.display_string}</p>
-                        {!item.get('rap_expiration').expires && <p>No expiry</p>}
-                        {item.get('rap_expiration').expires &&
-                        <p>
-                          {item.get('rap_expiration').expired ? "Expired: " : "Expires: "}
-                          {item.get('rap_expiration').expiry_date}
-                        </p>
+                        {
+                          item.get('rap_access_status') === 'Open Access' ?
+                            <div className="text-success">Open</div> :
+                            <>
+                              <div className="text-danger">Closed</div>
+                              <div>
+                                {!item.get('rap_expiration').expires && "No expiry"}
+                                {item.get('rap_expiration').expires &&
+                                  <>
+                                    {item.get('rap_expiration').expired ? "Expired: " : "Expires: "}
+                                    {item.get('rap_expiration').expiry_date}
+                                  </>
+                                }
+                              </div>
+                            </>
                         }
                       </div>
                     </li>
