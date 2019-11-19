@@ -13,6 +13,7 @@ import AppContext from '../context/AppContext';
 import {Tagger} from "./Tagger";
 import { IAppContext } from '../context/AppContext';
 import { PageRoute } from '../models/PageRoute';
+import {preserveNewLines, formatDateForDisplay} from "../utils/rendering";
 
 
 const PhysicalRepresentation: React.FC<{
@@ -533,14 +534,14 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
                   <span className="small">START DATE</span>
                   <br />
                   {item.getFirst('dates', (date: any) => {
-                    return date.begin && `${date.begin}` + (date.certainty ? ` (${date.certainty})` : '');
+                    return date.begin && `${formatDateForDisplay(date.begin)}` + (date.certainty ? ` (${date.certainty})` : '');
                   })}
                 </li>
                 <li className="list-group-item">
                   <span className="small">END DATE</span>
                   <br />
                   {item.getFirst('dates', (date: any) => {
-                    return date.end && `${date.end}` + (date.certainty_end ? ` (${date.certainty_end})` : '');
+                    return date.end && `${formatDateForDisplay(date.end)}` + (date.certainty_end ? ` (${date.certainty_end})` : '');
                   })}
                 </li>
               </ul>

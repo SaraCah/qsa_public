@@ -8,6 +8,7 @@ import { iconForType, labelForMandateType, labelForType } from '../utils/typeRes
 import { Relationship } from './Helpers';
 import { AdvancedSearchQuery } from '../models/AdvancedSearch';
 import { PageRoute } from '../models/PageRoute';
+import {preserveNewLines, formatDateForDisplay} from "../utils/rendering";
 
 
 const MandatePage: React.FC<PageRoute> = (route: PageRoute) => {
@@ -76,14 +77,14 @@ const MandatePage: React.FC<PageRoute> = (route: PageRoute) => {
                   <span className="small">START DATE</span>
                   <br />
                   {currentMandate.getFirst('date', (date: any) => {
-                    return date.begin && `${date.begin}` + (date.certainty ? ` (${date.certainty})` : '');
+                    return date.begin && `${formatDateForDisplay(date.begin)}` + (date.certainty ? ` (${date.certainty})` : '');
                   })}
                 </li>
                 <li className="list-group-item">
                   <span className="small">END DATE</span>
                   <br />
                   {currentMandate.getFirst('date', (date: any) => {
-                    return date.end && `${date.end}` + (date.certainty_end ? ` (${date.certainty_end})` : '');
+                    return date.end && `${formatDateForDisplay(date.end)}` + (date.certainty_end ? ` (${date.certainty_end})` : '');
                   })}
                 </li>
               </ul>

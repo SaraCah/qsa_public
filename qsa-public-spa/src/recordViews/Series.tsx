@@ -7,7 +7,7 @@ import { Note, RecordDisplay } from '../models/RecordDisplay';
 import { AccordionPanel, MaybeLink, NoteDisplay, RecordContext, Relationship } from './Helpers';
 import {Tagger} from "./Tagger";
 import { PageRoute } from '../models/PageRoute';
-import {preserveNewLines} from "../utils/rendering";
+import {preserveNewLines, formatDateForDisplay} from "../utils/rendering";
 
 
 const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
@@ -78,14 +78,14 @@ const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
                   <span className="small">START DATE</span>
                   <br />
                   {series.getFirst('dates', (date: any) => {
-                    return date.begin && `${date.begin}` + (date.certainty ? ` (${date.certainty})` : '');
+                    return date.begin && `${formatDateForDisplay(date.begin)}` + (date.certainty ? ` (${date.certainty})` : '');
                   })}
                 </li>
                 <li className="list-group-item">
                   <span className="small">END DATE</span>
                   <br />
                   {series.getFirst('dates', (date: any) => {
-                    return date.end && `${date.end}` + (date.certainty_end ? ` (${date.certainty_end})` : '');
+                    return date.end && `${formatDateForDisplay(date.end)}` + (date.certainty_end ? ` (${date.certainty_end})` : '');
                   })}
                 </li>
               </ul>

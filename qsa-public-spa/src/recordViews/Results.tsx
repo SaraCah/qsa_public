@@ -7,8 +7,9 @@ import { Http } from '../utils/http';
 import { iconForType, labelForType, uriFor } from '../utils/typeResolver';
 import queryString from 'query-string';
 import { PageRoute } from '../models/PageRoute';
-import {preserveNewLines} from "../utils/rendering";
+import {preserveNewLines, formatDateForDisplay} from "../utils/rendering";
 import { DateRangePicker } from './DateRangePicker';
+
 
 
 const FACET_LABELS: { [name: string]: string } = {
@@ -391,7 +392,7 @@ const SearchResult: React.FC<{ searchResult: any }> = props => {
       {props.searchResult.description && <p dangerouslySetInnerHTML={{__html: preserveNewLines(props.searchResult.description)}} />}
       {props.searchResult.dates_display_string && (
         <div>
-          <small>Dates: {props.searchResult.dates_display_string}</small>
+          <small>Dates: {formatDateForDisplay(props.searchResult.dates_display_string)}</small>
         </div>
       )}
       {props.searchResult.primary_type === 'archival_object' && formatRepresentationCounts()}
