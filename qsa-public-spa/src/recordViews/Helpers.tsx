@@ -5,6 +5,7 @@ import { iconForType, labelForRelator, uriFor } from '../utils/typeResolver';
 import { Link } from 'react-router-dom';
 import { Http } from '../utils/http';
 import { AdvancedSearchQuery } from '../models/AdvancedSearch';
+import {formatDateForDisplay} from "../utils/rendering";
 
 export const NoteDisplay: React.FC<{ note: Note }> = ({ note }) => {
   switch (note.kind) {
@@ -315,3 +316,36 @@ export const RecordContext: React.FC<{
     );
   }
 };
+
+export const CoreInformationDateDisplay: React.FC<{date: any}> = ({ date }) => {
+  return (
+      <>
+        <li className="list-group-item">
+          <span className="small">START DATE</span>
+          <br />
+          {
+            (function() {
+              if (date && date.begin) {
+                return `${formatDateForDisplay(date.begin)}` + (date.certainty ? ` (${date.certainty})` : '');
+              } else {
+                return '-';
+              }
+            })()
+          }
+        </li>
+        <li className="list-group-item">
+          <span className="small">END DATE</span>
+          <br />
+          {
+            (function() {
+              if (date && date.end) {
+                return `${formatDateForDisplay(date.end)}` + (date.certainty_end ? ` (${date.certainty_end})` : '');
+              } else {
+                return '-';
+              }
+            })()
+          }
+        </li>
+      </>
+  );
+}

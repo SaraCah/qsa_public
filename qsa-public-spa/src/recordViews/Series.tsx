@@ -4,7 +4,14 @@ import { Http } from '../utils/http';
 import Layout from './Layout';
 import { iconForType, labelForType } from '../utils/typeResolver';
 import { Note, RecordDisplay } from '../models/RecordDisplay';
-import { AccordionPanel, MaybeLink, NoteDisplay, RecordContext, Relationship } from './Helpers';
+import {
+  AccordionPanel,
+  CoreInformationDateDisplay,
+  MaybeLink,
+  NoteDisplay,
+  RecordContext,
+  Relationship
+} from './Helpers';
 import {Tagger} from "./Tagger";
 import { PageRoute } from '../models/PageRoute';
 import {preserveNewLines, formatDateForDisplay} from "../utils/rendering";
@@ -89,24 +96,7 @@ const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
                   <br />
                   {series.get('qsa_id_prefixed')}
                 </li>
-                <li className="list-group-item">
-                  <span className="small">START DATE</span>
-                  <br />
-                  {series.getFirst('dates', (date: any) => {
-                    return date.begin && `${formatDateForDisplay(date.begin)}` + (date.certainty ? ` (${date.certainty})` : '');
-                  })}
-                </li>
-                <li className="list-group-item">
-                  <span className="small">END DATE</span>
-                  <br />
-                  {series.getFirst('dates', (date: any) => {
-                    if (date.end)
-                      return `${formatDateForDisplay(date.end)}` + (date.certainty_end ? ` (${date.certainty_end})` : '');
-                    else {
-                      return '-';
-                    }
-                  })}
-                </li>
+                <CoreInformationDateDisplay date={series.getArray('dates')[0]} />
               </ul>
 
               {series.getFirst('dates', (date: any) => {

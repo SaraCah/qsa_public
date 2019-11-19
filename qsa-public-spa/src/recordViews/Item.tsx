@@ -8,7 +8,14 @@ import {
   labelForType
 } from '../utils/typeResolver';
 import { Note, RecordDisplay } from '../models/RecordDisplay';
-import { AccordionPanel, MaybeLink, NoteDisplay, RecordContext, Relationship } from './Helpers';
+import {
+  AccordionPanel,
+  CoreInformationDateDisplay,
+  MaybeLink,
+  NoteDisplay,
+  RecordContext,
+  Relationship
+} from './Helpers';
 import AppContext from '../context/AppContext';
 import {Tagger} from "./Tagger";
 import { IAppContext } from '../context/AppContext';
@@ -557,24 +564,7 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
                   <br />
                   {item.get('qsa_id_prefixed')}
                 </li>
-                <li className="list-group-item">
-                  <span className="small">START DATE</span>
-                  <br />
-                  {item.getFirst('dates', (date: any) => {
-                    return date.begin && `${formatDateForDisplay(date.begin)}` + (date.certainty ? ` (${date.certainty})` : '');
-                  })}
-                </li>
-                <li className="list-group-item">
-                  <span className="small">END DATE</span>
-                  <br />
-                  {item.getFirst('dates', (date: any) => {
-                    if (date.end)
-                      return `${formatDateForDisplay(date.end)}` + (date.certainty_end ? ` (${date.certainty_end})` : '');
-                    else {
-                      return '-';
-                    }
-                  })}
-                </li>
+                <CoreInformationDateDisplay date={item.getArray('dates')[0]} />
               </ul>
 
               {item.getFirst('dates', (date: any) => {

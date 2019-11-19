@@ -5,7 +5,13 @@ import { Http } from '../utils/http';
 import Layout from './Layout';
 import { Note, RecordDisplay } from '../models/RecordDisplay';
 import { iconForType, labelForType } from '../utils/typeResolver';
-import { AccordionPanel, MaybeLink, NoteDisplay, Relationship } from './Helpers';
+import {
+  AccordionPanel,
+  CoreInformationDateDisplay,
+  MaybeLink,
+  NoteDisplay,
+  Relationship
+} from './Helpers';
 import { AdvancedSearchQuery } from '../models/AdvancedSearch';
 import { PageRoute } from '../models/PageRoute';
 import {preserveNewLines, formatDateForDisplay} from "../utils/rendering";
@@ -78,24 +84,7 @@ const AgencyPage: React.FC<PageRoute> = (route: PageRoute) => {
                   <br />
                   {agency.get('qsa_id_prefixed')}
                 </li>
-                <li className="list-group-item">
-                  <span className="small">START DATE</span>
-                  <br />
-                  {agency.getFirst('dates', (date: any) => {
-                    return date.begin && `${formatDateForDisplay(date.begin)}` + (date.certainty ? `(${date.certainty})` : '');
-                  })}
-                </li>
-                <li className="list-group-item">
-                  <span className="small">END DATE</span>
-                  <br />
-                  {agency.getFirst('dates', (date: any) => {
-                    if (date.end)
-                      return `${formatDateForDisplay(date.end)}` + (date.certainty_end ? ` (${date.certainty_end})` : '');
-                    else {
-                      return '-';
-                    }
-                  })}
-                </li>
+                <CoreInformationDateDisplay date={agency.getArray('dates')[0]} />
               </ul>
 
               {agency.getFirst('dates', (date: any) => {

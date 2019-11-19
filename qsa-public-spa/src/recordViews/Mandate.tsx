@@ -5,7 +5,7 @@ import { Http } from '../utils/http';
 import Layout from './Layout';
 import { RecordDisplay } from '../models/RecordDisplay';
 import { iconForType, labelForMandateType, labelForType } from '../utils/typeResolver';
-import { Relationship } from './Helpers';
+import {CoreInformationDateDisplay, Relationship} from './Helpers';
 import { AdvancedSearchQuery } from '../models/AdvancedSearch';
 import { PageRoute } from '../models/PageRoute';
 import {preserveNewLines, formatDateForDisplay} from "../utils/rendering";
@@ -73,24 +73,7 @@ const MandatePage: React.FC<PageRoute> = (route: PageRoute) => {
                   <br />
                   {currentMandate.get('qsa_id_prefixed')}
                 </li>
-                <li className="list-group-item">
-                  <span className="small">START DATE</span>
-                  <br />
-                  {currentMandate.getFirst('date', (date: any) => {
-                    return date.begin && `${formatDateForDisplay(date.begin)}` + (date.certainty ? ` (${date.certainty})` : '');
-                  })}
-                </li>
-                <li className="list-group-item">
-                  <span className="small">END DATE</span>
-                  <br />
-                  {currentMandate.getFirst('date', (date: any) => {
-                    if (date.end)
-                      return `${formatDateForDisplay(date.end)}` + (date.certainty_end ? ` (${date.certainty_end})` : '');
-                    else {
-                      return '-';
-                    }
-                  })}
-                </li>
+                <CoreInformationDateDisplay date={currentMandate.getArray('dates')[0]} />
               </ul>
 
               {currentMandate.getFirst('date', (date: any) => {
