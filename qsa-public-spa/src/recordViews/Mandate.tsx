@@ -84,7 +84,11 @@ const MandatePage: React.FC<PageRoute> = (route: PageRoute) => {
                   <span className="small">END DATE</span>
                   <br />
                   {currentMandate.getFirst('date', (date: any) => {
-                    return date.end && `${formatDateForDisplay(date.end)}` + (date.certainty_end ? ` (${date.certainty_end})` : '');
+                    if (date.end)
+                      return `${formatDateForDisplay(date.end)}` + (date.certainty_end ? ` (${date.certainty_end})` : '');
+                    else {
+                      return '-';
+                    }
                   })}
                 </li>
               </ul>

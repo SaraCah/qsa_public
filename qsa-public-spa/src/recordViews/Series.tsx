@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { Redirect } from 'react-router';
 import { Http } from '../utils/http';
 import Layout from './Layout';
@@ -12,6 +12,7 @@ import {preserveNewLines, formatDateForDisplay} from "../utils/rendering";
 
 const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
   const [series, setCurrentSeries] = useState<any | null>(null);
+  const [showAccordions, setShowAccordions] = useState(true);
   const [notFoundRedirect, setNotFoundRedirect] = useState(false);
   const qsaId: string = route.match.params.qsaId;
 
@@ -31,6 +32,20 @@ const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
         setNotFoundRedirect(true);
       });
   }
+
+  useEffect(() => {
+    if (series) {
+      const accordionEl = document.getElementById('accordion');
+      if (accordionEl) {
+        const parent = accordionEl.parentNode;
+        if (parent) {
+          if (parent.childNodes.length === 1) {
+            setShowAccordions(false);
+          }
+        }
+      }
+    }
+  }, [series]);
 
   if (notFoundRedirect) {
     return <Redirect to="/404" push={true} />;
@@ -85,7 +100,11 @@ const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
                   <span className="small">END DATE</span>
                   <br />
                   {series.getFirst('dates', (date: any) => {
-                    return date.end && `${formatDateForDisplay(date.end)}` + (date.certainty_end ? ` (${date.certainty_end})` : '');
+                    if (date.end)
+                      return `${formatDateForDisplay(date.end)}` + (date.certainty_end ? ` (${date.certainty_end})` : '');
+                    else {
+                      return '-';
+                    }
                   })}
                 </li>
               </ul>
@@ -128,75 +147,78 @@ const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
               </ul>
             </section>
 
-            <section className="qg-accordion qg-dark-accordion" aria-label="Accordion Label">
-              <h2 id="accordion">Detailed information</h2>
+            {
+              showAccordions &&
+              <section className="qg-accordion qg-dark-accordion" aria-label="Accordion Label">
+                <h2 id="accordion">Detailed information</h2>
 
-              {/*<input type="radio" name="control" id="collapse" className="controls collapse" value="collapse" role="radio"/>*/}
-              {/*<label htmlFor="collapse" className="controls">Collapse details</label>*/}
-              {/*<span className="controls">&#124;</span>*/}
-              {/*<input type="radio" name="control" id="expand" className="controls expand" value="expand" role="radio"/>*/}
-              {/*<label htmlFor="expand" className="controls">Show details</label>*/}
+                {/*<input type="radio" name="control" id="collapse" className="controls collapse" value="collapse" role="radio"/>*/}
+                {/*<label htmlFor="collapse" className="controls">Collapse details</label>*/}
+                {/*<span className="controls">&#124;</span>*/}
+                {/*<input type="radio" name="control" id="expand" className="controls expand" value="expand" role="radio"/>*/}
+                {/*<label htmlFor="expand" className="controls">Show details</label>*/}
 
-              {series.getNotes('prefercite', null, (notes: Note[]) => (
-                <AccordionPanel
-                  id={series.generateId()}
-                  title="Notes - Preferred Citation"
-                  children={notes.map((note: Note, idx: number) => (
-                    <NoteDisplay key={idx} note={note} />
-                  ))}
-                />
-              ))}
+                {series.getNotes('prefercite', null, (notes: Note[]) => (
+                    <AccordionPanel
+                        id={series.generateId()}
+                        title="Notes - Preferred Citation"
+                        children={notes.map((note: Note, idx: number) => (
+                            <NoteDisplay key={idx} note={note} />
+                        ))}
+                    />
+                ))}
 
-              {series.getNotes('odd', 'Remarks', (notes: Note[]) => (
-                <AccordionPanel
-                  id={series.generateId()}
-                  title="Notes - Remarks"
-                  children={notes.map((note: Note, idx: number) => (
-                    <NoteDisplay note={note} key={idx} />
-                  ))}
-                />
-              ))}
+                {series.getNotes('odd', 'Remarks', (notes: Note[]) => (
+                    <AccordionPanel
+                        id={series.generateId()}
+                        title="Notes - Remarks"
+                        children={notes.map((note: Note, idx: number) => (
+                            <NoteDisplay note={note} key={idx} />
+                        ))}
+                    />
+                ))}
 
-              {series.getNotes('remarks', null, (notes: Note[]) => (
-                  <AccordionPanel
-                      id={series.generateId()}
-                      title="Notes - Remarks"
-                      children={notes.map((note: Note, idx: number) => (
-                          <NoteDisplay note={note} key={idx} />
-                      ))}
-                  />
-              ))}
+                {series.getNotes('remarks', null, (notes: Note[]) => (
+                    <AccordionPanel
+                        id={series.generateId()}
+                        title="Notes - Remarks"
+                        children={notes.map((note: Note, idx: number) => (
+                            <NoteDisplay note={note} key={idx} />
+                        ))}
+                    />
+                ))}
 
-              {series.getNotes('custodhist', null, (notes: Note[]) => (
-                <AccordionPanel
-                  id={series.generateId()}
-                  title="Notes - Agency Control Number (aka Department Numbers)"
-                  children={notes.map((note: Note, idx: number) => (
-                      <NoteDisplay note={note} key={idx} />
-                  ))}
-                />
-              ))}
+                {series.getNotes('custodhist', null, (notes: Note[]) => (
+                    <AccordionPanel
+                        id={series.generateId()}
+                        title="Notes - Agency Control Number (aka Department Numbers)"
+                        children={notes.map((note: Note, idx: number) => (
+                            <NoteDisplay note={note} key={idx} />
+                        ))}
+                    />
+                ))}
 
-              {series.getNotes('arrangement', null, (notes: Note[]) => (
-                <AccordionPanel
-                  id={series.generateId()}
-                  title="Notes - System of Arrangement"
-                  children={notes.map((note: Note, idx: number) => (
-                      <NoteDisplay note={note} key={idx} />
-                  ))}
-                />
-              ))}
+                {series.getNotes('arrangement', null, (notes: Note[]) => (
+                    <AccordionPanel
+                        id={series.generateId()}
+                        title="Notes - System of Arrangement"
+                        children={notes.map((note: Note, idx: number) => (
+                            <NoteDisplay note={note} key={idx} />
+                        ))}
+                    />
+                ))}
 
-              {series.getExternalDocuments(['Helpful Resources'], (docs: any) => (
-                <AccordionPanel
-                  id={series.generateId()}
-                  title="Helpful Resources"
-                  children={docs.map((doc: any, idx: number) => (
-                    <div><MaybeLink location={doc.location} label={doc.location} key={idx} /></div>
-                  ))}
-                />
-              ))}
-            </section>
+                {series.getExternalDocuments(['Helpful Resources'], (docs: any) => (
+                    <AccordionPanel
+                        id={series.generateId()}
+                        title="Helpful Resources"
+                        children={docs.map((doc: any, idx: number) => (
+                            <div><MaybeLink location={doc.location} label={doc.location} key={idx} /></div>
+                        ))}
+                    />
+                ))}
+              </section>
+            }
 
             <section>
               <h2>Relationships</h2>

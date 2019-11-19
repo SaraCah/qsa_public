@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { Redirect } from 'react-router';
 import {baseURL, Http} from '../utils/http';
 import Layout from './Layout';
@@ -485,6 +485,7 @@ const ReadingRoomRequestAction: React.FC<any> = ({ item }) => {
 
 const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
   const [item, setCurrentItem] = useState<any | null>(null);
+  const [showAccordions, setShowAccordions] = useState(true);
   const [notFoundRedirect, setNotFoundRedirect] = useState(false);
   const qsaId: string = route.match.params.qsaId;
 
@@ -503,6 +504,20 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
         setNotFoundRedirect(true);
       });
   }
+
+  useEffect(() => {
+    if (item) {
+      const accordionEl = document.getElementById('accordion');
+      if (accordionEl) {
+        const parent = accordionEl.parentNode;
+        if (parent) {
+          if (parent.childNodes.length === 1) {
+            setShowAccordions(false);
+          }
+        }
+      }
+    }
+  }, [item]);
 
   if (notFoundRedirect) {
     return <Redirect to="/404" push={true} />;
@@ -553,7 +568,11 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
                   <span className="small">END DATE</span>
                   <br />
                   {item.getFirst('dates', (date: any) => {
-                    return date.end && `${formatDateForDisplay(date.end)}` + (date.certainty_end ? ` (${date.certainty_end})` : '');
+                    if (date.end)
+                      return `${formatDateForDisplay(date.end)}` + (date.certainty_end ? ` (${date.certainty_end})` : '');
+                    else {
+                      return '-';
+                    }
                   })}
                 </li>
               </ul>
@@ -691,49 +710,52 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
               </ul>
             </section>
 
-            <section className="qg-accordion qg-dark-accordion" aria-label="Item Details">
-              <h2 id="accordion">Item details</h2>
+            {
+              showAccordions &&
+              <section className="qg-accordion qg-dark-accordion" aria-label="Item Details">
+                <h2 id="accordion">Item details</h2>
 
-              {/*<input type="radio" name="control" id="collapse" className="controls collapse" value="collapse" role="radio"/>*/}
-              {/*<label htmlFor="collapse" className="controls">Collapse details</label>*/}
-              {/*<span className="controls">&#124;</span>*/}
-              {/*<input type="radio" name="control" id="expand" className="controls expand" value="expand" role="radio"/>*/}
-              {/*<label htmlFor="expand" className="controls">Show details</label>*/}
+                {/*<input type="radio" name="control" id="collapse" className="controls collapse" value="collapse" role="radio"/>*/}
+                {/*<label htmlFor="collapse" className="controls">Collapse details</label>*/}
+                {/*<span className="controls">&#124;</span>*/}
+                {/*<input type="radio" name="control" id="expand" className="controls expand" value="expand" role="radio"/>*/}
+                {/*<label htmlFor="expand" className="controls">Show details</label>*/}
 
-              {item.getArray('physical_representations').length > 0 && (
-                <AccordionPanel
-                  id={item.generateId()}
-                  anchor="physical_representations"
-                  title="Physical representations"
-                  children={
-                    <ul className="list-group list-group-flush">
-                      {item.getArray('physical_representations').map((representation: any) => (
-                        <li key={representation.qsa_id} className="list-group-item">
-                          <PhysicalRepresentation representation={representation} item={item} context={route.context} />
-                        </li>
-                      ))}
-                    </ul>
-                  }
-                />
-              )}
+                {item.getArray('physical_representations').length > 0 && (
+                    <AccordionPanel
+                        id={item.generateId()}
+                        anchor="physical_representations"
+                        title="Physical representations"
+                        children={
+                          <ul className="list-group list-group-flush">
+                            {item.getArray('physical_representations').map((representation: any) => (
+                                <li key={representation.qsa_id} className="list-group-item">
+                                  <PhysicalRepresentation representation={representation} item={item} context={route.context} />
+                                </li>
+                            ))}
+                          </ul>
+                        }
+                    />
+                )}
 
-              {item.getArray('digital_representations').length > 0 && (
-                <AccordionPanel
-                  id={item.generateId()}
-                  anchor="digital_representations"
-                  title="Digital representations"
-                  children={
-                    <ul className="list-group list-group-flush">
-                      {item.getArray('digital_representations').map((representation: any) => (
-                        <li key={representation.qsa_id} className="list-group-item">
-                          <DigitalRepresentation representation={representation} item={item} context={route.context} />
-                        </li>
-                      ))}
-                    </ul>
-                  }
-                />
-              )}
-            </section>
+                {item.getArray('digital_representations').length > 0 && (
+                    <AccordionPanel
+                        id={item.generateId()}
+                        anchor="digital_representations"
+                        title="Digital representations"
+                        children={
+                          <ul className="list-group list-group-flush">
+                            {item.getArray('digital_representations').map((representation: any) => (
+                                <li key={representation.qsa_id} className="list-group-item">
+                                  <DigitalRepresentation representation={representation} item={item} context={route.context} />
+                                </li>
+                            ))}
+                          </ul>
+                        }
+                    />
+                )}
+              </section>
+            }
 
             {item.getArray('agent_relationships').length > 0 && (
               <section>
