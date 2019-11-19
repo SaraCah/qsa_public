@@ -97,18 +97,29 @@ const AgencyPage: React.FC<PageRoute> = (route: PageRoute) => {
               {agency.getFirst('dates', (date: any) => {
                 return date.date_notes && <p className="footer small">Date notes: {date.date_notes}</p>;
               })}
-
-              {(agency.get('display_name').alternative_name || agency.get('display_name').acronym) && (
-                <p>
-                  Alternative names: {agency.get('display_name').acronym} {agency.get('display_name').alternative_name}
-                </p>
-              )}
             </section>
 
             <section className="qg-accordion qg-dark-accordion" aria-label="Accordion Label">
               <h2 id="accordion">Detailed information</h2>
 
               <ul className="list-group list-group-flush">
+                {
+                  agency.getArray('alternative_names').length > 0 &&
+                  <li className="list-group-item list-group-item-action">
+                    <div className="d-flex w-100 justify-content-between">
+                      <h4 className="mb-1">Alternative names</h4>
+                    </div>
+                    <p className="mb-1">
+                      {
+                        agency.getArray('alternative_names').map((name: string) => (
+                            <>
+                              {name}<br/>
+                            </>
+                        ))
+                      }
+                    </p>
+                  </li>
+                }
                 {agency.getMaybe('agency_category', () => {
                   return (
                       <li className="list-group-item list-group-item-action">
