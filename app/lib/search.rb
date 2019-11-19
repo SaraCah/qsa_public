@@ -524,7 +524,11 @@ class Search
       next unless fields.include?(facet_field)
 
       facet_entries.each do |entry|
-        entry[:facet_label] = id_to_title.fetch(entry[:facet_value])
+        entry[:facet_label] = id_to_title.fetch(entry[:facet_value], entry[:facet_value])
+
+        if entry[:facet_value] == entry[:facet_label]
+          entry[:could_not_resolve] = true
+        end
       end
     end
 
@@ -581,6 +585,10 @@ class Search
     end
 
     resolve_document_ids(facets, ['mandate_id', 'function_id', 'responsible_agency_id', 'creating_agency_id'])
+
+    facets = facets.map {|field, entries|
+      [field, entries.reject {|entry| entry[:could_not_resolve]}]
+    }.to_h
 
     response = solr_response.fetch('response', {})
 
