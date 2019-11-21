@@ -15,6 +15,7 @@ import { IAppContext } from '../context/AppContext';
 import { PageRoute } from '../models/PageRoute';
 import {AdvancedSearchQuery} from "../models/AdvancedSearch";
 import {CompactSearchSummary} from "./Results";
+import {formatDateForDisplay} from "../utils/rendering";
 
 
 const FormErrors: React.FC<{ errors: any }> = ({ errors }) => {
@@ -1170,7 +1171,7 @@ const RequestSummary: React.FC<any> = props => {
             </button>
           </small>
         </div>
-        <div>
+        <div className="col-sm-12">
           <h1>Reading Room Request: {request.id}</h1>
           <dl className="row">
             <dt className="col-3">Status</dt>
@@ -1178,30 +1179,18 @@ const RequestSummary: React.FC<any> = props => {
             <dt className="col-3">Date Required</dt>
             <dd className="col-9">{new Date(request.date_required).toLocaleDateString()}</dd>
           </dl>
-          <table className="table table-bordered">
+          <table className="table table-bordered" style={{width: 'auto', maxWidth: '100%'}}>
             <tbody>
-              <tr>
-                <th scope="row" colSpan={2}>
-                  Queensland State Archive
-                </th>
-                <th scope="row" colSpan={2}>
-                  Client copy
-                </th>
-              </tr>
               <tr>
                 <th>Item ID</th>
                 <td>
-                  <Link to={uriFor(request.record.parent_qsa_id, 'archival_object')} target="_blank">
+                  <Link to={uriFor(request.record.controlling_record.qsa_id_prefixed, 'archival_object')} target="_blank">
                     {request.record.qsa_id_prefixed}
                   </Link>
                 </td>
                 <th>Previous System ID</th>
                 <td>
-                  {request.record.external_ids.map((external_id: any) => (
-                    <div>
-                      {external_id.source}: {external_id.external_id}
-                    </div>
-                  ))}
+                  {request.record.previous_system_ids.join('; ')}
                 </td>
               </tr>
               <tr>
@@ -1218,34 +1207,29 @@ const RequestSummary: React.FC<any> = props => {
               </tr>
               <tr>
                 <th>Access</th>
-                <td>{request.record.rap_access_status}</td>
+                <td>{(request.record.rap_access_status === 'Open Access' ? 'Open' : 'Closed')}</td>
                 <th>Dates</th>
-                <td>FIXME need to map dates</td>
+                <td>{formatDateForDisplay(request.record.controlling_record.begin_date)} - {formatDateForDisplay(request.record.controlling_record.end_date)}</td>
               </tr>
               <tr>
                 <th>Description</th>
                 <td colSpan={3}>
                   <p>{request.record.display_string}</p>
+                  {request.record.controlling_record.description && <p>request.record.controlling_record.description</p>}
                   {request.record.description && <p>request.record.description</p>}
                 </td>
               </tr>
               <tr>
-                <th>Series ID</th>
-                <td colSpan={3}>FIXME need to map Series ID</td>
-              </tr>
-              <tr>
-                <th>Home location</th>
-                <td>FIXME need to map home location</td>
-                <th>Top Container ID</th>
-                <td>FIXME need to map top container ID</td>
-              </tr>
-              <tr>
-                <th>Researcher ID</th>
-                <td>
-                  {props.context.user.first_name} {props.context.user.last_name}
+                <th>Series</th>
+                <td colSpan={3}>
+                  <Link
+                      to={uriFor(request.record.controlling_record._resolved.resource.qsa_id_prefixed, 'resource')}
+                      target="_blank"
+                  >
+                    {request.record.controlling_record._resolved.resource.qsa_id_prefixed}&nbsp;
+                    {request.record.controlling_record._resolved.resource.display_string}
+                  </Link>
                 </td>
-                <th>Date Requested</th>
-                <td>{request.date_required && new Date(request.date_required).toLocaleDateString()}</td>
               </tr>
             </tbody>
           </table>
