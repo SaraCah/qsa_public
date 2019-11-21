@@ -105,12 +105,15 @@ export const MyReadingRoomRequestsCartPage: React.FC<PageRoute> = (route: PageRo
                           {context.cart.reading_room_requests.open_records.map((cartItem: any) => (
                             <div key={cartItem.id}>
                               <div className="mb-2 qg-grab" role="listitem">
+                                <div className="pull-right">
+                                  <span className="badge pull-right">Open record</span>
+                                </div>
                                 <div className="d-flex w-100 justify-content-between">
-                                  <h2>
+                                  <h3>
                                     <Link to={uriFor(cartItem.record.controlling_record.qsa_id_prefixed, 'archival_object')}>
                                       {cartItem.record.qsa_id_prefixed}: {cartItem.record.display_string}
                                     </Link>
-                                  </h2>
+                                  </h3>
                                 </div>
                                 <dl className="row">
                                   <dt className="col-xs-6">Item type</dt>
@@ -126,7 +129,7 @@ export const MyReadingRoomRequestsCartPage: React.FC<PageRoute> = (route: PageRo
                                   <dt className="col-xs-6">Cost</dt>
                                   <dd className="col-xs-6">Free</dd>
                                 </dl>
-                                <h3 className="sr-only">Actions</h3>
+                                <h4 className="sr-only">Actions</h4>
                                 <div className="btn-group">
                                   <button
                                     className="qg-btn btn-default btn-xs"
@@ -189,11 +192,11 @@ export const MyReadingRoomRequestsCartPage: React.FC<PageRoute> = (route: PageRo
                                   <div className="pull-right">
                                     <span className="badge pull-right">Closed record</span>
                                   </div>
-                                  <h4>
+                                  <h3>
                                     <Link to={uriFor(cartItem.record.controlling_record.qsa_id_prefixed, 'archival_object')}>
                                       {cartItem.record.qsa_id_prefixed} {cartItem.record.display_string}
                                     </Link>
-                                  </h4>
+                                  </h3>
                                   <dl className="row" style={{ marginBottom: 0 }}>
                                     <dt className="col-xs-6">Item type</dt>
                                     <dd className="col-xs-6">Physical representation</dd>
