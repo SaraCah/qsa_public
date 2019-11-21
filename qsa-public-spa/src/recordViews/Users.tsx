@@ -1209,7 +1209,7 @@ const RequestSummary: React.FC<any> = props => {
                 <th>Access</th>
                 <td>{(request.record.rap_access_status === 'Open Access' ? 'Open' : 'Closed')}</td>
                 <th>Dates</th>
-                <td>{formatDateForDisplay(request.record.controlling_record.begin_date)} - {formatDateForDisplay(request.record.controlling_record.end_date)}</td>
+                <td>{formatDateForDisplay(request.record.controlling_record.begin_date || '')} - {formatDateForDisplay(request.record.controlling_record.end_date || '')}</td>
               </tr>
               <tr>
                 <th>Description</th>
