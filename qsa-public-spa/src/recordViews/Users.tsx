@@ -1215,7 +1215,7 @@ const RequestSummary: React.FC<any> = props => {
                 <th>Description</th>
                 <td colSpan={3}>
                   <p>{request.record.display_string}</p>
-                  {request.record.controlling_record.description && <p>request.record.controlling_record.description</p>}
+                  {request.record.controlling_record._resolved.description && <p>request.record.controlling_record._resolved.description</p>}
                   {request.record.description && <p>request.record.description</p>}
                 </td>
               </tr>
@@ -1259,7 +1259,7 @@ const RequestsSummary: React.FC<any> = props => {
             <th scope="col">#</th>
             <th scope="col">Request Type</th>
             <th scope="col">Status</th>
-            <th scope="col">Item Title</th>
+            <th scope="col">Item</th>
             <th scope="col">Required Date</th>
             <th scope="col">Requested Date</th>
             <th scope="col" />
@@ -1273,7 +1273,11 @@ const RequestsSummary: React.FC<any> = props => {
                 <td>{request.request_type}</td>
                 <td>{request.status}</td>
                 <td>
-                  <Link to={uriFor(request.record.controlling_record['_resolved'].qsa_id_prefixed, 'archival_object')}>
+                  <Link to={uriFor(request.record.controlling_record.qsa_id_prefixed, 'archival_object')}>
+                    {request.record.qsa_id_prefixed}
+                  </Link>
+                  &nbsp;
+                  <Link to={uriFor(request.record.controlling_record.qsa_id_prefixed, 'archival_object')}>
                     {request.record.display_string}
                   </Link>
                 </td>

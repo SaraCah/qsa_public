@@ -11,7 +11,9 @@ const LabelForType: { [name: string]: string } = {
   resource: 'Series',
   archival_object: 'Item',
   mandate: 'Mandate',
-  function: 'Function'
+  function: 'Function',
+  physical_representation: 'Physical representation',
+  digital_representation: 'Digital representation',
 };
 
 const IconForType: { [name: string]: string } = {

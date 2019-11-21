@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import { Link } from 'react-router-dom';
-import { uriFor } from '../utils/typeResolver';
+import {labelForType, uriFor} from '../utils/typeResolver';
 import Layout from '../recordViews/Layout';
 import { Http } from '../utils/http';
 import { IAppContext } from '../context/AppContext';
@@ -117,7 +117,7 @@ export const MyReadingRoomRequestsCartPage: React.FC<PageRoute> = (route: PageRo
                                 </div>
                                 <dl className="row">
                                   <dt className="col-xs-6">Item type</dt>
-                                  <dd className="col-xs-6">Physical representation</dd>
+                                  <dd className="col-xs-6">{labelForType(cartItem.record.jsonmodel_type)}</dd>
                                   <dt className="col-xs-6">Parent item</dt>
                                   <dd className="col-xs-6">
                                     <Link to={uriFor(cartItem.record.controlling_record.qsa_id_prefixed, 'archival_object')}>
@@ -199,7 +199,7 @@ export const MyReadingRoomRequestsCartPage: React.FC<PageRoute> = (route: PageRo
                                   </h3>
                                   <dl className="row" style={{ marginBottom: 0 }}>
                                     <dt className="col-xs-6">Item type</dt>
-                                    <dd className="col-xs-6">Physical representation</dd>
+                                    <dd className="col-xs-6">{labelForType(cartItem.record.jsonmodel_type)}</dd>
                                     <dt className="col-xs-6">Parent item</dt>
                                     <dd className="col-xs-6">
                                       <Link to={uriFor(cartItem.record.controlling_record.qsa_id_prefixed, 'archival_object')}>

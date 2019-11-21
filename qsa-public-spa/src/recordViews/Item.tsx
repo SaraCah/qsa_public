@@ -45,8 +45,15 @@ const PhysicalRepresentation: React.FC<{
       {
         isRepresentationAvailableForRequest(representation) &&
         <div className="pull-right text-right">
-          <div style={{marginBottom: 10}}><AddToReadingRoomRequestCartButton itemId={representation.get('id')} /></div>
-          <AddToDigitalCopyRequestCartButton itemId={representation.get('id')} />
+          {
+            isRepresentationAvailableForReadingRoomRequest(representation) &&
+            <div style={{marginBottom: 10}}><AddToReadingRoomRequestCartButton itemId={representation.get('id')} /></div>
+          }
+          {
+            isRepresentationAvailableForDigitalCopyRequest(representation) &&
+            <AddToDigitalCopyRequestCartButton
+                itemId={representation.get('id')}/>
+          }
         </div>
       }
       <dl>
@@ -134,6 +141,20 @@ const DigitalRepresentation: React.FC<{
 
   return (
     <>
+      {
+        isRepresentationAvailableForRequest(representation) &&
+        <div className="pull-right text-right">
+          {
+            isRepresentationAvailableForReadingRoomRequest(representation) &&
+            <div style={{marginBottom: 10}}><AddToReadingRoomRequestCartButton itemId={representation.get('id')} /></div>
+          }
+          {
+            isRepresentationAvailableForDigitalCopyRequest(representation) &&
+            <AddToDigitalCopyRequestCartButton
+                itemId={representation.get('id')}/>
+          }
+        </div>
+      }
       <dl>
         {
           representation.get('representation_file') &&
@@ -376,12 +397,35 @@ const REQUESTABLE_AVAILABILITIES = ['available',
                                     'unavailable_contact_qsa'];
 
 const isRepresentationAvailableForRequest = (representation: RecordDisplay) => {
-  return REQUESTABLE_AVAILABILITIES.indexOf(representation.get('availability')) >= 0;
+  return isRepresentationAvailableForReadingRoomRequest(representation)
+    ||  isRepresentationAvailableForDigitalCopyRequest(representation);
+};
+
+const isRepresentationAvailableForReadingRoomRequest = (representation: RecordDisplay) => {
+  if (representation.get('jsonmodel_type') === 'physical_representation') {
+    return REQUESTABLE_AVAILABILITIES.indexOf(representation.get('availability')) >= 0;
+  } else if (representation.get('jsonmodel_type') === 'digital_representation') {
+    // Open Access will have a download link!
+    // Restricted Access will need to be requested through the reading room
+    return representation.get('rap_access_status') === 'Restricted Access';
+  } else {
+    return false;
+  }
+};
+
+const isRepresentationAvailableForDigitalCopyRequest = (representation: RecordDisplay) => {
+  if (representation.get('jsonmodel_type') === 'physical_representation') {
+    return representation.get('rap_access_status') === 'Open Access';
+  } else if (representation.get('jsonmodel_type') === 'digital_representation') {
+    return false;
+  } else {
+    return false;
+  }
 };
 
 const DigitalCopyRequestAction: React.FC<any> = ({ item }) => {
   const requestableRepresentations: any[] = item.getArray('physical_representations').filter((representation: any) => {
-    return isRepresentationAvailableForRequest(new RecordDisplay(representation));
+    return isRepresentationAvailableForDigitalCopyRequest(new RecordDisplay(representation));
   });
 
   if (requestableRepresentations.length === 0) {
@@ -438,8 +482,9 @@ const DigitalCopyRequestAction: React.FC<any> = ({ item }) => {
 };
 
 const ReadingRoomRequestAction: React.FC<any> = ({ item }) => {
-  const requestableRepresentations: any[] = item.getArray('physical_representations').filter((representation: any) => {
-    return isRepresentationAvailableForRequest(new RecordDisplay(representation));
+  const allRepresentations: any[] = item.getArray('physical_representations').concat(item.getArray('digital_representations'));
+  const requestableRepresentations: any[] = allRepresentations.filter((representation: any) => {
+    return isRepresentationAvailableForReadingRoomRequest(new RecordDisplay(representation));
   });
 
   if (requestableRepresentations.length === 0) {
@@ -448,10 +493,22 @@ const ReadingRoomRequestAction: React.FC<any> = ({ item }) => {
 
   if (requestableRepresentations.length > 1) {
     const scrollToRepresentations = () => {
-      const target = document.getElementById('physical_representations');
-      if (target) {
-        target.scrollIntoView({ behavior: 'smooth' });
-        const checkbox = target.querySelector('input[type=checkbox]') as HTMLInputElement;
+      const physicalSection = document.getElementById('physical_representations');
+      const digitalSection = document.getElementById('digital_representations');
+
+      if (physicalSection) {
+        physicalSection.scrollIntoView({ behavior: 'smooth' });
+        const checkbox = physicalSection.querySelector('input[type=checkbox]') as HTMLInputElement;
+        if (checkbox && !checkbox.checked) {
+          checkbox.click();
+        }
+      }
+
+      if (digitalSection) {
+        if (!physicalSection) {
+          digitalSection.scrollIntoView({ behavior: 'smooth' });
+        }
+        const checkbox = digitalSection.querySelector('input[type=checkbox]') as HTMLInputElement;
         if (checkbox && !checkbox.checked) {
           checkbox.click();
         }
