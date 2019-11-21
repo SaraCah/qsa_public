@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import { Link } from 'react-router-dom';
 import { uriFor } from '../utils/typeResolver';
 import Layout from '../recordViews/Layout';
@@ -13,6 +13,7 @@ export const MyReadingRoomRequestsCartPage: React.FC<PageRoute> = (route: PageRo
   const [requiredDate, setRequiredDate] = useState('');
   const [showReadingRoomSuccess, setShowReadingRoomSuccess] = useState(false);
   const [agencyFields, setAgencyFields]: [any, any] = useState({});
+  const [requiredDateInPast, setRequiredDateInPast]: [boolean, any] = useState(false);
 
   const removeItem = (id: number, context: IAppContext): void => {
     Http.get()
@@ -39,6 +40,14 @@ export const MyReadingRoomRequestsCartPage: React.FC<PageRoute> = (route: PageRo
         console.error(exception);
       });
   };
+
+  useEffect(() => {
+    if (requiredDate && new Date(requiredDate).setHours(0,0,0,0) < new Date().setHours(0,0,0,0)) {
+      setRequiredDateInPast(true);
+    } else {
+      setRequiredDateInPast(false);
+    }
+  }, [requiredDate]);
 
   return (
     <>
@@ -88,8 +97,8 @@ export const MyReadingRoomRequestsCartPage: React.FC<PageRoute> = (route: PageRo
                                 onChange={e => setRequiredDate(e.target.value)}
                                 required
                               />
-                              {requiredDate && new Date(requiredDate).setHours(0,0,0,0) <= new Date().setHours(0,0,0,0) && (
-                                <small className="text-danger">Date provided is in the past</small>
+                              {requiredDateInPast && (
+                                <small className="alert alert-warning">Date provided is in the past</small>
                               )}
                             </div>
                           </div>
