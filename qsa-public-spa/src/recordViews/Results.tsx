@@ -75,6 +75,7 @@ const ResultsPage: React.FC<PageRoute> = (route: PageRoute) => {
             searchResults={searchResults}
             currentPage={currentPage}
             advancedSearchQuery={advancedSearchQuery}
+            context={route.context}
           />
         )}
       </Layout>
@@ -419,6 +420,7 @@ const SearchResults: React.FC<{
   searchResults: any;
   currentPage: number;
   advancedSearchQuery: AdvancedSearchQuery;
+  context: any;
 }> = props => {
   const pageUpper = Math.min(
     (props.searchResults.current_page + 1) * props.searchResults.page_size,
@@ -428,7 +430,7 @@ const SearchResults: React.FC<{
 
   if (props.searchResults.results.length === 0) {
     return <section className="qg-results">
-      <SaveYourSearch query={props.advancedSearchQuery} />
+      <SaveYourSearch query={props.advancedSearchQuery} context={props.context} />
       <h2>No results found</h2>
 
       <p>Your search did not match any results.</p>
@@ -437,7 +439,7 @@ const SearchResults: React.FC<{
 
   return (
     <section className="qg-results">
-      <SaveYourSearch query={props.advancedSearchQuery} />
+      <SaveYourSearch query={props.advancedSearchQuery} context={props.context} />
       <h2>Your search results</h2>
 
       <div className="row">
@@ -500,6 +502,10 @@ const SaveYourSearch: React.FC<any> = props => {
           setSaved(true);
         });
   };
+
+  if (!props.context || !props.context.user) {
+    return <></>;
+  }
 
   return(
     <div className="pull-right">
