@@ -1177,7 +1177,7 @@ const RequestSummary: React.FC<any> = props => {
             <dt className="col-3">Status</dt>
             <dd className="col-9">{request.status}</dd>
             <dt className="col-3">Date Required</dt>
-            <dd className="col-9">{new Date(request.date_required).toLocaleDateString()}</dd>
+            <dd className="col-9">{(request.date_required ? new Date(request.date_required).toLocaleDateString() : 'Not yet provided')}</dd>
           </dl>
           <table className="table table-bordered" style={{width: 'auto', maxWidth: '100%'}}>
             <tbody>
