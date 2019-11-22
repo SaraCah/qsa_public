@@ -303,8 +303,8 @@ class Search
 
     facets = solr_response.fetch('facet_counts').fetch('facet_fields', {}).fetch('access_status', [])
 
+    record['access_status_summary'] ||= {}
     facets.each_slice(2) do |field, count|
-      record['access_status_summary'] ||= {}
       record['access_status_summary'][field] = count
     end
 
