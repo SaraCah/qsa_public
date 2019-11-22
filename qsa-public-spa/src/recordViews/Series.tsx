@@ -118,7 +118,11 @@ const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
                         <div className="d-flex w-100 justify-content-between">
                           <h4 className="mb-1">{fieldLabel}</h4>
                         </div>
-                        <p className="mb-1">{value}</p>
+                        <p className="mb-1">
+                          {
+                            (Array.isArray(value) ? value.join('; ') : value)
+                          }
+                        </p>
                       </li>
                     );
                   });
