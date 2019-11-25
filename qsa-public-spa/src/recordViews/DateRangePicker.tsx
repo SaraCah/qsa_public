@@ -54,7 +54,7 @@ export const DateRangePicker: React.FC<any> = (props: DateRangePickerProps) => {
         </div>
       </div>
       <input className="date-picker-end" type="text" maxLength={4} style={{width: "4em"}} value={maxTextField} onChange={(e) => updateRange(minSelected, Number(e.target.value))} />
-      {(changed || true) && <div className="date-picker-apply">
+      {changed && <div className="date-picker-apply">
         <button className="btn btn-xs btn-secondary"
                 style={{marginLeft: "1em"}}
                 onClick={() => props.onRangeUpdated(minSelected, maxSelected)} >
