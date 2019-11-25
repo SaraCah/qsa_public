@@ -156,3 +156,30 @@
 .core-information .list-group.list-group-flush {
   margin-top: 10px;
 }
+
+.date-picker {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.date-picker .date-picker-start {
+  margin-right: 0.5em;
+}
+
+.date-picker .date-picker-end {
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+}
+
+.date-picker-range {
+  flex-grow: 1;
+  display: inline-block;
+  margin-left: 1em;
+  margin-right: 1em;
+  min-width: 5em;
+}
+
+.date-picker-apply button {
+  margin: 0 !important;
+  margin-top: 0.5em !important;
+}

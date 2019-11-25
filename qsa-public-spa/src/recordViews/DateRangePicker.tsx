@@ -40,9 +40,9 @@ export const DateRangePicker: React.FC<any> = (props: DateRangePickerProps) => {
 
   return (
     <>
-    <div>
-      <input type="text" maxLength={4} style={{width: "4em"}} value={minTextField} onChange={(e) => { updateRange(Number(e.target.value), maxSelected) }} />
-      <div style={{width: "60%", display: "inline-block", marginLeft: "1em", marginRight: "1em"}}>
+    <div className="date-picker">
+      <input className="date-picker-start" type="text" maxLength={4} style={{width: "4em"}} value={minTextField} onChange={(e) => { updateRange(Number(e.target.value), maxSelected) }} />
+      <div className="date-picker-range">
         <div style={{paddingTop: "1em"}}>
           <Range
             allowCross={false}
@@ -53,12 +53,14 @@ export const DateRangePicker: React.FC<any> = (props: DateRangePickerProps) => {
             onChange={([new_min, new_max]) => { updateRange(new_min, new_max) }} />
         </div>
       </div>
-      <input type="text" maxLength={4} style={{width: "4em"}} value={maxTextField} onChange={(e) => updateRange(minSelected, Number(e.target.value))} />
-      {changed && <button className="btn btn-xs btn-secondary"
-                          style={{marginLeft: "1em"}}
-                          onClick={() => props.onRangeUpdated(minSelected, maxSelected)} >
-        Apply
-      </button>}
+      <input className="date-picker-end" type="text" maxLength={4} style={{width: "4em"}} value={maxTextField} onChange={(e) => updateRange(minSelected, Number(e.target.value))} />
+      {(changed || true) && <div className="date-picker-apply">
+        <button className="btn btn-xs btn-secondary"
+                style={{marginLeft: "1em"}}
+                onClick={() => props.onRangeUpdated(minSelected, maxSelected)} >
+          Apply
+        </button>
+      </div>}
     </div>
 
     </>
