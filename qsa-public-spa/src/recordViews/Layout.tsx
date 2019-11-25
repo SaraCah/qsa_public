@@ -244,7 +244,7 @@ const Layout: React.FC<any> = (props: any) => {
                   <aside id="qg-secondary-content">
                     <UserSession context={context} />
 
-                    <div className="qg-aside">{props.aside}</div>
+                    <div className="qg-aside" style={{clear: "both"}}>{props.aside}</div>
                   </aside>
                 )}
 
