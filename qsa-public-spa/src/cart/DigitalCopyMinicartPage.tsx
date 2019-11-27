@@ -30,9 +30,9 @@ export const DigitalCopyMinicartPage: React.FC<any> = () => {
                       <div className="ssq-minicart-cards">
                           <h3>Cards accepted</h3>
                           <ul>
-                              <li><img src="{AppConfig.minicart_base_url + '/payment/minicart/visa.png'}"
+                              <li><img src={AppConfig.minicart_base_url + '/payment/minicart/visa.png'}
                                        alt="Visa" /></li>
-                              <li><img src="{AppConfig.minicart_base_url + '/payment/minicart/mastercard.png'}"
+                              <li><img src={AppConfig.minicart_base_url + '/payment/minicart/mastercard.png'}
                                        alt="MasterCard" /></li>
                           </ul>
                       </div>
