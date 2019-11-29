@@ -554,7 +554,7 @@ class QSAPublic < Sinatra::Base
     end
   end
 
-  Endpoint.post('/api/minicart-notify/:notify_key')
+  Endpoint.get_or_post('/api/minicart-notify/:notify_key')
     .param(:notify_key, String, "Notify key") do
     Carts.minicart_notify(params[:notify_key])
 
