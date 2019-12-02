@@ -169,34 +169,39 @@ const AspaceAdvancedSearch: React.FC<{
               </div>
             </div>
           </div>
-          <div className="form-group">
-            <div className="form-row">
-              <label>
-                <input
-                  type="checkbox"
-                  name="open"
-                  checked={advancedSearchQuery.isOpenRecordsOnly()}
-                  onChange={(e): void =>
-                    setAdvancedSearchQuery(advancedSearchQuery.setOpenRecordsOnly(e.target.checked))
-                  }
-                />{' '}
-                Open records only
-              </label>
-            </div>
-            <div className="form-row">
-              <label>
-                <input
-                  type="checkbox"
-                  name="has_digital"
-                  checked={advancedSearchQuery.hasDigitalObjects()}
-                  onChange={(e): void =>
-                    setAdvancedSearchQuery(advancedSearchQuery.setHasDigitalObjects(e.target.checked))
-                  }
-                />{' '}
-                Records with digital objects only
-              </label>
-            </div>
-          </div>
+          {
+            advancedSearchQuery.getTypeLimits().length === 1 &&  advancedSearchQuery.isTypeSelected('archival_object') &&
+            <>
+              <div className="form-group">
+                <div className="form-row">
+                  <label>
+                    <input
+                        type="checkbox"
+                        name="open"
+                        checked={advancedSearchQuery.isOpenRecordsOnly()}
+                        onChange={(e): void =>
+                            setAdvancedSearchQuery(advancedSearchQuery.setOpenRecordsOnly(e.target.checked))
+                        }
+                    />{' '}
+                    Open records only
+                  </label>
+                </div>
+                <div className="form-row">
+                  <label>
+                    <input
+                        type="checkbox"
+                        name="has_digital"
+                        checked={advancedSearchQuery.hasDigitalObjects()}
+                        onChange={(e): void =>
+                            setAdvancedSearchQuery(advancedSearchQuery.setHasDigitalObjects(e.target.checked))
+                        }
+                    />{' '}
+                    Records with digital objects only
+                  </label>
+                </div>
+              </div>
+            </>
+          }
           <div className="row">
             <button className="qg-btn btn-primary col-sm-2">Submit</button>
             <Link to="/" className="qg-btn btn-default search-reset-btn col-sm-2">Reset</Link>

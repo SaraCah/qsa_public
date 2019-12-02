@@ -554,6 +554,11 @@ class Search
 
     start_index = (page * AppConfig[:page_size])
 
+    if record_types != ['archival_object']
+      query.filter_linked_digital_objects_only = false
+      query.filter_open_records_only = false
+    end
+
     filters = [
       "primary_type:(#{record_types.join(' OR ')})",
       *query.filters.map {|filter|

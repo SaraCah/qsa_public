@@ -4,8 +4,9 @@ require 'date'
 class AdvancedSearchQuery
   attr_reader :query_string, :filter_start_date,
               :filters,
-              :filter_end_date, :filter_types,
-              :filter_open_records_only, :filter_linked_digital_objects_only
+              :filter_end_date, :filter_types
+
+  attr_accessor :filter_open_records_only, :filter_linked_digital_objects_only
 
   # These fields will be rewritten into queries that target multiple underlying Solr fields with specified weights
   EXPANDED_FIELDS = {

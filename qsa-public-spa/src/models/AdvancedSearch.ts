@@ -115,7 +115,9 @@ export class AdvancedSearchQuery {
 
   getTypeLimits(): string[] {
     if (this.criteria.recordTypes) {
-      return Object.keys(this.criteria.recordTypes);
+      return Object.keys(this.criteria.recordTypes).filter((recordType: string) => {
+        return this.criteria.recordTypes && this.criteria.recordTypes[recordType];
+      });
     } else {
       return [];
     }
