@@ -112,9 +112,9 @@ export class Http {
     return error;
   }
 
-  async fetchResults<T>(advancedSearchQuery: AdvancedSearchQuery, page = 0): Promise<T[]> {
+  async fetchResults<T>(advancedSearchQuery: AdvancedSearchQuery, page = 0, sort = 'relevance'): Promise<T[]> {
     const query = advancedSearchQuery.toJSON();
-    const response = await axios.post(`${searchUrl}?query=${query}&page=${page}`, this.getConfig()).catch(error => {
+    const response = await axios.post(`${searchUrl}?query=${query}&page=${page}&sort=${sort}`, this.getConfig()).catch(error => {
       return this.handleError(error, "Failed to fetch search results");
     });
 

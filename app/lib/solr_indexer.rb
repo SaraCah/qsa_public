@@ -45,6 +45,17 @@ class SolrIndexer
           batch << JSON.parse(ungzip(row[:blob]))
         end
 
+        # Load our first published times in as well.
+        publish_times_by_uri = db[:index_feed_publish_metadata]
+                                 .filter(:record_uri => batch.map {|record| record.fetch('uri')})
+                                 .select(:record_uri, :publish_time)
+                                 .map {|row| [row[:record_uri], Time.at(row[:publish_time]).utc.iso8601]}
+                                 .to_h
+
+        batch.each do |record|
+          record['publish_time'] = publish_times_by_uri.fetch(record['uri'])
+        end
+
         send_batch(batch)
         needs_commit = true
 

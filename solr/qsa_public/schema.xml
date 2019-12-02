@@ -21,6 +21,7 @@
   <field name="end_date" type="pdate" stored="true" multiValued="false" />
 
   <field name="last_modified_time" type="pdate" stored="true" multiValued="false" />
+  <field name="publish_time" type="pdate" stored="true" multiValued="false" />
 
   <field name="has_digital_representations" type="boolean" indexed="true" stored="true" multiValued="false"/>
   <field name="has_physical_representations" type="boolean" indexed="true" stored="true" multiValued="false"/>
@@ -35,6 +36,8 @@
   <field name="dates_display_string" type="string" indexed="false" stored="true" multiValued="false"/>
   <field name="digital_representation_count" type="pint" indexed="false" stored="true" multiValued="false"/>
   <field name="physical_representation_count" type="pint" indexed="false" stored="true" multiValued="false"/>
+
+  <field name="popularity_score" type="pint" indexed="false" stored="true" multiValued="false"/>
 
   <field name="parent_solr_doc_uri" type="string" indexed="true" stored="true" multiValued="false" />
 

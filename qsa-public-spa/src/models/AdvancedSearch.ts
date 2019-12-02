@@ -17,6 +17,7 @@ export interface Criteria {
   toDate?: string;
   openRecordsOnly?: boolean;
   hasDigitalObjects?: boolean;
+  sort?: string;
 }
 
 export interface Filter {
@@ -80,6 +81,16 @@ export class AdvancedSearchQuery {
 
   getClauses(): Clause[] {
     return this.criteria.clauses;
+  }
+
+  getSort(): string {
+    return (this.criteria.sort || 'relevance');
+  }
+
+  setSort(newSort: string): AdvancedSearchQuery {
+    const newCriteria: Criteria = { ...this.criteria };
+    newCriteria.sort = newSort;
+    return new AdvancedSearchQuery(newCriteria);
   }
 
   setFromDate(date: string): AdvancedSearchQuery {
@@ -227,7 +238,8 @@ export class AdvancedSearchQuery {
         from: this.criteria.fromDate,
         to: this.criteria.toDate,
         open: this.isOpenRecordsOnly(),
-        has_digital: this.hasDigitalObjects()
+        has_digital: this.hasDigitalObjects(),
+        sort: this.getSort(),
       },
       {
         arrayFormat: 'bracket'
@@ -337,6 +349,10 @@ export class AdvancedSearchQuery {
 
     if (raw.has_digital) {
       result.criteria.hasDigitalObjects = raw.has_digital === 'true';
+    }
+
+    if (raw.sort) {
+      result.criteria.sort = raw.sort;
     }
 
     return result;

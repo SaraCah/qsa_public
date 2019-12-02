@@ -33,7 +33,7 @@ const ResultsPage: React.FC<PageRoute> = (route: PageRoute) => {
 
   if (!searchResults) {
     Http.get()
-      .fetchResults(advancedSearchQuery, currentPage)
+      .fetchResults(advancedSearchQuery, currentPage, advancedSearchQuery.getSort())
       .then((results: any) => {
         setSearchResults(results);
         setShowCompact(true);
@@ -428,6 +428,21 @@ const SearchResults: React.FC<{
   );
   const pageLower = Math.min(pageUpper, props.searchResults.current_page * props.searchResults.page_size + 1);
 
+  const [sort, setSort] = useState(props.advancedSearchQuery.getSort());
+
+  const updateSort = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newSort = e.target.value;
+
+    if (sort !== newSort) {
+      setSort(newSort);
+    }
+  };
+
+  if (sort != props.advancedSearchQuery.getSort()) {
+    // Show results with the new sort order
+    return <Redirect to={'/search?' + props.advancedSearchQuery.setSort(sort).toQueryString()} />;
+  }
+
   if (props.searchResults.results.length === 0) {
     return <section className="qg-results">
       <SaveYourSearch query={props.advancedSearchQuery} context={props.context} />
@@ -441,6 +456,24 @@ const SearchResults: React.FC<{
     <section className="qg-results">
       <SaveYourSearch query={props.advancedSearchQuery} context={props.context} />
       <h2>Your search results</h2>
+
+      <div className="row">
+        <div className="col-sm-12">
+          <div className="pull-right">
+            <small>
+            Sort by&nbsp;
+              <select onChange={ (e) => { updateSort(e) } } value={props.advancedSearchQuery.getSort()}>
+                <option value="relevance">Relevance (default)</option>
+                <option value="recent_desc">Recently opened</option>
+                <option value="popular_desc">Most popular</option>
+                <option value="title_asc">Title (A-Z)</option>
+                <option value="date_desc">Date (newest to oldest)</option>
+                <option value="date_asc">Date (oldest to newest)</option>
+              </select>
+            </small>
+          </div>
+        </div>
+      </div>
 
       <div className="row">
         <div className="col-sm-12">

@@ -126,6 +126,8 @@ class Search
     'position_desc' => 'position desc',
     'date_asc' => 'start_date asc, title_sort asc',
     'date_desc' => 'start_date desc, title_sort desc',
+    'recent_desc' => 'publish_time desc',
+    'popular_desc' => 'popularity_score desc',
   }
 
 
