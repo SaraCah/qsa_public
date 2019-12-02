@@ -262,10 +262,10 @@ class Carts < BaseStorage
             system_mtime: now,
             )
 
-        DeferredTasks.add_closed_record_request_task(agency_request_id, user)
-
         remove_item(user_id, item.fetch(:id))
       end
+
+      DeferredTasks.add_closed_record_request_task(agency_request_id, user)
     end
   end
 
