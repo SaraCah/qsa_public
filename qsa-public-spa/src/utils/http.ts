@@ -28,6 +28,7 @@ const submitReadingRoomRequestsUrl = `${baseURL}/api/users/cart/create_reading_r
 const userRequestsUrl = `${baseURL}/api/users/requests`;
 const clearCartUrl = `${baseURL}/api/users/cart/clear`;
 const submitDigitalQuoteUrl = `${baseURL}/api/users/cart/create_digital_copy_quote_requests`;
+const reorderOpenRequestsUrl = `${baseURL}/api/users/cart/reorder_open_request`;
 const digitalCopyPricingUrl = `${baseURL}/api/digital_copy_pricing`;
 const submitOrderUrl = `${baseURL}/api/submit_order`;
 const getTagsUrl = `${baseURL}/api/tags`;
@@ -666,6 +667,22 @@ export class Http {
 
     const response = await axios.post(savedSearchesUpdateUrl, bodyFormData, config).catch(error => {
       return this.handleError(error, "Failed to update saved search");
+    });
+
+    return response.data || [];
+  }
+
+  async reorderOpenRequests(cartItemId: string, currentIndex: number, targetIndex: number): Promise<any> {
+    const bodyFormData = new FormData();
+    bodyFormData.append('cart_item_id', cartItemId);
+    bodyFormData.append('current_index', currentIndex + '');
+    bodyFormData.append('target_index', targetIndex + '');
+
+    const config = this.getConfig();
+    config.headers['Content-Type'] = 'multipart/form-data';
+
+    const response = await axios.post(reorderOpenRequestsUrl, bodyFormData, config).catch(error => {
+      return this.handleError(error, "Failed to update order");
     });
 
     return response.data || [];

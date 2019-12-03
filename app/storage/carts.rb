@@ -23,11 +23,13 @@ class Carts < BaseStorage
   def self.get(user_id)
     items = db[:cart_item]
       .filter(user_id: user_id)
-      .map do |row|
+      .each_with_index
+      .map do |row, idx|
       {
         id: row[:id],
         item_id: row[:item_id],
         request_type: row[:request_type],
+        position: row[:position],
         options: CartItemDTO.from_row(row),
       }
     end
@@ -51,7 +53,7 @@ class Carts < BaseStorage
     cart = {
       reading_room_requests: {
         total_count: reading_room_requests.count,
-        open_records: reading_room_requests.select{|item| item[:record].fetch('rap_access_status') == 'Open Access'},
+        open_records: reading_room_requests.select{|item| item[:record].fetch('rap_access_status') == 'Open Access'}.sort{|a, b| a[:position] <=> b[:position]},
         closed_records: reading_room_requests.select{|item| item[:record].fetch('rap_access_status') == 'Restricted Access'}.group_by{|item| item[:record].fetch('responsible_agency').fetch('ref')},
         agencies: [],
       },
@@ -119,10 +121,16 @@ class Carts < BaseStorage
   def self.add_item(user_id, request_type, item_id)
     raise "Request type not supported: #{request_type}" unless VALID_REQUEST_TYPES.include?(request_type)
 
+    next_position = db[:cart_item]
+                     .filter(user_id: user_id)
+                     .filter(request_type: request_type)
+                     .max(:position) + 1
+
     values = {
       user_id: user_id,
       request_type: request_type,
       item_id: item_id,
+      position: next_position,
       uniq_hash: build_cart_item_hash(user_id, item_id, request_type)
     }
 
@@ -336,5 +344,31 @@ class Carts < BaseStorage
     end
 
     count
+  end
+
+  def self.reorder_open_item(user_id, cart_item_id, direction)
+    cart = get(user_id)
+    sorted_request_ids = cart.fetch(:reading_room_requests, {}).fetch(:open_records, []).sort{|a,b| a[:position] <=> b[:position]}.map{|r| r[:id]}
+
+    current_index = sorted_request_ids.index(cart_item_id)
+
+    return if current_index < 0
+
+    sorted_request_ids.delete(cart_item_id)
+
+    # move up
+    if direction == :up
+      sorted_request_ids.insert([current_index-1, 0].max, cart_item_id)
+
+    # move down
+    else
+      sorted_request_ids.insert([current_index+1, sorted_request_ids.length].min, cart_item_id)
+    end
+
+    sorted_request_ids.each_with_index do |id, idx|
+      db[:cart_item]
+        .filter(id: id)
+        .update(position: idx + 1)
+    end
   end
 end

@@ -5,12 +5,13 @@ import Layout from '../recordViews/Layout';
 import { Http } from '../utils/http';
 import { IAppContext } from '../context/AppContext';
 import { PageRoute } from '../models/PageRoute';
+import {toISODateString} from "../utils/rendering";
 
 
 export const MyReadingRoomRequestsCartPage: React.FC<PageRoute> = (route: PageRoute) => {
   const context = route.context;
 
-  const [requiredDate, setRequiredDate] = useState(new Date().toISOString().split('T')[0]);
+  const [requiredDate, setRequiredDate] = useState(toISODateString(new Date()));
   const [requiredTime, setRequiredTime] = useState('Morning');
   const [showReadingRoomSuccess, setShowReadingRoomSuccess] = useState(false);
   const [agencyFields, setAgencyFields]: [any, any] = useState({});
@@ -40,6 +41,14 @@ export const MyReadingRoomRequestsCartPage: React.FC<PageRoute> = (route: PageRo
       .catch((exception: Error) => {
         console.error(exception);
       });
+  };
+
+  const reorderItem = (item: any, currentIndex: number, targetIndex: number): void => {
+    Http.get()
+        .reorderOpenRequests(item.id, currentIndex, targetIndex)
+        .then(() => {
+          context.refreshCart();
+        });
   };
 
   useEffect(() => {
@@ -119,13 +128,35 @@ export const MyReadingRoomRequestsCartPage: React.FC<PageRoute> = (route: PageRo
                               </select>
                             </div>
                           </div>
-                          {context.cart.reading_room_requests.open_records.map((cartItem: any) => (
+                          {context.cart.reading_room_requests.open_records.map((cartItem: any, idx: number) => (
                             <div key={cartItem.id}>
                               <div className="mb-2 qg-grab" role="listitem">
                                 <div className="pull-right">
-                                  <span className="badge pull-right">Open record</span>
+                                  {
+                                    idx > 0 &&
+                                    <div>
+                                      <button title="Move this item up the list"
+                                              className="qg-btn btn-secondary btn-xs"
+                                              onClick={e => { e.preventDefault(); reorderItem(cartItem, idx, idx - 1) }}>
+                                        <i className="fa fa-arrow-up" aria-hidden={true}/> Priority
+                                      </button>
+                                    </div>
+                                  }
+                                  {
+                                    idx < context.cart.reading_room_requests.open_records.length - 1 &&
+                                    <div>
+                                      <button title="Move this item down the list"
+                                              className="qg-btn btn-secondary btn-xs"
+                                              onClick={e => { e.preventDefault(); reorderItem(cartItem, idx, idx + 1) }}>
+                                        <i className="fa fa-arrow-down" aria-hidden={true}/> Priority
+                                      </button>
+                                    </div>
+                                  }
+                                  <div>
+                                    <span className="badge">Open record</span>
+                                  </div>
                                 </div>
-                                <div className="d-flex w-100 justify-content-between">
+                                <div>
                                   <h3>
                                     <Link to={uriFor(cartItem.record.controlling_record.qsa_id_prefixed, 'archival_object')}>
                                       {cartItem.record.title}

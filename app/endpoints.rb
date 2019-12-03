@@ -525,6 +525,17 @@ class QSAPublic < Sinatra::Base
     json_response({status: 'success'})
   end
 
+  Endpoint.post('/api/users/cart/reorder_open_request')
+    .param(:cart_item_id, Integer, "Cart item id")
+    .param(:current_index, Integer, "Current index")
+    .param(:target_index, Integer, "Target index") do
+
+    next [404] unless Ctx.user_logged_in?
+
+    Carts.reorder_open_item(Ctx.get.session.user_id, params[:cart_item_id], params[:current_index] > params[:target_index] ? :up : :down)
+    json_response({status: 'success'})
+  end
+
   Endpoint.post('/api/admin/become_user')
     .param(:user_id, Integer, "User ID") do
 
