@@ -184,7 +184,7 @@ class Carts < BaseStorage
     DeferredTasks.add_digital_copy_quote_request_task(quote_request_id, user)
   end
 
-  def self.handle_open_records(user_id, date_required)
+  def self.handle_open_records(user_id, date_required, time_required)
     now = Time.now
 
     user = Users.get(user_id)
@@ -198,6 +198,7 @@ class Carts < BaseStorage
           item_uri: item.fetch(:record).fetch('uri'),
           status: 'PENDING',
           date_required: date_required ? date_required.to_time.to_i * 1000 : date_required,
+          time_required: time_required,
           created_by: user.fetch('email'),
           modified_by: user.fetch('email'),
           create_time: now.to_i * 1000,
@@ -255,6 +256,7 @@ class Carts < BaseStorage
             item_uri: item.fetch(:record).fetch('uri'),
             status: 'AWAITING_AGENCY_APPROVAL',
             date_required: nil,
+            time_required: nil,
             created_by: user.fetch('email'),
             modified_by: user.fetch('email'),
             create_time: now.to_i * 1000,

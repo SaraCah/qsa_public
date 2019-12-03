@@ -436,6 +436,7 @@ class QSAPublic < Sinatra::Base
 
   Endpoint.post('/api/users/cart/create_reading_room_requests')
     .param(:date_required, String, "Date of pick up from reading room", optional: true)
+    .param(:time_required, String, "Time of pick up from reading room", optional: true)
     .param(:agency_fields, String, "JSON Blob of agency fields", optional: true) do
 
     next [404] unless Ctx.user_logged_in?
@@ -453,7 +454,7 @@ class QSAPublic < Sinatra::Base
       agency_fields = JSON.parse(params[:agency_fields])
     end
 
-    Carts.handle_open_records(Ctx.get.session.user_id, date_required)
+    Carts.handle_open_records(Ctx.get.session.user_id, date_required, params[:time_required] || 'Morning')
     Carts.handle_closed_records(Ctx.get.session.user_id, agency_fields)
 
     Carts.clear(Ctx.get.session.user_id, Carts::REQUEST_TYPE_READING_ROOM)

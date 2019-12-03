@@ -10,7 +10,8 @@ import { PageRoute } from '../models/PageRoute';
 export const MyReadingRoomRequestsCartPage: React.FC<PageRoute> = (route: PageRoute) => {
   const context = route.context;
 
-  const [requiredDate, setRequiredDate] = useState('');
+  const [requiredDate, setRequiredDate] = useState(new Date().toISOString().split('T')[0]);
+  const [requiredTime, setRequiredTime] = useState('Morning');
   const [showReadingRoomSuccess, setShowReadingRoomSuccess] = useState(false);
   const [agencyFields, setAgencyFields]: [any, any] = useState({});
   const [requiredDateInPast, setRequiredDateInPast]: [boolean, any] = useState(false);
@@ -30,7 +31,7 @@ export const MyReadingRoomRequestsCartPage: React.FC<PageRoute> = (route: PageRo
     event.preventDefault();
     setShowReadingRoomSuccess(false);
     Http.get()
-      .submitReadingRoomRequests(requiredDate, agencyFields)
+      .submitReadingRoomRequests(requiredDate, requiredTime, agencyFields)
       .then(() => {
         window.scrollTo(0,0);
         context.refreshCart();
@@ -82,8 +83,8 @@ export const MyReadingRoomRequestsCartPage: React.FC<PageRoute> = (route: PageRo
                               Getting ready for the reading room
                             </h2>
                             <p>
-                              Looks like you are planning to visit the reading room. You&apos;ll need to nominate a
-                              day to visit:
+                              Reading Room delivery / If you&#39;re ordering for a visit in the future, please
+                              nominate the day of your visit:
                             </p>
                             <div className="form-group">
                               <label className="sr-only" htmlFor="date-required">
@@ -95,11 +96,27 @@ export const MyReadingRoomRequestsCartPage: React.FC<PageRoute> = (route: PageRo
                                 id="date-required"
                                 style={{ position: 'relative', opacity: 1, zIndex: 'initial' }}
                                 onChange={e => setRequiredDate(e.target.value)}
+                                value={requiredDate}
                                 required
                               />
                               {requiredDateInPast && (
-                                <small className="alert alert-warning">Date provided is in the past</small>
+                                  <div><small className="alert alert-warning">Date provided is in the past</small></div>
                               )}
+                              <div><small>QSA is open from 9.00am to 4.30pm Monday to Friday and the second Saturday of every month</small></div>
+                            </div>
+                            <div className="form-group">
+                              <label className="sr-only" htmlFor="time-required">
+                                Time of day required
+                              </label>
+                              <select
+                                  className="form-control"
+                                  id="time-required"
+                                  onChange={e => setRequiredTime(e.target.value)}
+                                  required
+                              >
+                                <option>Morning</option>
+                                <option>Afternoon</option>
+                              </select>
                             </div>
                           </div>
                           {context.cart.reading_room_requests.open_records.map((cartItem: any) => (
@@ -111,23 +128,35 @@ export const MyReadingRoomRequestsCartPage: React.FC<PageRoute> = (route: PageRo
                                 <div className="d-flex w-100 justify-content-between">
                                   <h3>
                                     <Link to={uriFor(cartItem.record.controlling_record.qsa_id_prefixed, 'archival_object')}>
-                                      {cartItem.record.qsa_id_prefixed}: {cartItem.record.display_string}
+                                      {cartItem.record.title}
                                     </Link>
                                   </h3>
                                 </div>
                                 <dl className="row">
+                                  <dt className="col-xs-6">Item ID</dt>
+                                  <dd className="col-xs-6">
+                                    <Link to={uriFor(cartItem.record.controlling_record.qsa_id_prefixed, 'archival_object')}>
+                                      {cartItem.record.qsa_id_prefixed}
+                                    </Link>
+                                  </dd>
                                   <dt className="col-xs-6">Item type</dt>
                                   <dd className="col-xs-6">{labelForType(cartItem.record.jsonmodel_type)}</dd>
-                                  <dt className="col-xs-6">Parent item</dt>
+                                  <dt className="col-xs-6">Item format</dt>
+                                  <dd className="col-xs-6">{cartItem.record.format}</dd>
+                                  <dt className="col-xs-6">Parent ID</dt>
                                   <dd className="col-xs-6">
                                     <Link to={uriFor(cartItem.record.controlling_record.qsa_id_prefixed, 'archival_object')}>
                                       {cartItem.record.controlling_record.qsa_id_prefixed}
                                     </Link>
                                   </dd>
+                                  <dt className="col-xs-6">Parent title</dt>
+                                  <dd className="col-xs-6">
+                                    <Link to={uriFor(cartItem.record.controlling_record.qsa_id_prefixed, 'archival_object')}>
+                                      {cartItem.record.controlling_record._resolved.display_string}
+                                    </Link>
+                                  </dd>
                                   <dt className="col-xs-6">Delivery location</dt>
                                   <dd className="col-xs-6">Reading room</dd>
-                                  <dt className="col-xs-6">Cost</dt>
-                                  <dd className="col-xs-6">Free</dd>
                                 </dl>
                                 <h4 className="sr-only">Actions</h4>
                                 <div className="btn-group">
@@ -279,7 +308,7 @@ export const MyReadingRoomRequestsCartPage: React.FC<PageRoute> = (route: PageRo
                           .then(() => context.refreshCart());
                     }}
                   >
-                    Clear cart
+                    Clear Requests
                   </button>
                         </p>
                       </div>

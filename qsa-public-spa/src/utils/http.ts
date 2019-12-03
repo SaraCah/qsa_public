@@ -317,10 +317,14 @@ export class Http {
     return response.data || [];
   }
 
-  async submitReadingRoomRequests(dateRequired?: string, agencyFields?: any): Promise<any> {
+  async submitReadingRoomRequests(dateRequired?: string, timeRequired?: string, agencyFields?: any): Promise<any> {
     const bodyFormData = new FormData();
     if (dateRequired) {
       bodyFormData.set('date_required', dateRequired);
+    }
+
+    if (timeRequired) {
+      bodyFormData.set('time_required', timeRequired);
     }
 
     if (agencyFields) {
