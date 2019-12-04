@@ -15,7 +15,10 @@ import { IAppContext } from '../context/AppContext';
 import { PageRoute } from '../models/PageRoute';
 import {AdvancedSearchQuery} from "../models/AdvancedSearch";
 import {CompactSearchSummary} from "./Results";
-import {formatDateForDisplay} from "../utils/rendering";
+import {
+  formatConstantForDisplay,
+  formatDateForDisplay
+} from "../utils/rendering";
 
 
 const FormErrors: React.FC<{ errors: any }> = ({ errors }) => {
@@ -1158,29 +1161,53 @@ export const UserManagementPage: React.FC<PageRoute> = (route: PageRoute) => {
 };
 
 const RequestSummary: React.FC<any> = props => {
-  const [request] = useState(props.request);
+  const [requestId] = useState(props.requestId);
+  const [version, setVersion] = useState(0);
+  const [request, setRequest]: [any, any] = useState(null);
+
+  useEffect(() => {
+    Http.get()
+        .getRequest(requestId)
+        .then((json: any) => {
+          setRequest(json);
+        });
+  }, [requestId, version]);
+
+  if (!request) {
+    return <></>;
+  }
 
   return (
     <>
       <div className="row">
         <div className="col-sm-12">
           <small>
-            <span aria-hidden="true">«</span>
-            <button className="qg-btn btn-link btn-xs" onClick={() => props.onClear()}>
+            <Link to="/my-requests">
+              <span aria-hidden="true">«</span>
+              &nbsp;
               Return to listing
-            </button>
+            </Link>
           </small>
         </div>
         <div className="col-sm-12">
-          <h1>Reading Room Request: {request.id}</h1>
+          <h1>Reading Room Request</h1>
           <dl className="row">
+            <dt className="col-3">Request No.</dt>
+            <dd className="col-9">RR{request.id}</dd>
             <dt className="col-3">Status</dt>
-            <dd className="col-9">{request.status}</dd>
+            <dd className="col-9">{formatConstantForDisplay(request.status)}</dd>
             <dt className="col-3">Date Required</dt>
-            <dd className="col-9">{(request.date_required ? new Date(request.date_required).toLocaleDateString() : 'Not yet provided')}</dd>
+            <dd className="col-9">
+              {(request.date_required ? new Date(request.date_required).toLocaleDateString() : 'Not yet provided')}
+              &nbsp;{request.time_required}
+            </dd>
           </dl>
           <table className="table table-bordered" style={{width: 'auto', maxWidth: '100%'}}>
             <tbody>
+              <tr>
+                <th colSpan={2}>Queensland State Archives</th>
+                <th colSpan={2}>Client copy</th>
+              </tr>
               <tr>
                 <th>Item ID</th>
                 <td>
@@ -1194,15 +1221,9 @@ const RequestSummary: React.FC<any> = props => {
                 </td>
               </tr>
               <tr>
-                <th>Dept ID</th>
+                <th>Agency Control No.</th>
                 <td colSpan={3}>
-                  <Link
-                    to={uriFor(request.record.responsible_agency._resolved.qsa_id_prefixed, 'agent_corporate_entity')}
-                    target="_blank"
-                  >
-                    {request.record.responsible_agency._resolved.qsa_id_prefixed}&nbsp;
-                    {request.record.responsible_agency._resolved.display_string}
-                  </Link>
+                    {request.record.agency_assigned_id}
                 </td>
               </tr>
               <tr>
@@ -1231,6 +1252,16 @@ const RequestSummary: React.FC<any> = props => {
                   </Link>
                 </td>
               </tr>
+              <tr>
+                <th>Researcher ID</th>
+                <td>
+                  {props.context.user.id}
+                </td>
+                <th>Date Requested</th>
+                <td>
+                  {new Date(request.create_time).toLocaleDateString()}
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -1242,13 +1273,25 @@ const RequestSummary: React.FC<any> = props => {
 const RequestsSummary: React.FC<any> = props => {
   const [results, setResults] = useState({ results: [] });
 
-  useEffect(() => {
+  const refreshRequests = () => {
     Http.get()
-      .getRequests()
-      .then((data: any) => {
-        setResults(data);
-      });
+        .getRequests()
+        .then((data: any) => {
+          setResults(data);
+        });
+  };
+
+  useEffect(() => {
+    refreshRequests();
   }, []);
+
+  const cancelRequest = (request: any) => {
+    Http.get()
+        .cancelRequest(request.id)
+        .then(() => {
+          refreshRequests();
+        });
+  };
 
   return (
     <>
@@ -1270,8 +1313,8 @@ const RequestsSummary: React.FC<any> = props => {
             results.results.map((request: any) => (
               <tr key={request.id}>
                 <td>{request.id}</td>
-                <td>{request.request_type}</td>
-                <td>{request.status}</td>
+                <td>{formatConstantForDisplay(request.request_type)}</td>
+                <td>{formatConstantForDisplay(request.status)}</td>
                 <td>
                   <Link to={uriFor(request.record.controlling_record.qsa_id_prefixed, 'archival_object')}>
                     {request.record.qsa_id_prefixed}
@@ -1284,9 +1327,14 @@ const RequestsSummary: React.FC<any> = props => {
                 <td>{request.date_required && new Date(request.date_required).toLocaleDateString()} {request.time_required}</td>
                 <td>{new Date(request.create_time).toLocaleString()}</td>
                 <td>
-                  <button className="qg-btn btn-primary btn-xs" onClick={() => props.onSelectRequest(request)}>
+                  <Link className="qg-btn btn-primary btn-xs" to={`/my-requests/${request.id}`}>
                     View Request
-                  </button>
+                  </Link>
+                  {['PENDING', 'AWAITING_AGENCY_APPROVAL'].indexOf(request.status) >= 0 &&
+                    <button className="qg-btn btn-danger btn-xs" onClick={() => cancelRequest(request)}>
+                      Cancel Request
+                    </button>
+                  }
                 </td>
               </tr>
             ))}
@@ -1297,17 +1345,18 @@ const RequestsSummary: React.FC<any> = props => {
 };
 
 export const MyRequestsPage: React.FC<PageRoute> = (route: PageRoute) => {
-  const [selectedRequest, setSelectedRequest] = useState(null);
   return (
     <LoginRequired context={route.context}>
-      {
-        selectedRequest ? (
-          <RequestSummary context={route.context} request={selectedRequest} onClear={() => setSelectedRequest(null)} />
-        ) : (
-          <RequestsSummary context={route.context} onSelectRequest={setSelectedRequest} />
-        )
-      }
+      <RequestsSummary context={route.context} />
     </LoginRequired>
+  );
+};
+
+export const MyRequestPage: React.FC<PageRoute> = (route: PageRoute) => {
+  return (
+      <LoginRequired context={route.context}>
+        <RequestSummary context={route.context} requestId={route.match.params.id} />
+      </LoginRequired>
   );
 };
 

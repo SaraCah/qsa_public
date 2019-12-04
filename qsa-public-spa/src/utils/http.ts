@@ -26,6 +26,8 @@ const updateCartItemsUrl = `${baseURL}/api/users/cart/update_items`;
 const removeFromCartUrl = `${baseURL}/api/users/cart/remove_item`;
 const submitReadingRoomRequestsUrl = `${baseURL}/api/users/cart/create_reading_room_requests`;
 const userRequestsUrl = `${baseURL}/api/users/requests`;
+const userGetRequestUrl = `${baseURL}/api/users/requests/`;
+const cancelRequestUrl = `${baseURL}/api/users/requests/cancel`;
 const clearCartUrl = `${baseURL}/api/users/cart/clear`;
 const submitDigitalQuoteUrl = `${baseURL}/api/users/cart/create_digital_copy_quote_requests`;
 const reorderOpenRequestsUrl = `${baseURL}/api/users/cart/reorder_open_request`;
@@ -345,6 +347,27 @@ export class Http {
   async getRequests(): Promise<any> {
     const response = await axios.get(`${userRequestsUrl}`, this.getConfig()).catch(error => {
       return this.handleError(error, "Failed to get user requests");
+    });
+
+    return response.data || [];
+  }
+
+  async getRequest(requestId: string): Promise<any> {
+    const response = await axios.get(`${userGetRequestUrl}${requestId}`, this.getConfig()).catch(error => {
+      return this.handleError(error, "Failed to get request");
+    });
+
+    return response.data || [];
+  }
+
+  async cancelRequest(requestId: string): Promise<any> {
+    const config = this.getConfig();
+
+    const bodyFormData = new FormData();
+    bodyFormData.set('id', requestId);
+
+    const response = await axios.post(cancelRequestUrl, bodyFormData, config).catch(error => {
+      return this.handleError(error, "Failed to cancel request");
     });
 
     return response.data || [];

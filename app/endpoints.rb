@@ -506,6 +506,24 @@ class QSAPublic < Sinatra::Base
     json_response(Requests.all(Ctx.get.session.user_id))
   end
 
+  Endpoint.post('/api/users/requests/cancel')
+    .param(:id, String, "Request ID") do
+
+    next [404] unless Ctx.user_logged_in?
+
+    Requests.cancel(Ctx.get.session.user_id, params[:id])
+    json_response({status: 'success'})
+  end
+
+  Endpoint.get('/api/users/requests/:id')
+    .param(:id, String, "Request ID") do
+    next [404] unless Ctx.user_logged_in?
+    request = Requests.get(Ctx.get.session.user_id, params[:id])
+    next [404] if request.nil?
+
+    json_response(request)
+  end
+
   Endpoint.post('/api/users/cart/clear')
     .param(:request_type, String, "Request Type") do
 

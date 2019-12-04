@@ -32,7 +32,7 @@ import {
   MyRequestsPage,
   RegisterPage, TagManagementPage,
   UserManagementPage,
-  PageManagementPage, MySearchesPage,
+  PageManagementPage, MySearchesPage, MyRequestPage,
 } from './recordViews/Users';
 import { PasswordRecoveryPage } from './recordViews/PasswordRecovery';
 
@@ -220,6 +220,7 @@ ReactDOM.render(
         <Route exact path="/digital-copies-cart/set-price-checkout" component={wrappedRoute(DigitalCopySetPricePage, { pageTitle: 'Checkout Set Price Digital Copies' })} />
         <Route exact path="/digital-copies-cart/minicart" component={wrappedRoute(DigitalCopyMinicartPage, { pageTitle: 'Confirm Your Order' })} />
         <Route exact path="/my-requests" component={wrappedRoute(MyRequestsPage, { pageTitle: 'My Requests' })} />
+        <Route exact path="/my-requests/:id" component={wrappedRoute(MyRequestPage, { pageTitle: 'My Request' })} />
         <Route
           exact
           path="/my-details"

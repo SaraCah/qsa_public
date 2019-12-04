@@ -23,3 +23,7 @@ export const toISODateString = (date: Date): string => {
 
   return [year, month, day].join('-');
 };
+
+export const formatConstantForDisplay = (str: string): string => {
+  return str.split('_').join(' ');
+};
