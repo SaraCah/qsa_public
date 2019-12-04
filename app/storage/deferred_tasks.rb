@@ -53,7 +53,7 @@ class DeferredTasks < BaseStorage
   end
 
 
-  ClosedRecordRequest = Struct.new(:user, :agency, :purpose, :publication_details, :requested_items) do
+  ClosedRecordRequest = Struct.new(:user, :agency, :purpose, :permission_to_copy, :requested_items) do
     def to_json(*args)
       to_h.to_json
     end
@@ -99,7 +99,7 @@ class DeferredTasks < BaseStorage
     task_blob = ClosedRecordRequest.new(user,
                                         agency,
                                         agency_request[:purpose],
-                                        agency_request[:publication_details],
+                                        agency_request[:permission_to_copy] == 1 ? 'Yes' : 'No',
                                         requested_items).to_json
 
     add_task('agency_request', task_blob)

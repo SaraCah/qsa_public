@@ -16,6 +16,8 @@ export const MyReadingRoomRequestsCartPage: React.FC<PageRoute> = (route: PageRo
   const [showReadingRoomSuccess, setShowReadingRoomSuccess] = useState(false);
   const [agencyFields, setAgencyFields]: [any, any] = useState({});
   const [requiredDateInPast, setRequiredDateInPast]: [boolean, any] = useState(false);
+  const [accessTermsAccepted, setAccessTermsAccepted] = useState(false);
+  const [privacyTermsAccepted, setPrivacyTermsAccepted] = useState(false);
 
   const removeItem = (id: number, context: IAppContext): void => {
     Http.get()
@@ -49,6 +51,14 @@ export const MyReadingRoomRequestsCartPage: React.FC<PageRoute> = (route: PageRo
         .then(() => {
           context.refreshCart();
         });
+  };
+
+  const enableSubmit = function() {
+    if (Object.keys(context.cart.reading_room_requests.closed_records).length > 0) {
+      return accessTermsAccepted && privacyTermsAccepted;
+    } else {
+      return true;
+    }
   };
 
   useEffect(() => {
@@ -220,20 +230,51 @@ export const MyReadingRoomRequestsCartPage: React.FC<PageRoute> = (route: PageRo
                         <article>
                           <h2>Closed Records</h2>
                           <div className="alert alert-warning" role="alert">
-                            <h2>
+                            <h3>
                               <i className="fa fa-comments" />
+                              &nbsp;
                               Requesting restricted access records
-                            </h2>
+                            </h3>
                             <p>
-                              You have requested some restricted access records. Please provide some details
-                              regarding your request and access will be requested from the responsible agency.
-                              Queensland State Archives cannot guarantee access will be granted to the records.
+                              Some records at Queensland State Archives are subject to a restricted access period, however you may apply to the responsible agency for permission to view and copy these closed records. Access is granted at the discretion of the responsible agency and some agencies may ask you to provide additional information before making a decision.
                             </p>
+                            <p>
+                              If access is granted you will be notified on an 'Access to restricted records' permission form. Please contact Queensland State Archives to confirm that we have also received a copy of this permission form prior to visiting.
+                            </p>
+                          </div>
+                          <div className="alert alert-info">
+                            <h3>User Details</h3>
+                            <p>Please confirm your contact and postal details:</p>
+                            <div className="mb-2 qg-grab">
+                              <dl className="row">
+                                <dt className="col-xs-6">Name</dt>
+                                <dd className="col-xs-6">{context.user.first_name} {context.user.last_name}</dd>
+                                <dt className="col-xs-6">Email</dt>
+                                <dd className="col-xs-6">{context.user.email}</dd>
+                                <dt className="col-xs-6">Postal address</dt>
+                                <dd className="col-xs-6">
+                                  {
+                                    context.user.street_address &&
+                                    <div>{context.user.street_address}</div>
+                                  }
+                                  <div>
+                                  {
+                                     [context.user.city_suburb, context.user.state, context.user.post_code].filter((s: any) => {
+                                      return typeof(s) === 'string' && s.length > 0;
+                                     }).join(', ')
+                                  }
+                                  </div>
+                                </dd>
+                                <dt className="col-xs-6">Telephone</dt>
+                                <dd className="col-xs-6">{context.user.phone}</dd>
+                              </dl>
+                            </div>
+                            <p>If these details are not correct, <Link to="/my-details">please update them here</Link>.</p>
                           </div>
                           {Object.keys(context.cart.reading_room_requests.closed_records).map((agency_uri: string) => (
                             <div className="mb-2 qg-grab" role="listitem" key={agency_uri}>
                               <div className="d-flex w-100 justify-content-between">
-                                <h2>Agency Access Request</h2>
+                                <h3>Agency Access Request</h3>
                               </div>
                               <dl className="row">
                                 <dt className="col-xs-6">Agency</dt>
@@ -250,8 +291,6 @@ export const MyReadingRoomRequestsCartPage: React.FC<PageRoute> = (route: PageRo
                                 </dd>
                                 <dt className="col-xs-6">Delivery location</dt>
                                 <dd className="col-xs-6">Reading Room</dd>
-                                <dt className="col-xs-6">Cost</dt>
-                                <dd className="col-xs-6">Free</dd>
                               </dl>
                               <hr />
                               <h3>Requested items:</h3>
@@ -271,7 +310,13 @@ export const MyReadingRoomRequestsCartPage: React.FC<PageRoute> = (route: PageRo
                                     <dt className="col-xs-6">Parent item</dt>
                                     <dd className="col-xs-6">
                                       <Link to={uriFor(cartItem.record.controlling_record.qsa_id_prefixed, 'archival_object')}>
-                                        {cartItem.record.controlling_record.qsa_id_prefixed}
+                                        {cartItem.record.controlling_record.qsa_id_prefixed} {cartItem.record.controlling_record._resolved.display_string}
+                                      </Link>
+                                    </dd>
+                                    <dt className="col-xs-6">Series</dt>
+                                    <dd className="col-xs-6">
+                                      <Link to={uriFor(cartItem.record.controlling_record._resolved.resource.qsa_id_prefixed, 'resource')}>
+                                        {cartItem.record.controlling_record._resolved.resource.qsa_id_prefixed} {cartItem.record.controlling_record._resolved.resource.display_string}
                                       </Link>
                                     </dd>
                                   </dl>
@@ -292,6 +337,21 @@ export const MyReadingRoomRequestsCartPage: React.FC<PageRoute> = (route: PageRo
                               <hr />
                               <div className="form-row">
                                 <div className="form-group col-xs-12 col-md-12">
+                                  <label htmlFor={`permission_to_copy-${agency_uri}`}>
+                                    <input type="checkbox"
+                                           id={`permission_to_copy-${agency_uri}`}
+                                           onChange={e => {
+                                             const newValues: any = {};
+                                             newValues[agency_uri] = { ...agencyFields[agency_uri] };
+                                             newValues[agency_uri]['permission_to_copy'] = e.target.checked;
+                                             setAgencyFields(Object.assign({}, agencyFields, newValues));
+                                           }}/>
+                                    Request permission to copy
+                                  </label>
+                                </div>
+                              </div>
+                              <div className="form-row">
+                                <div className="form-group col-xs-12 col-md-12">
                                   <label htmlFor={`request-purpose-${agency_uri}`}>
                                     Purpose of request and why you need this information
                                   </label>
@@ -309,32 +369,37 @@ export const MyReadingRoomRequestsCartPage: React.FC<PageRoute> = (route: PageRo
                                   />
                                 </div>
                               </div>
-                              <div className="form-row">
-                                <div className="form-group col-xs-12 col-md-12">
-                                  <label htmlFor={`intention-to-publish-${agency_uri}`}>
-                                    Any intention to publish, and details of this publication
-                                  </label>
-                                  <textarea
-                                    className="form-control col-xs-12"
-                                    id={`intention-to-publish-${agency_uri}`}
-                                    rows={3}
-                                    required
-                                    onChange={e => {
-                                      const newValues: any = {};
-                                      newValues[agency_uri] = { ...agencyFields[agency_uri] };
-                                      newValues[agency_uri]['publication_details'] = e.target.value;
-                                      setAgencyFields(Object.assign({}, agencyFields, newValues));
-                                    }}
-                                  />
-                                </div>
-                              </div>
                             </div>
                           ))}
+                          <div className="alert alert-info">
+                            <p>
+                              <label>
+                                <input type="checkbox"
+                                       checked={accessTermsAccepted}
+                                       onChange={(e) => setAccessTermsAccepted(e.target.checked)}
+                                       required />
+                                &nbsp;
+                                I have read and understand the <Link to="/pages/access-to-restricted-records-faq" target="_blank">Access to Restricted Records FAQs</Link>.
+                              </label>
+                            </p>
+                            <p>
+                              <label>
+                                <input type="checkbox"
+                                       checked={privacyTermsAccepted}
+                                       onChange={(e) => setPrivacyTermsAccepted(e.target.checked)}
+                                       required />
+                                &nbsp;
+                                The personal information collected on this form is for the purpose of facilitating an application for permission to access a restricted record.  I agree to Queensland State Archives providing these details to the agency or agencies responsible for the identified records.
+                              </label>
+                            </p>
+                          </div>
                         </article>
                       )}
                       <div className="mt-5">
                         <p>
-                          <button type="submit" className="qg-btn btn-primary">
+                          <button type="submit"
+                                  className="qg-btn btn-primary"
+                                  disabled={!enableSubmit()}>
                             Submit Requests
                           </button>
                     &nbsp;&nbsp;
