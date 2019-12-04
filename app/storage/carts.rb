@@ -234,7 +234,7 @@ class Carts < BaseStorage
                               agency_uri: agency_uri,
                               status: 'PENDING',
                               purpose: agency_fields.fetch(agency_uri).fetch('purpose'),
-                              request_permission_to_copy: (agency_fields.fetch(agency_uri).fetch('request_permission_to_copy', false).to_s == 'true') ? 1 : 0,
+                              request_permission_to_copy: (agency_fields.fetch(agency_uri).fetch('permission_to_copy', false).to_s == 'true') ? 1 : 0,
                               created_by: user.fetch('email'),
                               modified_by: user.fetch('email'),
                               create_time: now.to_i * 1000,

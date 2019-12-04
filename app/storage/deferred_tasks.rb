@@ -99,7 +99,7 @@ class DeferredTasks < BaseStorage
     task_blob = ClosedRecordRequest.new(user,
                                         agency,
                                         agency_request[:purpose],
-                                        agency_request[:permission_to_copy] == 1 ? 'Yes' : 'No',
+                                        agency_request[:request_permission_to_copy] == 1 ? 'Yes' : 'No',
                                         requested_items).to_json
 
     add_task('agency_request', task_blob)
