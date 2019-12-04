@@ -868,6 +868,27 @@ const AdminUserDetailsForm: React.FC<any> = ({ userId }) => {
                   Admin account?
                 </label>
               </div>
+              <div className="form-group form-check">
+                <input
+                    type="checkbox"
+                    className="form-check-input"
+                    id="inactive-check"
+                    checked={userToEdit.is_inactive}
+                    onChange={e => setUserToEdit(Object.assign({ ...userToEdit }, { is_inactive: e.target.checked }))}
+                />
+                <label className="form-check-label" htmlFor="inactive-check">
+                  Inactive?
+                </label>
+              </div>
+              <div className="form-group">
+                <label htmlFor="admin-notes">Admin Notes <small className="text-muted">Only visible to administrators</small></label>
+                <textarea
+                    className="form-control"
+                    id="admin-notes"
+                    value={userToEdit.admin_notes}
+                    onChange={e => setUserToEdit(Object.assign({ ...userToEdit }, { admin_notes: e.target.value }))}
+                />
+              </div>
             </div>
             <h3>Verified user details</h3>
             <div className="qg-call-out-box">
@@ -1085,6 +1106,13 @@ const UserManagementListing: React.FC<any> = (props: any) => {
                   <td>{user.email}</td>
                   <td>{new Date(user.create_time).toLocaleDateString()}</td>
                   <td>
+                    {
+                      user.is_inactive &&
+                      <>
+                        <span className="badge badge-danger">Inactive</span>
+                        &nbsp;
+                      </>
+                    }
                     {user.is_admin ? (
                       <span className="badge badge-info">Admin</span>
                     ) : user.is_verified ? (
@@ -1098,7 +1126,7 @@ const UserManagementListing: React.FC<any> = (props: any) => {
                       Edit Details
                     </Link>&nbsp;
                 {
-                  user.id !== context.user.id && !user.is_admin &&
+                  user.id !== context.user.id && !user.is_admin && !user.is_inactive &&
                     <button
                       className="qg-btn btn-secondary btn-xs"
                       onClick={e => becomeUser(user, context)}>

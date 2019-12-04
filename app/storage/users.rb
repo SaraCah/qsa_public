@@ -91,6 +91,8 @@ class Users < BaseStorage
       phone: user_form_dto.fetch('phone', nil),
       admin: user_form_dto.fetch('is_admin') ? 1 : 0,
       verified: user_form_dto.fetch('is_verified') ? 1 : 0,
+      inactive: user_form_dto.fetch('is_inactive') ? 1 : 0,
+      admin_notes: user_form_dto.fetch('admin_notes', nil),
       modified_time: java.lang.System.currentTimeMillis
     }
 
@@ -144,20 +146,22 @@ class Users < BaseStorage
   end
 
 
-  def self.get(user_id)
+  def self.get(user_id, admin_access = false)
     user = db[:user][:id => user_id]
 
     return nil unless user
+    return nil if user[:inactive] == 1 && !admin_access
 
-    UserDTO.from_row(user)
+    UserDTO.from_row(user, admin_access)
   end
 
-  def self.get_for_email(email)
+  def self.get_for_email(email, admin_access = false)
     user = db[:user][:email => normalise_email(email)]
 
     return nil unless user
+    return nil if user[:inactive] == 1 && !admin_access
 
-    UserDTO.from_row(user)
+    UserDTO.from_row(user, admin_access)
   end
 
 # Contain both upper and lower case characters e.g. a-z, A-Z

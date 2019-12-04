@@ -18,6 +18,8 @@ class UserFormDTO
   define_field(:lock_version, Integer, default: 0)
   define_field(:create_time, Integer, required: false)
   define_field(:modified_time, Integer, required: false)
+  define_field(:admin_notes, String, required: false)
+  define_field(:is_inactive, Boolean, default: false)
 
   def self.validate_password(password, user)
     if user.new?

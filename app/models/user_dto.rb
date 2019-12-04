@@ -12,25 +12,36 @@ class UserDTO
   define_field(:phone, String)
   define_field(:is_admin, Boolean)
   define_field(:is_verified, Boolean)
+  define_field(:is_inactive, Boolean)
   define_field(:lock_version, Integer)
   define_field(:create_time, Integer)
   define_field(:modified_time, Integer)
+  define_field(:admin_notes, String)
 
-  def self.from_row(row)
-    new(id: row[:id],
-        email: row[:email],
-        first_name: row[:first_name],
-        last_name: row[:last_name],
-        street_address: row[:street_address],
-        city_suburb: row[:city_suburb],
-        state: row[:state],
-        post_code: row[:post_code],
-        phone: row[:phone],
-        is_admin: (row[:admin] == 1),
-        is_verified: (row[:verified] == 1),
-        lock_version: row[:lock_version],
-        create_time: row[:create_time],
-        modified_time: row[:modified_time])
+  def self.from_row(row, admin_access = false)
+    user_data = {
+      id: row[:id],
+      email: row[:email],
+      first_name: row[:first_name],
+      last_name: row[:last_name],
+      street_address: row[:street_address],
+      city_suburb: row[:city_suburb],
+      state: row[:state],
+      post_code: row[:post_code],
+      phone: row[:phone],
+      is_admin: (row[:admin] == 1),
+      is_verified: (row[:verified] == 1),
+      is_inactive: (row[:inactive] == 1),
+      lock_version: row[:lock_version],
+      create_time: row[:create_time],
+      modified_time: row[:modified_time]
+    }
+
+    if admin_access
+      user_data[:admin_notes] = row[:admin_notes]
+    end
+
+    new(user_data)
   end
 
   def display_string

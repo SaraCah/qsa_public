@@ -243,7 +243,7 @@ class QSAPublic < Sinatra::Base
       next [404]
     end
 
-    existing_user = Users.get(params[:user].fetch('id'))
+    existing_user = Users.get(params[:user].fetch('id'), admin_access = true)
     logged_in_user = Users.get(Ctx.get.session.user_id)
 
     can_edit = existing_user && (logged_in_user.fetch('is_admin') ||
@@ -315,7 +315,7 @@ class QSAPublic < Sinatra::Base
     logged_in_user = Users.get(Ctx.get.session.user_id)
 
     if logged_in_user.fetch('is_admin')
-      json_response(Users.get(params[:user_id]))
+      json_response(Users.get(params[:user_id], admin_access = true))
     else
       [404]
     end
