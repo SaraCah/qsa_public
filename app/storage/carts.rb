@@ -121,10 +121,10 @@ class Carts < BaseStorage
   def self.add_item(user_id, request_type, item_id)
     raise "Request type not supported: #{request_type}" unless VALID_REQUEST_TYPES.include?(request_type)
 
-    next_position = db[:cart_item]
+    next_position = (db[:cart_item]
                      .filter(user_id: user_id)
                      .filter(request_type: request_type)
-                     .max(:position) + 1
+                     .max(:position) || 0) + 1
 
     values = {
       user_id: user_id,
