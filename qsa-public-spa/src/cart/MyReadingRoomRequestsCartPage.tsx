@@ -211,6 +211,11 @@ export const MyReadingRoomRequestsCartPage: React.FC<PageRoute> = (route: PageRo
                           ))}
                         </article>
                       )}
+                      {
+                        Object.keys(context.cart.reading_room_requests.closed_records).length > 0 &&
+                        Object.keys(context.cart.reading_room_requests.closed_records).length > 0 &&
+                        <hr/>
+                      }
                       {Object.keys(context.cart.reading_room_requests.closed_records).length > 0 && (
                         <article>
                           <h2>Closed Records</h2>
