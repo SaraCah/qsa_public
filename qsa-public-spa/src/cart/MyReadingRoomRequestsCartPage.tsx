@@ -73,11 +73,12 @@ export const MyReadingRoomRequestsCartPage: React.FC<PageRoute> = (route: PageRo
                 </h1>
                 {showReadingRoomSuccess && (
                   <div className="alert alert-success">
-                    Reading room requests created! View them at <Link to="/my-requests">My requests</Link>.
+                    <p>Your Reading Room requests have been submitted.</p>
+                    <p><Link to="/my-requests">See your request history here</Link>.</p>
                   </div>
                 )}
                 {!context.user && <div className="alert alert-warning">Please log in to access your cart</div>}
-                {context.user && context.cart && context.cart.reading_room_requests.total_count === 0 && (
+                {context.user && context.cart && context.cart.reading_room_requests.total_count === 0 && !showReadingRoomSuccess && (
                   <div className="alert alert-info">Cart empty</div>
                 )}
                 {context.user && context.cart && context.cart.reading_room_requests.total_count > 0 && (
@@ -89,11 +90,13 @@ export const MyReadingRoomRequestsCartPage: React.FC<PageRoute> = (route: PageRo
                           <div className="alert alert-success" role="alert">
                             <h2>
                               <i className="fa fa-check" />
-                              Getting ready for the reading room
+                              Getting ready for the Reading Room
                             </h2>
                             <p>
-                              Reading Room delivery / If you&#39;re ordering for a visit in the future, please
-                              nominate the day of your visit:
+                              Reading Room delivery.
+                            </p>
+                            <p>
+                              If you&#39;re ordering for a visit in the future, please nominate the day of your visit:
                             </p>
                             <div className="form-group">
                               <label className="sr-only" htmlFor="date-required">
@@ -187,7 +190,7 @@ export const MyReadingRoomRequestsCartPage: React.FC<PageRoute> = (route: PageRo
                                     </Link>
                                   </dd>
                                   <dt className="col-xs-6">Delivery location</dt>
-                                  <dd className="col-xs-6">Reading room</dd>
+                                  <dd className="col-xs-6">Reading Room</dd>
                                 </dl>
                                 <h4 className="sr-only">Actions</h4>
                                 <div className="btn-group">
@@ -241,7 +244,7 @@ export const MyReadingRoomRequestsCartPage: React.FC<PageRoute> = (route: PageRo
                                   </Link>
                                 </dd>
                                 <dt className="col-xs-6">Delivery location</dt>
-                                <dd className="col-xs-6">Reading room</dd>
+                                <dd className="col-xs-6">Reading Room</dd>
                                 <dt className="col-xs-6">Cost</dt>
                                 <dd className="col-xs-6">Free</dd>
                               </dl>

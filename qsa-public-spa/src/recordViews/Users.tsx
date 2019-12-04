@@ -1281,7 +1281,7 @@ const RequestsSummary: React.FC<any> = props => {
                     {request.record.display_string}
                   </Link>
                 </td>
-                <td>{request.date_required && new Date(request.date_required).toLocaleDateString()}</td>
+                <td>{request.date_required && new Date(request.date_required).toLocaleDateString()} {request.time_required}</td>
                 <td>{new Date(request.create_time).toLocaleString()}</td>
                 <td>
                   <button className="qg-btn btn-primary btn-xs" onClick={() => props.onSelectRequest(request)}>
