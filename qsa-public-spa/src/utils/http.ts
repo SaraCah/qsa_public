@@ -345,8 +345,12 @@ export class Http {
     return response.data || [];
   }
 
-  async getRequests(): Promise<any> {
-    const response = await axios.get(`${userRequestsUrl}`, this.getConfig()).catch(error => {
+  async getRequests(sortBy: string): Promise<any> {
+    const params = {
+      sort_by: sortBy
+    };
+
+    const response = await axios.get(`${userRequestsUrl}`, Object.assign({}, this.getConfig(), { params })).catch(error => {
       return this.handleError(error, "Failed to get user requests");
     });
 

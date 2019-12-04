@@ -1360,10 +1360,11 @@ const RequestSummary: React.FC<any> = props => {
 
 const RequestsSummary: React.FC<any> = props => {
   const [results, setResults] = useState({ results: [] });
+  const [sortBy, setSortBy] = useState('date_requested_desc');
 
   const refreshRequests = () => {
     Http.get()
-        .getRequests()
+        .getRequests(sortBy)
         .then((data: any) => {
           setResults(data);
         });
@@ -1371,7 +1372,7 @@ const RequestsSummary: React.FC<any> = props => {
 
   useEffect(() => {
     refreshRequests();
-  }, []);
+  }, [sortBy]);
 
   const cancelRequest = (request: any) => {
     Http.get()
@@ -1384,10 +1385,26 @@ const RequestsSummary: React.FC<any> = props => {
   return (
     <>
       <h1>My Requests</h1>
+      <div className="pull-right">
+        <select className="form-control"
+                onChange={e => setSortBy(e.target.value)}
+                value={sortBy}>
+          <option value='date_requested_desc'>Requested Date descending</option>
+          <option value='date_requested_asc'>Requested Date ascending</option>
+          <option value='date_required_desc'>Required Date descending</option>
+          <option value='date_required_asc'>Required Date ascending</option>
+          <option value='request_no_desc'>Request No. descending</option>
+          <option value='request_no_asc'>Request No. ascending</option>
+          <option value='status_desc'>Status descending</option>
+          <option value='status_asc'>Status ascending</option>
+          <option value='qsa_id_desc'>Item ID descending</option>
+          <option value='qsa_id_asc'>Item ID ascending</option>
+        </select>
+      </div>
       <table className="table table-striped">
         <thead>
           <tr>
-            <th scope="col">#</th>
+            <th scope="col">Request No.</th>
             <th scope="col">Request Type</th>
             <th scope="col">Status</th>
             <th scope="col">Item</th>
@@ -1400,7 +1417,7 @@ const RequestsSummary: React.FC<any> = props => {
           {results.results &&
             results.results.map((request: any) => (
               <tr key={request.id}>
-                <td>{request.id}</td>
+                <td>RR{request.id}</td>
                 <td>{formatConstantForDisplay(request.request_type)}</td>
                 <td>{formatConstantForDisplay(request.status)}</td>
                 <td>
@@ -1414,14 +1431,17 @@ const RequestsSummary: React.FC<any> = props => {
                 </td>
                 <td>{request.date_required && new Date(request.date_required).toLocaleDateString()} {request.time_required}</td>
                 <td>{new Date(request.create_time).toLocaleString()}</td>
-                <td>
+                <td style={{whiteSpace: 'nowrap'}}>
                   <Link className="qg-btn btn-primary btn-xs" to={`/my-requests/${request.id}`}>
                     View Request
                   </Link>
                   {['PENDING', 'AWAITING_AGENCY_APPROVAL'].indexOf(request.status) >= 0 &&
-                    <button className="qg-btn btn-danger btn-xs" onClick={() => cancelRequest(request)}>
-                      Cancel Request
-                    </button>
+                    <>
+                      &nbsp;
+                      <button className="qg-btn btn-danger btn-xs" onClick={() => cancelRequest(request)}>
+                        Cancel Request
+                      </button>
+                    </>
                   }
                 </td>
               </tr>

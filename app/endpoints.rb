@@ -500,10 +500,11 @@ class QSAPublic < Sinatra::Base
     json_response(result)
   end
 
-  Endpoint.get('/api/users/requests') do
+  Endpoint.get('/api/users/requests')
+    .param(:sort_by, String, "Sort key", optional: true)do
     next [404] unless Ctx.user_logged_in?
 
-    json_response(Requests.all(Ctx.get.session.user_id))
+    json_response(Requests.all(Ctx.get.session.user_id, params[:sort_by]))
   end
 
   Endpoint.post('/api/users/requests/cancel')
