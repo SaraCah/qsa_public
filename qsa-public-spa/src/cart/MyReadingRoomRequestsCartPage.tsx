@@ -353,7 +353,7 @@ export const MyReadingRoomRequestsCartPage: React.FC<PageRoute> = (route: PageRo
                               <div className="form-row">
                                 <div className="form-group col-xs-12 col-md-12">
                                   <label htmlFor={`request-purpose-${agency_uri}`}>
-                                    Purpose of request and why you need this information
+                                    Reason for request:
                                   </label>
                                   <textarea
                                     className="form-control col-xs-12"
