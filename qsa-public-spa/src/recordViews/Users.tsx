@@ -17,7 +17,7 @@ import {AdvancedSearchQuery} from "../models/AdvancedSearch";
 import {CompactSearchSummary} from "./Results";
 import {
   formatConstantForDisplay,
-  formatDateForDisplay
+  formatDateForDisplay, toISODateString
 } from "../utils/rendering";
 
 
@@ -1164,18 +1164,50 @@ const RequestSummary: React.FC<any> = props => {
   const [requestId] = useState(props.requestId);
   const [version, setVersion] = useState(0);
   const [request, setRequest]: [any, any] = useState(null);
+  const [dateRequiredEditingMode, setDateRequiredEditingMode]: [boolean, any] = useState(false);
+  const [newDateRequired, setNewDateRequired] = useState(toISODateString(new Date()));
+  const [newTimeRequired, setNewTimeRequired] = useState('Morning');
+  const [requiredDateInPast, setRequiredDateInPast]: [boolean, any] = useState(false);
+
+  useEffect(() => {
+    if (newDateRequired && new Date(newDateRequired).setHours(0,0,0,0) < new Date().setHours(0,0,0,0)) {
+      setRequiredDateInPast(true);
+    } else {
+      setRequiredDateInPast(false);
+    }
+  }, [newDateRequired]);
 
   useEffect(() => {
     Http.get()
-        .getRequest(requestId)
+        .getRequest('' + requestId)
         .then((json: any) => {
           setRequest(json);
         });
   }, [requestId, version]);
 
+  useEffect(() => {
+    if (request) {
+      if (request.date_required) {
+        setNewDateRequired(toISODateString(new Date(request.date_required)));
+      }
+      if (request.time_required) {
+        setNewTimeRequired(request.time_required);
+      }
+    }
+  }, [request]);
+
   if (!request) {
     return <></>;
   }
+
+  const updateDateRequired = () => {
+    Http.get()
+        .updateRequestDateRequired(requestId, newDateRequired, newTimeRequired)
+        .then(() => {
+          setDateRequiredEditingMode(false);
+          setVersion(version + 1);
+        });
+  };
 
   return (
     <>
@@ -1198,8 +1230,64 @@ const RequestSummary: React.FC<any> = props => {
             <dd className="col-9">{formatConstantForDisplay(request.status)}</dd>
             <dt className="col-3">Date Required</dt>
             <dd className="col-9">
-              {(request.date_required ? new Date(request.date_required).toLocaleDateString() : 'Not yet provided')}
-              &nbsp;{request.time_required}
+              {
+                dateRequiredEditingMode &&
+                <>
+                  <div className="form-group">
+                    <label className="sr-only" htmlFor="date-required">
+                      Date required
+                    </label>
+                    <input
+                        type="date"
+                        className="form-control"
+                        id="date-required"
+                        style={{ position: 'relative', opacity: 1, zIndex: 'initial' }}
+                        onChange={e => setNewDateRequired(e.target.value)}
+                        value={newDateRequired}
+                        required
+                    />
+                    {requiredDateInPast && (
+                        <div><small className="alert alert-warning">Date provided is in the past</small></div>
+                    )}
+                    <div><small>QSA is open from 9.00am to 4.30pm Monday to Friday and the second Saturday of every month</small></div>
+                  </div>
+                  <div className="form-group">
+                    <label className="sr-only" htmlFor="time-required">
+                      Time of day required
+                    </label>
+                    <select
+                        className="form-control"
+                        id="time-required"
+                        onChange={e => setNewTimeRequired(e.target.value)}
+                        value={newTimeRequired}
+                        required
+                    >
+                      <option>Morning</option>
+                      <option>Afternoon</option>
+                    </select>
+                  </div>
+                  <p>
+                    <button className="qg-btn btn-primary btn-xs" onClick={() => updateDateRequired()}>Save Changes</button>
+                    &nbsp;
+                    <button className="qg-btn btn-default btn-xs" onClick={() => setDateRequiredEditingMode(false)}>Cancel</button>
+                  </p>
+                </>
+              }
+              {
+                !dateRequiredEditingMode &&
+                <>
+                  {(request.date_required ? new Date(request.date_required).toLocaleDateString() : 'Not yet provided')}
+                  &nbsp;{request.time_required}
+                  {
+                    request.status === 'PENDING' &&
+                    <p>
+                      <button className="qg-btn btn-secondary btn-xs" onClick={() => setDateRequiredEditingMode(true)}>
+                        Update Date Required
+                      </button>
+                    </p>
+                  }
+                </>
+              }
             </dd>
           </dl>
           <table className="table table-bordered" style={{width: 'auto', maxWidth: '100%'}}>

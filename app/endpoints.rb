@@ -515,6 +515,17 @@ class QSAPublic < Sinatra::Base
     json_response({status: 'success'})
   end
 
+  Endpoint.post('/api/users/requests/update')
+    .param(:id, String, "Request ID")
+    .param(:date_required, String, "Date required")
+    .param(:time_required, String, "Time required") do
+
+    next [404] unless Ctx.user_logged_in?
+
+    Requests.update(Ctx.get.session.user_id, params[:id], params[:date_required], params[:time_required])
+    json_response({status: 'success'})
+  end
+
   Endpoint.get('/api/users/requests/:id')
     .param(:id, String, "Request ID") do
     next [404] unless Ctx.user_logged_in?

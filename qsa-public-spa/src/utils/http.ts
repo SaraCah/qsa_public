@@ -28,6 +28,7 @@ const submitReadingRoomRequestsUrl = `${baseURL}/api/users/cart/create_reading_r
 const userRequestsUrl = `${baseURL}/api/users/requests`;
 const userGetRequestUrl = `${baseURL}/api/users/requests/`;
 const cancelRequestUrl = `${baseURL}/api/users/requests/cancel`;
+const updateRequestDateRequiredUrl = `${baseURL}/api/users/requests/update`;
 const clearCartUrl = `${baseURL}/api/users/cart/clear`;
 const submitDigitalQuoteUrl = `${baseURL}/api/users/cart/create_digital_copy_quote_requests`;
 const reorderOpenRequestsUrl = `${baseURL}/api/users/cart/reorder_open_request`;
@@ -368,6 +369,22 @@ export class Http {
 
     const response = await axios.post(cancelRequestUrl, bodyFormData, config).catch(error => {
       return this.handleError(error, "Failed to cancel request");
+    });
+
+    return response.data || [];
+  }
+
+
+  async updateRequestDateRequired(requestId: string, dateRequired: string, timeRequired: string): Promise<any> {
+    const config = this.getConfig();
+
+    const bodyFormData = new FormData();
+    bodyFormData.set('id', requestId);
+    bodyFormData.set('date_required', dateRequired);
+    bodyFormData.set('time_required', timeRequired);
+
+    const response = await axios.post(updateRequestDateRequiredUrl, bodyFormData, config).catch(error => {
+      return this.handleError(error, "Failed to update request");
     });
 
     return response.data || [];
