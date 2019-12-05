@@ -126,8 +126,6 @@ const PhysicalRepresentation: React.FC<{
             </>
         )}
       </dl>
-
-      <Tagger recordId={representation.get('id')} context={context}/>
     </>
   );
 };
@@ -236,7 +234,6 @@ const DigitalRepresentation: React.FC<{
             </>
         )}
       </dl>
-      <Tagger recordId={representation.get('id')} context={context}/>
     </>
   );
 };
