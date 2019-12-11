@@ -1059,16 +1059,19 @@ const UserManagementListing: React.FC<any> = (props: any) => {
                     <span className="input-group-text small">Registration date</span>
                   </div>
                   <input
-                    type="text"
+                    type="date"
                     aria-label="Start date"
-                    placeholder="start"
+                    placeholder="yyyy-mm-dd"
                     className="form-control"
                     onChange={e => setFilter(Object.assign({ ...filter }, { start_date: e.target.value }))}
                   />
+                  <div className="input-group-prepend input-group-append">
+                    <span className="input-group-text small">to</span>
+                  </div>
                   <input
-                    type="text"
+                    type="date"
                     aria-label="End date"
-                    placeholder="end"
+                    placeholder="yyyy-mm-dd"
                     className="form-control"
                     onChange={e => setFilter(Object.assign({ ...filter }, { end_date: e.target.value }))}
                   />

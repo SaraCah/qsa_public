@@ -116,6 +116,7 @@ export const MyReadingRoomRequestsCartPage: React.FC<PageRoute> = (route: PageRo
                                 type="date"
                                 className="form-control"
                                 id="date-required"
+                                placeholder="yyyy-mm-dd"
                                 style={{ position: 'relative', opacity: 1, zIndex: 'initial' }}
                                 onChange={e => setRequiredDate(e.target.value)}
                                 value={requiredDate}

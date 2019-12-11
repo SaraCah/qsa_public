@@ -148,8 +148,9 @@ const AspaceAdvancedSearch: React.FC<{
                     <input
                       onChange={(e): void => setAdvancedSearchQuery(advancedSearchQuery.setFromDate(e.target.value))}
                       className="form-control"
-                      type="text"
+                      type="date"
                       name="from"
+                      placeholder="yyyy, yyyy-mm or yyyy-mm-dd"
                       value={advancedSearchQuery.getFromDate() || ''}
                     />
                   </label>
@@ -160,8 +161,9 @@ const AspaceAdvancedSearch: React.FC<{
                     <input
                       onChange={(e): void => setAdvancedSearchQuery(advancedSearchQuery.setToDate(e.target.value))}
                       className="form-control"
-                      type="text"
+                      type="date"
                       name="to"
+                      placeholder="yyyy, yyyy-mm or yyyy-mm-dd"
                       value={advancedSearchQuery.getToDate() || ''}
                     />
                   </label>
