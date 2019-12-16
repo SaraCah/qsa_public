@@ -100,7 +100,7 @@ const PhysicalRepresentation: React.FC<{
         ))}
         {representation.getMaybe('preferred_citation', (value: string) => (
             <>
-              <dt>Preferred citation</dt>
+              <dt>Citation</dt>
               <dd>{value}</dd>
             </>
         ))}
