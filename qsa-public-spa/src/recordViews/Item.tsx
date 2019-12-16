@@ -69,7 +69,7 @@ const PhysicalRepresentation: React.FC<{
         </dd>
         {representation.getMaybe('agency_assigned_id', (value: string) => (
           <>
-            <dt>Agency ID</dt>
+            <dt>Agency Control Number</dt>
             <dd>{value}</dd>
           </>
         ))}
@@ -632,7 +632,7 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
                   return (
                     <li className="list-group-item list-group-item-action">
                       <div className="d-flex w-100 justify-content-between">
-                        <h4 className="mb-1">Departmental numbers</h4>
+                        <h4 className="mb-1">Agency Control Number</h4>
                       </div>
                       <p className="mb-1">{value}</p>
                     </li>
