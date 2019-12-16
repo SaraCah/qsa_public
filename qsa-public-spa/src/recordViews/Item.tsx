@@ -111,7 +111,7 @@ const PhysicalRepresentation: React.FC<{
                 representation.get('rap_access_status') === 'Open Access' ?
                   <dd className="text-success">Open</dd> :
                   <>
-                    <dd className="text-danger">Closed</dd>
+                    <dd className="text-danger">Restricted</dd>
                     <dd>
                       {!representation.get('rap_expiration').expires && "No expiry"}
                       {representation.get('rap_expiration').expires &&
@@ -219,7 +219,7 @@ const DigitalRepresentation: React.FC<{
                 representation.get('rap_access_status') === 'Open Access' ?
                   <dd className="text-success">Open</dd> :
                   <>
-                    <dd className="text-danger">Closed</dd>
+                    <dd className="text-danger">Restricted</dd>
                     <dd>
                       {!representation.get('rap_expiration').expires && "No expiry"}
                       {representation.get('rap_expiration').expires &&
@@ -735,7 +735,7 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
                           item.get('rap_access_status') === 'Open Access' ?
                             <div className="text-success">Open</div> :
                             <>
-                              <div className="text-danger">Closed</div>
+                              <div className="text-danger">Restricted</div>
                               <div>
                                 {!item.get('rap_expiration').expires && "No expiry"}
                                 {item.get('rap_expiration').expires &&

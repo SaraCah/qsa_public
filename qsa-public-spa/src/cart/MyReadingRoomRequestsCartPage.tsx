@@ -229,7 +229,7 @@ export const MyReadingRoomRequestsCartPage: React.FC<PageRoute> = (route: PageRo
                       }
                       {Object.keys(context.cart.reading_room_requests.closed_records).length > 0 && (
                         <article>
-                          <h2>Closed Records</h2>
+                          <h2>Restricted Records</h2>
                           <div className="alert alert-warning" role="alert">
                             <h3>
                               <i className="fa fa-comments" />
@@ -237,7 +237,7 @@ export const MyReadingRoomRequestsCartPage: React.FC<PageRoute> = (route: PageRo
                               Requesting restricted access records
                             </h3>
                             <p>
-                              Some records at Queensland State Archives are subject to a restricted access period, however you may apply to the responsible agency for permission to view and copy these closed records. Access is granted at the discretion of the responsible agency and some agencies may ask you to provide additional information before making a decision.
+                              Some records at Queensland State Archives are subject to a restricted access period, however you may apply to the responsible agency for permission to view and copy these restricted records. Access is granted at the discretion of the responsible agency and some agencies may ask you to provide additional information before making a decision.
                             </p>
                             <p>
                               If access is granted you will be notified on an 'Access to restricted records' permission form. Please contact Queensland State Archives to confirm that we have also received a copy of this permission form prior to visiting.
@@ -298,7 +298,7 @@ export const MyReadingRoomRequestsCartPage: React.FC<PageRoute> = (route: PageRo
                               {context.cart.reading_room_requests.closed_records[agency_uri].map((cartItem: any) => (
                                 <div key={cartItem.id} role="listitem" style={{ marginBottom: 40 }}>
                                   <div className="pull-right">
-                                    <span className="badge pull-right">Closed record</span>
+                                    <span className="badge pull-right">Restricted record</span>
                                   </div>
                                   <h3>
                                     <Link to={uriFor(cartItem.record.controlling_record.qsa_id_prefixed, 'archival_object')}>

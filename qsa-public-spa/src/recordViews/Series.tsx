@@ -134,7 +134,7 @@ const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
                   </div>
                   <div className="text-success">{(series.get('access_status_summary')['Open Access'] || 0)} Open Items</div>
                   <div>
-                    <span className="text-danger">{(series.get('access_status_summary')['Restricted Access'] || 0)} Closed Items</span>&nbsp;
+                    <span className="text-danger">{(series.get('access_status_summary')['Restricted Access'] || 0)} Restricted Items</span>&nbsp;
                     <a href="/pages/how-do-i-order-restricted-records" rel="noopener noreferrer" target="_blank"><i className="fa fa-question-circle" title="How to order restricted records" /></a>
                   </div>
                 </li>
