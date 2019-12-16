@@ -63,6 +63,12 @@ const PhysicalRepresentation: React.FC<{
         <dd>{representation.get('title')}</dd>
         <dt>Format</dt>
         <dd>{representation.get('format')}</dd>
+        {representation.getMaybe('intended_use', (value: string) => (
+            <>
+              <dt>Intended use</dt>
+              <dd>{value}</dd>
+            </>
+        ))}
         <dt>Availability</dt>
         <dd>
           <span className={`badge badge-pill ${classForAvailability(representation.get('availability'))}`}>{labelForAvailability(representation.get('availability'))}</span>
@@ -174,6 +180,12 @@ const DigitalRepresentation: React.FC<{
             <dt>Format</dt>
             <dd>{value}</dd>
           </>
+        ))}
+        {representation.getMaybe('intended_use', (value: string) => (
+            <>
+              <dt>Intended use</dt>
+              <dd>{value}</dd>
+            </>
         ))}
         {representation.getMaybe('agency_assigned_id', (value: string) => (
           <>
