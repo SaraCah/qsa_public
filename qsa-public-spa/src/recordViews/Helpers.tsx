@@ -77,7 +77,7 @@ export const Relationship: React.FC<{ relationship: any }> = ({ relationship }) 
         {relationship._resolved.display_string}
       </Link>
       <br />
-      {relationship.start_date}&nbsp;-&nbsp;{relationship.end_date}
+      {formatDateForDisplay(relationship.start_date)}&nbsp;-&nbsp;{formatDateForDisplay(relationship.end_date)}
     </>
   );
 };

@@ -1,5 +1,5 @@
 export const formatDateForDisplay = (str: string): string => {
-    return str.split(' ').map((bit) => (
+    return (str || '').split(' ').map((bit) => (
         bit.split('-').reverse().join('-')
     )).join(' ');
 };
