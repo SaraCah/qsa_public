@@ -61,6 +61,12 @@ const PhysicalRepresentation: React.FC<{
         <dd>{representation.get('qsa_id_prefixed')}</dd>
         <dt>Title</dt>
         <dd>{representation.get('title')}</dd>
+        {representation.getMaybe('description', (value: string) => (
+            <>
+              <dt>Description</dt>
+              <dd style={{whiteSpace: 'pre'}}>{value}</dd>
+            </>
+        ))}
         <dt>Format</dt>
         <dd>{representation.get('format')}</dd>
         {representation.getMaybe('intended_use', (value: string) => (
@@ -175,6 +181,12 @@ const DigitalRepresentation: React.FC<{
         <dd>{representation.get('qsa_id_prefixed')}</dd>
         <dt>Title</dt>
         <dd>{representation.get('title')}</dd>
+        {representation.getMaybe('description', (value: string) => (
+            <>
+              <dt>Description</dt>
+              <dd style={{whiteSpace: 'pre'}}>{value}</dd>
+            </>
+        ))}
         {representation.getMaybe('file_type', (value: string) => (
           <>
             <dt>Format</dt>
