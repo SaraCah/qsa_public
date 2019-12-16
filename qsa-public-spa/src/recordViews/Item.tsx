@@ -692,54 +692,6 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
                       </li>
                   );
                 })}
-                {item.getNotes('prefercite', null, (notes: Note[]) => (
-                  <li className="list-group-item list-group-item-action">
-                    <div className="d-flex w-100 justify-content-between">
-                      <h4 className="mb-1">Preferred citations</h4>
-                    </div>
-                    <div className="mb-1">
-                      {notes.map((note: Note, idx: number) => (
-                        <NoteDisplay key={idx} note={note} />
-                      ))}
-                    </div>
-                  </li>
-                ))}
-                {item.getNotes('odd', 'Remarks', (notes: Note[]) => (
-                  <li className="list-group-item list-group-item-action">
-                    <div className="d-flex w-100 justify-content-between">
-                      <h4 className="mb-1">Remarks</h4>
-                    </div>
-                    <div className="mb-1">
-                      {notes.map((note: Note, idx: number) => (
-                        <NoteDisplay key={idx} note={note} />
-                      ))}
-                    </div>
-                  </li>
-                ))}
-                {item.getNotes('remarks', null, (notes: Note[]) => (
-                    <li className="list-group-item list-group-item-action">
-                      <div className="d-flex w-100 justify-content-between">
-                        <h4 className="mb-1">Remarks</h4>
-                      </div>
-                      <div className="mb-1">
-                        {notes.map((note: Note, idx: number) => (
-                            <NoteDisplay key={idx} note={note} />
-                        ))}
-                      </div>
-                    </li>
-                ))}
-                {item.getExternalDocuments(['Helpful Resources'], (docs: any) => (
-                  <li className="list-group-item list-group-item-action">
-                    <div className="d-flex w-100 justify-content-between">
-                      <h4 className="mb-1">Helpful Resources</h4>
-                    </div>
-                    <div className="mb-1">
-                      {docs.map((doc: any, idx: number) => (
-                        <p><MaybeLink key={idx} location={doc.location} label={doc.location} /></p>
-                      ))}
-                    </div>
-                  </li>
-                ))}
                 {item.getMaybe('rap_applied', (rap: any) => {
                   return (
                     <li className="list-group-item list-group-item-action">
@@ -781,6 +733,42 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
                 {/*<input type="radio" name="control" id="expand" className="controls expand" value="expand" role="radio"/>*/}
                 {/*<label htmlFor="expand" className="controls">Show details</label>*/}
 
+                {item.getNotes('prefercite', null, (notes: Note[]) => (
+                    <AccordionPanel
+                        id={item.generateId()}
+                        title="Citation"
+                        children={notes.map((note: Note, idx: number) => (
+                            <NoteDisplay key={idx} note={note} />
+                        ))}
+                    />
+                ))}
+                {item.getNotes('odd', 'Remarks', (notes: Note[]) => (
+                    <AccordionPanel
+                        id={item.generateId()}
+                        title="Notes - Remarks"
+                        children={notes.map((note: Note, idx: number) => (
+                            <NoteDisplay key={idx} note={note} />
+                        ))}
+                    />
+                ))}
+                {item.getNotes('remarks', null, (notes: Note[]) => (
+                    <AccordionPanel
+                        id={item.generateId()}
+                        title="Notes - Remarks"
+                        children={notes.map((note: Note, idx: number) => (
+                            <NoteDisplay key={idx} note={note} />
+                        ))}
+                    />
+                ))}
+                {item.getExternalDocuments(['Helpful Resources'], (docs: any) => (
+                    <AccordionPanel
+                        id={item.generateId()}
+                        title="Helpful Resources"
+                        children={docs.map((doc: any, idx: number) => (
+                            <div><MaybeLink location={doc.location} label={doc.location} key={idx} /></div>
+                        ))}
+                    />
+                ))}
                 {item.getArray('physical_representations').length > 0 && (
                     <AccordionPanel
                         id={item.generateId()}
