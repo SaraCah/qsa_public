@@ -116,27 +116,23 @@ const PhysicalRepresentation: React.FC<{
               <dd>{value}</dd>
             </>
         ))}
-        {representation.get('rap_applied').uri !== item.get('rap_applied').uri && (
+        <dt>Access status <a href="/pages/restricted-access" rel="noopener noreferrer" target="_blank"><i className="fa fa-question-circle" title="Information about restricted access" /></a></dt>
+        {
+          representation.get('rap_access_status') === 'Open Access' ?
+            <dd className="text-success">Open</dd> :
             <>
-              <dt>Access status <a href="/pages/restricted-access" rel="noopener noreferrer" target="_blank"><i className="fa fa-question-circle" title="Information about restricted access" /></a></dt>
-              {
-                representation.get('rap_access_status') === 'Open Access' ?
-                  <dd className="text-success">Open</dd> :
+              <dd className="text-danger">Restricted</dd>
+              <dd>
+                {!representation.get('rap_expiration').expires && "No expiry"}
+                {representation.get('rap_expiration').expires &&
                   <>
-                    <dd className="text-danger">Restricted</dd>
-                    <dd>
-                      {!representation.get('rap_expiration').expires && "No expiry"}
-                      {representation.get('rap_expiration').expires &&
-                        <>
-                          {representation.get('rap_expiration').expired ? "Expired: " : "Expires: "}
-                          {representation.get('rap_expiration').expiry_date}
-                        </>
-                      }
-                    </dd>
+                    {representation.get('rap_expiration').expired ? "Expired: " : "Expires: "}
+                    {representation.get('rap_expiration').expiry_date}
                   </>
-              }
+                }
+              </dd>
             </>
-        )}
+        }
       </dl>
     </>
   );
@@ -236,27 +232,23 @@ const DigitalRepresentation: React.FC<{
               <dd>{value}</dd>
             </>
         ))}
-        {representation.get('rap_applied').uri !== item.get('rap_applied').uri && (
+        <dt>Access status <a href="/pages/restricted-access" rel="noopener noreferrer" target="_blank"><i className="fa fa-question-circle" title="Information about restricted access" /></a></dt>
+        {
+          representation.get('rap_access_status') === 'Open Access' ?
+            <dd className="text-success">Open</dd> :
             <>
-              <dt>Access status <a href="/pages/restricted-access" rel="noopener noreferrer" target="_blank"><i className="fa fa-question-circle" title="Information about restricted access" /></a></dt>
-              {
-                representation.get('rap_access_status') === 'Open Access' ?
-                  <dd className="text-success">Open</dd> :
+              <dd className="text-danger">Restricted</dd>
+              <dd>
+                {!representation.get('rap_expiration').expires && "No expiry"}
+                {representation.get('rap_expiration').expires &&
                   <>
-                    <dd className="text-danger">Restricted</dd>
-                    <dd>
-                      {!representation.get('rap_expiration').expires && "No expiry"}
-                      {representation.get('rap_expiration').expires &&
-                        <>
-                          {representation.get('rap_expiration').expired ? "Expired: " : "Expires: "}
-                          {representation.get('rap_expiration').expiry_date}
-                        </>
-                      }
-                    </dd>
+                    {representation.get('rap_expiration').expired ? "Expired: " : "Expires: "}
+                    {representation.get('rap_expiration').expiry_date}
                   </>
-              }
+                }
+              </dd>
             </>
-        )}
+        }
       </dl>
     </>
   );
