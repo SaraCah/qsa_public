@@ -142,7 +142,7 @@ const AgencyPage: React.FC<PageRoute> = (route: PageRoute) => {
               ))}
 
               {agency.getNotes('preferred_citation', null, (notes: Note[]) => (
-                <AccordionPanel id={agency.generateId()} title="Notes - Preferred Citation">
+                <AccordionPanel id={agency.generateId()} title="Citation">
                   {notes.map((note: Note) => (
                     <NoteDisplay note={note} />
                   ))}

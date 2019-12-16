@@ -155,7 +155,7 @@ const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
                 {series.getNotes('prefercite', null, (notes: Note[]) => (
                     <AccordionPanel
                         id={series.generateId()}
-                        title="Notes - Preferred Citation"
+                        title="Citation"
                         children={notes.map((note: Note, idx: number) => (
                             <NoteDisplay key={idx} note={note} />
                         ))}
