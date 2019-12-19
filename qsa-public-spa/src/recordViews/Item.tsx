@@ -626,7 +626,7 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
             <section className="core-information">
               <h2 className="sr-only">Basic information</h2>
 
-              <p className="lead">{item.get('description')}</p>
+              <p className="lead" style={{whiteSpace: 'pre'}}>{item.get('description')}</p>
 
               <ul className="list-group list-group-horizontal-md">
                 <li className="list-group-item">

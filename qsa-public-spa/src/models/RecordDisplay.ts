@@ -1,3 +1,5 @@
+import React from "react";
+
 interface TextNote {
   kind: 'text';
   text: string[];
@@ -36,6 +38,10 @@ export class RecordDisplay {
 
   getMaybe(fieldName: string, callback: any): any {
     if (this.get(fieldName)) {
+      // treat empty array as nil
+      if (Array.isArray(this.get(fieldName)) && this.get(fieldName).length === 0) {
+        return [];
+      }
       return callback(this.get(fieldName));
     } else {
       return [];
