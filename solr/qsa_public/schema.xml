@@ -12,6 +12,7 @@
   <field name="title_stemmed" type="text_en" indexed="true" stored="false" required="false" multiValued="true" />
   <field name="qsa_id" type="string" indexed="true" stored="true" required="false" multiValued="false" />
   <field name="qsa_id_prefixed" type="string" indexed="true" stored="true" required="false" multiValued="false" />
+  <field name="associated_qsa_ids" type="string" indexed="true" stored="true" required="false" multiValued="true" />
 
   <field name="json" type="string" indexed="false" stored="true" multiValued="false" />
   <field name="keywords" type="text_general" indexed="true" stored="false" multiValued="true"/>
@@ -52,6 +53,7 @@
   <field name="qsa_id_search" type="keyword" indexed="true" stored="false" required="false" multiValued="true" />
   <copyField source="qsa_id" dest="qsa_id_search" />
   <copyField source="qsa_id_prefixed" dest="qsa_id_search" />
+  <copyField source="associated_qsa_ids" dest="qsa_id_search" />
   <field name="note_types" type="string" indexed="true" stored="true" multiValued="true"/>
 
   <!-- Stemmed variants -->
