@@ -601,14 +601,14 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
   } else if (!item) {
     return <Layout skipFooter={true} />;
   } else {
-    route.setPageTitle(`Item: ${item.get('title')}`);
+    route.setPageTitle(`Item: ${item.get('title') || item.get('display_string')}`);
 
     return (
       <Layout aside={<RecordContext qsaId={qsaId} recordType="archival_object" />}>
         <div className="row">
           <div className="col-sm-12">
             <h1>
-              {item.get('title')}
+              {item.get('title') || item.get('display_string')}
               <div>
                 <div className="badge">
                   <small>
@@ -709,7 +709,7 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
                                 {item.get('rap_expiration').expires &&
                                   <>
                                     {item.get('rap_expiration').expired ? "Expired: " : "Expires: "}
-                                    {item.get('rap_expiration').expiry_date}
+                                    {formatDateForDisplay(item.get('rap_expiration').expiry_date)}
                                   </>
                                 }
                               </div>

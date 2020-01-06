@@ -139,6 +139,34 @@ interface Context {
   children_count: number;
 }
 
+export const formatRecordDisplayString = (record: any): string => {
+  if (record.jsonmodel_type === 'archival_object') {
+    let parts = [];
+
+    if (record.title) {
+      parts.push(record.title);
+    }
+
+    if (record.dates && record.dates.length > 0) {
+      const date = record.dates[0];
+      let bits = [];
+      if (date['begin']) {
+        bits.push(formatDateForDisplay(date['begin']));
+      }
+      if (date['end']) {
+        bits.push(formatDateForDisplay(date['end']));
+      }
+      if (bits.length > 0) {
+        parts.push(bits.join(' - '));
+      }
+    }
+
+    return parts.join(', ');
+  } else {
+    return record.display_string || record.title;
+  }
+};
+
 const RecordContextSiblings: React.FC<{ context: Context }> = ({ context }) => {
   let siblingsQuery: AdvancedSearchQuery | null = null;
   let childrenQuery: AdvancedSearchQuery | null = null;
@@ -175,9 +203,9 @@ const RecordContextSiblings: React.FC<{ context: Context }> = ({ context }) => {
             )}
             &nbsp;
             {isCurrent ? (
-              <span>{sibling.display_string}</span>
+              <span>{formatRecordDisplayString(sibling)}</span>
             ) : (
-              <Link to={uriFor(sibling.qsa_id_prefixed, sibling.jsonmodel_type)}>{sibling.display_string}</Link>
+              <Link to={uriFor(sibling.qsa_id_prefixed, sibling.jsonmodel_type)}>{formatRecordDisplayString(sibling)}</Link>
             )}
             {isCurrent && context.children.length > 0 && (
               <ul>
@@ -292,7 +320,7 @@ export const RecordContext: React.FC<{
                   <i className={iconForType(next_ancestor.jsonmodel_type)} aria-hidden="true" />
                   &nbsp;
                   <Link to={uriFor(next_ancestor.qsa_id_prefixed, next_ancestor.jsonmodel_type)}>
-                    {next_ancestor.display_string}
+                    {next_ancestor.title}
                   </Link>
                   {nested_lists}
                 </li>
