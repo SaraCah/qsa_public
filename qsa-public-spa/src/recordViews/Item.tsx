@@ -92,12 +92,6 @@ const PhysicalRepresentation: React.FC<{
             <dd>{representation.getArray('previous_system_ids').join('; ')}</dd>
           </>
         }
-        {representation.getMaybe('intended_use', (value: string) => (
-            <>
-              <dt>Intended use</dt>
-              <dd>{value}</dd>
-            </>
-        ))}
         {representation.getMaybe('preferred_citation', (value: string) => (
             <>
               <dt>Citation</dt>
@@ -208,12 +202,6 @@ const DigitalRepresentation: React.FC<{
             <dd>{representation.getArray('previous_system_ids').join('; ')}</dd>
           </>
         }
-        {representation.getMaybe('intended_use', (value: string) => (
-            <>
-              <dt>Intended use</dt>
-              <dd>{value}</dd>
-            </>
-        ))}
         {representation.getMaybe('preferred_citation', (value: string) => (
             <>
               <dt>Preferred citation</dt>
