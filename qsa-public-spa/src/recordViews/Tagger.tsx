@@ -159,7 +159,8 @@ export const Tagger: React.FC<any> = ({ recordId, context }) => {
         }
         <ReCaptcha context={context} />
         <div className="form-inline">
-          <input className="form-control form-control-sm" type="text" value={tagToCreate} onChange={(e) => setTagToCreate(e.target.value)} size={30} maxLength={60} />
+          <label className="sr-only" htmlFor="tagger-tag-name">Tag name</label>
+          <input id="tagger-tag-name" className="form-control form-control-sm" type="text" value={tagToCreate} onChange={(e) => setTagToCreate(e.target.value)} size={30} maxLength={60} />
           <button className="qg-btn btn-primary btn-sm" type="submit" disabled={recaptchaRequired}>Add Tag</button>
         </div>
       </form>

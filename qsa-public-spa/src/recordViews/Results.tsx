@@ -267,12 +267,14 @@ const SearchFacets: React.FC<{
                       <div className="facet-count">
                         <Link
                           className="qg-btn btn-link facet-remove-btn"
+                          aria-label="Remove this filter"
+                          title="Remove this filter"
                           to={{
                             pathname: '/search',
                             search: props.advancedSearchQuery.removeFilter(filter).toQueryString()
                           }}
                         >
-                          <i className="fa fa-minus-circle" title="Remove this filter" />
+                          <i className="fa fa-minus-circle" aria-hidden={true} />
                         </Link>
                       </div>
                     </li>

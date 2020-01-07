@@ -1414,9 +1414,11 @@ const RequestsSummary: React.FC<any> = props => {
     <>
       <h1>My Requests</h1>
       <div className="pull-right">
+        <label htmlFor="order-by" className="sr-only">Order by</label>
         <select className="form-control"
                 onChange={e => setSortBy(e.target.value)}
-                value={sortBy}>
+                value={sortBy}
+                id="order-by">
           <option value='date_requested_desc'>Requested Date descending</option>
           <option value='date_requested_asc'>Requested Date ascending</option>
           <option value='date_required_desc'>Required Date descending</option>
@@ -1438,7 +1440,7 @@ const RequestsSummary: React.FC<any> = props => {
             <th scope="col">Item</th>
             <th scope="col">Required Date</th>
             <th scope="col">Requested Date</th>
-            <th scope="col" />
+            <th scope="col"><span className="sr-only">Actions</span></th>
           </tr>
         </thead>
         <tbody>
@@ -1540,7 +1542,7 @@ const TagModeration: React.FC<any> = props => {
             <th style={{width: '40%'}}>Tag</th>
             <th style={{width: '10%'}}>Record</th>
             <th style={{width: '20%'}}>Date Reported</th>
-            <th/>
+            <th scope="col"><span className="sr-only">Actions</span></th>
           </tr>
         </thead>
         <tbody>
@@ -1695,7 +1697,7 @@ export const PageList: React.FC<any> = () => {
         <thead>
           <tr>
             <th>Page name</th>
-            <th></th>
+            <th><span className="sr-only">Actions</span></th>
           </tr>
         </thead>
         <tbody>
@@ -1876,7 +1878,7 @@ export const SavedSearches: React.FC<any> = (props: any) => {
             <th scope="col">Search Summary</th>
             <th scope="col">Notes</th>
             <th scope="col">Date Saved</th>
-            <th scope="col" />
+            <th scope="col"><span className="sr-only">Actions</span></th>
           </tr>
           </thead>
           <tbody>

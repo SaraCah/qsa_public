@@ -40,27 +40,31 @@ const AspaceAdvancedSearch: React.FC<{
             onSubmit();
           }}
         >
-          <button style={{ display: 'none' }} aria-hidden="true" />
           {advancedSearchQuery.map((clause, idx) => (
             <div className="form-row" key={clause.id}>
               <div className="form-group col-md-2">
                 {idx === 0 && <label className="form-control-plaintext text-right" htmlFor={`search-text-clause-${idx}`}>Search for:</label>}
                 {
-                  <select
-                    name="op[]"
-                    className="form-control custom-select"
-                    style={{ display: idx === 0 ? 'none' : 'block' }}
-                    value={clause.boolean_operator}
-                    onChange={(e): void => setAdvancedSearchQuery(advancedSearchQuery.operatorChanged(e, idx))}
-                  >
-                    <option value="AND">AND</option>
-                    <option value="OR">OR</option>
-                    <option value="NOT">NOT</option>
-                  </select>
+                  <>
+                    <label className="sr-only" htmlFor={`search-op-${idx}`}>Search operator</label>
+                    <select
+                      name="op[]"
+                      id={`search-op-${idx}`}
+                      className="form-control custom-select"
+                      style={{ display: idx === 0 ? 'none' : 'block' }}
+                      value={clause.boolean_operator}
+                      onChange={(e): void => setAdvancedSearchQuery(advancedSearchQuery.operatorChanged(e, idx))}
+                    >
+                      <option value="AND">AND</option>
+                      <option value="OR">OR</option>
+                      <option value="NOT">NOT</option>
+                    </select>
+                  </>
                 }
               </div>
 
               <div className="form-group col-md-5">
+                {idx > 0 && <label className="sr-only" htmlFor={`search-text-clause-${idx}`}>Search for</label>}
                 <input
                   id={`search-text-clause-${idx}`}
                   type="text"

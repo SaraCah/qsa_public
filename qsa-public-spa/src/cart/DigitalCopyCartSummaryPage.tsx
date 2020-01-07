@@ -56,7 +56,7 @@ export const DigitalCopyCartSummaryPage: React.FC<PageRoute> = (route: PageRoute
                     <th>Title</th>
                     <th>Parent Item</th>
                     <th style={{textAlign: 'right'}}>Price</th>
-                    <th></th>
+                    <th><span className="sr-only">Actions</span></th>
                   </tr>
                 </thead>
                 <tbody>
