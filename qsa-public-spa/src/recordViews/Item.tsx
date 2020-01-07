@@ -110,7 +110,7 @@ const PhysicalRepresentation: React.FC<{
               <dd>{value}</dd>
             </>
         ))}
-        <dt>Access status <a href="/pages/restricted-access" rel="noopener noreferrer" target="_blank"><i className="fa fa-question-circle" title="Information about restricted access" /></a></dt>
+        <dt>Access status <a href="/pages/restricted-access" rel="noopener noreferrer" target="_blank" aria-label="Information about restricted access"><i className="fa fa-question-circle" title="Information about restricted access" /></a></dt>
         {
           representation.get('rap_access_status') === 'Open Access' ?
             <dd className="text-success">Open</dd> :
@@ -220,7 +220,7 @@ const DigitalRepresentation: React.FC<{
               <dd>{value}</dd>
             </>
         ))}
-        <dt>Access status <a href="/pages/restricted-access" rel="noopener noreferrer" target="_blank"><i className="fa fa-question-circle" title="Information about restricted access" /></a></dt>
+        <dt>Access status <a href="/pages/restricted-access" rel="noopener noreferrer" target="_blank" aria-label="Information about restricted access"><i className="fa fa-question-circle" title="Information about restricted access" /></a></dt>
         {
           representation.get('rap_access_status') === 'Open Access' ?
             <dd className="text-success">Open</dd> :
@@ -684,7 +684,7 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
                   return (
                     <li className="list-group-item list-group-item-action">
                       <div className="d-flex w-100 justify-content-between">
-                        <h4 className="mb-1">Access status <a href="/pages/restricted-access" rel="noopener noreferrer" target="_blank"><i className="fa fa-question-circle" title="Information about restricted access" /></a></h4>
+                        <h4 className="mb-1">Access status <a href="/pages/restricted-access" rel="noopener noreferrer" target="_blank" aria-label="Information about restricted access"><i className="fa fa-question-circle" title="Information about restricted access" /></a></h4>
                       </div>
                       <div className="mb-1">
                         {

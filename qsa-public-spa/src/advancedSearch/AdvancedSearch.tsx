@@ -44,7 +44,7 @@ const AspaceAdvancedSearch: React.FC<{
           {advancedSearchQuery.map((clause, idx) => (
             <div className="form-row" key={clause.id}>
               <div className="form-group col-md-2">
-                {idx === 0 && <span className="form-control-plaintext text-right">Search for:</span>}
+                {idx === 0 && <label className="form-control-plaintext text-right" htmlFor={`search-text-clause-${idx}`}>Search for:</label>}
                 {
                   <select
                     name="op[]"
@@ -62,6 +62,7 @@ const AspaceAdvancedSearch: React.FC<{
 
               <div className="form-group col-md-5">
                 <input
+                  id={`search-text-clause-${idx}`}
                   type="text"
                   className="form-control"
                   name="q[]"
@@ -71,7 +72,9 @@ const AspaceAdvancedSearch: React.FC<{
               </div>
 
               <div className="form-group col-md-2">
+                <label className="sr-only" htmlFor={`search-field-clause-${idx}`}>Search within field</label>
                 <select
+                  id={`search-field-clause-${idx}`}
                   name="f[]"
                   className="form-control"
                   value={clause.target_field}
@@ -88,6 +91,7 @@ const AspaceAdvancedSearch: React.FC<{
               <div className="form-group col-md-1">
                 <button
                   className="qg-btn btn-default btn-sm"
+                  aria-label="Add another clause"
                   tabIndex={0}
                   onClick={(e): void => {
                     e.preventDefault();
@@ -102,6 +106,7 @@ const AspaceAdvancedSearch: React.FC<{
                 <div className="form-group col-md-1">
                   <button
                     className="qg-btn btn-default btn-sm"
+                    aria-label="Remove this clause"
                     tabIndex={0}
                     onClick={(e): void => {
                       e.preventDefault();

@@ -150,7 +150,7 @@ export const Tagger: React.FC<any> = ({ recordId, context }) => {
 
   return (
     <section>
-      <h3>Tags &nbsp; <small><a href="/pages/user-contributions-tagging" rel="noopener noreferrer" target="_blank"><i className="fa fa-question-circle" />&nbsp;More information</a></small></h3>
+      <h3>Tags &nbsp; <small><a href="/pages/user-contributions-tagging" rel="noopener noreferrer" target="_blank" aria-label="Information about user contributed tags"><i className="fa fa-question-circle" />&nbsp;More information</a></small></h3>
 
       <form onSubmit={(e) => {e.preventDefault(); addTag()}}>
         {

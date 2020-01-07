@@ -310,6 +310,8 @@ export const RecordContext: React.FC<{
 
     return (
       <div className="record-context">
+        <h2>Record Context</h2>
+
         {context.path_to_root.length === 0 ? (
           <RecordContextSiblings context={context} />
         ) : (

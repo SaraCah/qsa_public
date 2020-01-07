@@ -256,7 +256,7 @@ const SearchFacets: React.FC<{
           <h2>Results facets</h2>
           {props.advancedSearchQuery.filters().length > 0 && (
             <section className="active-filters">
-              <h4>Active filters</h4>
+              <h3>Active filters</h3>
               <ul>
                 {props.advancedSearchQuery.filters().map((filter: Filter) => {
                   return (
@@ -289,7 +289,7 @@ const SearchFacets: React.FC<{
 
             return (
               <section className="available-filters" key={field}>
-                <h4>{FACET_LABELS[field]}</h4>
+                <h3>{FACET_LABELS[field]}</h3>
                 <ul>
                   {
                     facets
@@ -461,8 +461,8 @@ const SearchResults: React.FC<{
         <div className="col-sm-12">
           <div className="pull-right">
             <small>
-            Sort by&nbsp;
-              <select onChange={ (e) => { updateSort(e) } } value={props.advancedSearchQuery.getSort()}>
+            <label htmlFor={"select-results-sort"}>Sort by&nbsp;</label>
+              <select id="select-results-sort" onChange={ (e) => { updateSort(e) } } value={props.advancedSearchQuery.getSort()}>
                 <option value="relevance">Relevance (default)</option>
                 <option value="recent_desc">Recently opened</option>
                 <option value="popular_desc">Most popular</option>

@@ -41,8 +41,9 @@ export const DateRangePicker: React.FC<any> = (props: DateRangePickerProps) => {
   return (
     <>
     <div className="date-picker">
-      <input className="date-picker-start" type="text" maxLength={4} style={{width: "4em"}} value={minTextField} onChange={(e) => { updateRange(Number(e.target.value), maxSelected) }} />
-      <div className="date-picker-range">
+      <label className="sr-only" htmlFor="date-picker-start">Limit to records dated after year</label>
+      <input id="date-picker-start" className="date-picker-start" type="text" maxLength={4} style={{width: "4em"}} value={minTextField} onChange={(e) => { updateRange(Number(e.target.value), maxSelected) }} />
+      <div className="date-picker-range" aria-hidden="true">
         <div style={{paddingTop: "1em"}}>
           <Range
             allowCross={false}
@@ -53,7 +54,8 @@ export const DateRangePicker: React.FC<any> = (props: DateRangePickerProps) => {
             onChange={([new_min, new_max]) => { updateRange(new_min, new_max) }} />
         </div>
       </div>
-      <input className="date-picker-end" type="text" maxLength={4} style={{width: "4em"}} value={maxTextField} onChange={(e) => updateRange(minSelected, Number(e.target.value))} />
+      <label className="sr-only" htmlFor="date-picker-end">Limit to records dated before year</label>
+      <input id="date-picker-end" className="date-picker-end" type="text" maxLength={4} style={{width: "4em"}} value={maxTextField} onChange={(e) => updateRange(minSelected, Number(e.target.value))} />
       {changed && <div className="date-picker-apply">
         <button className="btn btn-xs btn-secondary"
                 style={{marginLeft: "1em"}}

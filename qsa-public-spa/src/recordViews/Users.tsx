@@ -149,7 +149,6 @@ export const RegisterPage: React.FC<PageRoute> = (route: PageRoute) => {
                   type="text"
                   className="form-control"
                   id="email"
-                  aria-describedby="emailHelp"
                   placeholder="Enter email"
                   onChange={e => setUser(Object.assign({}, user, { email: e.target.value }))}
                 />
@@ -507,7 +506,6 @@ const UserDetailsForm: React.FC<{ context: IAppContext }> = ({ context }) => {
                 type="text"
                 className="form-control"
                 id="email"
-                aria-describedby="emailHelp"
                 placeholder="Enter email"
                 value={user.email}
                 onChange={e => setUser(Object.assign({}, user, { email: e.target.value }))}
@@ -805,7 +803,6 @@ const AdminUserDetailsForm: React.FC<any> = ({ userId }) => {
                   type="text"
                   className="form-control"
                   id="email-address"
-                  aria-describedby="emailHelp"
                   value={userToEdit.email}
                   placeholder="Enter email"
                   onChange={e => setUserToEdit(Object.assign({ ...userToEdit }, { email: e.target.value }))}
