@@ -60,49 +60,6 @@ class Search
   end
 
 
-  def self.date_pad_start(s)
-    default = ['0000', '01', '01']
-    bits = s.split('-')
-
-    full_date = (0...3).map {|i| bits.fetch(i, default.fetch(i))}.join('-')
-
-    "#{full_date}T00:00:00Z"
-  end
-
-
-  def self.date_pad_end(s)
-    default = ['9999', '12', '31']
-    bits = s.split('-')
-
-    full_date = (0...3).map {|i| bits.fetch(i, default.fetch(i))}.join('-')
-
-    "#{full_date}T23:59:59Z"
-  end
-
-
-  # Either of these parameters might be nil or empty
-  def self.build_date_filter(start_date, end_date)
-    # A record is NOT in range if its start date is after our end date, OR its
-    # end date is before our start date.
-
-    clauses = []
-
-    unless end_date.to_s.empty?
-      clauses << "start_date:[#{date_pad_end(end_date)} TO *]"
-    end
-
-    unless start_date.to_s.empty?
-      clauses << "end_date:[* TO #{date_pad_start(start_date)}]"
-    end
-
-    if clauses.empty?
-      '*:*'
-    else
-      "NOT (#{clauses.join(' OR ')})"
-    end
-  end
-
-
   def self.build_supplied_filters(filters)
     return '*:*' if filters.empty?
 
