@@ -822,6 +822,26 @@ class QSAPublic < Sinatra::Base
     json_response(SavedSearches.all(Ctx.get.session.user_id))
   end
 
+  # Legacy Redirects
+  Endpoint.get('/Search/ItemDetails.aspx')
+    .param(:ItemId, String, "Item QSA ID") \
+  do
+    redirect "/items/ITM#{params[:ItemId].gsub(/[^0-9]/, '')}"
+  end
+
+  Endpoint.get('/Search/SeriesDetails.aspx')
+    .param(:SeriesId, String, "Series QSA ID") \
+  do
+    redirect "/series/S#{params[:SeriesId].gsub(/[^0-9]/, '')}"
+  end
+
+  Endpoint.get('/Search/AgencyDetails.aspx')
+    .param(:AgencyId, String, "Agency QSA ID") \
+  do
+    redirect "/agencies/A#{params[:AgencyId].gsub(/[^0-9]/, '')}"
+  end
+
+
   if !defined?(STATIC_DIR)
     STATIC_DIR = File.realpath(File.absolute_path(File.join(File.dirname(__FILE__), '..', 'static')))
   end
