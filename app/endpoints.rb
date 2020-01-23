@@ -220,8 +220,12 @@ class QSAPublic < Sinatra::Base
     elsif DBAuth.authenticate(params[:email], params[:password])
       user = Users.get_for_email(params[:email])
 
-      session_id = Sessions.create_session(user.fetch('id'))
-      json_response(authenticated: true, session_id: session_id)
+      if user.nil?
+        json_response(authenticated: false, delay_seconds: 0, user_inactive: true)
+      else
+        session_id = Sessions.create_session(user.fetch('id'))
+        json_response(authenticated: true, session_id: session_id)
+      end
     else
       json_response(authenticated: false, delay_seconds: 0)
     end

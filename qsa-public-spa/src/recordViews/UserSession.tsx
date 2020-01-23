@@ -52,6 +52,7 @@ export const LoginPage: React.FC<PageRoute> = (route: PageRoute) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showLoginFailed, setShowLoginFailed] = useState(false);
+  const [loginFailedMessage, setLoginFailedMessage] = useState('');
   const [showLoginSuccess, setShowLoginSuccess] = useState(false);
   const [rateLimitDelay, setRateLimitDelay] = useState(0);
 
@@ -67,6 +68,13 @@ export const LoginPage: React.FC<PageRoute> = (route: PageRoute) => {
           appContext.setUser(null);
           setShowLoginFailed(true);
           setRateLimitDelay(login_response.delay_seconds);
+          if (login_response.user_inactive) {
+            setLoginFailedMessage('There is an issue with your account please contact info@archives.qld.go.au');
+          } else if (rateLimitDelay > 0) {
+            setLoginFailedMessage('Please wait ' + rateLimitDelay + ' second(s) before trying again.');
+          } else {
+            setLoginFailedMessage('Invalid email or password.')
+          }
         }
       });
   };
@@ -106,12 +114,8 @@ export const LoginPage: React.FC<PageRoute> = (route: PageRoute) => {
           >
             <div className="qg-call-out-box">
               {showLoginFailed && (
-              <div className="alert alert-warning" role="alert" style={{ marginBottom: 20 }}>
-                {rateLimitDelay > 0 ?
-                  <p>Please wait {rateLimitDelay} second(s) before trying again.</p>
-                  :
-                  <p>Invalid email or password.</p>
-                }
+                <div className="alert alert-warning" role="alert" style={{ marginBottom: 20 }}>
+                  <p>{loginFailedMessage}</p>
                 </div>
               )}
               <div className="form-row">
