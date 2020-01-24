@@ -96,6 +96,17 @@ class Users < BaseStorage
       modified_time: java.lang.System.currentTimeMillis
     }
 
+    if user_for_email[:inactive] != data_for_update[:inactive]
+      # inactive has changed!
+      if data_for_update[:inactive] == 1
+        # user has been deactivated
+        data_for_update[:inactive_time] = java.lang.System.currentTimeMillis
+      else
+        # user has been reactivated
+        data_for_update[:inactive_time] = nil
+      end
+    end
+
     updated = db[:user]
                 .filter(id: user_form_dto.fetch('id'))
                 .filter(lock_version: user_form_dto.fetch('lock_version'))
@@ -190,6 +201,12 @@ class Users < BaseStorage
     else
       [{code: "INCORRECT_PASSWORD", field: 'current_password'}]
     end
+  end
+
+  def self.log_last_login_time(user_id)
+    db[:user]
+      .filter(id: user_id)
+      .update(last_login_time: java.lang.System.currentTimeMillis)
   end
 
 end

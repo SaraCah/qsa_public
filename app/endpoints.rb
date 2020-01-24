@@ -223,6 +223,7 @@ class QSAPublic < Sinatra::Base
       if user.nil?
         json_response(authenticated: false, delay_seconds: 0, user_inactive: true)
       else
+        Users.log_last_login_time(user.fetch('id'))
         session_id = Sessions.create_session(user.fetch('id'))
         json_response(authenticated: true, session_id: session_id)
       end
