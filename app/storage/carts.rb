@@ -371,4 +371,26 @@ class Carts < BaseStorage
         .update(position: idx + 1)
     end
   end
+
+  def self.start_periodic_tasks!
+    Thread.new do
+      loop do
+        begin
+          Ctx.open do
+            notified = Carts.minicart_notify_all
+
+            if notified > 0
+              $LOG.info(("Pushed through %d carts where payment was made but the notification was lost." +
+                         "  This can happen if the POST request from the payment gateway goes missing.") % [notified])
+            end
+          end
+        rescue
+          $LOG.error("Failure in Carts periodic task: #{$!}")
+          $LOG.error($@.join("\n"))
+        end
+
+        sleep 600 + (60 * rand).to_i
+      end
+    end
+  end
 end

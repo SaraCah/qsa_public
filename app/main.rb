@@ -169,6 +169,8 @@ class QSAPublic < Sinatra::Base
     DB.connect
 
     SolrIndexer.start
+
+    Carts.start_periodic_tasks!
   end
 
   error do
