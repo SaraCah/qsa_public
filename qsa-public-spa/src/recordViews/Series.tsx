@@ -207,7 +207,7 @@ const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
                         id={series.generateId()}
                         title="Helpful Resources"
                         children={docs.map((doc: any, idx: number) => (
-                            <div><MaybeLink location={doc.location} label={doc.location} key={idx} /></div>
+                            <div key="{idx}"><MaybeLink location={doc.location} label={doc.location} /></div>
                         ))}
                     />
                 ))}
