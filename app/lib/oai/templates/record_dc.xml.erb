@@ -23,9 +23,9 @@
 
             <dc:title><%= record.fetch('display_string') %></dc:title>
 
-            <% creator = record.fetch('creating_agency', nil) %>
-            <% if creator %>
-                <dc:creator><%= creator['_resolved']['display_string'] %></dc:creator>
+            <% creators = record.fetch('creating_agency', []) %>
+            <% if creators.length > 0 %>
+                <dc:creator><%= creators.map{|creator| creator['_resolved']['display_string']}.join('; ') %></dc:creator>
             <% end %>
 
             <% dates = record.fetch('dates', []) %>

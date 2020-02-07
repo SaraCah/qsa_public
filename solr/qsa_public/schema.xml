@@ -65,7 +65,7 @@
   <field name="qsaid_sort" type="string" indexed="true" stored="false" multiValued="false" />
 
   <!-- Agency Business -->
-  <field name="creating_agency_id" type="string" indexed="true" stored="true" multiValued="false" />
+  <field name="creating_agency_id" type="string" indexed="true" stored="true" multiValued="true" />
   <field name="responsible_agency_id" type="string" indexed="true" stored="true" multiValued="false" />
 
   <!-- Mandate/Function Business -->
