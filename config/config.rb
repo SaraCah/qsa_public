@@ -2,6 +2,8 @@
 # grant all on qsa_public.* to 'qsa'@'localhost' identified by 'qsa123';
 
 AppConfig[:db_url] = "jdbc:mysql://localhost:3306/qsa_public?useUnicode=true&characterEncoding=UTF-8&user=qsa&password=qsa123"
+AppConfig[:aspace_db_url] = "jdbc:mysql://localhost:3306/qsa_public?useUnicode=true&characterEncoding=UTF-8&user=qsa&password=qsa123"
+AppConfig[:storage_file_path] = "/tmp/qsa_dev"
 # AppConfig[:session_secret] = "randomly_generated_token"
 
 AppConfig[:indexer_interval_seconds] = 5

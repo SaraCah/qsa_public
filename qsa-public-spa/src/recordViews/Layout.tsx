@@ -254,7 +254,7 @@ const Layout: React.FC<any> = (props: any) => {
             ) : (
               <>
                 <div id="qg-options" className="row">
-                  <div id="qg-share" className="qg-share" />
+                  <div id="qg-share" className="qg-share"/>
                   <div id="qg-feedback-btn">
                     <button
                       className="btn btn-default qg-toggle-btn collapsed qg-icon"
@@ -266,7 +266,99 @@ const Layout: React.FC<any> = (props: any) => {
                     </button>
                   </div>
                 </div>
-
+                <div id="qg-page-feedback" className="row-collapse show">
+                  <form id="qg-page-feedback-form"
+                  method="post"
+                  action="https://www.smartservice.qld.gov.au/services/submissions/email/feedback/feedback"
+                  className="form"
+                  data-recaptcha="true"
+                  >
+                    <ol className="questions">
+                      <li>
+                        <fieldset id="page-feedback-about">
+                          <legend><span className="label"> Is your feedback about:</span></legend>
+                          <div className="radio">
+                            <input name="page-feedback-about" id="page-feedback-about-this-website" type="radio" value="this website"
+                            data-qg-pr="default"
+                            data-parent="#qg-page-feedback-form"
+                            data-target="#feedback-page" />
+                            <label htmlFor="page-feedback-about-this-website">this website</label>
+                          </div>
+                          <div className="radio">
+                            <input name="page-feedback-about" id="page-feedback-about-a-government-service" type="radio" value="a government service"
+                            data-qg-pr="default"
+                            data-parent="#qg-page-feedback-form"
+                            data-target="#feedback-serv-dep-staff"
+                            />
+                            <label htmlFor="page-feedback-about-a-government-service">a government service, department or staff member?</label>
+                          </div>
+                        </fieldset>
+                      </li>
+                    </ol>
+                    <div className="panel">
+                      <div id="feedback-serv-dep-staff" className="status info panel-collapse collapse">
+                        <h2>Feedback on government services, department and staff</h2>
+                        <p>Please use our <a href="https://www.qld.gov.au/contact-us/complaints/">complaints and compliments form</a></p>
+                      </div>
+                      <div id="feedback-page-list" className="questions">
+                        <h2>Page Feedback</h2>
+                        <ol id="feedback-page-list" className="questions">
+                          <li className="coll-12">
+                            <fieldset>
+                              <legend>
+                                <span className="label">How satisfied are you with your experience today?</span>
+                                <abbr title="(required)" className="required"></abbr>
+                              </legend>
+                              <div className="radio">
+                                <input type="radio" name="feedback-satisfaction" value="Very dissatisfied" required={true} id="fs-very-dissatisfied" />
+                                <label htmlFor="fs-very-dissatisdied">Very dissatisfied (1) </label>
+                              </div>
+                              <div className="radio">
+                                <input type="radio" name="feedback-satisfaction" value="Dissatisfied" required={true} id="fs-dissatisfied" />
+                                <label htmlFor="fs-dissatisdied">Dissatisfied (2) </label>
+                              </div>
+                              <div className="radio">
+                                <input type="radio" name="feedback-satisfaction" value="Neither satisfied or dissatisfied" required={true} id="fs-neither-satisfied-or-dissatisfied" />
+                                <label htmlFor="fs-neither-satisfied-or-dissatisfied">Neither satisfied or dissatisfied (3) </label>
+                              </div>
+                              <div className="radio">
+                                <input type="radio" name="feedback-satisfaction" value="Satisfied" required={true} id="fs-satisfied" />
+                                <label htmlFor="fs-satisfied">Satisfied (4) </label>
+                              </div>
+                              <div className="radio">
+                                <input type="radio" name="feedback-satisfaction" value="Very satisfied" required={true} id="fs-very-satisfied" />
+                                <label htmlFor="fs-very-satisfied">Very satisfied (5) </label>
+                              </div>
+                            </fieldset>
+                          </li>
+                          <li className="col-12">
+                            <div className="form-group">
+                              <label htmlFor="form-group">
+                              <span className="label">Comments</span>
+                              <abbr title="(required)" className="requiured">*</abbr>
+                              </label>
+                              <textarea className="form-control" name="comments" id="comments"  required={true}></textarea>
+                            </div>
+                          </li>
+                          <li id="feedback-captcha-containter" className="col-md-12">
+                            <div className="form-group">
+                              <label htmlFor="feedback-captcha">Please leave this blank (this helps us identify automatic spam)</label>
+                              <input className="form-control" type="text" name="captcha" id="feedback-captcha" value=""/>
+                            </div>
+                          </li>
+                          <li className="footer col-md12">
+                            <span id="feedback-hidden-inputs"></span>
+                            <ul className="actions">
+                              <li>
+                                <button type="submit" value="Submit feedback" className="qg-btn btn-primary">Submit Feedback</button>
+                              </li>
+                            </ul>
+                          </li>
+                        </ol>
+                      </div>
+                    </div>
+                  </form>
+                </div>
                 <footer>
                   <div className="qg-site-map row">
                     <div>
