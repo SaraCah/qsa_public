@@ -257,7 +257,7 @@ const Layout: React.FC<any> = (props: any) => {
                   <div id="qg-share" className="qg-share"/>
                   <div id="qg-feedback-btn">
                     <button
-                      className="btn btn-default qg-toggle-btn collapsed qg-icon"
+                      className="btn btn-default qg-toggle-btn qg-icon collapsed"
                       id="page-feedback-useful"
                       data-toggle="collapse"
                       data-target="#qg-page-feedback"
@@ -266,7 +266,7 @@ const Layout: React.FC<any> = (props: any) => {
                     </button>
                   </div>
                 </div>
-                <div id="qg-page-feedback" className="row-collapse show">
+                <div id="qg-page-feedback" className="collapse">
                   <form id="qg-page-feedback-form"
                   method="post"
                   action="https://www.smartservice.qld.gov.au/services/submissions/email/feedback/feedback"
