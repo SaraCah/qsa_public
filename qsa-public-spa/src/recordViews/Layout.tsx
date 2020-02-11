@@ -163,7 +163,7 @@ const Layout: React.FC<any> = (props: any) => {
                     name="query"
                     id="qg-search-query"
                     className="form-control"
-                    placeholder="Search website"
+                    placeholder="Search all qld.gov.au"
                     tabIndex={0}
                     aria-required="true"
                   />
