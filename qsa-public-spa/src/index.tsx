@@ -197,7 +197,7 @@ ReactDOM.render(
           exact
           path="/"
           component={wrappedRoute(HomePage, {
-            pageTitle: 'Archives Search: Home'
+            pageTitle: 'ArchivesSearch: Home'
           })}
         />
         <Route path="/agencies/:qsaId" component={wrappedRoute(AgencyPage, { pageTitle: 'View agency' })} />

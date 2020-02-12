@@ -90,7 +90,7 @@ export const LoginPage: React.FC<PageRoute> = (route: PageRoute) => {
                 Login Success
               </h2>
               <p>
-                Return to <Link to="/">Archives Search</Link> or visit <Link to="/my-account">your account</Link>.
+                Return to <Link to="/">ArchivesSearch</Link> or visit <Link to="/my-account">your account</Link>.
               </p>
             </div>
           </div>
@@ -203,7 +203,7 @@ export const LogoutPage: React.FC<PageRoute> = (route: PageRoute) => {
               </div> :
               <div className="alert alert-success" role="alert">
                 <h2><i className="fa fa-check-circle"/>Logout Success</h2>
-                <p>Return to <Link to="/">Archives Search</Link> or log in again <Link to="/login">here</Link>.</p>
+                <p>Return to <Link to="/">ArchivesSearch</Link> or log in again <Link to="/login">here</Link>.</p>
               </div>
           }
         </div>

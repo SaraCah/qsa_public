@@ -10,7 +10,7 @@ const LeftNavigation: React.FC<any> = (props: any) => {
     <nav id="qg-side-nav" aria-label="side navigation" role="navigation">
       {!props.errorPage && <PageSnippet slug="sidebar-top" />}
       <h2>
-        <Link to={'/'}>Archives Search</Link>
+        <Link to={'/'}>ArchivesSearch</Link>
       </h2>
       {!props.showNavForUser && (
         <ul aria-label="section navigation" style={props.context.user ? { paddingBottom: 0 } : {}}>
@@ -223,7 +223,7 @@ const Layout: React.FC<any> = (props: any) => {
                       Queensland's archives
                     </a>
                   </li>
-                  <li className="qldGovBreadcrumb">Archives Search</li>
+                  <li className="qldGovBreadcrumb">ArchivesSearch</li>
                 </ol>
               </nav>
             </div>

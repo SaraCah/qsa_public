@@ -55,7 +55,7 @@ const ResultsPage: React.FC<PageRoute> = (route: PageRoute) => {
         skipFooter={!searchResults}
         aside={searchResults.results.length > 0 && <SearchFacets facets={searchResults.facets} advancedSearchQuery={advancedSearchQuery} />}
       >
-        <h1>Archives Search</h1>
+        <h1>ArchivesSearch</h1>
 
         {showCompact ? (
           <CompactSearchSummary

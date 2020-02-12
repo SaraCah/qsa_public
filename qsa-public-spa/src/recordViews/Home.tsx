@@ -8,7 +8,7 @@ import {PageSnippet} from './PageViewPage';
 const HomePage: React.FC<RouteComponentProps<any>> = (route: RouteComponentProps<any>) => {
   return (
     <Layout>
-      <h1>Archives Search</h1>
+      <h1>ArchivesSearch</h1>
 
       <PageSnippet slug="welcome" />
       <div className="qg-call-out-box">
