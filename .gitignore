@@ -6,6 +6,7 @@
 /data
 /config/config.local.rb
 /static
+/node_modules
 
 # dependencies
 /qsa-public-spa/node_modules
