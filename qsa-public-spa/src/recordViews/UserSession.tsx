@@ -69,7 +69,7 @@ export const LoginPage: React.FC<PageRoute> = (route: PageRoute) => {
           setShowLoginFailed(true);
           setRateLimitDelay(login_response.delay_seconds);
           if (login_response.user_inactive) {
-            setLoginFailedMessage('There is an issue with your account please contact info@archives.qld.go.au');
+            setLoginFailedMessage('There is an issue with your account please contact info@archives.qld.gov.au');
           } else if (rateLimitDelay > 0) {
             setLoginFailedMessage('Please wait ' + rateLimitDelay + ' second(s) before trying again.');
           } else {
