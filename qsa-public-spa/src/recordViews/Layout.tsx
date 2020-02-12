@@ -280,30 +280,35 @@ const Layout: React.FC<any> = (props: any) => {
                           <div className="radio">
                             <input name="page-feedback-about" id="page-feedback-about-this-website" type="radio" value="this website"
                             data-qg-pr="default"
-                            data-parent="#qg-page-feedback-form"
-                            data-target="#feedback-page" />
+                            data-target="#feedback-page"
+                            data-toggle="collapse"
+                            aria-expanded="false"
+                            aria-controls="#feedback-page" />
                             <label htmlFor="page-feedback-about-this-website">this website</label>
                           </div>
                           <div className="radio">
                             <input name="page-feedback-about" id="page-feedback-about-a-government-service" type="radio" value="a government service"
                             data-qg-pr="default"
-                            data-parent="#qg-page-feedback-form"
                             data-target="#feedback-serv-dep-staff"
+                            data-toggle="collapse"
+                            aria-expanded="false"
+                            aria-controls="#feedback-serv-dep-staff"
                             />
                             <label htmlFor="page-feedback-about-a-government-service">a government service, department or staff member?</label>
                           </div>
                         </fieldset>
                       </li>
                     </ol>
+
                     <div className="panel">
-                      <div id="feedback-serv-dep-staff" className="status info panel-collapse collapse">
+                      <div id="feedback-serv-dep-staff" className="status info panel-collapse collapse" data-parent="#qg-page-feedback-form">
                         <h2>Feedback on government services, department and staff</h2>
                         <p>Please use our <a href="https://www.qld.gov.au/contact-us/complaints/">complaints and compliments form</a></p>
                       </div>
-                      <div id="feedback-page-list" className="questions">
+                      <div id="feedback-page" className="panel-collapse collapse" data-parent="#qg-page-feedback-form">
                         <h2>Page Feedback</h2>
                         <ol id="feedback-page-list" className="questions">
-                          <li className="coll-12">
+                          <li className="col-12">
                             <fieldset>
                               <legend>
                                 <span className="label">How satisfied are you with your experience today?</span>
