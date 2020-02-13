@@ -133,8 +133,16 @@ const AgencyPage: React.FC<PageRoute> = (route: PageRoute) => {
                 </AccordionPanel>
               ))}
 
-              {agency.getNotes('information_sources', null, (notes: Note[]) => (
-                <AccordionPanel id={agency.generateId()} title="Notes - Information Sources">
+              {agency.getExternalDocuments(['Helpful Resources'], (docs: any) => (
+                <AccordionPanel id={agency.generateId()} title="Helpful Resources">
+                  {docs.map((doc: any) => (
+                      <div><MaybeLink location={doc.location} label={doc.location} /></div>
+                  ))}
+                </AccordionPanel>
+              ))}
+
+              {agency.getNotes('remarks', null, (notes: Note[]) => (
+                <AccordionPanel id={agency.generateId()} title="Notes - Remarks">
                   {notes.map((note: Note) => (
                     <NoteDisplay note={note} />
                   ))}
@@ -143,14 +151,6 @@ const AgencyPage: React.FC<PageRoute> = (route: PageRoute) => {
 
               {agency.getNotes('preferred_citation', null, (notes: Note[]) => (
                 <AccordionPanel id={agency.generateId()} title="Citation">
-                  {notes.map((note: Note) => (
-                    <NoteDisplay note={note} />
-                  ))}
-                </AccordionPanel>
-              ))}
-
-              {agency.getNotes('remarks', null, (notes: Note[]) => (
-                <AccordionPanel id={agency.generateId()} title="Notes - Remarks">
                   {notes.map((note: Note) => (
                     <NoteDisplay note={note} />
                   ))}
@@ -181,13 +181,14 @@ const AgencyPage: React.FC<PageRoute> = (route: PageRoute) => {
                 </AccordionPanel>
               ))}
 
-              {agency.getExternalDocuments(['Helpful Resources'], (docs: any) => (
-                <AccordionPanel id={agency.generateId()} title="Helpful Resources">
-                  {docs.map((doc: any) => (
-                      <div><MaybeLink location={doc.location} label={doc.location} /></div>
+              {agency.getNotes('information_sources', null, (notes: Note[]) => (
+                <AccordionPanel id={agency.generateId()} title="Notes - Information Sources">
+                  {notes.map((note: Note) => (
+                    <NoteDisplay note={note} />
                   ))}
                 </AccordionPanel>
               ))}
+
             </section>
 
             <section>
