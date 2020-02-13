@@ -140,6 +140,8 @@ const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
                 })}
               </ul>
             </section>
+            
+            <Tagger recordId={series.get('id')} context={route.context}/>
 
             {
               showAccordions &&
@@ -282,7 +284,7 @@ const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
               </ul>
             </section>
 
-            <Tagger recordId={series.get('id')} context={route.context}/>
+           
           </div>
         </div>
       </Layout>
