@@ -348,7 +348,7 @@ const Layout: React.FC<any> = (props: any) => {
                           <li id="feedback-captcha-containter" className="col-md-12">
                             <div className="form-group">
                               <label htmlFor="feedback-captcha">Please leave this blank (this helps us identify automatic spam)</label>
-                              <input className="form-control" type="text" name="captcha" id="feedback-captcha" value=""/>
+                              <input className="form-control" type="text" name="captcha" id="feedback-captcha" value="" onChange={(e) => {}}/>
                             </div>
                           </li>
                           <li className="footer col-md12">
