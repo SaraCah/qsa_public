@@ -5,7 +5,7 @@ import { iconForType, labelForRelator, uriFor } from '../utils/typeResolver';
 import { Link } from 'react-router-dom';
 import { Http } from '../utils/http';
 import { AdvancedSearchQuery } from '../models/AdvancedSearch';
-import {formatDateForDisplay} from "../utils/rendering";
+import {rewriteISODates} from "../utils/rendering";
 
 export const NoteDisplay: React.FC<{ note: Note }> = ({ note }) => {
   switch (note.kind) {
@@ -77,7 +77,7 @@ export const Relationship: React.FC<{ relationship: any }> = ({ relationship }) 
         {relationship._resolved.display_string}
       </Link>
       <br />
-      {formatDateForDisplay(relationship.start_date)}&nbsp;-&nbsp;{formatDateForDisplay(relationship.end_date)}
+      {rewriteISODates(relationship.start_date)}&nbsp;-&nbsp;{rewriteISODates(relationship.end_date)}
     </>
   );
 };
@@ -140,31 +140,7 @@ interface Context {
 }
 
 export const formatRecordDisplayString = (record: any): string => {
-  if (record.jsonmodel_type === 'archival_object') {
-    let parts = [];
-
-    if (record.title) {
-      parts.push(record.title);
-    }
-
-    if (record.dates && record.dates.length > 0) {
-      const date = record.dates[0];
-      let bits = [];
-      if (date['begin']) {
-        bits.push(formatDateForDisplay(date['begin']));
-      }
-      if (date['end']) {
-        bits.push(formatDateForDisplay(date['end']));
-      }
-      if (bits.length > 0) {
-        parts.push(bits.join(' - '));
-      }
-    }
-
-    return parts.join(', ');
-  } else {
-    return record.display_string || record.title;
-  }
+  return rewriteISODates(record.display_string || record.title);
 };
 
 const RecordContextSiblings: React.FC<{ context: Context }> = ({ context }) => {
@@ -358,7 +334,7 @@ export const CoreInformationDateDisplay: React.FC<{date: any}> = ({ date }) => {
           {
             (function() {
               if (date && date.begin) {
-                return `${formatDateForDisplay(date.begin)}` + (date.certainty ? ` (${date.certainty})` : '');
+                return `${rewriteISODates(date.begin)}` + (date.certainty ? ` (${date.certainty})` : '');
               } else {
                 return '-';
               }
@@ -371,7 +347,7 @@ export const CoreInformationDateDisplay: React.FC<{date: any}> = ({ date }) => {
           {
             (function() {
               if (date && date.end) {
-                return `${formatDateForDisplay(date.end)}` + (date.certainty_end ? ` (${date.certainty_end})` : '');
+                return `${rewriteISODates(date.end)}` + (date.certainty_end ? ` (${date.certainty_end})` : '');
               } else {
                 return '-';
               }

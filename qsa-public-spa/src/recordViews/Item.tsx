@@ -20,7 +20,7 @@ import AppContext from '../context/AppContext';
 import {Tagger} from "./Tagger";
 import { IAppContext } from '../context/AppContext';
 import { PageRoute } from '../models/PageRoute';
-import {preserveNewLines, formatDateForDisplay} from "../utils/rendering";
+import {preserveNewLines, rewriteISODates} from "../utils/rendering";
 
 
 const PhysicalRepresentation: React.FC<{
@@ -121,7 +121,7 @@ const PhysicalRepresentation: React.FC<{
                 {representation.get('rap_expiration').expires &&
                   <>
                     {representation.get('rap_expiration').expired ? "Expired: " : "Expires: "}
-                    {representation.get('rap_expiration').expiry_date}
+                    {rewriteISODates(representation.get('rap_expiration').expiry_date)}
                   </>
                 }
               </dd>
@@ -231,7 +231,7 @@ const DigitalRepresentation: React.FC<{
                 {representation.get('rap_expiration').expires &&
                   <>
                     {representation.get('rap_expiration').expired ? "Expired: " : "Expires: "}
-                    {representation.get('rap_expiration').expiry_date}
+                    {rewriteISODates(representation.get('rap_expiration').expiry_date)}
                   </>
                 }
               </dd>
@@ -697,7 +697,7 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
                                 {item.get('rap_expiration').expires &&
                                   <>
                                     {item.get('rap_expiration').expired ? "Expired: " : "Expires: "}
-                                    {formatDateForDisplay(item.get('rap_expiration').expiry_date)}
+                                    {rewriteISODates(item.get('rap_expiration').expiry_date)}
                                   </>
                                 }
                               </div>

@@ -7,7 +7,7 @@ import { Http } from '../utils/http';
 import { iconForType, labelForType, uriFor } from '../utils/typeResolver';
 import queryString from 'query-string';
 import { PageRoute } from '../models/PageRoute';
-import {preserveNewLines, formatDateForDisplay} from "../utils/rendering";
+import {preserveNewLines, rewriteISODates} from "../utils/rendering";
 import { DateRangePicker } from './DateRangePicker';
 
 
@@ -262,7 +262,7 @@ const SearchFacets: React.FC<{
                   return (
                     <li key={filter.field}>
                       <div className="facet-label">
-                        {FACET_LABELS[filter.field]}: {filter.label}&nbsp;
+                        {FACET_LABELS[filter.field]}: {rewriteISODates(filter.label)}&nbsp;
                       </div>
                       <div className="facet-count">
                         <Link
@@ -302,7 +302,7 @@ const SearchFacets: React.FC<{
                         if (props.advancedSearchQuery.hasFilter(facet.facet_field, facet.facet_value)) {
                           return (
                             <li key={facet.facet_field + '_' + facet.facet_label}>
-                              <div className="facet-label">{facet.facet_label}</div>
+                              <div className="facet-label">{rewriteISODates(facet.facet_label)}</div>
                               <div className="facet-count">{facet.facet_count}</div>
                             </li>
                           );
@@ -318,7 +318,7 @@ const SearchFacets: React.FC<{
                                                  .toQueryString()
                                   }}
                                 >
-                                  {facet.facet_label}
+                                  {rewriteISODates(facet.facet_label)}
                                 </Link>
                               </div>
                               <div className="facet-count">{facet.facet_count}</div>
@@ -389,7 +389,7 @@ const SearchResult: React.FC<{ searchResult: any }> = props => {
       <div className="d-flex w-100 justify-content-between">
         <h3>
           <Link to={uriFor(props.searchResult.qsa_id_prefixed, props.searchResult.primary_type)}>
-            {props.searchResult.title}
+            {rewriteISODates(props.searchResult.title)}
           </Link>
         </h3>
         <span className="badge">
@@ -402,7 +402,7 @@ const SearchResult: React.FC<{ searchResult: any }> = props => {
       {props.searchResult.description && <p dangerouslySetInnerHTML={{__html: preserveNewLines(props.searchResult.description)}} />}
       {props.searchResult.dates_display_string && (
         <div>
-          <small>Dates: {formatDateForDisplay(props.searchResult.dates_display_string)}</small>
+          <small>Dates: {rewriteISODates(props.searchResult.dates_display_string)}</small>
         </div>
       )}
       {props.searchResult.primary_type === 'archival_object' && formatRepresentationCounts()}

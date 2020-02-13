@@ -8,7 +8,7 @@ import { iconForType, labelForMandateType, labelForType } from '../utils/typeRes
 import {CoreInformationDateDisplay, Relationship} from './Helpers';
 import { AdvancedSearchQuery } from '../models/AdvancedSearch';
 import { PageRoute } from '../models/PageRoute';
-import {preserveNewLines, formatDateForDisplay} from "../utils/rendering";
+import {preserveNewLines, rewriteISODates} from "../utils/rendering";
 
 
 const MandatePage: React.FC<PageRoute> = (route: PageRoute) => {
@@ -73,7 +73,7 @@ const MandatePage: React.FC<PageRoute> = (route: PageRoute) => {
                   <br />
                   {currentMandate.get('qsa_id_prefixed')}
                 </li>
-                <CoreInformationDateDisplay date={currentMandate.getArray('dates')[0]} />
+                <CoreInformationDateDisplay date={currentMandate.getArray('date')[0]} />
               </ul>
 
               {currentMandate.getFirst('date', (date: any) => {

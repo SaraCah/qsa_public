@@ -16,8 +16,9 @@ import { PageRoute } from '../models/PageRoute';
 import {AdvancedSearchQuery} from "../models/AdvancedSearch";
 import {CompactSearchSummary} from "./Results";
 import {
+  epochToDateDisplayString, epochToDateTimeDisplayString,
   formatConstantForDisplay,
-  formatDateForDisplay, toISODateString
+  rewriteISODates, toISODateString
 } from "../utils/rendering";
 
 
@@ -1104,7 +1105,7 @@ const UserManagementListing: React.FC<any> = (props: any) => {
                     {user.first_name} {user.last_name}
                   </td>
                   <td>{user.email}</td>
-                  <td>{new Date(user.create_time).toLocaleDateString()}</td>
+                  <td>{epochToDateDisplayString(user.create_time)}</td>
                   <td>
                     {
                       user.is_inactive &&
@@ -1272,6 +1273,7 @@ const RequestSummary: React.FC<any> = props => {
                         style={{ position: 'relative', opacity: 1, zIndex: 'initial' }}
                         onChange={e => setNewDateRequired(e.target.value)}
                         value={newDateRequired}
+                        placeholder="yyyy-mm-dd"
                         required
                     />
                     {requiredDateInPast && (
@@ -1304,7 +1306,7 @@ const RequestSummary: React.FC<any> = props => {
               {
                 !dateRequiredEditingMode &&
                 <>
-                  {(request.date_required ? new Date(request.date_required).toLocaleDateString() : 'Not yet provided')}
+                  {(request.date_required ? epochToDateDisplayString(request.date_required) : 'Not yet provided')}
                   &nbsp;{request.time_required}
                   {
                     request.status === 'PENDING' &&
@@ -1346,7 +1348,7 @@ const RequestSummary: React.FC<any> = props => {
                 <th>Access</th>
                 <td>{(request.record.rap_access_status === 'Open Access' ? 'Open' : 'Restricted')}</td>
                 <th>Dates</th>
-                <td>{formatDateForDisplay(request.record.controlling_record.begin_date || '')} - {formatDateForDisplay(request.record.controlling_record.end_date || '')}</td>
+                <td>{rewriteISODates(request.record.controlling_record.begin_date || '')} - {rewriteISODates(request.record.controlling_record.end_date || '')}</td>
               </tr>
               <tr>
                 <th>Description</th>
@@ -1375,7 +1377,7 @@ const RequestSummary: React.FC<any> = props => {
                 </td>
                 <th>Date Requested</th>
                 <td>
-                  {new Date(request.create_time).toLocaleDateString()}
+                  {epochToDateDisplayString(request.create_time)}
                 </td>
               </tr>
             </tbody>
@@ -1459,8 +1461,8 @@ const RequestsSummary: React.FC<any> = props => {
                     {request.record.display_string}
                   </Link>
                 </td>
-                <td>{request.date_required && new Date(request.date_required).toLocaleDateString()} {request.time_required}</td>
-                <td>{new Date(request.create_time).toLocaleString()}</td>
+                <td>{request.date_required && epochToDateDisplayString(request.date_required)} {request.time_required}</td>
+                <td>{epochToDateTimeDisplayString(request.create_time)}</td>
                 <td style={{whiteSpace: 'nowrap'}}>
                   <Link className="qg-btn btn-primary btn-xs" to={`/my-requests/${request.id}`}>
                     View Request
@@ -1559,7 +1561,7 @@ const TagModeration: React.FC<any> = props => {
                   </Link>
                 </td>
                 <td>
-                  {new Date(tag.date_flagged).toLocaleString()}
+                  {epochToDateTimeDisplayString(tag.date_flagged)}
                 </td>
                 <td>
                   <button className="qg-btn btn-success btn-xs" onClick={(e) => unflagTag(tag.id)}>
@@ -1901,7 +1903,7 @@ export const SavedSearches: React.FC<any> = (props: any) => {
                     </button>
                   }
                 </td>
-                <td>{new Date(savedSearch.create_time).toLocaleString()}</td>
+                <td>{epochToDateTimeDisplayString(savedSearch.create_time)}</td>
                 <td>
                   <Link
                       to={'/search?' + savedSearch.query_string}

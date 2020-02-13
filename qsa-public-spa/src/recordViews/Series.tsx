@@ -14,7 +14,7 @@ import {
 } from './Helpers';
 import {Tagger} from "./Tagger";
 import { PageRoute } from '../models/PageRoute';
-import {preserveNewLines, formatDateForDisplay} from "../utils/rendering";
+import {preserveNewLines, rewriteISODates} from "../utils/rendering";
 
 
 const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
@@ -152,6 +152,16 @@ const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
                 {/*<input type="radio" name="control" id="expand" className="controls expand" value="expand" role="radio"/>*/}
                 {/*<label htmlFor="expand" className="controls">Show details</label>*/}
 
+                {series.getNotes('preferred_citation', null, (notes: Note[]) => (
+                    <AccordionPanel
+                        id={series.generateId()}
+                        title="Citation"
+                        children={notes.map((note: Note, idx: number) => (
+                            <NoteDisplay key={idx} note={note} />
+                        ))}
+                    />
+                ))}
+
                 {series.getNotes('prefercite', null, (notes: Note[]) => (
                     <AccordionPanel
                         id={series.generateId()}
@@ -186,6 +196,16 @@ const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
                     <AccordionPanel
                         id={series.generateId()}
                         title="Notes - Agency Control Number (aka Department Numbers)"
+                        children={notes.map((note: Note, idx: number) => (
+                            <NoteDisplay note={note} key={idx} />
+                        ))}
+                    />
+                ))}
+
+                {series.getNotes('system_of_arrangement', null, (notes: Note[]) => (
+                    <AccordionPanel
+                        id={series.generateId()}
+                        title="Notes - System of Arrangement"
                         children={notes.map((note: Note, idx: number) => (
                             <NoteDisplay note={note} key={idx} />
                         ))}

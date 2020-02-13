@@ -1,7 +1,8 @@
+// Example:
+// Input:  YYYY-MM-DD
+// Output: DD/MM/YYYY
 export const formatDateForDisplay = (str: string): string => {
-    return (str || '').split(' ').map((bit) => (
-        bit.split('-').reverse().join('-')
-    )).join(' ');
+  return str.split('-').reverse().join('/');
 };
 
 export const preserveNewLines = (str: string): string => {
@@ -26,4 +27,27 @@ export const toISODateString = (date: Date): string => {
 
 export const formatConstantForDisplay = (str: string): string => {
   return str.split('_').join(' ');
+};
+
+export const rewriteISODates = (str: string): string => {
+  if (!str) {
+    return str;
+  }
+
+  const isoDateRegex = RegExp(/\d\d\d\d-\d\d(-\d\d)?/,'g');
+  let match: any;
+
+  while ((match = isoDateRegex.exec(str)) !== null) {
+    str = str.replace(match[0], formatDateForDisplay(match[0]));
+  }
+
+  return str;
+};
+
+export const epochToDateDisplayString = (epoch: number): string => {
+  return new Date(epoch).toLocaleDateString('en-au');
+};
+
+export const epochToDateTimeDisplayString = (epoch: number): string => {
+  return new Date(epoch).toLocaleString('en-au');
 };

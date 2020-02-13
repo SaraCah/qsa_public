@@ -8,7 +8,7 @@ import { iconForType, labelForType } from '../utils/typeResolver';
 import {CoreInformationDateDisplay, Relationship} from './Helpers';
 import { AdvancedSearchQuery } from '../models/AdvancedSearch';
 import { PageRoute } from '../models/PageRoute';
-import {preserveNewLines, formatDateForDisplay} from "../utils/rendering";
+import {preserveNewLines, rewriteISODates} from "../utils/rendering";
 
 
 const FunctionPage: React.FC<PageRoute> = (route: PageRoute) => {
@@ -73,7 +73,7 @@ const FunctionPage: React.FC<PageRoute> = (route: PageRoute) => {
                   <br />
                   {currentFunction.get('qsa_id_prefixed')}
                 </li>
-                <CoreInformationDateDisplay date={currentFunction.getArray('dates')[0]} />
+                <CoreInformationDateDisplay date={currentFunction.getArray('date')[0]} />
               </ul>
 
               {currentFunction.getFirst('date', (date: any) => {
