@@ -77,7 +77,7 @@ export const Relationship: React.FC<{ relationship: any }> = ({ relationship }) 
         {relationship._resolved.display_string}
       </Link>
       <br />
-      {rewriteISODates(relationship.start_date)}&nbsp;-&nbsp;{rewriteISODates(relationship.end_date)}
+      {rewriteISODates(relationship.start_date)}&nbsp; to &nbsp;{rewriteISODates(relationship.end_date)}
     </>
   );
 };
