@@ -82,13 +82,13 @@ const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
             <section className="core-information">
               <h2 className="sr-only">Basic information</h2>
 
-              <div className="lead">
+              {/* <div className="lead">
                 {
                   ['abstract', 'description'].map((field: any) => (
                     <p key={field}>{series.get(field)}</p>
                   ))
                 }
-              </div>
+              </div> */}
 
               <ul className="list-group list-group-horizontal-md">
                 <li className="list-group-item">
@@ -106,11 +106,22 @@ const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
               <h3 className="sr-only">Series descriptive metadata</h3>
 
               <ul className="list-group list-group-flush">
+                
+              <li className="list-group-item list-group-item-action">
+                  <div className="d-flex w-100 justify-content-between">
+                    <h4 className="mb-1">Access Status Summary <a href="/pages/restricted-access" rel="noopener noreferrer" target="_blank" aria-label="Information about restricted access"><i className="fa fa-question-circle" title="Information about restricted access" /></a></h4>
+                  </div>
+                  <div className="text-success">{(series.get('access_status_summary')['Open Access'] || 0)} Open Items</div>
+                  <div>
+                    <span className="text-danger">{(series.get('access_status_summary')['Restricted Access'] || 0)} Restricted Items</span>&nbsp;
+                    <a href="/pages/how-do-i-order-restricted-records" rel="noopener noreferrer" target="_blank" aria-label="How to order restricted records"><i className="fa fa-question-circle" title="How to order restricted records" /></a>
+                  </div>
+                </li>
                 {[
-                  ['sensitivity_label', 'Sensitivity label'],
+                  ['repository_processing_note', 'Previous System Identifiers'],
+                  ['sensitivity_label', 'Sensitivity Statement'],
                   ['copyright_status', 'Copyright status'],
-                  ['information_sources', 'Information sources'],
-                  ['repository_processing_note', 'Previous identifiers']
+                  // ['information_sources', 'Information sources']
                 ].map(([fieldName, fieldLabel]) => {
                   return series.getMaybe(fieldName, (value: any) => {
                     return (
@@ -127,17 +138,6 @@ const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
                     );
                   });
                 })}
-
-                <li className="list-group-item list-group-item-action">
-                  <div className="d-flex w-100 justify-content-between">
-                    <h4 className="mb-1">Access Status Summary <a href="/pages/restricted-access" rel="noopener noreferrer" target="_blank" aria-label="Information about restricted access"><i className="fa fa-question-circle" title="Information about restricted access" /></a></h4>
-                  </div>
-                  <div className="text-success">{(series.get('access_status_summary')['Open Access'] || 0)} Open Items</div>
-                  <div>
-                    <span className="text-danger">{(series.get('access_status_summary')['Restricted Access'] || 0)} Restricted Items</span>&nbsp;
-                    <a href="/pages/how-do-i-order-restricted-records" rel="noopener noreferrer" target="_blank" aria-label="How to order restricted records"><i className="fa fa-question-circle" title="How to order restricted records" /></a>
-                  </div>
-                </li>
               </ul>
             </section>
 
