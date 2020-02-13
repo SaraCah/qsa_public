@@ -89,10 +89,6 @@ class QSAPublic < Sinatra::Base
     config.also_reload File.join('**', '*.rb')
   end
 
-  configure do
-    FileUtils.mkdir_p(File.join(File.dirname(__FILE__), '..', 'static'))
-  end
-
   use Rack::Session::Cookie, :key => 'qsa_public.session',
       :path => '/',
       :secret => AppConfig[:session_secret]

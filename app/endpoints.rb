@@ -848,6 +848,8 @@ class QSAPublic < Sinatra::Base
 
 
   if !defined?(STATIC_DIR)
+    # create static directory on startup
+    FileUtils.mkdir_p(File.join(File.dirname(__FILE__), '..', 'static'))
     STATIC_DIR = File.realpath(File.absolute_path(File.join(File.dirname(__FILE__), '..', 'static')))
   end
 
