@@ -117,7 +117,7 @@ const AgencyPage: React.FC<PageRoute> = (route: PageRoute) => {
                   return (
                       <li className="list-group-item list-group-item-action">
                         <div className="d-flex w-100 justify-content-between">
-                          <h4 className="mb-1">Category</h4>
+                          <h4 className="mb-1">Agency Category</h4>
                         </div>
                         <p className="mb-1">{agency.get('agency_category_label') || agency.get('agency_category')}</p>
                       </li>
