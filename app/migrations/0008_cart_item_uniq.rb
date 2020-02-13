@@ -27,7 +27,7 @@ Sequel.migration do
     end
 
     alter_table(:cart_item) do
-      add_foreign_key([:user_id], :user)
+      add_foreign_key(:user_id, :user)
 
       # add a uniq_hash column
       add_column(:uniq_hash, String, null: false, unique: true, size: 32)
