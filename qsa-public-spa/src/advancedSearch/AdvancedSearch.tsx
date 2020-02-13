@@ -94,6 +94,7 @@ const AspaceAdvancedSearch: React.FC<{
 
               <div className="form-group col-md-1">
                 <button
+                  type="button"
                   className="qg-btn btn-default btn-sm"
                   aria-label="Add another clause"
                   tabIndex={0}
@@ -109,6 +110,7 @@ const AspaceAdvancedSearch: React.FC<{
               {idx > 0 && (
                 <div className="form-group col-md-1">
                   <button
+                    type="button"
                     className="qg-btn btn-default btn-sm"
                     aria-label="Remove this clause"
                     tabIndex={0}
