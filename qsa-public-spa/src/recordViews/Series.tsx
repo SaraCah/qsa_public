@@ -154,9 +154,9 @@ const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
                 {/*<input type="radio" name="control" id="expand" className="controls expand" value="expand" role="radio"/>*/}
                 {/*<label htmlFor="expand" className="controls">Show details</label>*/}
 
-                {/* Made the Description notes up the top but come back to make sure it's right  */}
+                {/* Made the Description notes up the top but come back to make sure it's right becuase needs to interact with as_runcorn  */}
 
-                {series.getNotes('description', null, (notes: Note[]) => (
+                {/* {series.getNotes('description', null, (notes: Note[]) => (
                     <AccordionPanel
                         id={series.generateId()}
                         title="Notes - Description"
@@ -164,7 +164,7 @@ const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
                             <NoteDisplay note={note} key={idx} />
                         ))}
                     />
-                ))}
+                ))} */}
 
                 {series.getExternalDocuments(['Helpful Resources'], (docs: any) => (
                     <AccordionPanel
