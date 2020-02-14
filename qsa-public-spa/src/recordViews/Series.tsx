@@ -179,7 +179,7 @@ const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
                 {series.getNotes('odd', 'Remarks', (notes: Note[]) => (
                     <AccordionPanel
                         id={series.generateId()}
-                        title="Notes - Remarks"
+                        title="Remarks"
                         children={notes.map((note: Note, idx: number) => (
                             <NoteDisplay note={note} key={idx} />
                         ))}
@@ -189,7 +189,7 @@ const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
                 {series.getNotes('remarks', null, (notes: Note[]) => (
                     <AccordionPanel
                         id={series.generateId()}
-                        title="Notes - Remarks"
+                        title="Remarks"
                         children={notes.map((note: Note, idx: number) => (
                             <NoteDisplay note={note} key={idx} />
                         ))}
@@ -221,7 +221,7 @@ const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
                 {series.getNotes('custodhist', null, (notes: Note[]) => (
                     <AccordionPanel
                         id={series.generateId()}
-                        title="Notes - Agency Control Number"
+                        title="Agency Control Number"
                         children={notes.map((note: Note, idx: number) => (
                             <NoteDisplay note={note} key={idx} />
                         ))}
@@ -231,7 +231,7 @@ const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
                 {series.getNotes('system_of_arrangement', null, (notes: Note[]) => (
                     <AccordionPanel
                         id={series.generateId()}
-                        title="Notes - System of Arrangement"
+                        title="System of Arrangement"
                         children={notes.map((note: Note, idx: number) => (
                             <NoteDisplay note={note} key={idx} />
                         ))}
@@ -241,7 +241,7 @@ const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
                 {series.getNotes('arrangement', null, (notes: Note[]) => (
                     <AccordionPanel
                         id={series.generateId()}
-                        title="Notes - System of Arrangement"
+                        title="System of Arrangement"
                         children={notes.map((note: Note, idx: number) => (
                             <NoteDisplay note={note} key={idx} />
                         ))}
@@ -253,7 +253,7 @@ const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
                 {series.getNotes('information_sources', null, (notes: Note[]) => (
                     <AccordionPanel
                         id={series.generateId()}
-                        title="Notes - Information Sources"
+                        title="Information Sources"
                         children={notes.map((note: Note, idx: number) => (
                             <NoteDisplay note={note} key={idx} />
                         ))}
