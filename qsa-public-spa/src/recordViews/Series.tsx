@@ -154,22 +154,24 @@ const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
                 {/*<input type="radio" name="control" id="expand" className="controls expand" value="expand" role="radio"/>*/}
                 {/*<label htmlFor="expand" className="controls">Show details</label>*/}
 
-                {series.getNotes('preferred_citation', null, (notes: Note[]) => (
+                {/* Made the Description notes up the top but come back to make sure it's right  */}
+
+                {series.getNotes('description', null, (notes: Note[]) => (
                     <AccordionPanel
                         id={series.generateId()}
-                        title="Citation"
+                        title="Notes - Description"
                         children={notes.map((note: Note, idx: number) => (
-                            <NoteDisplay key={idx} note={note} />
+                            <NoteDisplay note={note} key={idx} />
                         ))}
                     />
                 ))}
 
-                {series.getNotes('prefercite', null, (notes: Note[]) => (
+                {series.getExternalDocuments(['Helpful Resources'], (docs: any) => (
                     <AccordionPanel
                         id={series.generateId()}
-                        title="Citation"
-                        children={notes.map((note: Note, idx: number) => (
-                            <NoteDisplay key={idx} note={note} />
+                        title="Helpful Resources"
+                        children={docs.map((doc: any, idx: number) => (
+                            <div key="{idx}"><MaybeLink location={doc.location} label={doc.location} /></div>
                         ))}
                     />
                 ))}
@@ -194,10 +196,32 @@ const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
                     />
                 ))}
 
+                {series.getNotes('preferred_citation', null, (notes: Note[]) => (
+                    <AccordionPanel
+                        id={series.generateId()}
+                        title="Citation"
+                        children={notes.map((note: Note, idx: number) => (
+                            <NoteDisplay key={idx} note={note} />
+                        ))}
+                    />
+                ))}
+
+
+                {series.getNotes('prefercite', null, (notes: Note[]) => (
+                    <AccordionPanel
+                        id={series.generateId()}
+                        title="Citation"
+                        children={notes.map((note: Note, idx: number) => (
+                            <NoteDisplay key={idx} note={note} />
+                        ))}
+                    />
+                ))}
+
+
                 {series.getNotes('custodhist', null, (notes: Note[]) => (
                     <AccordionPanel
                         id={series.generateId()}
-                        title="Notes - Agency Control Number (aka Department Numbers)"
+                        title="Notes - Agency Control Number"
                         children={notes.map((note: Note, idx: number) => (
                             <NoteDisplay note={note} key={idx} />
                         ))}
@@ -224,15 +248,19 @@ const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
                     />
                 ))}
 
-                {series.getExternalDocuments(['Helpful Resources'], (docs: any) => (
+               
+
+                {series.getNotes('information_sources', null, (notes: Note[]) => (
                     <AccordionPanel
                         id={series.generateId()}
-                        title="Helpful Resources"
-                        children={docs.map((doc: any, idx: number) => (
-                            <div key="{idx}"><MaybeLink location={doc.location} label={doc.location} /></div>
+                        title="Notes - Information Sources"
+                        children={notes.map((note: Note, idx: number) => (
+                            <NoteDisplay note={note} key={idx} />
                         ))}
                     />
                 ))}
+
+
               </section>
             }
 
