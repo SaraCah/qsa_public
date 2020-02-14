@@ -764,7 +764,7 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
               {item.getNotes('odd', 'Remarks', (notes: Note[]) => (
                     <AccordionPanel
                         id={item.generateId()}
-                        title="Notes - Remarks"
+                        title="Remarks"
                         children={notes.map((note: Note, idx: number) => (
                             <NoteDisplay key={idx} note={note} />
                         ))}
@@ -773,7 +773,7 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
                 {item.getNotes('remarks', null, (notes: Note[]) => (
                     <AccordionPanel
                         id={item.generateId()}
-                        title="Notes - Remarks"
+                        title="Remarks"
                         children={notes.map((note: Note, idx: number) => (
                             <NoteDisplay key={idx} note={note} />
                         ))}
