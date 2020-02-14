@@ -159,10 +159,10 @@ const DigitalRepresentation: React.FC<{
         {
           representation.get('representation_file') &&
           <>
-            <dt>Download link</dt>
+            <dt>Download File</dt>
             <dd>
             <a href={baseURL + '/api/download_file/' + representation.get('qsa_id_prefixed')} target="_blank" rel="noopener noreferrer">
-            Link to file
+            Link to download
             </a>
             </dd>
           </>
@@ -171,58 +171,10 @@ const DigitalRepresentation: React.FC<{
         <dd>{representation.get('qsa_id_prefixed')}</dd>
         <dt>Title</dt>
         <dd>{representation.get('title')}</dd>
-        {representation.getMaybe('description', (value: string) => (
-            <>
-              <dt>Description</dt>
-              <dd style={{whiteSpace: 'pre'}}>{value}</dd>
-            </>
-        ))}
-        {representation.getMaybe('file_type', (value: string) => (
-          <>
-            <dt>Format</dt>
-            <dd>{value}</dd>
-          </>
-        ))}
-        {representation.getMaybe('intended_use', (value: string) => (
-            <>
-              <dt>Intended use</dt>
-              <dd>{value}</dd>
-            </>
-        ))}
-        {representation.getMaybe('agency_assigned_id', (value: string) => (
-          <>
-            <dt>Agency ID</dt>
-            <dd>{value}</dd>
-          </>
-        ))}
-        {
-          representation.getArray('previous_system_ids').length > 0 &&
-          <>
-            <dt>Previous system identifier</dt>
-            <dd>{representation.getArray('previous_system_ids').join('; ')}</dd>
-          </>
-        }
-        {representation.getMaybe('preferred_citation', (value: string) => (
-            <>
-              <dt>Preferred citation</dt>
-              <dd>{value}</dd>
-            </>
-        ))}
-        {representation.getMaybe('remarks', (value: string) => (
-            <>
-              <dt>Remarks</dt>
-              <dd>{value}</dd>
-            </>
-        ))}
-        {representation.getMaybe('processing_handling_notes', (value: string) => (
-            <>
-              <dt>Processing/handling notes</dt>
-              <dd>{value}</dd>
-            </>
-        ))}
+
         <dt>Access status <a href="/pages/restricted-access" rel="noopener noreferrer" target="_blank" aria-label="Information about restricted access"><i className="fa fa-question-circle" title="Information about restricted access" /></a></dt>
-        {
-          representation.get('rap_access_status') === 'Open Access' ?
+        
+        {representation.get('rap_access_status') === 'Open Access' ?
             <dd className="text-success">Open</dd> :
             <>
               <dd className="text-danger">Restricted</dd>
@@ -237,6 +189,63 @@ const DigitalRepresentation: React.FC<{
               </dd>
             </>
         }
+
+        {representation.getArray('previous_system_ids').length > 0 &&
+          <>
+            <dt>Previous system identifier</dt>
+            <dd>{representation.getArray('previous_system_ids').join('; ')}</dd>
+          </>
+        }
+
+        {representation.getMaybe('agency_assigned_id', (value: string) => (
+          <>
+            <dt>Agency Control Number</dt>
+            <dd>{value}</dd>
+          </>
+        ))}
+       
+        {representation.getMaybe('description', (value: string) => (
+            <>
+              <dt>Description</dt>
+              <dd style={{whiteSpace: 'pre'}}>{value}</dd>
+            </>
+        ))}
+        
+        {representation.getMaybe('file_type', (value: string) => (
+          <>
+            <dt>Format</dt>
+            <dd>{value}</dd>
+          </>
+        ))}
+
+        {representation.getMaybe('intended_use', (value: string) => (
+            <>
+              <dt>Intended use</dt>
+              <dd>{value}</dd>
+            </>
+        ))}
+
+        {representation.getMaybe('processing_handling_notes', (value: string) => (
+            <>
+              <dt>Processing/handling notes</dt>
+              <dd>{value}</dd>
+            </>
+        ))}
+
+        {representation.getMaybe('remarks', (value: string) => (
+            <>
+              <dt>Remarks</dt>
+              <dd>{value}</dd>
+            </>
+        ))}
+
+        {representation.getMaybe('preferred_citation', (value: string) => (
+            <>
+              <dt>Preferred citation</dt>
+              <dd>{value}</dd>
+            </>
+        ))}
+
       </dl>
     </>
   );
@@ -681,8 +690,8 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
                     </li>
                   );
                 })}
-                {/* Come back and check  */}
-                {item.getMaybe('description', (value: any) => {
+                {/* Come back and check needs to interact */}
+                {/* {item.getMaybe('description', (value: any) => {
                   return (
                       <li className="list-group-item list-group-item-action">
                         <div className="d-flex w-100 justify-content-between">
@@ -691,7 +700,7 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
                         <p className="mb-1">{value}</p>
                       </li>
                   );
-                })}
+                })} */}
                 {
                   item.getArray('subjects').length > 0 &&
                   <li className="list-group-item list-group-item-action">
