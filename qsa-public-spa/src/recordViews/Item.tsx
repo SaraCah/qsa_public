@@ -61,55 +61,7 @@ const PhysicalRepresentation: React.FC<{
         <dd>{representation.get('qsa_id_prefixed')}</dd>
         <dt>Title</dt>
         <dd>{representation.get('title')}</dd>
-        {representation.getMaybe('description', (value: string) => (
-            <>
-              <dt>Description</dt>
-              <dd style={{whiteSpace: 'pre'}}>{value}</dd>
-            </>
-        ))}
-        <dt>Format</dt>
-        <dd>{representation.get('format')}</dd>
-        {representation.getMaybe('intended_use', (value: string) => (
-            <>
-              <dt>Intended use</dt>
-              <dd>{value}</dd>
-            </>
-        ))}
-        <dt>Availability</dt>
-        <dd>
-          <span className={`badge badge-pill ${classForAvailability(representation.get('availability'))}`}>{labelForAvailability(representation.get('availability'))}</span>
-        </dd>
-        {representation.getMaybe('agency_assigned_id', (value: string) => (
-          <>
-            <dt>Agency Control Number</dt>
-            <dd>{value}</dd>
-          </>
-        ))}
-        {
-          representation.getArray('previous_system_ids').length > 0 &&
-          <>
-            <dt>Previous system identifier</dt>
-            <dd>{representation.getArray('previous_system_ids').join('; ')}</dd>
-          </>
-        }
-        {representation.getMaybe('preferred_citation', (value: string) => (
-            <>
-              <dt>Citation</dt>
-              <dd>{value}</dd>
-            </>
-        ))}
-        {representation.getMaybe('remarks', (value: string) => (
-            <>
-              <dt>Remarks</dt>
-              <dd>{value}</dd>
-            </>
-        ))}
-        {representation.getMaybe('processing_handling_notes', (value: string) => (
-            <>
-              <dt>Processing/handling notes</dt>
-              <dd>{value}</dd>
-            </>
-        ))}
+
         <dt>Access status <a href="/pages/restricted-access" rel="noopener noreferrer" target="_blank" aria-label="Information about restricted access"><i className="fa fa-question-circle" title="Information about restricted access" /></a></dt>
         {
           representation.get('rap_access_status') === 'Open Access' ?
@@ -127,6 +79,63 @@ const PhysicalRepresentation: React.FC<{
               </dd>
             </>
         }
+
+        <dt>Availability</dt>
+        <dd>
+          <span className={`badge badge-pill ${classForAvailability(representation.get('availability'))}`}>{labelForAvailability(representation.get('availability'))}</span>
+        </dd>
+
+        {representation.getArray('previous_system_ids').length > 0 &&
+          <>
+            <dt>Previous System Identifier</dt>
+            <dd>{representation.getArray('previous_system_ids').join('; ')}</dd>
+          </>
+        }
+
+        {representation.getMaybe('agency_assigned_id', (value: string) => (
+          <>
+            <dt>Agency Control Number</dt>
+            <dd>{value}</dd>
+          </>
+        ))}
+
+        {representation.getMaybe('description', (value: string) => (
+            <>
+              <dt>Description</dt>
+              <dd style={{whiteSpace: 'pre'}}>{value}</dd>
+            </>
+        ))}
+
+        <dt>Format</dt>
+        <dd>{representation.get('format')}</dd>
+        {representation.getMaybe('intended_use', (value: string) => (
+            <>
+              <dt>Intended Use</dt>
+              <dd>{value}</dd>
+            </>
+        ))}
+
+        {representation.getMaybe('processing_handling_notes', (value: string) => (
+            <>
+              <dt>Processing/Handling Notes</dt>
+              <dd>{value}</dd>
+            </>
+        ))}
+        
+        {representation.getMaybe('remarks', (value: string) => (
+            <>
+              <dt>Remarks</dt>
+              <dd>{value}</dd>
+            </>
+        ))}
+       
+        {representation.getMaybe('preferred_citation', (value: string) => (
+            <>
+              <dt>Citation</dt>
+              <dd>{value}</dd>
+            </>
+        ))}
+       
       </dl>
     </>
   );
