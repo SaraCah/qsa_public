@@ -632,59 +632,12 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
               <h3 className="sr-only">Item descriptive metadata</h3>
 
               <ul className="list-group list-group-flush">
-                {item.getMaybe('agency_assigned_id', (value: any) => {
+
+              {item.getMaybe('rap_applied', (rap: any) => {
                   return (
                     <li className="list-group-item list-group-item-action">
                       <div className="d-flex w-100 justify-content-between">
-                        <h4 className="mb-1">Agency Control Number</h4>
-                      </div>
-                      <p className="mb-1">{value}</p>
-                    </li>
-                  );
-                })}
-                {
-                  item.getArray('previous_system_ids').length > 0 &&
-                    <li className="list-group-item list-group-item-action">
-                      <div className="d-flex w-100 justify-content-between">
-                        <h4 className="mb-1">Previous system identifiers</h4>
-                      </div>
-                      <p className="mb-1">{item.getArray('previous_system_ids').join('; ')}</p>
-                    </li>
-                }
-                {
-                  item.getArray('subjects').length > 0 &&
-                  <li className="list-group-item list-group-item-action">
-                    <div className="d-flex w-100 justify-content-between">
-                      <h4 className="mb-1">Subjects</h4>
-                    </div>
-                    <p className="mb-1">{item.getArray('subjects').join('; ')}</p>
-                  </li>
-                }
-                {item.getMaybe('sensitivity_label', (value: any) => {
-                  return (
-                      <li className="list-group-item list-group-item-action">
-                        <div className="d-flex w-100 justify-content-between">
-                          <h4 className="mb-1">Sensitivity Label</h4>
-                        </div>
-                        <p className="mb-1">{value}</p>
-                      </li>
-                  );
-                })}
-                {item.getMaybe('copyright_status', (value: any) => {
-                  return (
-                      <li className="list-group-item list-group-item-action">
-                        <div className="d-flex w-100 justify-content-between">
-                          <h4 className="mb-1">Copyright Status</h4>
-                        </div>
-                        <p className="mb-1">{value}</p>
-                      </li>
-                  );
-                })}
-                {item.getMaybe('rap_applied', (rap: any) => {
-                  return (
-                    <li className="list-group-item list-group-item-action">
-                      <div className="d-flex w-100 justify-content-between">
-                        <h4 className="mb-1">Access status <a href="/pages/restricted-access" rel="noopener noreferrer" target="_blank" aria-label="Information about restricted access"><i className="fa fa-question-circle" title="Information about restricted access" /></a></h4>
+                        <h4 className="mb-1">Access Status Summary <a href="/pages/restricted-access" rel="noopener noreferrer" target="_blank" aria-label="Information about restricted access"><i className="fa fa-question-circle" title="Information about restricted access" /></a></h4>
                       </div>
                       <div className="mb-1">
                         {
@@ -707,9 +660,70 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
                     </li>
                   );
                 })}
+
+                {
+                  item.getArray('previous_system_ids').length > 0 &&
+                    <li className="list-group-item list-group-item-action">
+                      <div className="d-flex w-100 justify-content-between">
+                        <h4 className="mb-1">Previous System Identifiers</h4>
+                      </div>
+                      <p className="mb-1">{item.getArray('previous_system_ids').join('; ')}</p>
+                    </li>
+                }
+
+                {item.getMaybe('agency_assigned_id', (value: any) => {
+                  return (
+                    <li className="list-group-item list-group-item-action">
+                      <div className="d-flex w-100 justify-content-between">
+                        <h4 className="mb-1">Agency Control Number</h4>
+                      </div>
+                      <p className="mb-1">{value}</p>
+                    </li>
+                  );
+                })}
+                {/* Come back and check  */}
+                {item.getMaybe('description', (value: any) => {
+                  return (
+                      <li className="list-group-item list-group-item-action">
+                        <div className="d-flex w-100 justify-content-between">
+                          <h4 className="mb-1">Description</h4>
+                        </div>
+                        <p className="mb-1">{value}</p>
+                      </li>
+                  );
+                })}
+                {
+                  item.getArray('subjects').length > 0 &&
+                  <li className="list-group-item list-group-item-action">
+                    <div className="d-flex w-100 justify-content-between">
+                      <h4 className="mb-1">Subjects</h4>
+                    </div>
+                    <p className="mb-1">{item.getArray('subjects').join('; ')}</p>
+                  </li>
+                }
+                {item.getMaybe('sensitivity_label', (value: any) => {
+                  return (
+                      <li className="list-group-item list-group-item-action">
+                        <div className="d-flex w-100 justify-content-between">
+                          <h4 className="mb-1">Sensitivity Statement</h4>
+                        </div>
+                        <p className="mb-1">{value}</p>
+                      </li>
+                  );
+                })}
+                {item.getMaybe('copyright_status', (value: any) => {
+                  return (
+                      <li className="list-group-item list-group-item-action">
+                        <div className="d-flex w-100 justify-content-between">
+                          <h4 className="mb-1">Copyright Status</h4>
+                        </div>
+                        <p className="mb-1">{value}</p>
+                      </li>
+                  );
+                })}
               </ul>
             </section>
-
+            <Tagger recordId={item.get('id')} context={route.context}/>
             {
               showAccordions &&
               <section className="qg-accordion qg-dark-accordion" aria-label="Item Details">
@@ -720,17 +734,16 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
                 {/*<span className="controls">&#124;</span>*/}
                 {/*<input type="radio" name="control" id="expand" className="controls expand" value="expand" role="radio"/>*/}
                 {/*<label htmlFor="expand" className="controls">Show details</label>*/}
-
-                {item.getNotes('prefercite', null, (notes: Note[]) => (
+                {item.getExternalDocuments(['Helpful Resources'], (docs: any) => (
                     <AccordionPanel
                         id={item.generateId()}
-                        title="Citation"
-                        children={notes.map((note: Note, idx: number) => (
-                            <NoteDisplay key={idx} note={note} />
+                        title="Helpful Resources"
+                        children={docs.map((doc: any, idx: number) => (
+                            <div><MaybeLink location={doc.location} label={doc.location} key={idx} /></div>
                         ))}
                     />
                 ))}
-                {item.getNotes('odd', 'Remarks', (notes: Note[]) => (
+              {item.getNotes('odd', 'Remarks', (notes: Note[]) => (
                     <AccordionPanel
                         id={item.generateId()}
                         title="Notes - Remarks"
@@ -748,15 +761,16 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
                         ))}
                     />
                 ))}
-                {item.getExternalDocuments(['Helpful Resources'], (docs: any) => (
+                {item.getNotes('prefercite', null, (notes: Note[]) => (
                     <AccordionPanel
                         id={item.generateId()}
-                        title="Helpful Resources"
-                        children={docs.map((doc: any, idx: number) => (
-                            <div><MaybeLink location={doc.location} label={doc.location} key={idx} /></div>
+                        title="Citation"
+                        children={notes.map((note: Note, idx: number) => (
+                            <NoteDisplay key={idx} note={note} />
                         ))}
                     />
                 ))}
+
                 {item.getArray('physical_representations').length > 0 && (
                     <AccordionPanel
                         id={item.generateId()}
@@ -821,7 +835,6 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
               </section>
             )}
 
-            <Tagger recordId={item.get('id')} context={route.context}/>
           </div>
         </div>
       </Layout>
