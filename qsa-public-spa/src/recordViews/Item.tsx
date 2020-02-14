@@ -201,7 +201,7 @@ const DigitalRepresentation: React.FC<{
 
         {representation.getArray('previous_system_ids').length > 0 &&
           <>
-            <dt>Previous system identifier</dt>
+            <dt>Previous System Identifier</dt>
             <dd>{representation.getArray('previous_system_ids').join('; ')}</dd>
           </>
         }
@@ -236,7 +236,7 @@ const DigitalRepresentation: React.FC<{
 
         {representation.getMaybe('processing_handling_notes', (value: string) => (
             <>
-              <dt>Processing/handling notes</dt>
+              <dt>Processing/Handling Notes</dt>
               <dd>{value}</dd>
             </>
         ))}
@@ -250,7 +250,7 @@ const DigitalRepresentation: React.FC<{
 
         {representation.getMaybe('preferred_citation', (value: string) => (
             <>
-              <dt>Preferred citation</dt>
+              <dt>Preferred Citation</dt>
               <dd>{value}</dd>
             </>
         ))}
