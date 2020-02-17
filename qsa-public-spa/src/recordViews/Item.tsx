@@ -628,7 +628,7 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
             </h1>
 
             <RequestActions item={item} />
-
+     
             <section className="core-information">
               <h2 className="sr-only">Basic information</h2>
 
