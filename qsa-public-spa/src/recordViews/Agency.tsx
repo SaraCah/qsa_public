@@ -141,14 +141,6 @@ const AgencyPage: React.FC<PageRoute> = (route: PageRoute) => {
                 </AccordionPanel>
               ))}
 
-              {agency.getNotes('information_sources', null, (notes: Note[]) => (
-                <AccordionPanel id={agency.generateId()} title="Information Sources">
-                  {notes.map((note: Note) => (
-                    <NoteDisplay note={note} />
-                  ))}
-                </AccordionPanel>
-              ))}
-
               {agency.getNotes('remarks', null, (notes: Note[]) => (
                 <AccordionPanel id={agency.generateId()} title="Remarks">
                   {notes.map((note: Note) => (
@@ -183,6 +175,14 @@ const AgencyPage: React.FC<PageRoute> = (route: PageRoute) => {
 
               {agency.getNotes('legislation_administered', null, (notes: Note[]) => (
                 <AccordionPanel id={agency.generateId()} title="Legislation Administering">
+                  {notes.map((note: Note) => (
+                    <NoteDisplay note={note} />
+                  ))}
+                </AccordionPanel>
+              ))}
+
+              {agency.getNotes('information_sources', null, (notes: Note[]) => (
+                <AccordionPanel id={agency.generateId()} title="Information Sources">
                   {notes.map((note: Note) => (
                     <NoteDisplay note={note} />
                   ))}
