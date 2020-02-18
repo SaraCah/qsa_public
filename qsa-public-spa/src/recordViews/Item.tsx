@@ -151,11 +151,10 @@ const DownloadDigitalRepresentation: React.FC<{
             <div className="dropdown">
               <button className="qg-btn btn-warning dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <i className="fa fa-download" aria-hidden="true"></i>
-                Link to download
-                
+                View Copy
             </button>
               <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <a href={baseURL + '/api/download_file/' + representation.get('qsa_id_prefixed')} target="_blank" rel="noopener noreferrer" className="dropdown-item">
+            <a href={baseURL + '/api/download_file/' + representation.get('qsa_id_prefixed')} target="_blank" rel="noopener noreferrer" className="dropdown-item">Download
             </a>
             </div>
             </div>

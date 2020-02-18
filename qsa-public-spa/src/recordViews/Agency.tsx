@@ -117,7 +117,7 @@ const AgencyPage: React.FC<PageRoute> = (route: PageRoute) => {
                   return (
                       <li className="list-group-item list-group-item-action">
                         <div className="d-flex w-100 justify-content-between">
-                          <h4 className="mb-1">Agency Category</h4>
+                          <h4 className="mb-1">Category</h4>
                         </div>
                         <p className="mb-1">{agency.get('agency_category_label') || agency.get('agency_category')}</p>
                       </li>
@@ -137,6 +137,14 @@ const AgencyPage: React.FC<PageRoute> = (route: PageRoute) => {
                 <AccordionPanel id={agency.generateId()} title="Helpful Resources">
                   {docs.map((doc: any) => (
                       <div><MaybeLink location={doc.location} label={doc.location} /></div>
+                  ))}
+                </AccordionPanel>
+              ))}
+
+              {agency.getNotes('information_sources', null, (notes: Note[]) => (
+                <AccordionPanel id={agency.generateId()} title="Information Sources">
+                  {notes.map((note: Note) => (
+                    <NoteDisplay note={note} />
                   ))}
                 </AccordionPanel>
               ))}
@@ -181,14 +189,6 @@ const AgencyPage: React.FC<PageRoute> = (route: PageRoute) => {
                 </AccordionPanel>
               ))}
 
-              {agency.getNotes('information_sources', null, (notes: Note[]) => (
-                <AccordionPanel id={agency.generateId()} title="Information Sources">
-                  {notes.map((note: Note) => (
-                    <NoteDisplay note={note} />
-                  ))}
-                </AccordionPanel>
-              ))}
-
             </section>
 
             <section>
@@ -214,9 +214,9 @@ const AgencyPage: React.FC<PageRoute> = (route: PageRoute) => {
                   );
                 })}
               </ul>
-              {agency.getArray('function_relationships').length > 0 && <h3>Related functions</h3>}
+              {agency.getArray('mandate_relationships').length > 0 && <h3>Related mandates</h3>}
               <ul className="list-group list-group-flush">
-                {agency.getArray('function_relationships').map((rlshp: any, idx: number) => {
+                {agency.getArray('mandate_relationships').map((rlshp: any, idx: number) => {
                   return (
                     <li key={idx} className="list-group-item">
                       {<Relationship relationship={rlshp} />}
@@ -224,9 +224,9 @@ const AgencyPage: React.FC<PageRoute> = (route: PageRoute) => {
                   );
                 })}
               </ul>
-              {agency.getArray('mandate_relationships').length > 0 && <h3>Related mandates</h3>}
+              {agency.getArray('function_relationships').length > 0 && <h3>Related functions</h3>}
               <ul className="list-group list-group-flush">
-                {agency.getArray('mandate_relationships').map((rlshp: any, idx: number) => {
+                {agency.getArray('function_relationships').map((rlshp: any, idx: number) => {
                   return (
                     <li key={idx} className="list-group-item">
                       {<Relationship relationship={rlshp} />}
