@@ -82,14 +82,6 @@ const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
             <section className="core-information">
               <h2 className="sr-only">Basic information</h2>
 
-              {/* <div className="lead">
-                {
-                  ['abstract', 'description'].map((field: any) => (
-                    <p key={field}>{series.get(field)}</p>
-                  ))
-                }
-              </div> */}
-
               <ul className="list-group list-group-horizontal-md">
                 <li className="list-group-item">
                   <span className="small">ID</span>

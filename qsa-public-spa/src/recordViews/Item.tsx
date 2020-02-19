@@ -252,7 +252,7 @@ const DigitalRepresentation: React.FC<{
 
         {representation.getMaybe('intended_use', (value: string) => (
             <>
-              <dt>Intended use</dt>
+              <dt>Intended Use</dt>
               <dd>{value}</dd>
             </>
         ))}
@@ -273,7 +273,7 @@ const DigitalRepresentation: React.FC<{
 
         {representation.getMaybe('preferred_citation', (value: string) => (
             <>
-              <dt>Preferred Citation</dt>
+              <dt>Citation</dt>
               <dd>{value}</dd>
             </>
         ))}
@@ -661,9 +661,6 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
      
             <section className="core-information">
               <h2 className="sr-only">Basic information</h2>
-
-              <p className="lead" style={{whiteSpace: 'pre'}}>{item.get('description')}</p>
-
               <ul className="list-group list-group-horizontal-md">
                 <li className="list-group-item">
                   <span className="small">ID</span>
@@ -729,7 +726,6 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
                     </li>
                   );
                 })}
-                {/* Come back and check needs to interact */}
                 {item.getMaybe('description', (value: any) => {
                   return (
                       <li className="list-group-item list-group-item-action">
