@@ -730,7 +730,7 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
                   );
                 })}
                 {/* Come back and check needs to interact */}
-                {/* {item.getMaybe('description', (value: any) => {
+                {item.getMaybe('description', (value: any) => {
                   return (
                       <li className="list-group-item list-group-item-action">
                         <div className="d-flex w-100 justify-content-between">
@@ -739,7 +739,7 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
                         <p className="mb-1">{value}</p>
                       </li>
                   );
-                })} */}
+                })}
                 {
                   item.getArray('subjects').length > 0 &&
                   <li className="list-group-item list-group-item-action">
