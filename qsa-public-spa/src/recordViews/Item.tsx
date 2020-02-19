@@ -141,28 +141,35 @@ const PhysicalRepresentation: React.FC<{
   );
 };
 
-const DownloadDigitalRepresentation: React.FC<{
-  representation: any;
-}> = ({representation}) => {
-  representation = new RecordDisplay(representation);
-  return (
-    <> {representation.get('representation_file') &&
-          <>
-            <div className="dropdown">
-              <button className="qg-btn btn-warning dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <i className="fa fa-download" aria-hidden="true"></i>
-                View Copy
-            </button>
-              <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <a href={baseURL + '/api/download_file/' + representation.get('qsa_id_prefixed')} target="_blank" rel="noopener noreferrer" className="dropdown-item">Download
-            </a>
-            </div>
-            </div>
-          </>
+const DownloadDigitalRepresentations: React.FC<{
+  representations: any;
+}> = ({representations}) => {
+  if (representations.length == 0) {
+    return <></>;
+  }
+
+  return <>
+    <div className="dropdown">
+      <button className="qg-btn btn-warning dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i className="fa fa-download" aria-hidden="true"></i>&nbsp;
+        View Copy
+      </button>
+      <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        {
+          representations.map((r: any) => {
+            let representation = new RecordDisplay(r);
+            return <a href={baseURL + '/api/download_file/' + representation.get('qsa_id_prefixed')}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="dropdown-item">
+              {representation.get('qsa_id_prefixed')} {representation.get('title')}
+            </a>;
+          })
         }
-      </>
-  )
-}
+      </div>
+    </div>
+  </>;
+};
 
 const DigitalRepresentation: React.FC<{
   representation: any;
@@ -428,13 +435,7 @@ const RequestActions: React.FC<any> = ({ item }) => {
       <div className="col-sm-12 record-top-request-buttons">
         <div className={"top-request-button"}><ReadingRoomRequestAction item={item}/></div>
         <div className={"top-request-button"}><DigitalCopyRequestAction item={item}/></div>
-        <div className={"top-request-button"}>
-        {item.getArray('digital_representations').map((representation: any) => (
-                                <div key={representation.qsa_id}>
-                                  <DownloadDigitalRepresentation representation={representation} />
-                                </div>
-                            ))}
-        </div>
+        <div className={"top-request-button"}><DownloadDigitalRepresentations representations={item.getArray('digital_representations')}/></div>
       </div>
     </div>
   )
