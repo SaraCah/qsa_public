@@ -22,6 +22,7 @@ const FACET_LABELS: { [name: string]: string } = {
   responsible_agency_id: 'Responsible Agency',
   tags_string: 'Tags',
   open_record: 'Access Status',
+  formats: 'Format',
 };
 
 const ResultsPage: React.FC<PageRoute> = (route: PageRoute) => {

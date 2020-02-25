@@ -81,6 +81,9 @@
   <!-- Access status -->
   <field name="access_status" type="string" indexed="true" stored="true" multiValued="false" />
 
+  <!-- Format -->
+  <field name="formats" type="string" indexed="true" stored="true" multiValued="true" />
+
   <uniqueKey>id</uniqueKey>
 
   <!-- field type definitions. The "name" attribute is
