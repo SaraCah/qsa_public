@@ -474,8 +474,8 @@ const SearchResults: React.FC<{
                 <option value="recent_desc">Recently opened</option>
                 <option value="popular_desc">Most popular</option>
                 <option value="title_asc">Title (A-Z)</option>
-                <option value="date_desc">Date (newest to oldest)</option>
-                <option value="date_asc">Date (oldest to newest)</option>
+                <option value="date_desc">New records (newest to oldest)</option>
+                <option value="date_asc">New records (oldest to newest)</option>
               </select>
             </small>
           </div>
