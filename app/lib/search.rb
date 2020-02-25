@@ -88,13 +88,13 @@ class Search
   }
 
   FACETS = [
-    'formats',
     'open_record',
+    'formats',
     'resource_id',
-    'mandate_id',
-    'function_id',
-    'responsible_agency_id',
     'creating_agency_id',
+    'responsible_agency_id',
+    'function_id',
+    'mandate_id',
     'tags_string',
   ]
 
