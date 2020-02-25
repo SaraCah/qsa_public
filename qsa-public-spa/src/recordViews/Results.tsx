@@ -9,6 +9,7 @@ import queryString from 'query-string';
 import { PageRoute } from '../models/PageRoute';
 import {preserveNewLines, rewriteISODates} from "../utils/rendering";
 import { DateRangePicker } from './DateRangePicker';
+import {type} from "os";
 
 
 
@@ -20,6 +21,7 @@ const FACET_LABELS: { [name: string]: string } = {
   creating_agency_id: 'Creating Agency',
   responsible_agency_id: 'Responsible Agency',
   tags_string: 'Tags',
+  open_record: 'Access Status',
 };
 
 const ResultsPage: React.FC<PageRoute> = (route: PageRoute) => {
@@ -218,6 +220,18 @@ export const CompactSearchSummary: React.FC<{
   );
 };
 
+const rewriteFacetLabel = (label: string, facet: string): string => {
+  if (facet === 'open_record') {
+    if (label === 'true') {
+      return 'Open';
+    } else {
+      return 'Closed';
+    }
+  }
+
+  return rewriteISODates(label);
+}
+
 const SearchFacets: React.FC<{
   facets: any;
   advancedSearchQuery: AdvancedSearchQuery;
@@ -262,7 +276,7 @@ const SearchFacets: React.FC<{
                   return (
                     <li key={filter.field}>
                       <div className="facet-label">
-                        {FACET_LABELS[filter.field]}: {rewriteISODates(filter.label)}&nbsp;
+                        {FACET_LABELS[filter.field]}: {rewriteFacetLabel(filter.label, filter.field)}&nbsp;
                       </div>
                       <div className="facet-count">
                         <Link
@@ -302,7 +316,7 @@ const SearchFacets: React.FC<{
                         if (props.advancedSearchQuery.hasFilter(facet.facet_field, facet.facet_value)) {
                           return (
                             <li key={facet.facet_field + '_' + facet.facet_label}>
-                              <div className="facet-label">{rewriteISODates(facet.facet_label)}</div>
+                              <div className="facet-label">{rewriteFacetLabel(facet.facet_label, facet.facet_field)}</div>
                               <div className="facet-count">{facet.facet_count}</div>
                             </li>
                           );
@@ -318,7 +332,7 @@ const SearchFacets: React.FC<{
                                                  .toQueryString()
                                   }}
                                 >
-                                  {rewriteISODates(facet.facet_label)}
+                                  {rewriteFacetLabel(facet.facet_label, facet.facet_field)}
                                 </Link>
                               </div>
                               <div className="facet-count">{facet.facet_count}</div>
