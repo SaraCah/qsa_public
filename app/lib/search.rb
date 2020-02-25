@@ -530,7 +530,7 @@ class Search
                                        'start': start_index,
                                        'sort': sort,
                                        'facet': true,
-                                       'facet.field': ['mandate_id', 'function_id', 'responsible_agency_id', 'creating_agency_id', 'tags_string'],
+                                       'facet.field': ['resource_id', 'mandate_id', 'function_id', 'responsible_agency_id', 'creating_agency_id', 'tags_string'],
                                        'facet.mincount': 1,
                                        fq: filters)
 
@@ -548,7 +548,7 @@ class Search
       }
     end
 
-    resolve_document_ids(facets, ['mandate_id', 'function_id', 'responsible_agency_id', 'creating_agency_id'])
+    resolve_document_ids(facets, ['resource_id', 'mandate_id', 'function_id', 'responsible_agency_id', 'creating_agency_id'])
 
     facets = facets.map {|field, entries|
       [field, entries.reject {|entry| entry[:could_not_resolve]}]
