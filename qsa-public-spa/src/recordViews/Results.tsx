@@ -454,6 +454,11 @@ const SearchResults: React.FC<{
     </section>;
   }
 
+  const number_of_pages_to_show = 10;
+  const first_page_to_show = Math.max(props.searchResults.current_page - number_of_pages_to_show / 2, 0);
+  const last_page = Math.ceil(props.searchResults.total_count / props.searchResults.page_size) - 1;
+  const last_page_to_show = Math.min(first_page_to_show + number_of_pages_to_show, last_page);
+
   return (
     <section className="qg-results">
       <SaveYourSearch query={props.advancedSearchQuery} context={props.context} />
@@ -497,28 +502,29 @@ const SearchResults: React.FC<{
       <nav>
         <div className="text-center">
           <ul className="pagination">
-            <li className={'page-item prev ' + (props.currentPage === 0 ? 'disabled' : '')}>
+            <li className={'page-item ' + (props.currentPage === 0 ? 'disabled' : '')}>
               <Link
-                to={'/search?' + props.advancedSearchQuery.toQueryString() + '&page=' + (props.currentPage - 1)}
-                className="page-link"
-              >
-                <span aria-hidden="true">«</span> Previous
-              </Link>
+                  to={'/search?' + props.advancedSearchQuery.toQueryString() + '&page=0'}
+                  className="page-link"
+              >First</Link>
             </li>
-            <li
-              className={
-                'page-item next ' +
-                (props.currentPage >= Math.ceil(props.searchResults.total_count / props.searchResults.page_size) - 1
-                  ? 'disabled'
-                  : '')
-              }
-            >
+            {
+              [...Array(number_of_pages_to_show)].map((e, i) => {
+                const pageToShow = first_page_to_show + i;
+                return pageToShow <= last_page_to_show &&
+                  <li key={i} className={'page-item ' + (props.currentPage === pageToShow ? 'active' : '')}>
+                    <Link
+                        to={'/search?' + props.advancedSearchQuery.toQueryString() + '&page=' + pageToShow}
+                        className="page-link"
+                    >{pageToShow + 1}</Link>
+                  </li>;
+              })
+            }
+            <li className={'page-item ' + (props.currentPage >= last_page ? 'disabled' : '')}>
               <Link
-                to={'/search?' + props.advancedSearchQuery.toQueryString() + '&page=' + (props.currentPage + 1)}
-                className="page-link"
-              >
-                Next <span aria-hidden="true">»</span>
-              </Link>
+                  to={'/search?' + props.advancedSearchQuery.toQueryString() + '&page=' + last_page}
+                  className="page-link"
+              >Last</Link>
             </li>
           </ul>
         </div>
@@ -526,6 +532,7 @@ const SearchResults: React.FC<{
     </section>
   );
 };
+
 
 const SaveYourSearch: React.FC<any> = props => {
   const [saved, setSaved] = useState(false);
