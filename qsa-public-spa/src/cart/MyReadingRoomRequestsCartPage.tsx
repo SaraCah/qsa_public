@@ -390,7 +390,7 @@ export const MyReadingRoomRequestsCartPage: React.FC<PageRoute> = (route: PageRo
                                        onChange={(e) => setPrivacyTermsAccepted(e.target.checked)}
                                        required />
                                 &nbsp;
-                                The personal information collected on this form is for the purpose of facilitating an application for permission to access a restricted record.  I agree to Queensland State Archives providing these details to the agency or agencies responsible for the identified records.
+                                The personal information collected on this form is for the purpose of facilitating an application for permission to access a restricted record. The Queensland Government manages and protects your personal information in line with the Information Privacy Act 2009. We will not disclose your personal information to any other third parties or use it for another purpose without your consent, unless authorised or required by law. I agree to Queensland State Archives providing these details to the agency or agencies responsible for the identified records.
                               </label>
                             </p>
                           </div>
