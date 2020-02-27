@@ -45,7 +45,7 @@ export const iconForType = (recordType: string): string => {
 };
 
 const LabelForAvailability: { [name: string]: string } = {
-    available: 'Available. There are no other restrictions current.',
+    available: 'There are no other restrictions current.',
     unavailable_temporarily: 'Temporarily Unavailable. Contact QSA for more information.',
     unavailable_due_to_conservation: 'This item must be assessed by a conservator to determine if it can be made available.',
     unavailable_due_to_condition: 'This item is unavailable due to its condition. Where possible, a copy will be made available.',

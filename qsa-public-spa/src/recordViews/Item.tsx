@@ -32,7 +32,7 @@ const PhysicalRepresentation: React.FC<{
 
   const classForAvailability = (availability: string) => {
     if (availability === 'available') {
-      return 'badge-success';
+      return 'badge-primary';
     } else if (REQUESTABLE_AVAILABILITIES.indexOf(availability) >= 0) {
       return 'badge-warning';
     } else {
