@@ -186,8 +186,13 @@ export const MyReadingRoomRequestsCartPage: React.FC<PageRoute> = (route: PageRo
                                   </dd>
                                   <dt className="col-xs-6">Item type</dt>
                                   <dd className="col-xs-6">{labelForType(cartItem.record.jsonmodel_type)}</dd>
-                                  <dt className="col-xs-6">Item format</dt>
-                                  <dd className="col-xs-6">{cartItem.record.format}</dd>
+                                  {
+                                    cartItem.record.format &&
+                                    <>
+                                      <dt className="col-xs-6">Item format</dt>
+                                      <dd className="col-xs-6">{cartItem.record.format}</dd>
+                                    </>
+                                  }
                                   <dt className="col-xs-6">Parent ID</dt>
                                   <dd className="col-xs-6">
                                     <Link to={uriFor(cartItem.record.controlling_record.qsa_id_prefixed, 'archival_object')}>
@@ -302,16 +307,35 @@ export const MyReadingRoomRequestsCartPage: React.FC<PageRoute> = (route: PageRo
                                   </div>
                                   <h3>
                                     <Link to={uriFor(cartItem.record.controlling_record.qsa_id_prefixed, 'archival_object')}>
-                                      {cartItem.record.qsa_id_prefixed} {cartItem.record.display_string}
+                                      {cartItem.record.display_string}
                                     </Link>
                                   </h3>
                                   <dl className="row" style={{ marginBottom: 0 }}>
-                                    <dt className="col-xs-6">Item type</dt>
-                                    <dd className="col-xs-6">{labelForType(cartItem.record.jsonmodel_type)}</dd>
-                                    <dt className="col-xs-6">Parent item</dt>
+                                    <dt className="col-xs-6">Item ID</dt>
                                     <dd className="col-xs-6">
                                       <Link to={uriFor(cartItem.record.controlling_record.qsa_id_prefixed, 'archival_object')}>
-                                        {cartItem.record.controlling_record.qsa_id_prefixed} {cartItem.record.controlling_record._resolved.display_string}
+                                        {cartItem.record.qsa_id_prefixed}
+                                      </Link>
+                                    </dd>
+                                    <dt className="col-xs-6">Item type</dt>
+                                    <dd className="col-xs-6">{labelForType(cartItem.record.jsonmodel_type)}</dd>
+                                    {
+                                      cartItem.record.format &&
+                                      <>
+                                        <dt className="col-xs-6">Item format</dt>
+                                        <dd className="col-xs-6">{cartItem.record.format}</dd>
+                                      </>
+                                    }
+                                    <dt className="col-xs-6">Parent ID</dt>
+                                    <dd className="col-xs-6">
+                                      <Link to={uriFor(cartItem.record.controlling_record.qsa_id_prefixed, 'archival_object')}>
+                                        {cartItem.record.controlling_record.qsa_id_prefixed}
+                                      </Link>
+                                    </dd>
+                                    <dt className="col-xs-6">Parent title</dt>
+                                    <dd className="col-xs-6">
+                                      <Link to={uriFor(cartItem.record.controlling_record.qsa_id_prefixed, 'archival_object')}>
+                                        {cartItem.record.controlling_record._resolved.display_string}
                                       </Link>
                                     </dd>
                                     <dt className="col-xs-6">Series</dt>
