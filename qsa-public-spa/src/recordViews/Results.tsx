@@ -363,8 +363,8 @@ const SearchFacets: React.FC<{
       <DateRangePicker
         minYear={1800}
         maxYear={new Date().getFullYear()}
-        minSelected={props.advancedSearchQuery.getFromDate()}
-        maxSelected={props.advancedSearchQuery.getToDate()}
+        minSelected={props.advancedSearchQuery.getFromDateYear()}
+        maxSelected={props.advancedSearchQuery.getToDateYear()}
         onRangeUpdated={(min: number, max: number) => {
           setFireNewSearch(props.advancedSearchQuery
                                 .setFromDate('' + min)

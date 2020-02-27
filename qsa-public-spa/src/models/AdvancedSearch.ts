@@ -103,6 +103,22 @@ export class AdvancedSearchQuery {
     return this.criteria.fromDate;
   }
 
+  getYearForDate(date: string | undefined): number | undefined {
+    const isoDateRegex = RegExp(/(\d\d\d\d)(-\d\d)?(-\d\d)?/);
+    if (date && isoDateRegex.test(date)) {
+      const match = isoDateRegex.exec(date);
+      if (match && match[1]) {
+        return parseInt(match[1]);
+      }
+    }
+
+    return undefined;
+  }
+
+  getFromDateYear(): number | undefined {
+    return this.getYearForDate(this.criteria.fromDate);
+  }
+
   setToDate(date: string): AdvancedSearchQuery {
     const newCriteria: Criteria = { ...this.criteria };
     newCriteria.toDate = date;
@@ -111,6 +127,10 @@ export class AdvancedSearchQuery {
 
   getToDate(): string | undefined {
     return this.criteria.toDate;
+  }
+
+  getToDateYear(): number | undefined {
+    return this.getYearForDate(this.criteria.toDate);
   }
 
   getTypeLimits(): string[] {
