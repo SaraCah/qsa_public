@@ -125,7 +125,7 @@ export const MyReadingRoomRequestsCartPage: React.FC<PageRoute> = (route: PageRo
                               {requiredDateInPast && (
                                   <div><small className="alert alert-warning">Date provided is in the past</small></div>
                               )}
-                              <div><small>QSA is open from 9.00am to 4.30pm Monday to Friday and the second Saturday of every month</small></div>
+                              <div><small>QSA is open from 9am to 4.30pm Monday to Friday and the second Saturday of each month, closed Public Holidays</small></div>
                             </div>
                             <div className="form-group">
                               <label className="sr-only" htmlFor="time-required">
