@@ -32,7 +32,7 @@ const PhysicalRepresentation: React.FC<{
 
   const classForAvailability = (availability: string) => {
     if (availability === 'available') {
-      return 'badge-success';
+      return 'badge-primary';
     } else if (REQUESTABLE_AVAILABILITIES.indexOf(availability) >= 0) {
       return 'badge-warning';
     } else {
@@ -61,55 +61,7 @@ const PhysicalRepresentation: React.FC<{
         <dd>{representation.get('qsa_id_prefixed')}</dd>
         <dt>Title</dt>
         <dd>{representation.get('title')}</dd>
-        {representation.getMaybe('description', (value: string) => (
-            <>
-              <dt>Description</dt>
-              <dd style={{whiteSpace: 'pre'}}>{value}</dd>
-            </>
-        ))}
-        <dt>Format</dt>
-        <dd>{representation.get('format')}</dd>
-        {representation.getMaybe('intended_use', (value: string) => (
-            <>
-              <dt>Intended use</dt>
-              <dd>{value}</dd>
-            </>
-        ))}
-        <dt>Availability</dt>
-        <dd>
-          <span className={`badge badge-pill ${classForAvailability(representation.get('availability'))}`}>{labelForAvailability(representation.get('availability'))}</span>
-        </dd>
-        {representation.getMaybe('agency_assigned_id', (value: string) => (
-          <>
-            <dt>Agency Control Number</dt>
-            <dd>{value}</dd>
-          </>
-        ))}
-        {
-          representation.getArray('previous_system_ids').length > 0 &&
-          <>
-            <dt>Previous system identifier</dt>
-            <dd>{representation.getArray('previous_system_ids').join('; ')}</dd>
-          </>
-        }
-        {representation.getMaybe('preferred_citation', (value: string) => (
-            <>
-              <dt>Citation</dt>
-              <dd>{value}</dd>
-            </>
-        ))}
-        {representation.getMaybe('remarks', (value: string) => (
-            <>
-              <dt>Remarks</dt>
-              <dd>{value}</dd>
-            </>
-        ))}
-        {representation.getMaybe('processing_handling_notes', (value: string) => (
-            <>
-              <dt>Processing/handling notes</dt>
-              <dd>{value}</dd>
-            </>
-        ))}
+
         <dt>Access status <a href="/pages/restricted-access" rel="noopener noreferrer" target="_blank" aria-label="Information about restricted access"><i className="fa fa-question-circle" title="Information about restricted access" /></a></dt>
         {
           representation.get('rap_access_status') === 'Open Access' ?
@@ -127,9 +79,96 @@ const PhysicalRepresentation: React.FC<{
               </dd>
             </>
         }
+
+        <dt>Availability</dt>
+        <dd>
+          <span className={`badge badge-pill ${classForAvailability(representation.get('availability'))}`}>{labelForAvailability(representation.get('availability'))}</span>
+        </dd>
+
+        {representation.getArray('previous_system_ids').length > 0 &&
+          <>
+            <dt>Previous System Identifier</dt>
+            <dd>{representation.getArray('previous_system_ids').join('; ')}</dd>
+          </>
+        }
+
+        {representation.getMaybe('agency_assigned_id', (value: string) => (
+          <>
+            <dt>Agency Control Number</dt>
+            <dd>{value}</dd>
+          </>
+        ))}
+
+        {representation.getMaybe('description', (value: string) => (
+            <>
+              <dt>Description</dt>
+              <dd style={{whiteSpace: 'pre'}}>{value}</dd>
+            </>
+        ))}
+
+        <dt>Format</dt>
+        <dd>{representation.get('format')}</dd>
+        {representation.getMaybe('intended_use', (value: string) => (
+            <>
+              <dt>Intended Use</dt>
+              <dd>{value}</dd>
+            </>
+        ))}
+
+        {representation.getMaybe('processing_handling_notes', (value: string) => (
+            <>
+              <dt>Processing/Handling Notes</dt>
+              <dd>{value}</dd>
+            </>
+        ))}
+        
+        {representation.getMaybe('remarks', (value: string) => (
+            <>
+              <dt>Remarks</dt>
+              <dd>{value}</dd>
+            </>
+        ))}
+       
+        {representation.getMaybe('preferred_citation', (value: string) => (
+            <>
+              <dt>Citation</dt>
+              <dd>{value}</dd>
+            </>
+        ))}
+       
       </dl>
     </>
   );
+};
+
+const DownloadDigitalRepresentations: React.FC<{
+  representations: any;
+}> = ({representations}) => {
+  if (representations.length == 0) {
+    return <></>;
+  }
+
+  return <>
+    <div className="dropdown">
+      <button className="qg-btn btn-warning dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i className="fa fa-download" aria-hidden="true"></i>&nbsp;
+        View Copy
+      </button>
+      <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        {
+          representations.map((r: any) => {
+            let representation = new RecordDisplay(r);
+            return <a href={baseURL + '/api/download_file/' + representation.get('qsa_id_prefixed')}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="dropdown-item">
+              {representation.get('qsa_id_prefixed')} {representation.get('title')}
+            </a>;
+          })
+        }
+      </div>
+    </div>
+  </>;
 };
 
 const DigitalRepresentation: React.FC<{
@@ -159,10 +198,10 @@ const DigitalRepresentation: React.FC<{
         {
           representation.get('representation_file') &&
           <>
-            <dt>Download link</dt>
+            <dt>Download File</dt>
             <dd>
             <a href={baseURL + '/api/download_file/' + representation.get('qsa_id_prefixed')} target="_blank" rel="noopener noreferrer">
-            Link to file
+            Link to download
             </a>
             </dd>
           </>
@@ -171,58 +210,10 @@ const DigitalRepresentation: React.FC<{
         <dd>{representation.get('qsa_id_prefixed')}</dd>
         <dt>Title</dt>
         <dd>{representation.get('title')}</dd>
-        {representation.getMaybe('description', (value: string) => (
-            <>
-              <dt>Description</dt>
-              <dd style={{whiteSpace: 'pre'}}>{value}</dd>
-            </>
-        ))}
-        {representation.getMaybe('file_type', (value: string) => (
-          <>
-            <dt>Format</dt>
-            <dd>{value}</dd>
-          </>
-        ))}
-        {representation.getMaybe('intended_use', (value: string) => (
-            <>
-              <dt>Intended use</dt>
-              <dd>{value}</dd>
-            </>
-        ))}
-        {representation.getMaybe('agency_assigned_id', (value: string) => (
-          <>
-            <dt>Agency ID</dt>
-            <dd>{value}</dd>
-          </>
-        ))}
-        {
-          representation.getArray('previous_system_ids').length > 0 &&
-          <>
-            <dt>Previous system identifier</dt>
-            <dd>{representation.getArray('previous_system_ids').join('; ')}</dd>
-          </>
-        }
-        {representation.getMaybe('preferred_citation', (value: string) => (
-            <>
-              <dt>Preferred citation</dt>
-              <dd>{value}</dd>
-            </>
-        ))}
-        {representation.getMaybe('remarks', (value: string) => (
-            <>
-              <dt>Remarks</dt>
-              <dd>{value}</dd>
-            </>
-        ))}
-        {representation.getMaybe('processing_handling_notes', (value: string) => (
-            <>
-              <dt>Processing/handling notes</dt>
-              <dd>{value}</dd>
-            </>
-        ))}
+
         <dt>Access status <a href="/pages/restricted-access" rel="noopener noreferrer" target="_blank" aria-label="Information about restricted access"><i className="fa fa-question-circle" title="Information about restricted access" /></a></dt>
-        {
-          representation.get('rap_access_status') === 'Open Access' ?
+        
+        {representation.get('rap_access_status') === 'Open Access' ?
             <dd className="text-success">Open</dd> :
             <>
               <dd className="text-danger">Restricted</dd>
@@ -237,6 +228,63 @@ const DigitalRepresentation: React.FC<{
               </dd>
             </>
         }
+
+        {representation.getArray('previous_system_ids').length > 0 &&
+          <>
+            <dt>Previous System Identifier</dt>
+            <dd>{representation.getArray('previous_system_ids').join('; ')}</dd>
+          </>
+        }
+
+        {representation.getMaybe('agency_assigned_id', (value: string) => (
+          <>
+            <dt>Agency Control Number</dt>
+            <dd>{value}</dd>
+          </>
+        ))}
+       
+        {representation.getMaybe('description', (value: string) => (
+            <>
+              <dt>Description</dt>
+              <dd style={{whiteSpace: 'pre'}}>{value}</dd>
+            </>
+        ))}
+        
+        {representation.getMaybe('file_type', (value: string) => (
+          <>
+            <dt>Format</dt>
+            <dd>{value}</dd>
+          </>
+        ))}
+
+        {representation.getMaybe('intended_use', (value: string) => (
+            <>
+              <dt>Intended Use</dt>
+              <dd>{value}</dd>
+            </>
+        ))}
+
+        {representation.getMaybe('processing_handling_notes', (value: string) => (
+            <>
+              <dt>Processing/Handling Notes</dt>
+              <dd>{value}</dd>
+            </>
+        ))}
+
+        {representation.getMaybe('remarks', (value: string) => (
+            <>
+              <dt>Remarks</dt>
+              <dd>{value}</dd>
+            </>
+        ))}
+
+        {representation.getMaybe('preferred_citation', (value: string) => (
+            <>
+              <dt>Citation</dt>
+              <dd>{value}</dd>
+            </>
+        ))}
+
       </dl>
     </>
   );
@@ -387,6 +435,7 @@ const RequestActions: React.FC<any> = ({ item }) => {
       <div className="col-sm-12 record-top-request-buttons">
         <div className={"top-request-button"}><ReadingRoomRequestAction item={item}/></div>
         <div className={"top-request-button"}><DigitalCopyRequestAction item={item}/></div>
+        <div className={"top-request-button"}><DownloadDigitalRepresentations representations={item.getArray('digital_representations')}/></div>
       </div>
     </div>
   )
@@ -610,12 +659,9 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
             </h1>
 
             <RequestActions item={item} />
-
+     
             <section className="core-information">
               <h2 className="sr-only">Basic information</h2>
-
-              <p className="lead" style={{whiteSpace: 'pre'}}>{item.get('description')}</p>
-
               <ul className="list-group list-group-horizontal-md">
                 <li className="list-group-item">
                   <span className="small">ID</span>
@@ -632,59 +678,12 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
               <h3 className="sr-only">Item descriptive metadata</h3>
 
               <ul className="list-group list-group-flush">
-                {item.getMaybe('agency_assigned_id', (value: any) => {
+
+              {item.getMaybe('rap_applied', (rap: any) => {
                   return (
                     <li className="list-group-item list-group-item-action">
                       <div className="d-flex w-100 justify-content-between">
-                        <h4 className="mb-1">Agency Control Number</h4>
-                      </div>
-                      <p className="mb-1">{value}</p>
-                    </li>
-                  );
-                })}
-                {
-                  item.getArray('previous_system_ids').length > 0 &&
-                    <li className="list-group-item list-group-item-action">
-                      <div className="d-flex w-100 justify-content-between">
-                        <h4 className="mb-1">Previous system identifiers</h4>
-                      </div>
-                      <p className="mb-1">{item.getArray('previous_system_ids').join('; ')}</p>
-                    </li>
-                }
-                {
-                  item.getArray('subjects').length > 0 &&
-                  <li className="list-group-item list-group-item-action">
-                    <div className="d-flex w-100 justify-content-between">
-                      <h4 className="mb-1">Subjects</h4>
-                    </div>
-                    <p className="mb-1">{item.getArray('subjects').join('; ')}</p>
-                  </li>
-                }
-                {item.getMaybe('sensitivity_label', (value: any) => {
-                  return (
-                      <li className="list-group-item list-group-item-action">
-                        <div className="d-flex w-100 justify-content-between">
-                          <h4 className="mb-1">Sensitivity Label</h4>
-                        </div>
-                        <p className="mb-1">{value}</p>
-                      </li>
-                  );
-                })}
-                {item.getMaybe('copyright_status', (value: any) => {
-                  return (
-                      <li className="list-group-item list-group-item-action">
-                        <div className="d-flex w-100 justify-content-between">
-                          <h4 className="mb-1">Copyright Status</h4>
-                        </div>
-                        <p className="mb-1">{value}</p>
-                      </li>
-                  );
-                })}
-                {item.getMaybe('rap_applied', (rap: any) => {
-                  return (
-                    <li className="list-group-item list-group-item-action">
-                      <div className="d-flex w-100 justify-content-between">
-                        <h4 className="mb-1">Access status <a href="/pages/restricted-access" rel="noopener noreferrer" target="_blank" aria-label="Information about restricted access"><i className="fa fa-question-circle" title="Information about restricted access" /></a></h4>
+                        <h4 className="mb-1">Access Status Summary <a href="/pages/restricted-access" rel="noopener noreferrer" target="_blank" aria-label="Information about restricted access"><i className="fa fa-question-circle" title="Information about restricted access" /></a></h4>
                       </div>
                       <div className="mb-1">
                         {
@@ -707,9 +706,69 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
                     </li>
                   );
                 })}
+
+                {
+                  item.getArray('previous_system_ids').length > 0 &&
+                    <li className="list-group-item list-group-item-action">
+                      <div className="d-flex w-100 justify-content-between">
+                        <h4 className="mb-1">Previous System Identifiers</h4>
+                      </div>
+                      <p className="mb-1">{item.getArray('previous_system_ids').join('; ')}</p>
+                    </li>
+                }
+
+                {item.getMaybe('agency_assigned_id', (value: any) => {
+                  return (
+                    <li className="list-group-item list-group-item-action">
+                      <div className="d-flex w-100 justify-content-between">
+                        <h4 className="mb-1">Agency Control Number</h4>
+                      </div>
+                      <p className="mb-1">{value}</p>
+                    </li>
+                  );
+                })}
+                {item.getMaybe('description', (value: any) => {
+                  return (
+                      <li className="list-group-item list-group-item-action">
+                        <div className="d-flex w-100 justify-content-between">
+                          <h4 className="mb-1">Description</h4>
+                        </div>
+                        <p className="mb-1">{value}</p>
+                      </li>
+                  );
+                })}
+                {
+                  item.getArray('subjects').length > 0 &&
+                  <li className="list-group-item list-group-item-action">
+                    <div className="d-flex w-100 justify-content-between">
+                      <h4 className="mb-1">Subjects</h4>
+                    </div>
+                    <p className="mb-1">{item.getArray('subjects').join('; ')}</p>
+                  </li>
+                }
+                {item.getMaybe('sensitivity_label', (value: any) => {
+                  return (
+                      <li className="list-group-item list-group-item-action">
+                        <div className="d-flex w-100 justify-content-between">
+                          <h4 className="mb-1">Sensitivity Statement</h4>
+                        </div>
+                        <p className="mb-1">{value}</p>
+                      </li>
+                  );
+                })}
+                {item.getMaybe('copyright_status', (value: any) => {
+                  return (
+                      <li className="list-group-item list-group-item-action">
+                        <div className="d-flex w-100 justify-content-between">
+                          <h4 className="mb-1">Copyright Status</h4>
+                        </div>
+                        <p className="mb-1">{value}</p>
+                      </li>
+                  );
+                })}
               </ul>
             </section>
-
+            <Tagger recordId={item.get('id')} context={route.context}/>
             {
               showAccordions &&
               <section className="qg-accordion qg-dark-accordion" aria-label="Item Details">
@@ -720,34 +779,6 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
                 {/*<span className="controls">&#124;</span>*/}
                 {/*<input type="radio" name="control" id="expand" className="controls expand" value="expand" role="radio"/>*/}
                 {/*<label htmlFor="expand" className="controls">Show details</label>*/}
-
-                {item.getNotes('prefercite', null, (notes: Note[]) => (
-                    <AccordionPanel
-                        id={item.generateId()}
-                        title="Citation"
-                        children={notes.map((note: Note, idx: number) => (
-                            <NoteDisplay key={idx} note={note} />
-                        ))}
-                    />
-                ))}
-                {item.getNotes('odd', 'Remarks', (notes: Note[]) => (
-                    <AccordionPanel
-                        id={item.generateId()}
-                        title="Notes - Remarks"
-                        children={notes.map((note: Note, idx: number) => (
-                            <NoteDisplay key={idx} note={note} />
-                        ))}
-                    />
-                ))}
-                {item.getNotes('remarks', null, (notes: Note[]) => (
-                    <AccordionPanel
-                        id={item.generateId()}
-                        title="Notes - Remarks"
-                        children={notes.map((note: Note, idx: number) => (
-                            <NoteDisplay key={idx} note={note} />
-                        ))}
-                    />
-                ))}
                 {item.getExternalDocuments(['Helpful Resources'], (docs: any) => (
                     <AccordionPanel
                         id={item.generateId()}
@@ -757,6 +788,34 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
                         ))}
                     />
                 ))}
+              {item.getNotes('odd', 'Remarks', (notes: Note[]) => (
+                    <AccordionPanel
+                        id={item.generateId()}
+                        title="Remarks"
+                        children={notes.map((note: Note, idx: number) => (
+                            <NoteDisplay key={idx} note={note} />
+                        ))}
+                    />
+                ))}
+                {item.getNotes('remarks', null, (notes: Note[]) => (
+                    <AccordionPanel
+                        id={item.generateId()}
+                        title="Remarks"
+                        children={notes.map((note: Note, idx: number) => (
+                            <NoteDisplay key={idx} note={note} />
+                        ))}
+                    />
+                ))}
+                {item.getNotes('prefercite', null, (notes: Note[]) => (
+                    <AccordionPanel
+                        id={item.generateId()}
+                        title="Citation"
+                        children={notes.map((note: Note, idx: number) => (
+                            <NoteDisplay key={idx} note={note} />
+                        ))}
+                    />
+                ))}
+
                 {item.getArray('physical_representations').length > 0 && (
                     <AccordionPanel
                         id={item.generateId()}
@@ -821,7 +880,6 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
               </section>
             )}
 
-            <Tagger recordId={item.get('id')} context={route.context}/>
           </div>
         </div>
       </Layout>

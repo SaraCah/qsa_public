@@ -125,7 +125,7 @@ export const MyReadingRoomRequestsCartPage: React.FC<PageRoute> = (route: PageRo
                               {requiredDateInPast && (
                                   <div><small className="alert alert-warning">Date provided is in the past</small></div>
                               )}
-                              <div><small>QSA is open from 9.00am to 4.30pm Monday to Friday and the second Saturday of every month</small></div>
+                              <div><small>QSA is open from 9am to 4.30pm Monday to Friday and the second Saturday of each month, closed Public Holidays</small></div>
                             </div>
                             <div className="form-group">
                               <label className="sr-only" htmlFor="time-required">
@@ -186,8 +186,13 @@ export const MyReadingRoomRequestsCartPage: React.FC<PageRoute> = (route: PageRo
                                   </dd>
                                   <dt className="col-xs-6">Item type</dt>
                                   <dd className="col-xs-6">{labelForType(cartItem.record.jsonmodel_type)}</dd>
-                                  <dt className="col-xs-6">Item format</dt>
-                                  <dd className="col-xs-6">{cartItem.record.format}</dd>
+                                  {
+                                    cartItem.record.format &&
+                                    <>
+                                      <dt className="col-xs-6">Item format</dt>
+                                      <dd className="col-xs-6">{cartItem.record.format}</dd>
+                                    </>
+                                  }
                                   <dt className="col-xs-6">Parent ID</dt>
                                   <dd className="col-xs-6">
                                     <Link to={uriFor(cartItem.record.controlling_record.qsa_id_prefixed, 'archival_object')}>
@@ -302,16 +307,35 @@ export const MyReadingRoomRequestsCartPage: React.FC<PageRoute> = (route: PageRo
                                   </div>
                                   <h3>
                                     <Link to={uriFor(cartItem.record.controlling_record.qsa_id_prefixed, 'archival_object')}>
-                                      {cartItem.record.qsa_id_prefixed} {cartItem.record.display_string}
+                                      {cartItem.record.display_string}
                                     </Link>
                                   </h3>
                                   <dl className="row" style={{ marginBottom: 0 }}>
-                                    <dt className="col-xs-6">Item type</dt>
-                                    <dd className="col-xs-6">{labelForType(cartItem.record.jsonmodel_type)}</dd>
-                                    <dt className="col-xs-6">Parent item</dt>
+                                    <dt className="col-xs-6">Item ID</dt>
                                     <dd className="col-xs-6">
                                       <Link to={uriFor(cartItem.record.controlling_record.qsa_id_prefixed, 'archival_object')}>
-                                        {cartItem.record.controlling_record.qsa_id_prefixed} {cartItem.record.controlling_record._resolved.display_string}
+                                        {cartItem.record.qsa_id_prefixed}
+                                      </Link>
+                                    </dd>
+                                    <dt className="col-xs-6">Item type</dt>
+                                    <dd className="col-xs-6">{labelForType(cartItem.record.jsonmodel_type)}</dd>
+                                    {
+                                      cartItem.record.format &&
+                                      <>
+                                        <dt className="col-xs-6">Item format</dt>
+                                        <dd className="col-xs-6">{cartItem.record.format}</dd>
+                                      </>
+                                    }
+                                    <dt className="col-xs-6">Parent ID</dt>
+                                    <dd className="col-xs-6">
+                                      <Link to={uriFor(cartItem.record.controlling_record.qsa_id_prefixed, 'archival_object')}>
+                                        {cartItem.record.controlling_record.qsa_id_prefixed}
+                                      </Link>
+                                    </dd>
+                                    <dt className="col-xs-6">Parent title</dt>
+                                    <dd className="col-xs-6">
+                                      <Link to={uriFor(cartItem.record.controlling_record.qsa_id_prefixed, 'archival_object')}>
+                                        {cartItem.record.controlling_record._resolved.display_string}
                                       </Link>
                                     </dd>
                                     <dt className="col-xs-6">Series</dt>
@@ -390,7 +414,7 @@ export const MyReadingRoomRequestsCartPage: React.FC<PageRoute> = (route: PageRo
                                        onChange={(e) => setPrivacyTermsAccepted(e.target.checked)}
                                        required />
                                 &nbsp;
-                                The personal information collected on this form is for the purpose of facilitating an application for permission to access a restricted record.  I agree to Queensland State Archives providing these details to the agency or agencies responsible for the identified records.
+                                The personal information collected on this form is for the purpose of facilitating an application for permission to access a restricted record. The Queensland Government manages and protects your personal information in line with the Information Privacy Act 2009. We will not disclose your personal information to any other third parties or use it for another purpose without your consent, unless authorised or required by law. I agree to Queensland State Archives providing these details to the agency or agencies responsible for the identified records.
                               </label>
                             </p>
                           </div>

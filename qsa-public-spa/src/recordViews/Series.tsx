@@ -82,14 +82,6 @@ const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
             <section className="core-information">
               <h2 className="sr-only">Basic information</h2>
 
-              <div className="lead">
-                {
-                  ['abstract', 'description'].map((field: any) => (
-                    <p key={field}>{series.get(field)}</p>
-                  ))
-                }
-              </div>
-
               <ul className="list-group list-group-horizontal-md">
                 <li className="list-group-item">
                   <span className="small">ID</span>
@@ -106,11 +98,22 @@ const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
               <h3 className="sr-only">Series descriptive metadata</h3>
 
               <ul className="list-group list-group-flush">
+                
+              <li className="list-group-item list-group-item-action">
+                  <div className="d-flex w-100 justify-content-between">
+                    <h4 className="mb-1">Access Status Summary <a href="/pages/restricted-access" rel="noopener noreferrer" target="_blank" aria-label="Information about restricted access"><i className="fa fa-question-circle" title="Information about restricted access" /></a></h4>
+                  </div>
+                  <div className="text-success">{(series.get('access_status_summary')['Open Access'] || 0)} Open Items</div>
+                  <div>
+                    <span className="text-danger">{(series.get('access_status_summary')['Restricted Access'] || 0)} Restricted Items</span>&nbsp;
+                    <a href="/pages/how-do-i-order-restricted-records" rel="noopener noreferrer" target="_blank" aria-label="How to order restricted records"><i className="fa fa-question-circle" title="How to order restricted records" /></a>
+                  </div>
+                </li>
                 {[
-                  ['sensitivity_label', 'Sensitivity label'],
+                  ['repository_processing_note', 'Previous System Identifiers'],
+                  ['sensitivity_label', 'Sensitivity Statement'],
                   ['copyright_status', 'Copyright status'],
-                  ['information_sources', 'Information sources'],
-                  ['repository_processing_note', 'Previous identifiers']
+                  // ['information_sources', 'Information sources']
                 ].map(([fieldName, fieldLabel]) => {
                   return series.getMaybe(fieldName, (value: any) => {
                     return (
@@ -127,19 +130,10 @@ const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
                     );
                   });
                 })}
-
-                <li className="list-group-item list-group-item-action">
-                  <div className="d-flex w-100 justify-content-between">
-                    <h4 className="mb-1">Access Status Summary <a href="/pages/restricted-access" rel="noopener noreferrer" target="_blank" aria-label="Information about restricted access"><i className="fa fa-question-circle" title="Information about restricted access" /></a></h4>
-                  </div>
-                  <div className="text-success">{(series.get('access_status_summary')['Open Access'] || 0)} Open Items</div>
-                  <div>
-                    <span className="text-danger">{(series.get('access_status_summary')['Restricted Access'] || 0)} Restricted Items</span>&nbsp;
-                    <a href="/pages/how-do-i-order-restricted-records" rel="noopener noreferrer" target="_blank" aria-label="How to order restricted records"><i className="fa fa-question-circle" title="How to order restricted records" /></a>
-                  </div>
-                </li>
               </ul>
             </section>
+            
+            <Tagger recordId={series.get('id')} context={route.context}/>
 
             {
               showAccordions &&
@@ -152,70 +146,10 @@ const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
                 {/*<input type="radio" name="control" id="expand" className="controls expand" value="expand" role="radio"/>*/}
                 {/*<label htmlFor="expand" className="controls">Show details</label>*/}
 
-                {series.getNotes('preferred_citation', null, (notes: Note[]) => (
+                {series.getNotes('description', null, (notes: Note[]) => (
                     <AccordionPanel
                         id={series.generateId()}
-                        title="Citation"
-                        children={notes.map((note: Note, idx: number) => (
-                            <NoteDisplay key={idx} note={note} />
-                        ))}
-                    />
-                ))}
-
-                {series.getNotes('prefercite', null, (notes: Note[]) => (
-                    <AccordionPanel
-                        id={series.generateId()}
-                        title="Citation"
-                        children={notes.map((note: Note, idx: number) => (
-                            <NoteDisplay key={idx} note={note} />
-                        ))}
-                    />
-                ))}
-
-                {series.getNotes('odd', 'Remarks', (notes: Note[]) => (
-                    <AccordionPanel
-                        id={series.generateId()}
-                        title="Notes - Remarks"
-                        children={notes.map((note: Note, idx: number) => (
-                            <NoteDisplay note={note} key={idx} />
-                        ))}
-                    />
-                ))}
-
-                {series.getNotes('remarks', null, (notes: Note[]) => (
-                    <AccordionPanel
-                        id={series.generateId()}
-                        title="Notes - Remarks"
-                        children={notes.map((note: Note, idx: number) => (
-                            <NoteDisplay note={note} key={idx} />
-                        ))}
-                    />
-                ))}
-
-                {series.getNotes('custodhist', null, (notes: Note[]) => (
-                    <AccordionPanel
-                        id={series.generateId()}
-                        title="Notes - Agency Control Number (aka Department Numbers)"
-                        children={notes.map((note: Note, idx: number) => (
-                            <NoteDisplay note={note} key={idx} />
-                        ))}
-                    />
-                ))}
-
-                {series.getNotes('system_of_arrangement', null, (notes: Note[]) => (
-                    <AccordionPanel
-                        id={series.generateId()}
-                        title="Notes - System of Arrangement"
-                        children={notes.map((note: Note, idx: number) => (
-                            <NoteDisplay note={note} key={idx} />
-                        ))}
-                    />
-                ))}
-
-                {series.getNotes('arrangement', null, (notes: Note[]) => (
-                    <AccordionPanel
-                        id={series.generateId()}
-                        title="Notes - System of Arrangement"
+                        title="Notes - Description"
                         children={notes.map((note: Note, idx: number) => (
                             <NoteDisplay note={note} key={idx} />
                         ))}
@@ -231,6 +165,90 @@ const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
                         ))}
                     />
                 ))}
+
+                {series.getNotes('odd', 'Remarks', (notes: Note[]) => (
+                    <AccordionPanel
+                        id={series.generateId()}
+                        title="Remarks"
+                        children={notes.map((note: Note, idx: number) => (
+                            <NoteDisplay note={note} key={idx} />
+                        ))}
+                    />
+                ))}
+
+                {series.getNotes('remarks', null, (notes: Note[]) => (
+                    <AccordionPanel
+                        id={series.generateId()}
+                        title="Remarks"
+                        children={notes.map((note: Note, idx: number) => (
+                            <NoteDisplay note={note} key={idx} />
+                        ))}
+                    />
+                ))}
+
+                {series.getNotes('preferred_citation', null, (notes: Note[]) => (
+                    <AccordionPanel
+                        id={series.generateId()}
+                        title="Citation"
+                        children={notes.map((note: Note, idx: number) => (
+                            <NoteDisplay key={idx} note={note} />
+                        ))}
+                    />
+                ))}
+
+
+                {series.getNotes('prefercite', null, (notes: Note[]) => (
+                    <AccordionPanel
+                        id={series.generateId()}
+                        title="Citation"
+                        children={notes.map((note: Note, idx: number) => (
+                            <NoteDisplay key={idx} note={note} />
+                        ))}
+                    />
+                ))}
+
+
+                {series.getNotes('custodhist', null, (notes: Note[]) => (
+                    <AccordionPanel
+                        id={series.generateId()}
+                        title="Agency Control Number"
+                        children={notes.map((note: Note, idx: number) => (
+                            <NoteDisplay note={note} key={idx} />
+                        ))}
+                    />
+                ))}
+
+                {series.getNotes('system_of_arrangement', null, (notes: Note[]) => (
+                    <AccordionPanel
+                        id={series.generateId()}
+                        title="System of Arrangement"
+                        children={notes.map((note: Note, idx: number) => (
+                            <NoteDisplay note={note} key={idx} />
+                        ))}
+                    />
+                ))}
+
+                {series.getNotes('arrangement', null, (notes: Note[]) => (
+                    <AccordionPanel
+                        id={series.generateId()}
+                        title="System of Arrangement"
+                        children={notes.map((note: Note, idx: number) => (
+                            <NoteDisplay note={note} key={idx} />
+                        ))}
+                    />
+                ))}
+
+                {series.getNotes('information_sources', null, (notes: Note[]) => (
+                    <AccordionPanel
+                        id={series.generateId()}
+                        title="Information Sources"
+                        children={notes.map((note: Note, idx: number) => (
+                            <NoteDisplay note={note} key={idx} />
+                        ))}
+                    />
+                ))}
+
+
               </section>
             }
 
@@ -282,7 +300,7 @@ const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
               </ul>
             </section>
 
-            <Tagger recordId={series.get('id')} context={route.context}/>
+           
           </div>
         </div>
       </Layout>

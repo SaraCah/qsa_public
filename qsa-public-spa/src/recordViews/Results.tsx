@@ -9,6 +9,7 @@ import queryString from 'query-string';
 import { PageRoute } from '../models/PageRoute';
 import {preserveNewLines, rewriteISODates} from "../utils/rendering";
 import { DateRangePicker } from './DateRangePicker';
+import {type} from "os";
 
 
 
@@ -20,6 +21,8 @@ const FACET_LABELS: { [name: string]: string } = {
   creating_agency_id: 'Creating Agency',
   responsible_agency_id: 'Responsible Agency',
   tags_string: 'Tags',
+  open_record: 'Access Status',
+  formats: 'Format',
 };
 
 const ResultsPage: React.FC<PageRoute> = (route: PageRoute) => {
@@ -218,6 +221,18 @@ export const CompactSearchSummary: React.FC<{
   );
 };
 
+const rewriteFacetLabel = (label: string, facet: string): string => {
+  if (facet === 'open_record') {
+    if (label === 'true') {
+      return 'Open';
+    } else {
+      return 'Closed';
+    }
+  }
+
+  return rewriteISODates(label);
+}
+
 const SearchFacets: React.FC<{
   facets: any;
   advancedSearchQuery: AdvancedSearchQuery;
@@ -262,7 +277,7 @@ const SearchFacets: React.FC<{
                   return (
                     <li key={filter.field}>
                       <div className="facet-label">
-                        {FACET_LABELS[filter.field]}: {rewriteISODates(filter.label)}&nbsp;
+                        {FACET_LABELS[filter.field]}: {rewriteFacetLabel(filter.label, filter.field)}&nbsp;
                       </div>
                       <div className="facet-count">
                         <Link
@@ -302,7 +317,7 @@ const SearchFacets: React.FC<{
                         if (props.advancedSearchQuery.hasFilter(facet.facet_field, facet.facet_value)) {
                           return (
                             <li key={facet.facet_field + '_' + facet.facet_label}>
-                              <div className="facet-label">{rewriteISODates(facet.facet_label)}</div>
+                              <div className="facet-label">{rewriteFacetLabel(facet.facet_label, facet.facet_field)}</div>
                               <div className="facet-count">{facet.facet_count}</div>
                             </li>
                           );
@@ -318,7 +333,7 @@ const SearchFacets: React.FC<{
                                                  .toQueryString()
                                   }}
                                 >
-                                  {rewriteISODates(facet.facet_label)}
+                                  {rewriteFacetLabel(facet.facet_label, facet.facet_field)}
                                 </Link>
                               </div>
                               <div className="facet-count">{facet.facet_count}</div>
@@ -348,8 +363,8 @@ const SearchFacets: React.FC<{
       <DateRangePicker
         minYear={1800}
         maxYear={new Date().getFullYear()}
-        minSelected={props.advancedSearchQuery.getFromDate()}
-        maxSelected={props.advancedSearchQuery.getToDate()}
+        minSelected={props.advancedSearchQuery.getFromDateYear()}
+        maxSelected={props.advancedSearchQuery.getToDateYear()}
         onRangeUpdated={(min: number, max: number) => {
           setFireNewSearch(props.advancedSearchQuery
                                 .setFromDate('' + min)
@@ -454,6 +469,11 @@ const SearchResults: React.FC<{
     </section>;
   }
 
+  const number_of_pages_to_show = 10;
+  const first_page_to_show = Math.max(props.searchResults.current_page - number_of_pages_to_show / 2, 0);
+  const last_page = Math.ceil(props.searchResults.total_count / props.searchResults.page_size) - 1;
+  const last_page_to_show = Math.min(first_page_to_show + number_of_pages_to_show, last_page);
+
   return (
     <section className="qg-results">
       <SaveYourSearch query={props.advancedSearchQuery} context={props.context} />
@@ -469,8 +489,8 @@ const SearchResults: React.FC<{
                 <option value="recent_desc">Recently opened</option>
                 <option value="popular_desc">Most popular</option>
                 <option value="title_asc">Title (A-Z)</option>
-                <option value="date_desc">Date (newest to oldest)</option>
-                <option value="date_asc">Date (oldest to newest)</option>
+                <option value="date_desc">New records (newest to oldest)</option>
+                <option value="date_asc">New records (oldest to newest)</option>
               </select>
             </small>
           </div>
@@ -497,28 +517,29 @@ const SearchResults: React.FC<{
       <nav>
         <div className="text-center">
           <ul className="pagination">
-            <li className={'page-item prev ' + (props.currentPage === 0 ? 'disabled' : '')}>
+            <li className={'page-item ' + (props.currentPage === 0 ? 'disabled' : '')}>
               <Link
-                to={'/search?' + props.advancedSearchQuery.toQueryString() + '&page=' + (props.currentPage - 1)}
-                className="page-link"
-              >
-                <span aria-hidden="true">«</span> Previous
-              </Link>
+                  to={'/search?' + props.advancedSearchQuery.toQueryString() + '&page=0'}
+                  className="page-link"
+              >First</Link>
             </li>
-            <li
-              className={
-                'page-item next ' +
-                (props.currentPage >= Math.ceil(props.searchResults.total_count / props.searchResults.page_size) - 1
-                  ? 'disabled'
-                  : '')
-              }
-            >
+            {
+              [...Array(number_of_pages_to_show)].map((e, i) => {
+                const pageToShow = first_page_to_show + i;
+                return pageToShow <= last_page_to_show &&
+                  <li key={i} className={'page-item ' + (props.currentPage === pageToShow ? 'active' : '')}>
+                    <Link
+                        to={'/search?' + props.advancedSearchQuery.toQueryString() + '&page=' + pageToShow}
+                        className="page-link"
+                    >{pageToShow + 1}</Link>
+                  </li>;
+              })
+            }
+            <li className={'page-item ' + (props.currentPage >= last_page ? 'disabled' : '')}>
               <Link
-                to={'/search?' + props.advancedSearchQuery.toQueryString() + '&page=' + (props.currentPage + 1)}
-                className="page-link"
-              >
-                Next <span aria-hidden="true">»</span>
-              </Link>
+                  to={'/search?' + props.advancedSearchQuery.toQueryString() + '&page=' + last_page}
+                  className="page-link"
+              >Last</Link>
             </li>
           </ul>
         </div>
@@ -526,6 +547,7 @@ const SearchResults: React.FC<{
     </section>
   );
 };
+
 
 const SaveYourSearch: React.FC<any> = props => {
   const [saved, setSaved] = useState(false);

@@ -32,6 +32,7 @@
   <field name="functions" type="string" indexed="true" stored="true" multiValued="true"/>
   <field name="mandates" type="string" indexed="true" stored="true" multiValued="true"/>
   <field name="previous_system_ids" type="keyword" indexed="true" stored="true" multiValued="true"/>
+  <field name="agency_assigned_ids" type="string" indexed="true" stored="true" required="false" multiValued="true" />
 
   <field name="description" type="string" indexed="false" stored="true" multiValued="false"/>
   <field name="dates_display_string" type="string" indexed="false" stored="true" multiValued="false"/>
@@ -79,6 +80,9 @@
 
   <!-- Access status -->
   <field name="access_status" type="string" indexed="true" stored="true" multiValued="false" />
+
+  <!-- Format -->
+  <field name="formats" type="string" indexed="true" stored="true" multiValued="true" />
 
   <uniqueKey>id</uniqueKey>
 

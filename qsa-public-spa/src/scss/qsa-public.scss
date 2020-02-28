@@ -200,3 +200,14 @@
   background-color: #075d6b !important;
   border-color: #0a5966 !important;
 }
+
+.pagination .page-item.disabled a.page-link {
+  text-decoration: none !important;
+}
+
+.pagination .page-item.disabled a.page-link,
+.pagination .page-item.disabled a.page-link:visited,
+.pagination .page-item.disabled a.page-link:active,
+.pagination .page-item.disabled a.page-link:hover {
+  color: #6c757d !important;
+}

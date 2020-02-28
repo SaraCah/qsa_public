@@ -18,6 +18,9 @@ const LeftNavigation: React.FC<any> = (props: any) => {
             <Link to={'/search?type[]=resource'}>Series</Link>
           </li>
           <li>
+            <Link to={'/search?type[]=archival_object'}>Items</Link>
+          </li>
+          <li>
             <Link to={'/search?type[]=agent_corporate_entity'}>Agencies</Link>
           </li>
           <li>

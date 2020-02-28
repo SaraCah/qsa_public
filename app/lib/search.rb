@@ -87,6 +87,24 @@ class Search
     'popular_desc' => 'popularity_score desc',
   }
 
+  FACETS = [
+    'open_record',
+    'formats',
+    'resource_id',
+    'creating_agency_id',
+    'responsible_agency_id',
+    'function_id',
+    'mandate_id',
+    'tags_string',
+  ]
+
+  FACETS_TO_RESOLVE = [
+    'resource_id',
+    'mandate_id',
+    'function_id',
+    'responsible_agency_id',
+    'creating_agency_id',
+  ]
 
   def self.parse_sort(sort_spec)
     VALID_SORTS.fetch(sort_spec)
@@ -530,7 +548,7 @@ class Search
                                        'start': start_index,
                                        'sort': sort,
                                        'facet': true,
-                                       'facet.field': ['mandate_id', 'function_id', 'responsible_agency_id', 'creating_agency_id', 'tags_string'],
+                                       'facet.field': FACETS,
                                        'facet.mincount': 1,
                                        fq: filters)
 
@@ -548,7 +566,7 @@ class Search
       }
     end
 
-    resolve_document_ids(facets, ['mandate_id', 'function_id', 'responsible_agency_id', 'creating_agency_id'])
+    resolve_document_ids(facets, FACETS_TO_RESOLVE)
 
     facets = facets.map {|field, entries|
       [field, entries.reject {|entry| entry[:could_not_resolve]}]

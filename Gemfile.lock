@@ -5,7 +5,7 @@ GEM
       gyoku (>= 0.4.0)
       nokogiri
     aws-eventstream (1.0.3)
-    aws-partitions (1.277.0)
+    aws-partitions (1.278.0)
     aws-sdk-core (3.90.1)
       aws-eventstream (~> 1.0, >= 1.0.2)
       aws-partitions (~> 1, >= 1.239.0)
