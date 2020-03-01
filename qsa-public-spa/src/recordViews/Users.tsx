@@ -145,7 +145,7 @@ export const RegisterPage: React.FC<PageRoute> = (route: PageRoute) => {
             <h3>Your login details</h3>
             <div className="qg-call-out-box">
               <div className="form-group">
-                <label htmlFor="email">Email address</label>
+                <label htmlFor="email"><span className='required-asterix'>*</span>Email address</label>
                 <input
                   type="text"
                   className="form-control"
@@ -155,7 +155,7 @@ export const RegisterPage: React.FC<PageRoute> = (route: PageRoute) => {
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="password">Password</label>
+                <label htmlFor="password"><span className='required-asterix'>*</span>Password</label>
                 <input
                   type="password"
                   className="form-control"
@@ -168,7 +168,7 @@ export const RegisterPage: React.FC<PageRoute> = (route: PageRoute) => {
                 </div>
               </div>
               <div className="form-group">
-                <label htmlFor="confirm_password">Confirm Password</label>
+                <label htmlFor="confirm_password"><span className='required-asterix'>*</span>Confirm Password</label>
                 <input
                   type="password"
                   className="form-control"
@@ -193,6 +193,7 @@ export const RegisterPage: React.FC<PageRoute> = (route: PageRoute) => {
                   </small>
                 )}
               </div>
+              <p><span className='required-asterix'>*</span>Required fields</p>
             </div>
 
             <h3>Your contact details</h3>
@@ -204,7 +205,7 @@ export const RegisterPage: React.FC<PageRoute> = (route: PageRoute) => {
               <br />
 
               <div className="form-group">
-                <label htmlFor="first_name">First Name</label>
+                <label htmlFor="first_name"><span className='required-asterix'>*</span>First Name</label>
                 <input
                   type="text"
                   className="form-control"
@@ -214,7 +215,7 @@ export const RegisterPage: React.FC<PageRoute> = (route: PageRoute) => {
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="last_name">Last Name</label>
+                <label htmlFor="last_name"><span className='required-asterix'>*</span>Last Name</label>
                 <input
                   type="text"
                   className="form-control"
@@ -273,6 +274,7 @@ export const RegisterPage: React.FC<PageRoute> = (route: PageRoute) => {
                   onChange={e => setUser(Object.assign({}, user, { phone: e.target.value }))}
                 />
               </div>
+              <p><span className='required-asterix'>*</span>Required fields</p>
             </div>
 
             <div className="qg-call-out-box">
