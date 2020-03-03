@@ -307,7 +307,7 @@ export const MyReadingRoomRequestsCartPage: React.FC<PageRoute> = (route: PageRo
                                   </div>
                                   <h3>
                                     <Link to={uriFor(cartItem.record.controlling_record.qsa_id_prefixed, 'archival_object')}>
-                                      {cartItem.record.display_string}
+                                      {cartItem.record.title}
                                     </Link>
                                   </h3>
                                   <dl className="row" style={{ marginBottom: 0 }}>
