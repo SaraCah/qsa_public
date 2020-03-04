@@ -25,6 +25,7 @@ echo "== Preparing QSA Public"
 echo "================================================================================"
 (
     ./bootstrap.sh
+    cp -a qsa-public-spa/public static
 )
 
 # Write the version file
