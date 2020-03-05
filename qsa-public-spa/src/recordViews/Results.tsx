@@ -226,7 +226,7 @@ const rewriteFacetLabel = (label: string, facet: string): string => {
     if (label === 'true') {
       return 'Open';
     } else {
-      return 'Closed';
+      return 'Restricted';
     }
   }
 
