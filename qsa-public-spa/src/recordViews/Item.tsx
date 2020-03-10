@@ -152,7 +152,7 @@ const DownloadDigitalRepresentations: React.FC<{
     <div className="dropdown">
       <button className="qg-btn btn-warning dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <i className="fa fa-download" aria-hidden="true"></i>&nbsp;
-        View Copy
+        View Digital Copy
       </button>
       <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
         {
@@ -195,17 +195,7 @@ const DigitalRepresentation: React.FC<{
         </div>
       }
       <dl>
-        {
-          representation.get('representation_file') &&
-          <>
-            <dt>Download File</dt>
-            <dd>
-            <a href={baseURL + '/api/download_file/' + representation.get('qsa_id_prefixed')} target="_blank" rel="noopener noreferrer">
-            Link to download
-            </a>
-            </dd>
-          </>
-        }
+      <DownloadDigitalRepresentations representations={item.getArray('digital_representations')}/>
         <dt>ID</dt>
         <dd>{representation.get('qsa_id_prefixed')}</dd>
         <dt>Title</dt>
@@ -435,7 +425,7 @@ const RequestActions: React.FC<any> = ({ item }) => {
       <div className="col-sm-12 record-top-request-buttons">
         <div className={"top-request-button"}><ReadingRoomRequestAction item={item}/></div>
         <div className={"top-request-button"}><DigitalCopyRequestAction item={item}/></div>
-        <div className={"top-request-button"}><DownloadDigitalRepresentations representations={item.getArray('digital_representations')}/></div>
+        <div className={"top-request-button pull-right text-right"}><DownloadDigitalRepresentations representations={item.getArray('digital_representations')}/></div>
       </div>
     </div>
   )
