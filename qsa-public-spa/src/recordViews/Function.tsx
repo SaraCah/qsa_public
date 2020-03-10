@@ -125,6 +125,17 @@ const FunctionPage: React.FC<PageRoute> = (route: PageRoute) => {
                   );
                 })}
               </ul>
+              
+              {currentFunction.getArray('function_relationships').length > 0 && <h3>Related functions</h3>}
+              <ul className="list-group list-group-flush">
+                {currentFunction.getArray('function_relationships').map((rlshp: any, idx: number) => {
+                  return (
+                    <li key={idx} className="list-group-item">
+                      {<Relationship relationship={rlshp} />}
+                    </li>
+                  );
+                })}
+              </ul>
 
               {currentFunction.getArray('mandate_relationships').length > 0 && <h3>Related mandates</h3>}
               <ul className="list-group list-group-flush">
@@ -137,16 +148,6 @@ const FunctionPage: React.FC<PageRoute> = (route: PageRoute) => {
                 })}
               </ul>
 
-              {currentFunction.getArray('function_relationships').length > 0 && <h3>Related functions</h3>}
-              <ul className="list-group list-group-flush">
-                {currentFunction.getArray('function_relationships').map((rlshp: any, idx: number) => {
-                  return (
-                    <li key={idx} className="list-group-item">
-                      {<Relationship relationship={rlshp} />}
-                    </li>
-                  );
-                })}
-              </ul>
             </section>
           </div>
         </div>
