@@ -162,7 +162,7 @@ const AspaceAdvancedSearch: React.FC<{
                       className="form-control"
                       type="text"
                       name="from"
-                      placeholder="yyyy, mm-yyyy or dd-mm-yyyy"
+                      placeholder="yyyy, yyyy-mm or yyyy-mm-dd"
                       value={advancedSearchQuery.getFromDate() || ''}
                       style={{minWidth: '240px'}}
                     />
@@ -176,7 +176,7 @@ const AspaceAdvancedSearch: React.FC<{
                       className="form-control"
                       type="text"
                       name="to"
-                      placeholder="yyyy, mm-yyyy or dd-mm-yyyy"
+                      placeholder="yyyy, yyyy-mm or yyyy-mm-dd"
                       value={advancedSearchQuery.getToDate() || ''}
                       style={{minWidth: '240px'}}
                     />
