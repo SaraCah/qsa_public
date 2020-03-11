@@ -38,6 +38,7 @@ const FunctionPage: React.FC<PageRoute> = (route: PageRoute) => {
     return <Layout skipFooter={true} />;
   } else {
     route.setPageTitle(`Function: ${currentFunction.get('title')}`);
+    route.triggerPageViewTracker();
 
     const relatedQuery = AdvancedSearchQuery.emptyQuery().addStickyFilter(
       'function_id',
