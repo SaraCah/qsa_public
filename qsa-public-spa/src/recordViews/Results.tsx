@@ -414,8 +414,6 @@ const SearchResult: React.FC<{ searchResult: any }> = props => {
           {props.searchResult.qsa_id_prefixed}
         </span>
       </div>
-      {console.log(props.searchResult.json)
-      }
       {props.searchResult.description && props.searchResult.primary_type !== 'resource' ?
       <p dangerouslySetInnerHTML={{__html: preserveNewLines(props.searchResult.description)}}/>
       :
