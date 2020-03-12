@@ -414,7 +414,10 @@ const SearchResult: React.FC<{ searchResult: any }> = props => {
           {props.searchResult.qsa_id_prefixed}
         </span>
       </div>
-      {props.searchResult.description && <p dangerouslySetInnerHTML={{__html: preserveNewLines(props.searchResult.description)}} />}
+      {props.searchResult.description && props.searchResult.primary_type !== 'resource' ?
+      <p dangerouslySetInnerHTML={{__html: preserveNewLines(props.searchResult.description)}}/>
+      :
+      ""} 
       {props.searchResult.dates_display_string && (
         <div>
           <small>Dates: {rewriteISODates(props.searchResult.dates_display_string)}</small>
