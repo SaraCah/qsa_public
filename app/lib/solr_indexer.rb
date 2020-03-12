@@ -1,6 +1,6 @@
 require 'zlib'
 
-RECORD_BATCH_SIZE = 25
+RECORD_BATCH_SIZE = 100
 
 class SolrIndexer
 
