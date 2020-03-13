@@ -44,6 +44,7 @@ const AgencyPage: React.FC<PageRoute> = (route: PageRoute) => {
     return <Layout skipFooter={true} />;
   } else {
     route.setPageTitle(`Agency: ${agency.get('display_string')}`);
+    route.triggerPageViewTracker();
 
     const controlledRecordsQuery = AdvancedSearchQuery.emptyQuery().addStickyFilter(
       'responsible_agency_id',

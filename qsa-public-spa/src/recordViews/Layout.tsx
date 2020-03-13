@@ -15,10 +15,10 @@ const LeftNavigation: React.FC<any> = (props: any) => {
       {!props.showNavForUser && (
         <ul aria-label="section navigation" style={props.context.user ? { paddingBottom: 0 } : {}}>
           <li>
-            <Link to={'/search?type[]=resource'}>Series</Link>
+            <Link to={'/search?type[]=archival_object'}>Items</Link>
           </li>
           <li>
-            <Link to={'/search?type[]=archival_object'}>Items</Link>
+            <Link to={'/search?type[]=resource'}>Series</Link>
           </li>
           <li>
             <Link to={'/search?type[]=agent_corporate_entity'}>Agencies</Link>

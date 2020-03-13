@@ -60,6 +60,7 @@ const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
     return <Layout skipFooter={true} />;
   } else {
     route.setPageTitle(`Series: ${series.get('title')}`);
+    route.triggerPageViewTracker();
 
     return (
       <Layout aside={<RecordContext qsaId={qsaId} recordType="resource" />}>

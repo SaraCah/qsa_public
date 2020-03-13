@@ -21,7 +21,9 @@ import {Tagger} from "./Tagger";
 import { IAppContext } from '../context/AppContext';
 import { PageRoute } from '../models/PageRoute';
 import {preserveNewLines, rewriteISODates} from "../utils/rendering";
+import ReactGA from "react-ga";
 
+declare var AppConfig: any;
 
 const PhysicalRepresentation: React.FC<{
   representation: any;
@@ -143,7 +145,8 @@ const PhysicalRepresentation: React.FC<{
 
 const DownloadDigitalRepresentations: React.FC<{
   representations: any;
-}> = ({representations}) => {
+  triggerDownloadTracker: (path: string, repesentation: RecordDisplay) => void;
+}> = ({representations, triggerDownloadTracker}) => {
   if (representations.length == 0) {
     return <></>;
   }
@@ -156,12 +159,14 @@ const DownloadDigitalRepresentations: React.FC<{
       </button>
       <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
         {
-          representations.map((r: any) => {
+          representations.map((r: any, idx: number) => {
             let representation = new RecordDisplay(r);
             return <a href={baseURL + '/api/download_file/' + representation.get('qsa_id_prefixed')}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="dropdown-item">
+                      onClick={(e) => {triggerDownloadTracker((e.target as HTMLAnchorElement).href, representation); return true}}
+                      className="dropdown-item"
+                      key={idx}>
               {representation.get('qsa_id_prefixed')} {representation.get('title')}
             </a>;
           })
@@ -175,7 +180,8 @@ const DigitalRepresentation: React.FC<{
   representation: any;
   item: RecordDisplay;
   context: IAppContext;
-}> = ({ representation, item, context }) => {
+  triggerDownloadTracker: (path: string, repesentation: RecordDisplay) => void;
+}> = ({ representation, item, context, triggerDownloadTracker }) => {
   representation = new RecordDisplay(representation);
 
   return (
@@ -195,7 +201,20 @@ const DigitalRepresentation: React.FC<{
         </div>
       }
       <dl>
-      <DownloadDigitalRepresentations representations={item.getArray('digital_representations')}/>
+        {
+          representation.get('representation_file') &&
+          <>
+            <dt>Download File</dt>
+            <dd>
+              <a href={baseURL + '/api/download_file/' + representation.get('qsa_id_prefixed')}
+                 target="_blank"
+                 rel="noopener noreferrer"
+                 onClick={(e) => {triggerDownloadTracker((e.target as HTMLAnchorElement).href, representation); return true}}>
+                Link to download
+              </a>
+            </dd>
+          </>
+        }
         <dt>ID</dt>
         <dd>{representation.get('qsa_id_prefixed')}</dd>
         <dt>Title</dt>
@@ -419,13 +438,13 @@ const AddToReadingRoomRequestCartButton: React.FC<any> = ({ itemId }) => {
   );
 };
 
-const RequestActions: React.FC<any> = ({ item }) => {
+const RequestActions: React.FC<any> = ({ item, route }) => {
   return (
     <div className="row">
       <div className="col-sm-12 record-top-request-buttons">
         <div className={"top-request-button"}><ReadingRoomRequestAction item={item}/></div>
         <div className={"top-request-button"}><DigitalCopyRequestAction item={item}/></div>
-        <div className={"top-request-button pull-right text-right"}><DownloadDigitalRepresentations representations={item.getArray('digital_representations')}/></div>
+        <div className={"top-request-button"}><DownloadDigitalRepresentations representations={item.getArray('digital_representations')} triggerDownloadTracker={route.triggerDownloadTracker}/></div>
       </div>
     </div>
   )
@@ -629,6 +648,7 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
     return <Layout skipFooter={true} />;
   } else {
     route.setPageTitle(`Item: ${item.get('title') || item.get('display_string')}`);
+    route.triggerPageViewTracker();
 
     return (
       <Layout aside={<RecordContext qsaId={qsaId} recordType="archival_object" />}>
@@ -648,7 +668,7 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
               </div>
             </h1>
 
-            <RequestActions item={item} />
+            <RequestActions item={item} route={route} />
      
             <section className="core-information">
               <h2 className="sr-only">Basic information</h2>
@@ -832,7 +852,7 @@ const ItemPage: React.FC<PageRoute> = (route: PageRoute) => {
                           <ul className="list-group list-group-flush">
                             {item.getArray('digital_representations').map((representation: any) => (
                                 <li key={representation.qsa_id} className="list-group-item">
-                                  <DigitalRepresentation representation={representation} item={item} context={route.context} />
+                                  <DigitalRepresentation representation={representation} item={item} context={route.context} triggerDownloadTracker={route.triggerDownloadTracker} />
                                 </li>
                             ))}
                           </ul>
