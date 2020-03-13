@@ -155,7 +155,7 @@ const DownloadDigitalRepresentations: React.FC<{
     <div className="dropdown">
       <button className="qg-btn btn-warning dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <i className="fa fa-download" aria-hidden="true"></i>&nbsp;
-        View Copy
+        View Digital Copy
       </button>
       <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
         {
