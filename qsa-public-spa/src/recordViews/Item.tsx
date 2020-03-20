@@ -104,7 +104,7 @@ const PhysicalRepresentation: React.FC<{
         {representation.getMaybe('description', (value: string) => (
             <>
               <dt>Description</dt>
-              <dd style={{whiteSpace: 'pre'}}>{value}</dd>
+              <dd style={{whiteSpace: 'pre-wrap'}}>{value}</dd>
             </>
         ))}
 
@@ -255,7 +255,7 @@ const DigitalRepresentation: React.FC<{
         {representation.getMaybe('description', (value: string) => (
             <>
               <dt>Description</dt>
-              <dd style={{whiteSpace: 'pre'}}>{value}</dd>
+              <dd style={{whiteSpace: 'pre-wrap'}}>{value}</dd>
             </>
         ))}
         
