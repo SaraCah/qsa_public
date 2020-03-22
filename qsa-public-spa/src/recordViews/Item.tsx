@@ -145,9 +145,14 @@ const PhysicalRepresentation: React.FC<{
 
 const DownloadDigitalRepresentations: React.FC<{
   representations: any;
-  triggerDownloadTracker: (path: string, repesentation: RecordDisplay) => void;
+  triggerDownloadTracker: (path: string, representation: RecordDisplay) => void;
 }> = ({representations, triggerDownloadTracker}) => {
-  if (representations.length == 0) {
+
+  const downloadableRepresentations = representations.filter((rep: any) => {
+    return !!rep.representation_file;
+  });
+
+  if (downloadableRepresentations.length == 0) {
     return <></>;
   }
 
@@ -159,7 +164,7 @@ const DownloadDigitalRepresentations: React.FC<{
       </button>
       <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
         {
-          representations.map((r: any, idx: number) => {
+          downloadableRepresentations.map((r: any, idx: number) => {
             let representation = new RecordDisplay(r);
             return <a href={baseURL + '/api/download_file/' + representation.get('qsa_id_prefixed')}
                       target="_blank"
