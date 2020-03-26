@@ -14,7 +14,6 @@ import {
 } from './Helpers';
 import {Tagger} from "./Tagger";
 import { PageRoute } from '../models/PageRoute';
-import {preserveNewLines, rewriteISODates} from "../utils/rendering";
 
 
 const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
