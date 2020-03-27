@@ -88,7 +88,7 @@ class ErrorBuffer {
 
     this.flushing = true;
     axios
-      .post(`${process.env.REACT_APP_QSA_PUBLIC_URL}/api/error_report`, {
+      .post(`${process.env.REACT_APP_QSA_PUBLIC_URL || ''}/api/error_report`, {
         errors: this.formatErrors(errors),
         consoleMessages: this.formatMessages(consoleMessages)
       })
