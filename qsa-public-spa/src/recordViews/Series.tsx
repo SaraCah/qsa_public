@@ -124,7 +124,7 @@ const SeriesPage: React.FC<PageRoute> = (route: PageRoute) => {
                         </div>
                         <p className="mb-1">
                           {
-                            (Array.isArray(value) ? value.join('; ') : value)
+                            (Array.isArray(value) ? value.join('; ') : value != 'ENUM_NOT_FOUND' ? value : '')
                           }
                         </p>
                       </li>
