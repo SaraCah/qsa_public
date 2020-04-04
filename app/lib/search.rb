@@ -482,20 +482,21 @@ class Search
       }
     }.flatten.uniq
 
-    query = "{!terms f=id}" + document_ids_to_resolve.join(',')
+    id_to_title = {}
 
-    response = solr_handle_search('q' => query,
-                       'offset' => 0,
-                       'rows' => document_ids_to_resolve.length,
-                       'fl' => 'id,title')
+    document_ids_to_resolve.each_slice(100) do |batch_of_ids_to_resolve|
+      query = "{!terms f=id}" + batch_of_ids_to_resolve.join(',')
+
+      response = solr_handle_search('q' => query,
+                                    'offset' => 0,
+                                    'rows' => batch_of_ids_to_resolve.length,
+                                    'fl' => 'id,title')
 
 
-    id_to_title = response.fetch('response').fetch('docs').map {|doc|
-      [
-        doc['id'],
-        doc['title']
-      ]
-    }.to_h
+      response.fetch('response').fetch('docs').each {|doc|
+         id_to_title[doc['id']] = doc['title']
+      }
+    end
 
     facets.each do |facet_field, facet_entries|
       next unless fields.include?(facet_field)
