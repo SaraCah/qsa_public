@@ -1,6 +1,8 @@
 #!/bin/bash
 
-export JVM_HEAP_SIZE="512m"
+if [ "$JVM_HEAP_SIZE" = "" ]; then
+    JVM_HEAP_SIZE="512m"
+fi
 
 cd "`dirname "$0"`/../"
 
