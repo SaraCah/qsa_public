@@ -80,8 +80,21 @@ lsof -i ":${solr_port}" -sTCP:LISTEN && fail "Port $solr_port already in use"
 trap "stop_solr" INT TERM EXIT
 
 function run() {
+    heap_size="$((grep '^\s*AppConfig\[:java_heap_size\]' config/config.local.rb config/config.rb 2>/dev/null || true) | cut -d'=' -f2 | tr -c -d '[a-z0-9]' | head -1)"
+    solr_heap_size="$((grep '^\s*AppConfig\[:solr_heap_size\]' config/config.local.rb config/config.rb 2>/dev/null || true) | cut -d'=' -f2 | tr -c -d '[a-z0-9]' | head -1)"
+
+    if [ "$solr_heap_size" = "" ]; then
+        solr_heap_size="$heap_size"
+
+        if [ "$solr_heap_size" = "" ]; then
+            solr_heap_size="512m"
+        fi
+    fi
+
     mkdir -p data/solr
-    solr_dist/bin/solr start -f -p $solr_port -s solr -a "-Dsolr.data.home=$PWD/data/solr -Djava.security.egd=file:/dev/./urandom" &
+    solr_dist/bin/solr start -f -p $solr_port -s solr -m "$solr_heap_size" -a "-Dsolr.data.home=$PWD/data/solr -Djava.security.egd=file:/dev/./urandom" &
+
+    export JVM_HEAP_SIZE="$heap_size"
     scripts/jruby.sh distlibs/gems/bin/fishwife app/config.ru --quiet --host $listen_address --port $listen_port -E "$QSA_PUBLIC_ENV" -O request_body_max=134217728
 }
 
